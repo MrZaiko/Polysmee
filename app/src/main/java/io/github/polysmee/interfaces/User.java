@@ -1,6 +1,6 @@
 package io.github.polysmee.interfaces;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A generic user
@@ -26,19 +26,19 @@ public interface User {
     String getSurname();
 
     /**
-     * Retrieves the list of the upcoming appointments for this user
-     * @return user's list of appointment in an unmodifiable list
+     * Retrieves the set of the upcoming appointments for this user
+     * @return user's set of appointment in an unmodifiable set
      */
-    List<Appointment> getAppointments();
+    Set<Appointment> getAppointments();
 
     /**
-     * Adds the given appointment to the list of appointments
+     * Adds the given appointment to the set of appointments
      * @param newAppointment the appointment to be added
      */
     void addAppointment(Appointment newAppointment);
 
     /**
-     * Removes the given appointment to the list of appointments
+     * Removes the given appointment to the set of appointments
      * @param appointment the appointment to be removed
      */
     void removeAppointment(Appointment appointment);
