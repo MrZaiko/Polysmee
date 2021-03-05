@@ -36,4 +36,10 @@ public interface User {
      * @param newAppointment the appointment to be added
      */
     void addAppointment(Appointment newAppointment);
+
+    /**
+     * Removes the given appointment to the list of appointments
+     * @param appointment the appointment to be removed
+     */
+    void removeAppointment(Appointment appointment);
 }

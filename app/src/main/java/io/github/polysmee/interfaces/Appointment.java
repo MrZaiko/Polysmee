@@ -16,7 +16,8 @@ public interface Appointment {
     long getStartTime();
 
     /**
-     * Retrieves the appointment's duration in seconds
+     * Retrieves the appointment's duration in seconds to stay consistent with the EPOCH
+     * representation
      * @return the appointment's duration
      */
     long getDuration();
@@ -44,4 +45,10 @@ public interface Appointment {
      * @param newParticipant the user to be added
      */
     void addParticipant(User newParticipant);
+
+    /**
+     * Removes the given user to the list of participant
+     * @param participant the user to be removed
+     */
+    void removeParticipant(User participant);
 }
