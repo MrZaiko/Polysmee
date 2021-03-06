@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Polysmee</string>
+    <string name="hello_user_you_are_not_connected_please_login">Hello user ! You are not connected. Please login !</string>
+    <string name="login">Login</string>
 </resources>
