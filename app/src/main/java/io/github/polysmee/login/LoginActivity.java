@@ -70,17 +70,11 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(this, MainActivity.class));
                 finish();
 
-            } else {
-
-                if(response == null) {
+            } else if(response == null) {
                     Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+            } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                     Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
-                    return;
-                }
+            } else {
 
                 Toast.makeText(this, "unknown error occured", Toast.LENGTH_LONG).show();
 
