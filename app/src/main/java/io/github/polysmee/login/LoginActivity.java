@@ -76,10 +76,6 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
         } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
                 Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
-        } else {
-
-            Toast.makeText(this, "unknown error occured", Toast.LENGTH_LONG).show();
-
         }
 
     }
