@@ -61,24 +61,26 @@ public class LoginActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RC_SIGN_IN) {
-            IdpResponse response = IdpResponse.fromResultIntent(data);
-
-            if (resultCode == RESULT_OK) {
-
-                // Successfully signed in
-                startActivity(new Intent(this, MainActivity.class));
-                finish();
-
-            } else if(response == null) {
-                    Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
-            } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
-            } else {
-
-                Toast.makeText(this, "unknown error occured", Toast.LENGTH_LONG).show();
-
-            }
+        if (requestCode != RC_SIGN_IN) {
+            return;
         }
+        IdpResponse response = IdpResponse.fromResultIntent(data);
+
+        if (resultCode == RESULT_OK) {
+
+            // Successfully signed in
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+
+        } else if(response == null) {
+                Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
+        } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
+                Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
+        } else {
+
+            Toast.makeText(this, "unknown error occured", Toast.LENGTH_LONG).show();
+
+        }
+
     }
 }
