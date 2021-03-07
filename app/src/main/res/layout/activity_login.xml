@@ -10,7 +10,7 @@
         android:id="@+id/login_text_prompt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/hello_user_you_are_not_connected_please_login"
+        android:text="@string/user_prompt"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
