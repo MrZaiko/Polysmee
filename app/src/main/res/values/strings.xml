@@ -1,5 +1,10 @@
 <resources>
     <string name="app_name">Polysmee</string>
     <string name="hello_user_you_are_not_connected_please_login">Hello user ! You are not connected. Please login !</string>
-    <string name="login">Login</string>
+    <string name="login">Login</string><string name="title_activity_login_check">LoginCheckActivity</string>
+    <!--
+    This string is used for square devices and overridden by hello_world in
+    values-round/strings.xml for round devices.
+    -->
+    <string name="hello_world">Hello Square World!</string>
 </resources>
