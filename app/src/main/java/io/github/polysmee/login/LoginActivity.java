@@ -40,12 +40,6 @@ public class LoginActivity extends AppCompatActivity {
         List<AuthUI.IdpConfig> providers = Collections.singletonList(
             new AuthUI.IdpConfig.EmailBuilder().build());
 
-        Toast.makeText(this, AuthUI.getInstance()
-            .createSignInIntentBuilder()
-            .setIsSmartLockEnabled(false)
-            .setAvailableProviders(providers)
-            .build().getClass().toString(), Toast.LENGTH_LONG).show();
-
         // Create and launch sign-in intent
         startActivityForResult(
             AuthUI.getInstance()
