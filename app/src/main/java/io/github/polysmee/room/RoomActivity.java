@@ -47,13 +47,14 @@ public class RoomActivity extends AppCompatActivity {
         setContentView(R.layout.activity_room);
 
         this.appointment = (Appointment) getIntent().getSerializableExtra(APPOINTMENT_KEY);
-        setTitle(appointment.getTitle());
+        if (appointment != null)
+            setTitle(appointment.getTitle());
 
 
         //Fragment Creation
         List<Fragment> list = new ArrayList<>();
         list.add(new ActivityRoomMessagesFragment());
-        list.add(new ActivityRoomParticipantsFragment(appointment.getParticipants()));
+        list.add(new ActivityRoomParticipantsFragment(appointment != null ? appointment.getParticipants() : null));
 
 
         ViewPager2 pager = findViewById(R.id.roomActivityPager);

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,10 +22,10 @@ import io.github.polysmee.interfaces.User;
 public class ActivityRoomParticipantsFragment extends Fragment {
 
     private ViewGroup rootView;
-    private Set<User> participants;
+    private final Set<User> participants;
 
     public ActivityRoomParticipantsFragment(Set<User> participants) {
-        this.participants = participants;
+        this.participants = participants != null ? participants : new HashSet<>();
     }
 
     @Nullable
