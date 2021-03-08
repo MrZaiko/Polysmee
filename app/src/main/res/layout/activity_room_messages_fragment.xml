@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".room.RoomActivity">
+
+    <Button
+        android:id="@+id/roomActivitySendMessageButton"
+        android:layout_width="104dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="18dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="sendMessage"
+        android:text="Send"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/roomActivityMessageText" />
+
+    <Button
+        android:id="@+id/roomActivityReceiveMessageButton"
+        android:layout_width="104dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginEnd="2dp"
+        android:onClick="receiveMessage"
+        android:text="Receive"
+        app:layout_constraintBottom_toTopOf="@+id/roomActivitySendMessageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/roomActivityMessageText" />
+
+    <ScrollView
+        android:id="@+id/roomActivityMessagesScrollView"
+        android:layout_width="370dp"
+        android:layout_height="487dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/roomActivityReceiveMessageButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+        <LinearLayout
+            android:id="@+id/rommActivityScrollViewLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="7dp" />
+    </ScrollView>
+
+    <EditText
+        android:id="@+id/roomActivityMessageText"
+        android:layout_width="265dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="8dp"
+        android:autofillHints=""
+        android:background="@android:drawable/editbox_background_normal"
+        android:ems="10"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/roomActivitySendMessageButton"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
