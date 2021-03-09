@@ -2,11 +2,16 @@ package io.github.polysmee.roomActivityTests;
 
 import android.content.Intent;
 
+import androidx.test.InstrumentationRegistry;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.intent.Intents.intended;
 
 import org.junit.Rule;
@@ -26,7 +31,9 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
@@ -72,8 +79,9 @@ public class RoomActivityTest {
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, expectedAppointment);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+            openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
             Intents.init();
-            clickMenu(R.id.roomMenuInfo);
+            onView(withText("Info")).perform(click());
             intended(hasExtra(RoomActivityInfo.APPOINTMENT_KEY, expectedAppointment));
             Intents.release();
         }

@@ -9,6 +9,9 @@ import org.junit.runners.JUnit4;
 import io.github.polysmee.R;
 import io.github.polysmee.room.fragments.roomActivityMessagesFragment;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
@@ -23,7 +26,7 @@ public class roomActivityMessagesFragmentTest {
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
         assertDisplayed(R.id.roomActivityMessageText, message);
-        clickOn(R.id.roomActivitySendMessageButton);
+        onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertContains(R.id.roomActivityMessageText, "");
     }
 
@@ -32,7 +35,7 @@ public class roomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
-        clickOn(R.id.roomActivitySendMessageButton);
+        onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
         assertDisplayed(message);
     }
@@ -42,7 +45,7 @@ public class roomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
-        clickOn(R.id.roomActivityReceiveMessageButton);
+        onView(withId(R.id.roomActivityReceiveMessageButton)).perform(click());
         assertContains(R.id.roomActivityMessageText, "");
     }
 
@@ -52,7 +55,7 @@ public class roomActivityMessagesFragmentTest {
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
         assertDisplayed(R.id.roomActivityMessageText, message);
-        clickOn(R.id.roomActivityReceiveMessageButton);
+        onView(withId(R.id.roomActivityReceiveMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
         assertContains(message);
     }
