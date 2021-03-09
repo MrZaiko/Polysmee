@@ -29,7 +29,7 @@ public class AppointmentActivity extends AppCompatActivity {
     User user;
 
     Calendar date;
-    public void showDateTimePicker(boolean isStart) {
+    public void showDateTimePicker(Calendar calendar, TextView textView) {
         final Calendar currentDate = Calendar.getInstance();
         date = Calendar.getInstance();
         new DatePickerDialog(AppointmentActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
@@ -39,22 +39,16 @@ public class AppointmentActivity extends AppCompatActivity {
                 date.set(Calendar.MINUTE, minute);
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
-                updateCalendar(isStart);
+                updateCalendar(calendar, textView);
             }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
 
-    private void updateCalendar(boolean isStart) {
+    private void updateCalendar(Calendar calendar, TextView textView) {
         txtError.setVisibility(View.INVISIBLE);
-        if(isStart) {
-            clndrStartTime = (Calendar) date.clone();
-            String strStartTime = clndrStartTime.get(Calendar.DAY_OF_MONTH) + "/" + String.format("%02d", clndrStartTime.get(Calendar.MONTH)) + "/" + clndrStartTime.get(Calendar.YEAR) + "   -   " + String.format("%02d", clndrStartTime.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", clndrStartTime.get(Calendar.MINUTE));
-            txtStartTime.setText(strStartTime);
-        } else {
-            clndrEndTime = (Calendar) date.clone();
-            String strEndTime = clndrEndTime.get(Calendar.DAY_OF_MONTH) + "/" + String.format("%02d", clndrEndTime.get(Calendar.MONTH)) + "/" + clndrEndTime.get(Calendar.YEAR) + "   -   " + String.format("%02d", clndrEndTime.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", clndrEndTime.get(Calendar.MINUTE));
-            txtEndTime.setText(strEndTime);
-        }
+        calendar = (Calendar) date.clone();
+        String strStartTime = calendar.get(Calendar.DAY_OF_MONTH) + "/" + String.format("%02d", calendar.get(Calendar.MONTH)) + "/" + calendar.get(Calendar.YEAR) + "   -   " + String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", calendar.get(Calendar.MINUTE));
+        textView.setText(strStartTime);
     }
 
     @Override
@@ -62,15 +56,7 @@ public class AppointmentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment);
 
-        editTitle = findViewById(R.id.editTxtAppointmentTitleSet);
-        editCourse = findViewById(R.id.editTxtAppointmentCourseSet);
-        btnStartTime = findViewById(R.id.btnStartTime);
-        btnEndTime = findViewById(R.id.btnEndTime);
-        btnCreate = findViewById(R.id.btnCreateAppointment);
-        btnReset = findViewById(R.id.btnReset);
-        txtError = findViewById(R.id.txtError);
-        txtStartTime = findViewById(R.id.txtStartTime);
-        txtEndTime = findViewById(R.id.txtEndTime);
+        attributeSetters();
 
         txtError.setVisibility(View.INVISIBLE);
 
@@ -78,15 +64,22 @@ public class AppointmentActivity extends AppCompatActivity {
         user = (User) getIntent().getSerializableExtra(EXTRA_USER);
 
         btnStartTime.setOnClickListener(v -> {
-            showDateTimePicker(true);
+            showDateTimePicker(clndrStartTime, txtStartTime);
         });
 
         btnEndTime.setOnClickListener(v -> {
-            showDateTimePicker(false);
+            showDateTimePicker(clndrEndTime, txtEndTime);
         });
 
-        btnCreate.setOnClickListener(v -> {
-            if(clndrStartTime.getTimeInMillis() >= clndrEndTime.getTimeInMillis() || clndrStartTime.getTimeInMillis() <= Calendar.getInstance().getTimeInMillis()) {
+        btnCreate.setOnClickListener(createClickListener);
+
+        btnReset.setOnClickListener(resetClickListener);
+    }
+
+    View.OnClickListener createClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (clndrStartTime.getTimeInMillis() >= clndrEndTime.getTimeInMillis() || clndrStartTime.getTimeInMillis() <= Calendar.getInstance().getTimeInMillis()) {
                 txtError.setVisibility(View.VISIBLE);
                 txtError.setText(ERROR_TXT);
             } else {
@@ -98,9 +91,12 @@ public class AppointmentActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
-        });
+        }
+    };
 
-        btnReset.setOnClickListener(v -> {
+    View.OnClickListener resetClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
             editTitle.setText("Appointment Title");
             editCourse.setText("Appointment Course");
             txtError.setText("");
@@ -108,6 +104,18 @@ public class AppointmentActivity extends AppCompatActivity {
             txtEndTime.setText("End Time");
             clndrStartTime = Calendar.getInstance();
             txtStartTime.setText("Start Time");
-        });
+        }
+    };
+
+    private void attributeSetters() {
+        editTitle = findViewById(R.id.editTxtAppointmentTitleSet);
+        editCourse = findViewById(R.id.editTxtAppointmentCourseSet);
+        btnStartTime = findViewById(R.id.btnStartTime);
+        btnEndTime = findViewById(R.id.btnEndTime);
+        btnCreate = findViewById(R.id.btnCreateAppointment);
+        btnReset = findViewById(R.id.btnReset);
+        txtError = findViewById(R.id.txtError);
+        txtStartTime = findViewById(R.id.txtStartTime);
+        txtEndTime = findViewById(R.id.txtEndTime);
     }
 }
