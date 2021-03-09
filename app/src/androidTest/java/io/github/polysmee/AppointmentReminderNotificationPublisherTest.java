@@ -20,9 +20,9 @@ import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
 public class AppointmentReminderNotificationPublisherTest {
-    public final String notification_text = ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+
-            ApplicationProvider.getApplicationContext().getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms)+
-            ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left);
+    public final String notification_text = ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+" "+
+            TimeUnit.MILLISECONDS.toMinutes(ApplicationProvider.getApplicationContext().getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms))+
+            ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left);
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
     private void clearAllNotifications(UiDevice uiDevice) {

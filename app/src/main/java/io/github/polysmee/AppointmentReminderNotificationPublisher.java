@@ -91,9 +91,9 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
-                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+
-                        context.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms)+
-                        context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left))
+                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+" "+
+                        TimeUnit.MILLISECONDS.toMinutes(context.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms))+
+                        context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left))
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
