@@ -9,6 +9,7 @@ import org.junit.runners.JUnit4;
 import io.github.polysmee.R;
 import io.github.polysmee.room.fragments.roomActivityMessagesFragment;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -25,6 +26,7 @@ public class roomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
+        closeSoftKeyboard();
         assertDisplayed(R.id.roomActivityMessageText, message);
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertContains(R.id.roomActivityMessageText, "");
@@ -35,6 +37,7 @@ public class roomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
+        closeSoftKeyboard();
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
         assertDisplayed(message);
@@ -45,6 +48,7 @@ public class roomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
+        closeSoftKeyboard();
         onView(withId(R.id.roomActivityReceiveMessageButton)).perform(click());
         assertContains(R.id.roomActivityMessageText, "");
     }
@@ -54,6 +58,7 @@ public class roomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
         writeTo(R.id.roomActivityMessageText, message);
+        closeSoftKeyboard();
         assertDisplayed(R.id.roomActivityMessageText, message);
         onView(withId(R.id.roomActivityReceiveMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
