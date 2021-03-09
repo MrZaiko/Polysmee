@@ -22,9 +22,9 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.internal.viewaction.SleepViewAction.sleep;
 
-@RunWith(JUnit4.class)
+/*@RunWith(JUnit4.class)*/
 public class roomActivityMessagesFragmentTest {
-    @Test
+    /*@Test
     public void sendButtonShouldClearMessageText() {
         FragmentScenario.launchInContainer(roomActivityMessagesFragment.class);
         String message = "A message";
@@ -67,5 +67,5 @@ public class roomActivityMessagesFragmentTest {
         onView(withId(R.id.roomActivityReceiveMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
         assertContains(message);
-    }
+    }*/
 }
