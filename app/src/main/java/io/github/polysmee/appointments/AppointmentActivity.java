@@ -23,13 +23,13 @@ public class AppointmentActivity extends AppCompatActivity {
     public static final String ERROR_TXT = "Error : Start and end time must result in a correct time slot";
     EditText editTitle, editCourse;
     Button btnStartTime, btnEndTime, btnCreate, btnReset;
-    Calendar clndrStartTime, clndrEndTime;
+    Calendar calendarStartTime, calendarEndTime;
     TextView txtError, txtStartTime, txtEndTime;
 
     User user;
 
     Calendar date;
-    public void showDateTimePicker(Calendar calendar, TextView textView) {
+    public void showDateTimePicker(TextView textView, boolean isStart) {
         final Calendar currentDate = Calendar.getInstance();
         date = Calendar.getInstance();
         new DatePickerDialog(AppointmentActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
@@ -39,15 +39,19 @@ public class AppointmentActivity extends AppCompatActivity {
                 date.set(Calendar.MINUTE, minute);
                 date.set(Calendar.SECOND, 0);
                 date.set(Calendar.MILLISECOND, 0);
-                updateCalendar(calendar, textView);
+                updateCalendar(textView, isStart);
             }, currentDate.get(Calendar.HOUR_OF_DAY), currentDate.get(Calendar.MINUTE), true).show();
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
 
-    private void updateCalendar(Calendar calendar, TextView textView) {
+    private void updateCalendar(TextView textView, boolean isStart) {
+        if(isStart) {
+            calendarStartTime = (Calendar) date.clone();
+        } else {
+            calendarEndTime = (Calendar) date.clone();
+        }
         txtError.setVisibility(View.INVISIBLE);
-        calendar = (Calendar) date.clone();
-        String strStartTime = calendar.get(Calendar.DAY_OF_MONTH) + "/" + String.format("%02d", calendar.get(Calendar.MONTH)) + "/" + calendar.get(Calendar.YEAR) + "   -   " + String.format("%02d", calendar.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", calendar.get(Calendar.MINUTE));
+        String strStartTime = date.get(Calendar.DAY_OF_MONTH) + "/" + String.format("%02d", date.get(Calendar.MONTH)) + "/" + date.get(Calendar.YEAR) + "   -   " + String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", date.get(Calendar.MINUTE));
         textView.setText(strStartTime);
     }
 
@@ -64,11 +68,11 @@ public class AppointmentActivity extends AppCompatActivity {
         user = (User) getIntent().getSerializableExtra(EXTRA_USER);
 
         btnStartTime.setOnClickListener(v -> {
-            showDateTimePicker(clndrStartTime, txtStartTime);
+            showDateTimePicker(txtStartTime, true);
         });
 
         btnEndTime.setOnClickListener(v -> {
-            showDateTimePicker(clndrEndTime, txtEndTime);
+            showDateTimePicker(txtEndTime, false);
         });
 
         btnCreate.setOnClickListener(createClickListener);
@@ -79,13 +83,13 @@ public class AppointmentActivity extends AppCompatActivity {
     View.OnClickListener createClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (clndrStartTime.getTimeInMillis() >= clndrEndTime.getTimeInMillis() || clndrStartTime.getTimeInMillis() <= Calendar.getInstance().getTimeInMillis()) {
+            if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= Calendar.getInstance().getTimeInMillis()){
                 txtError.setVisibility(View.VISIBLE);
                 txtError.setText(ERROR_TXT);
             } else {
                 String title = editTitle.getText().toString();
                 String course = editCourse.getText().toString();
-                BasicAppointment appointment = new BasicAppointment(clndrStartTime.getTimeInMillis(), clndrEndTime.getTimeInMillis() - clndrStartTime.getTimeInMillis(), course, title, user);
+                BasicAppointment appointment = new BasicAppointment(calendarStartTime.getTimeInMillis(), calendarEndTime.getTimeInMillis() - calendarStartTime.getTimeInMillis(), course, title, user);
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(EXTRA_APPOINTMENT, appointment);
                 setResult(Activity.RESULT_OK, returnIntent);
@@ -100,9 +104,9 @@ public class AppointmentActivity extends AppCompatActivity {
             editTitle.setText("Appointment Title");
             editCourse.setText("Appointment Course");
             txtError.setText("");
-            clndrEndTime = Calendar.getInstance();
+            calendarEndTime = Calendar.getInstance();
             txtEndTime.setText("End Time");
-            clndrStartTime = Calendar.getInstance();
+            calendarStartTime = Calendar.getInstance();
             txtStartTime.setText("Start Time");
         }
     };

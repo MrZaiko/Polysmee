@@ -82,7 +82,6 @@ public class AppointmentActivityTest {
 
     @Test
     public void btnStartTimeGetsTime() {
-        String startTime = "23/03/2021   -   17:02";
         clickOn(R.id.btnStartTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(17, 2);
@@ -92,7 +91,6 @@ public class AppointmentActivityTest {
 
     @Test
     public void btnEndTimeGetsTime(){
-        String endTime = "23/03/2021   -   18:02";
         clickOn(R.id.btnEndTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(18, 2);

@@ -21,8 +21,8 @@
 
     <EditText
         android:id="@+id/editTxtAppointmentTitleSet"
-        android:layout_width="279dp"
-        android:layout_height="84dp"
+        android:layout_width="268dp"
+        android:layout_height="50dp"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="607dp"
         android:backgroundTint="@color/black"
@@ -34,14 +34,15 @@
         android:textColorHint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/editTxtAppointmentCourseSet"
-        android:layout_width="279dp"
-        android:layout_height="84dp"
+        android:layout_width="246dp"
+        android:layout_height="58dp"
         android:layout_marginTop="160dp"
         android:layout_marginBottom="607dp"
         android:backgroundTint="@color/black"
@@ -53,25 +54,27 @@
         android:textColorHint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintVertical_bias="0.308" />
 
     <Button
         android:id="@+id/btnStartTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="186dp"
+        android:layout_height="46dp"
         android:text="@string/pick_start_time"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.428" />
+        app:layout_constraintVertical_bias="0.322" />
 
     <Button
         android:id="@+id/btnEndTime"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="180dp"
+        android:layout_height="47dp"
         android:layout_marginTop="52dp"
         android:layout_marginBottom="56dp"
         android:text="@string/pick_end_time"
@@ -83,8 +86,8 @@
 
     <Button
         android:id="@+id/btnCreateAppointment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="328dp"
+        android:layout_height="64dp"
         android:layout_marginTop="16dp"
         android:text="@string/done_create_appointment"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,8 +96,8 @@
 
     <Button
         android:id="@+id/btnReset"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="88dp"
+        android:layout_height="48dp"
         android:layout_marginBottom="16dp"
         android:text="@string/reset"
         app:layout_constraintBottom_toTopOf="@+id/btnCreateAppointment"
@@ -118,12 +121,15 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="82dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginBottom="5dp"
         android:text="@string/maximum_duration_of_an_appointment_is_4h"
         android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCreateAppointment" />
+        app:layout_constraintTop_toBottomOf="@+id/btnCreateAppointment"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/txtStartTime"
