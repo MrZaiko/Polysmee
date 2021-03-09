@@ -46,7 +46,7 @@ public class TestAppointment implements Appointment, Serializable {
 
     @Override
     public Set<User> getParticipants() {
-        return new HashSet<>();
+        return participants;
     }
 
     @Override
