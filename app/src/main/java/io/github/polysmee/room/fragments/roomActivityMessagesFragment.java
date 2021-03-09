@@ -40,14 +40,7 @@ public class roomActivityMessagesFragment extends Fragment {
     }
 
     public void sendMessage(View view) {
-        //Close the keyboard
-        try {
-            InputMethodManager inputManager = (InputMethodManager)
-                    rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
-        } catch (Exception ignored) {}
-
+        closeKeyboard();
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
@@ -66,15 +59,8 @@ public class roomActivityMessagesFragment extends Fragment {
     }
 
     public void receiveMessage(View view) {
-        //Close the keyboard
-        try {
-            InputMethodManager inputManager = (InputMethodManager)
-                    rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
-                    InputMethodManager.HIDE_NOT_ALWAYS);
-        } catch (Exception ignored) {}
-
-
+        closeKeyboard();
+        
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
         messageEditText.setText("");
@@ -89,6 +75,16 @@ public class roomActivityMessagesFragment extends Fragment {
         //Scroll down the view to see the latest messages
         ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+    }
+
+    private void closeKeyboard() {
+        //Close the keyboard
+        try {
+            InputMethodManager inputManager = (InputMethodManager)
+                    rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
+                    InputMethodManager.HIDE_NOT_ALWAYS);
+        } catch (Exception ignored) {}
     }
 
     private TextView generateMessageTextView(String message, boolean isSent) {
