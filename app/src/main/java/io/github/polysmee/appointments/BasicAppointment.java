@@ -22,6 +22,7 @@ public class BasicAppointment implements Appointment, Serializable {
         } else {
             this.startTime = startTime;
         }
+        //duration cannot be less than 0 or more than 4 hours
         if(duration < 0 ) {
             this.duration = 0;
         } else if (duration > 3600000*4) {
