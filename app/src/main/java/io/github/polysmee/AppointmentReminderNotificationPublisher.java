@@ -23,18 +23,9 @@ import java.util.concurrent.TimeUnit;
 //greatly inspired by https://developer.android.com/training/notify-user/build-notification#java
 public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
-
-    private final static String CHANEL_ID = "appointment reminder notication";
-    private final static String CHANEL_NAME = "Reminder of starting appointment notification channel";
-    private final static String CHANEL_DESCRIPTION = "Notification chanel used to remind the use" +
-            "r that he/she has an appointment comming soon";
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
-    private final static String NOTIFICATION_TITLE = "Appointment reminder :)";
-    private final static long NOTIFCATION_BEFORE_TIME_REMINDER = 300000;// 300000ms = 5 min
     private final static int NOTIFICATION_LOCKSCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
-    private final static int NOTIFICATION_ID = 0;
-    private final static String NOTIFICATION_TEXT = "You have a appointment in " + TimeUnit.MILLISECONDS.toMinutes(NOTIFCATION_BEFORE_TIME_REMINDER) + " minute(s).";
 
     // From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
     //"It's safe to call this repeatedly because creating an existing notification channel performs no operation."
@@ -43,8 +34,9 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANEL_ID, CHANEL_NAME, CHANEL_NOTIFICATION_PRIORITY);
-            channel.setDescription(CHANEL_DESCRIPTION);
+            NotificationChannel channel = new NotificationChannel(context.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
+                    , context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
+            channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
             channel.setLockscreenVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
@@ -96,30 +88,18 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         createNotificationChannel(context);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANEL_ID)
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(NOTIFICATION_TITLE)
-                .setContentText(NOTIFICATION_TEXT)
+                .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
+                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+
+                        context.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms)+
+                        context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left))
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
                 .setSound(Settings.System.DEFAULT_RINGTONE_URI);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
-        notificationManager.notify(NOTIFICATION_ID, builder.build());
+        notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
     }
-
-    public static String getNotificationTitle() {
-        return NOTIFICATION_TITLE;
-    }
-
-    public static String getNotificationText() {
-        return NOTIFICATION_TEXT;
-    }
-
-    public static long getNotifcationBeforeTimeReminder() {
-        return NOTIFCATION_BEFORE_TIME_REMINDER;
-    }
-
-
 }
