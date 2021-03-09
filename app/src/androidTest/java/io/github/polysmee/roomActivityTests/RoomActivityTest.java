@@ -15,6 +15,7 @@ import org.junit.runner.RunWith;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
@@ -23,6 +24,7 @@ import io.github.polysmee.room.RoomActivityInfo;
 
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
@@ -32,6 +34,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
+import static com.schibsted.spain.barista.internal.viewaction.SwipeActions.swipeLeft;
 
 @RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
@@ -73,6 +76,31 @@ public class RoomActivityTest {
             clickMenu(R.id.roomMenuInfo);
             intended(hasExtra(RoomActivityInfo.APPOINTMENT_KEY, expectedAppointment));
             Intents.release();
+        }
+    }
+
+    @Test
+    public void participantsShouldBeCorrectlyDisplayed() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        String name1 = "Daniel";
+        String name2 = "Jacques";
+        String surname1 = "Dupont";
+        String surname2 = "Petrov";
+        User testUser1 = new TestUser("jhbjk", name1, surname1, null);
+        User testUser2 = new TestUser("jhbjk", name2, surname2, null);
+        Set<User> set = new HashSet<>();
+        set.add(testUser1);
+        set.add(testUser2);
+        TestAppointment expectedAppointment = new TestAppointment(10,4654564,"fdsdfsfs", "kljkjsdhfjklfsd", set);
+
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, expectedAppointment);
+
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+            swipeViewPagerForward(R.id.roomActivityPager);
+            assertContains(name1);
+            assertContains(name2);
+            assertContains(surname1);
+            assertContains(surname2);
         }
     }
 }
