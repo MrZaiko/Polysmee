@@ -1,11 +1,12 @@
 package io.github.polysmee.interfaces;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
  * A generic user
  */
-public interface User {
+public interface User{
 
     /**
      * Retrieves the user's id
