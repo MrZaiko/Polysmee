@@ -12,7 +12,7 @@
         <activity
             android:name=".room.RoomActivity"
             />
-        <activity android:name=".room.RoomInfoActivity">
+        <activity android:name=".room.RoomActivityInfo">
 
         </activity>
         <activity android:name=".MainActivity">

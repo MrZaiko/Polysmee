@@ -12,7 +12,7 @@ import java.util.Date;
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.Appointment;
 
-public class RoomInfoActivity extends AppCompatActivity {
+public class RoomActivityInfo extends AppCompatActivity {
     public static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomInfoActivity.APPOINTMENT_KEY";
 
     @Override

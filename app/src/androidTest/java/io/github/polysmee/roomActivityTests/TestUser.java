@@ -1,6 +1,7 @@
-package io.github.polysmee.roomActivityTest;
+package io.github.polysmee.roomActivityTests;
 
 import java.io.Serializable;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.polysmee.interfaces.Appointment;
@@ -47,5 +48,21 @@ public class TestUser implements User, Serializable {
     @Override
     public void removeAppointment(Appointment appointment) {
         appointments.remove(appointment);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TestUser testUser = (TestUser) o;
+        return Objects.equals(id, testUser.id) &&
+                Objects.equals(name, testUser.name) &&
+                Objects.equals(surname, testUser.surname) &&
+                Objects.equals(appointments, testUser.appointments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, surname, appointments);
     }
 }

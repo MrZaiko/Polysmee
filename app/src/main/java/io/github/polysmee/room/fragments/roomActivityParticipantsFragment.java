@@ -19,12 +19,12 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
 
-public class ActivityRoomParticipantsFragment extends Fragment {
+public class roomActivityParticipantsFragment extends Fragment {
 
     private ViewGroup rootView;
-    private final Set<User> participants;
+    private Set<User> participants;
 
-    public ActivityRoomParticipantsFragment(Set<User> participants) {
+    public roomActivityParticipantsFragment(Set<User> participants) {
         this.participants = participants != null ? participants : new HashSet<>();
     }
 
