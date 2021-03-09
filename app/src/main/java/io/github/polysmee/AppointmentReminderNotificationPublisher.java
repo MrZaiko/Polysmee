@@ -3,15 +3,10 @@ package io.github.polysmee;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.job.JobScheduler;
-import android.app.job.JobService;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.os.Build;
-import android.os.Handler;
 import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
@@ -20,7 +15,14 @@ import androidx.core.app.NotificationManagerCompat;
 import java.util.concurrent.TimeUnit;
 
 
-//greatly inspired by https://developer.android.com/training/notify-user/build-notification#java
+/**
+ * greatly inspired by https://developer.android.com/training/notify-user/build-notification#java
+ * It is the broadcast receiver class that will receive broadcasts at certain times (specified in
+ * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
+ * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
+ *
+ * @author Thomas Bienaimé
+ **/
 public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
@@ -48,6 +50,7 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
     /**
      * Create a notification that remind the user, he/she has a appointment coming with the parameter
      * specified in the values resources, in appointmentReminderNotification.xml
+     *
      * @param context The Context in which the receiver is running.
      * @param intent  The Intent being received.
      */
@@ -61,8 +64,8 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
-                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+" "+
-                        TimeUnit.MILLISECONDS.toMinutes(context.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms))+
+                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " " +
+                        TimeUnit.MILLISECONDS.toMinutes(context.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms)) +
                         context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left))
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
