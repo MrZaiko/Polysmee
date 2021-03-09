@@ -7,16 +7,28 @@
     android:textAlignment="gravity"
     tools:context=".appointments.AppointmentActivity">
 
+    <TextView
+        android:id="@+id/txtEndTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="End Time"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/btnReset"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnEndTime" />
+
     <EditText
         android:id="@+id/editTxtAppointmentTitleSet"
         android:layout_width="279dp"
         android:layout_height="84dp"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="607dp"
-        android:backgroundTint="#FF0000"
+        android:backgroundTint="@color/black"
         android:ems="10"
         android:importantForAutofill="no"
-        android:inputType="textPersonName"
+        android:inputType="text"
         android:text="@string/appointment_title"
         android:textColor="#000000"
         android:textColorHint="#000000"
@@ -28,17 +40,22 @@
 
     <EditText
         android:id="@+id/editTxtAppointmentCourseSet"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="55dp"
-        android:layout_marginBottom="502dp"
+        android:layout_width="279dp"
+        android:layout_height="84dp"
+        android:layout_marginTop="160dp"
+        android:layout_marginBottom="607dp"
+        android:backgroundTint="@color/black"
         android:ems="10"
-        android:inputType="textPersonName"
+        android:importantForAutofill="no"
+        android:inputType="text"
         android:text="@string/appointment_course"
+        android:textColor="#000000"
+        android:textColorHint="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTxtAppointmentTitleSet" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0" />
 
     <Button
         android:id="@+id/btnStartTime"
@@ -55,9 +72,12 @@
         android:id="@+id/btnEndTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="42dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginBottom="56dp"
         android:text="@string/pick_end_time"
+        app:layout_constraintBottom_toTopOf="@+id/btnReset"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnStartTime" />
 
@@ -75,12 +95,12 @@
         android:id="@+id/btnReset"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
+        android:layout_marginBottom="16dp"
         android:text="@string/reset"
+        app:layout_constraintBottom_toTopOf="@+id/btnCreateAppointment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnEndTime" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/txtError"
@@ -104,4 +124,15 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btnCreateAppointment" />
+
+    <TextView
+        android:id="@+id/txtStartTime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Start Time"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toTopOf="@id/btnEndTime"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnStartTime" />
 </androidx.constraintlayout.widget.ConstraintLayout>
