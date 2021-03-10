@@ -96,7 +96,7 @@ public class CalendarActivity extends AppCompatActivity{
         long epochTimeToday = DailyCalendar.todayEpochTimeAtMidnight() * 1000;
         Date today = new Date(epochTimeToday);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        dateText.setText("Appointments on the " + formatter.format(today) +" : ");
+        dateText.setText(String.format("Appointments on the %s : ", formatter.format(today)));
     }
 
     /**
