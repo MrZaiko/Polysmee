@@ -44,7 +44,7 @@ public class CalendarActivity extends AppCompatActivity{
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
      */
-    private void changeCurrentCalendarLayout(){
+    protected void changeCurrentCalendarLayout(){
         List<Appointment> todayAppointments = DailyCalendar.getAppointmentsForTheDay(user.getAppointments());
         int i = 0;
         for(Appointment appointment : todayAppointments){
@@ -59,7 +59,7 @@ public class CalendarActivity extends AppCompatActivity{
      * @param appointment the appointment's whose description is created
      * @return the textual representation of the appointment in the calendar
      */
-    private String createAppointmentDescription(Appointment appointment){
+    protected String createAppointmentDescription(Appointment appointment){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Reunion name : ").append(appointment.getTitle());
         stringBuilder.append("\n");
@@ -76,7 +76,7 @@ public class CalendarActivity extends AppCompatActivity{
      * @param appointment the appointment to add
      * @param i integer parameter used to create unique ids (at least in the calendar's current layout) for the calendar entry
      */
-    private void addAppointmentToCalendarLayout(Appointment appointment, int i){
+    protected void addAppointmentToCalendarLayout(Appointment appointment, int i){
         //layout: on one part add description as text, on another button "details" to be able to join
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.calendar_entry,null);
         TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointment);
@@ -91,7 +91,7 @@ public class CalendarActivity extends AppCompatActivity{
     /**
      * Sets the text view on top of the calendar to the current day's date
      */
-    private void setTodayDateText(){
+    protected void setTodayDateText(){
         TextView dateText = (TextView)findViewById(R.id.todayDate);
         long epochTimeToday = DailyCalendar.todayEpochTimeAtMidnight() * 1000;
         Date today = new Date(epochTimeToday);
