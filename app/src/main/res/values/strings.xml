@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Polysmee</string>
+    <string name="roomActivityReceiveButton">Receive</string>
+    <string name="roomActivitySendButton">Send</string>
+    <string name="roomActivityMessagesTab">Messages</string>
+    <string name="roomActivityParticipantsTab">Participants</string>
 </resources>
