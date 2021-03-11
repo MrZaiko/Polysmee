@@ -29,13 +29,13 @@ public class CalendarActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar2);
-        scrollLayout = (LinearLayout)findViewById(R.id.scrollLayout);
+        scrollLayout = (LinearLayout)findViewById(R.id.scrollLayoutCalendarActivity);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         setTodayDateText();
         changeCurrentCalendarLayout();
 
-        Button refreshButton = (Button) findViewById(R.id.refreshButton);
+        Button refreshButton = (Button) findViewById(R.id.refreshButtonCalendarActivity);
         refreshButton.setOnClickListener((v) -> {refresh();});
 
 
@@ -79,8 +79,8 @@ public class CalendarActivity extends AppCompatActivity{
     protected void addAppointmentToCalendarLayout(Appointment appointment, int i){
         //layout: on one part add description as text, on another button "details" to be able to join
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.calendar_entry,null);
-        TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointment);
-        Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButton);
+        TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
+        Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
         appointmentLayout.setId(constraintLayoutId + i);
         appointmentDescription.setId(constraintLayoutId + i + 1);
@@ -92,7 +92,7 @@ public class CalendarActivity extends AppCompatActivity{
      * Sets the text view on top of the calendar to the current day's date
      */
     protected void setTodayDateText(){
-        TextView dateText = (TextView)findViewById(R.id.todayDate);
+        TextView dateText = (TextView)findViewById(R.id.todayDateCalendarActivity);
         long epochTimeToday = DailyCalendar.todayEpochTimeAtMidnight() * 1000;
         Date today = new Date(epochTimeToday);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");

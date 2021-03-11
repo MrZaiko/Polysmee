@@ -51,7 +51,7 @@ public class CalendarActivityTest {
         Date date = new Date(DailyCalendar.todayEpochTimeAtMidnight()*1000);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            Espresso.onView(withId(R.id.todayDate)).check(ViewAssertions.matches(
+            Espresso.onView(withId(R.id.todayDateCalendarActivity)).check(ViewAssertions.matches(
                     withText(containsString("Appointments on the " + formatter.format(date) +" : " ))));
         }
     }
@@ -105,7 +105,7 @@ public class CalendarActivityTest {
                 user.addAppointment(a);
                 appointments[i] = a;
             }
-            ViewInteraction onRefreshButton = Espresso.onView(withId(R.id.refreshButton));
+            ViewInteraction onRefreshButton = Espresso.onView(withId(R.id.refreshButtonCalendarActivity));
             onRefreshButton.perform(ViewActions.click());
             int j = 0;
             for(int i = 0; i<times.length -1; ++i){

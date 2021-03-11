@@ -6,18 +6,18 @@
     android:layout_height="50dp">
 
     <TextView
-        android:id="@+id/descriptionOfAppointment"
+        android:id="@+id/descriptionOfAppointmentCalendarEntry"
         android:layout_width="306dp"
         android:layout_height="60dp"
         android:text="@string/calendar_entry_description"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/detailsButton"
+        app:layout_constraintEnd_toStartOf="@+id/detailsButtonCalendarEntry"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/emptySpace"
+        android:id="@+id/emptySpaceCalendarEntry"
         android:layout_width="306dp"
         android:layout_height="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,13 +25,13 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/detailsButton"
+        android:id="@+id/detailsButtonCalendarEntry"
         android:layout_width="101dp"
         android:layout_height="0dp"
         android:text="@string/details_button"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toEndOf="@+id/descriptionOfAppointment"
+        app:layout_constraintStart_toEndOf="@+id/descriptionOfAppointmentCalendarEntry"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

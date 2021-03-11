@@ -8,7 +8,7 @@
     tools:context=".calendar.CalendarActivity">
 
     <Button
-        android:id="@+id/refreshButton"
+        android:id="@+id/refreshButtonCalendarActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
@@ -18,7 +18,7 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:id="@+id/appointmentScroll"
+        android:id="@+id/appointmentScrollCalendarActivity"
         android:layout_width="407dp"
         android:layout_height="376dp"
         android:layout_marginStart="2dp"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
-            android:id="@+id/scrollLayout"
+            android:id="@+id/scrollLayoutCalendarActivity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -38,7 +38,7 @@
     </ScrollView>
 
     <TextView
-        android:id="@+id/todayDate"
+        android:id="@+id/todayDateCalendarActivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
