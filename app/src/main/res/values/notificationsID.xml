@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="appointment_reminder_notification_id">0</integer>
+</resources>
