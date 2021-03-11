@@ -119,7 +119,7 @@ public class AppointmentActivityTest {
         assertDisplayed(R.id.appointmentCreationTxtStartTime, "Start Time");
         assertNotDisplayed(R.id.appointmentCreationtxtError);
         assertDisplayed(R.id.appointmentCreationTxtEndTime, "End Time");
-        assertDisplayed(R.id.appointmentCreationEditTxtAppointmentCourseSet, "Appointment Course");
-        assertDisplayed(R.id.appointmentCreationEditTxtAppointmentTitleSet, "Appointment Title");
+        assertDisplayed(R.id.appointmentCreationEditTxtAppointmentCourseSet, "");
+        assertDisplayed(R.id.appointmentCreationEditTxtAppointmentTitleSet, "");
     }
 }

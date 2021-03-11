@@ -16,6 +16,11 @@ public class TestUser implements User, Serializable {
         this.surname = surname;
     }
 
+    public TestUser(String name) {
+        this.name = name;
+        this.surname = "default-man";
+    }
+
     @Override
     public String getId() {
         return null;
