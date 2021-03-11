@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
  * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
  *
- * @author Thomas Bienaimé
  **/
 public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
@@ -31,7 +30,7 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
 
     // From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
     //"It's safe to call this repeatedly because creating an existing notification channel performs no operation."
-    //Later when doing the notification with ressource file move it to the app launch as suggered
+    //Later when doing the notification with ressource file move it to the app launch as suggested
     private void createNotificationChannel(Context context) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
