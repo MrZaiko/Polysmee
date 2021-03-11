@@ -1,7 +1,6 @@
 package io.github.polysmee.roomActivityTests;
 
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
@@ -50,13 +49,39 @@ public class TestAppointment implements Appointment, Serializable {
     }
 
     @Override
-    public void addParticipant(User newParticipant) {
-        participants.add(newParticipant);
+    public User getOwner() {
+        return null;
     }
 
     @Override
-    public void removeParticipant(User participant) {
-        participants.remove(participant);
+    public boolean setStartTime(long startTime) {
+        return false;
+    }
+
+    @Override
+    public boolean setDuration(long duration) {
+        return false;
+    }
+
+    @Override
+    public void setCourse(String course) {
+
+    }
+
+    @Override
+    public void setTitle(String title) {
+
+    }
+
+    @Override
+    public boolean addParticipant(User newParticipant) {
+
+        return participants.add(newParticipant);
+    }
+
+    @Override
+    public boolean removeParticipant(User participant) {
+        return participants.remove(participant);
     }
 
     @Override
