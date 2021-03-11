@@ -12,26 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee">
+
         <activity android:name=".room.RoomActivity" />
         <activity android:name=".room.RoomActivityInfo" />
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
         <activity android:name=".login.LoginCheckActivity"
+            android:label="@string/title_activity_login_check"/>
 
-            android:label="@string/title_activity_login_check">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".appointments.AppointmentActivity"/>
+        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".login.LoginActivity"/>
 
-        <activity android:name=".login.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
 
         <activity android:name=".MainActivity">
             <intent-filter>
