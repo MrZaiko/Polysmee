@@ -1,5 +1,6 @@
 package io.github.polysmee.interfaces;
 
+import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -8,13 +9,13 @@ import java.util.Set;
 public interface Appointment {
 
     /**
-     * Retrieves the starting time of the appointment in EPOCH representation
+     * Retrieves the starting time of the appointment in EPOCH representation (milliseconds)
      * @return the appointment's start time
      */
     long getStartTime();
 
     /**
-     * Retrieves the appointment's duration in seconds to stay consistent with the EPOCH
+     * Retrieves the appointment's duration in milliseconds to stay consistent with the EPOCH
      * representation
      * @return the appointment's duration
      */
@@ -39,14 +40,49 @@ public interface Appointment {
     Set<User> getParticipants();
 
     /**
+     * Retrieves the appointment's owner
+     * @return the appointment's owner
+     */
+    User getOwner();
+
+    /**
+     * Sets the appointment's start time
+     * @param startTime the new start time
+     * @return true if the time was set, false if it had an incorrect value (<0);
+     */
+    boolean setStartTime(long startTime);
+
+    /**
+     * Sets the appointment's duration, which cannot be longer than 4 hours
+     * @param duration the new duration
+     * @return true if the time was set, false if it had an incorrect value (<0 or more than 4 hours);
+     */
+    boolean setDuration(long duration);
+
+    /**
+     * Sets the appointment's course
+     * @param course the new course
+     */
+    void setCourse(String course);
+
+    /**
+     * Sets the appointment's title
+     * @param title the new title
+     */
+    void setTitle(String title);
+
+    /**
      * Adds the given user to the set of participant
      * @param newParticipant the user to be added
+     * @return true if the participant was successfully added
      */
-    void addParticipant(User newParticipant);
+    boolean addParticipant(User newParticipant);
 
     /**
      * Removes the given user to the set of participant
+     * Cannot remove the owner
      * @param participant the user to be removed
+     * @return true if the participant was successfully removed
      */
-    void removeParticipant(User participant);
+    boolean removeParticipant(User participant);
 }

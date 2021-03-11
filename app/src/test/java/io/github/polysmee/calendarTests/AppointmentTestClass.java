@@ -15,7 +15,7 @@ public class AppointmentTestClass implements Appointment {
     private final String title;
     private Set<User> users = new HashSet<>();
 
-    public AppointmentTestClass(long startTime, long duration,String course, String title){
+    public AppointmentTestClass(long startTime, long duration, String course, String title){
         this.startTime = startTime;
         this.duration = duration;
         this.course = new String(course);
@@ -47,13 +47,40 @@ public class AppointmentTestClass implements Appointment {
     }
 
     @Override
-    public void addParticipant(User newParticipant) {
-        users.add(newParticipant);
+    public User getOwner() {
+        return null;
     }
 
     @Override
-    public void removeParticipant(User participant) {
+    public boolean setStartTime(long startTime) {
+        return false;
+    }
+
+    @Override
+    public boolean setDuration(long duration) {
+        return false;
+    }
+
+    @Override
+    public void setCourse(String course) {
+
+    }
+
+    @Override
+    public void setTitle(String title) {
+
+    }
+
+    @Override
+    public boolean addParticipant(User newParticipant) {
+        users.add(newParticipant);
+        return false;
+    }
+
+    @Override
+    public boolean removeParticipant(User participant) {
         users.add(participant);
+        return false;
     }
 
     @Override
