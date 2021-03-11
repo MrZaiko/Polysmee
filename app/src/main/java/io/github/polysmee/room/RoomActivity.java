@@ -23,6 +23,10 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.room.fragments.roomActivityMessagesFragment;
 import io.github.polysmee.room.fragments.roomActivityParticipantsFragment;
 
+/**
+ * Activity representing all room related operations
+ * The appointment related to this room is given in argument
+ */
 public class RoomActivity extends AppCompatActivity {
 
     private Appointment appointment;
@@ -52,7 +56,6 @@ public class RoomActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.roomActivityTabs);
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(list.get(position).toString())).attach();
-
     }
 
     @Override

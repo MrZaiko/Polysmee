@@ -12,6 +12,9 @@ import java.util.Date;
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.Appointment;
 
+/**
+ * Activity showing all information about an appointment given in argument
+ */
 public class RoomActivityInfo extends AppCompatActivity {
     public static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomInfoActivity.APPOINTMENT_KEY";
 

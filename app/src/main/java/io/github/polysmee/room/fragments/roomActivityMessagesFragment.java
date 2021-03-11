@@ -19,6 +19,9 @@ import androidx.fragment.app.Fragment;
 
 import io.github.polysmee.R;
 
+/**
+ * Fragment that handles messaging (Send, receive, display)
+ */
 public class roomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
 
@@ -39,6 +42,11 @@ public class roomActivityMessagesFragment extends Fragment {
         return "Messages";
     }
 
+    /**
+     * Display the message written in the PlainText RoomActivityMessageTest in the ScrollView
+     * RoomActivityMessagesScrollView with a sent_message_background style
+     * @param view
+     */
     public void sendMessage(View view) {
         closeKeyboard();
 
@@ -58,9 +66,14 @@ public class roomActivityMessagesFragment extends Fragment {
         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
+    /**
+     * Display the message written in the PlainText RoomActivityMessageTest in the ScrollView
+     * RoomActivityMessagesScrollView with a received_message_background style
+     * @param view
+     */
     public void receiveMessage(View view) {
         closeKeyboard();
-        
+
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
         messageEditText.setText("");

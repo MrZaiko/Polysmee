@@ -8,6 +8,9 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import java.util.List;
 
+/**
+ * Pager adapter that handles the room specific fragments
+ */
 public class RoomPagerAdapter extends FragmentStateAdapter {
 
     private final List<Fragment> fragmentList;

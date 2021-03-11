@@ -19,11 +19,18 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
 
+/**
+ * Fragment that display all participants given in argument
+ */
 public class roomActivityParticipantsFragment extends Fragment {
 
     private ViewGroup rootView;
-    private Set<User> participants;
+    private final Set<User> participants;
 
+    /**
+     * roomActivityParticipantsFragment constructor
+     * @param participants the set of User to be displayed
+     */
     public roomActivityParticipantsFragment(Set<User> participants) {
         this.participants = participants != null ? participants : new HashSet<>();
     }
@@ -41,8 +48,9 @@ public class roomActivityParticipantsFragment extends Fragment {
         return "Participants";
     }
 
-    public void generateParticipantsView() {
+    private void generateParticipantsView() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
+
         for (User user: participants) {
             TextView participant = new TextView(rootView.getContext());
             participant.setText(user.getName() + " " + user.getSurname());
