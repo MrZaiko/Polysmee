@@ -64,18 +64,13 @@ public class TestAppointment implements Appointment, Serializable {
     }
 
     @Override
-    public void setCourse(String course) {
-
-    }
+    public void setCourse(String course) {}
 
     @Override
-    public void setTitle(String title) {
-
-    }
+    public void setTitle(String title) {}
 
     @Override
     public boolean addParticipant(User newParticipant) {
-
         return participants.add(newParticipant);
     }
 
