@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">Polysmee</string>
 
-    <string name="todays_date_calendarActivity">Date</string>
+    <string name="calendarActivityTodaysDate">Date</string>
 
-    <string name="refresh_button_calendarActivity">Refresh</string>
+    <string name="calendarActivityRefreshButton">Refresh</string>
 
-    <string name="calendar_entry_description">Description</string>
-    <string name="details_button_calendarEntry">Details</string>
+    <string name="calendarEntryDescription">Description</string>
+    <string name="calendarEntryDetailsButton">Details</string>
 </resources>

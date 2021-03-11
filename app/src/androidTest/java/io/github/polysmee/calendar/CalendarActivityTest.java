@@ -105,7 +105,7 @@ public class CalendarActivityTest {
                 user.addAppointment(a);
                 appointments[i] = a;
             }
-            ViewInteraction onRefreshButton = Espresso.onView(withId(R.id.refreshButtonCalendarActivity));
+            ViewInteraction onRefreshButton = Espresso.onView(withId(R.id.calendarActivityRefreshButton));
             onRefreshButton.perform(ViewActions.click());
             int j = 0;
             for(int i = 0; i<times.length -1; ++i){

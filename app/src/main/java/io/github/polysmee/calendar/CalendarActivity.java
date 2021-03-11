@@ -29,13 +29,13 @@ public class CalendarActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar2);
-        scrollLayout = (LinearLayout)findViewById(R.id.scrollLayoutCalendarActivity);
+        scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         setTodayDateText();
         changeCurrentCalendarLayout();
 
-        Button refreshButton = (Button) findViewById(R.id.refreshButtonCalendarActivity);
+        Button refreshButton = (Button) findViewById(R.id.calendarActivityRefreshButton);
         refreshButton.setOnClickListener((v) -> {refresh();});
 
 
