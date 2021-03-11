@@ -23,5 +23,6 @@ public class LoginCheckActivity extends AppCompatActivity {
         } else {
             startActivity(new Intent(this, MainActivity.class));
         }
+        finish();
     }
 }

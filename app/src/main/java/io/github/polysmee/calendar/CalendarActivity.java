@@ -13,7 +13,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-
+import io.github.polysmee.appointments.BasicAppointment;
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
@@ -24,7 +24,7 @@ public class CalendarActivity extends AppCompatActivity{
     private LayoutInflater inflater ;
     private static final int constraintLayoutId = 284546;
     private User user = PseudoLoggedUser.getSingletonPseudoUser("idMagique"); //replace Mathis's singleton until I get access to it
-
+    private int demo_indexer = 0;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,7 +38,14 @@ public class CalendarActivity extends AppCompatActivity{
         Button refreshButton = (Button) findViewById(R.id.calendarActivityRefreshButton);
         refreshButton.setOnClickListener((v) -> {refresh();});
 
+        Button demoButton    = (Button) findViewById(R.id.calendarActivityDemoButton);
+        demoButton.setOnClickListener((v)->{demoAddAppointment();});
+    }
 
+
+    private void demoAddAppointment(){
+        user.addAppointment(new BasicAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer*60,50,"Demo" + demo_indexer,"DemoTitle" + demo_indexer,user));
+        demo_indexer += 1;
     }
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
