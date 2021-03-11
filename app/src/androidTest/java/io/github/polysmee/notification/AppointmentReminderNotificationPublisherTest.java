@@ -38,7 +38,7 @@ public class AppointmentReminderNotificationPublisherTest {
     @Test
     public void notification_launch_with_good_title_and_text(){
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        clearAllNotifications(uiDevice);
+        //clearAllNotifications(uiDevice);
         AppointmentReminderNotificationPublisher publisher = new AppointmentReminderNotificationPublisher();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(ApplicationProvider.getApplicationContext(), intent);
@@ -46,7 +46,6 @@ public class AppointmentReminderNotificationPublisherTest {
         uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)),TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(notification_text)));
-        clearAllNotifications(uiDevice);
-
+        //clearAllNotifications(uiDevice);
     }
 }

@@ -27,7 +27,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class AppointmentActivityTest {
-    private static final TestUser TEST_USER = new TestUser("username");
+    private static final TestUser TEST_USER = new TestUser("username", "koko");
     String title = "title";
     String course = "course";
     String startTime = "23/03/2021   -   17:02";

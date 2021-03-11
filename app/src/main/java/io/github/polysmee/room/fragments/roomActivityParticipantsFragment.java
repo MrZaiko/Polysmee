@@ -52,6 +52,7 @@ public class roomActivityParticipantsFragment extends Fragment {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 
         for (User user: participants) {
+            System.out.println("hello" + participants.toString());
             TextView participant = new TextView(rootView.getContext());
             participant.setText(user.getName() + " " + user.getSurname());
             participant.setTextSize(20);

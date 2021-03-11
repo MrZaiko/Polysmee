@@ -112,8 +112,8 @@ public class AppointmentActivity extends AppCompatActivity {
         @Override
         public void onClick(View v) {
             //reset every input text field and both start and end times
-            editTitle.setText("Appointment Title");
-            editCourse.setText("Appointment Course");
+            editTitle.setText("");
+            editCourse.setText("");
             txtError.setText("");
             calendarEndTime = Calendar.getInstance();
             txtEndTime.setText("End Time");

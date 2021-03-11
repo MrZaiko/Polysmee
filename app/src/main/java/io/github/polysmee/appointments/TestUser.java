@@ -8,10 +8,12 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 
 public class TestUser implements User, Serializable {
+    private final String surname;
     String name;
 
-    public TestUser(String name) {
+    public TestUser(String name, String surname) {
         this.name = name;
+        this.surname = surname;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class TestUser implements User, Serializable {
 
     @Override
     public String getSurname() {
-        return null;
+        return surname;
     }
 
     @Override
