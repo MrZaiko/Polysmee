@@ -12,38 +12,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee">
-        <activity android:name=".appointments.AppointmentActivity"></activity>
-        <receiver android:name=".AppointmentReminderNotificationPublisher" />
-        <activity
-            android:name=".login.LoginCheckActivity"
-            android:label="@string/title_activity_login_check">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-      
-        <activity android:name=".calendar.CalendarActivity">
-           <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".calendar.CalendarActivity"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        <activity android:name=".appointments.AppointmentActivity"/>
+        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
-        <activity android:name=".login.LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+        <activity android:name=".login.LoginActivity"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-      
+        <activity android:name=".room.RoomActivity" />
+        <activity android:name=".room.RoomActivityInfo" />
+        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
+
+        <activity android:name=".login.LoginCheckActivity"
+            android:label="@string/title_activity_login_check" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

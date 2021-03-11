@@ -1,7 +1,9 @@
-package io.github.polysmee;
+package io.github.polysmee.appointments;
 
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+
+import com.schibsted.spain.barista.interaction.BaristaClickInteractions;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -10,6 +12,7 @@ import org.junit.runner.RunWith;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.appointments.TestUser;
 import io.github.polysmee.interfaces.Appointment;
@@ -35,7 +38,7 @@ public class AppointmentActivityTest {
 
     @Test
     public void btnCreateCreatesCorrectAppointment() {
-        clickOn(R.id.appointmentCreationBtnStartTime);
+        BaristaClickInteractions.clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(17, 2);
 

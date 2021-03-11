@@ -1,4 +1,4 @@
-package io.github.polysmee;
+package io.github.polysmee.notification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,6 +13,9 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import java.util.concurrent.TimeUnit;
+
+import io.github.polysmee.MainActivity;
+import io.github.polysmee.R;
 
 
 /**
