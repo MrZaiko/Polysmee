@@ -31,7 +31,7 @@ public class AppointmentActivity extends AppCompatActivity {
     //A calendar is a wait to get time using year/month... and allows to transform it to epoch time
     private Calendar date;
     //Function which first displays a DatePicker then a TimePicker and stores all the information in Calendar date
-    public void showDateTimePicker(TextView textView, boolean isStart) {
+    private void showDateTimePicker(TextView textView, boolean isStart) {
         final Calendar currentDate = Calendar.getInstance();
         date = Calendar.getInstance();
         new DatePickerDialog(AppointmentActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
@@ -46,6 +46,7 @@ public class AppointmentActivity extends AppCompatActivity {
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
 
+    //only to be used by function showDateTimePicker
     private void updateCalendar(TextView textView, boolean isStart) {
         //Update start or end time with user input
         if(isStart) {
