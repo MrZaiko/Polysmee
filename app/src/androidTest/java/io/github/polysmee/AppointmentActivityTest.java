@@ -35,19 +35,19 @@ public class AppointmentActivityTest {
 
     @Test
     public void btnCreateCreatesCorrectAppointment() {
-        clickOn(R.id.btnStartTime);
+        clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(17, 2);
 
-        clickOn(R.id.btnEndTime);
+        clickOn(R.id.appointmentCreationBtnEndTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(18, 2);
 
-        writeTo(R.id.editTxtAppointmentTitleSet, title);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
 
-        writeTo(R.id.editTxtAppointmentCourseSet, course);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
 
-        clickOn(R.id.btnCreateAppointment);
+        clickOn(R.id.appointmentCreationbtnCreateAppointment);
 
         Appointment appointment = (Appointment) testRule.getScenario().getResult().getResultData().getSerializableExtra(AppointmentActivity.EXTRA_APPOINTMENT);
         assertEquals(appointment.getTitle(), title);
@@ -64,59 +64,59 @@ public class AppointmentActivityTest {
 
     @Test
     public void btnCreateSaysErrorHappenedOnIncorrectStartAndEndTime() {
-        clickOn(R.id.btnStartTime);
+        clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(17, 2);
 
-        clickOn(R.id.btnEndTime);
+        clickOn(R.id.appointmentCreationBtnEndTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(16, 2);
 
-        writeTo(R.id.editTxtAppointmentTitleSet, title);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
 
-        writeTo(R.id.editTxtAppointmentCourseSet, course);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
 
-        clickOn(R.id.btnCreateAppointment);
-        assertDisplayed(R.id.txtError, AppointmentActivity.ERROR_TXT);
+        clickOn(R.id.appointmentCreationbtnCreateAppointment);
+        assertDisplayed(R.id.appointmentCreationtxtError, AppointmentActivity.ERROR_TXT);
     }
 
     @Test
     public void btnStartTimeGetsTime() {
-        clickOn(R.id.btnStartTime);
+        clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(17, 2);
-        assertDisplayed(R.id.txtStartTime, startTime);
-        assertNotDisplayed(R.id.txtError);
+        assertDisplayed(R.id.appointmentCreationTxtStartTime, startTime);
+        assertNotDisplayed(R.id.appointmentCreationtxtError);
     }
 
     @Test
     public void btnEndTimeGetsTime(){
-        clickOn(R.id.btnEndTime);
+        clickOn(R.id.appointmentCreationBtnEndTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(18, 2);
-        assertDisplayed(R.id.txtEndTime, endTime);
-        assertNotDisplayed(R.id.txtError);
+        assertDisplayed(R.id.appointmentCreationTxtEndTime, endTime);
+        assertNotDisplayed(R.id.appointmentCreationtxtError);
     }
 
     @Test
     public void btnResetResets() {
-        clickOn(R.id.btnStartTime);
+        clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(17, 2);
 
-        clickOn(R.id.btnEndTime);
+        clickOn(R.id.appointmentCreationBtnEndTime);
         setDateOnPicker(2021, 3, 23);
         setTimeOnPicker(18, 2);
 
-        writeTo(R.id.editTxtAppointmentCourseSet, course);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
 
-        writeTo(R.id.editTxtAppointmentTitleSet, title);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
 
-        clickOn(R.id.btnReset);
-        assertDisplayed(R.id.txtStartTime, "Start Time");
-        assertNotDisplayed(R.id.txtError);
-        assertDisplayed(R.id.txtEndTime, "End Time");
-        assertDisplayed(R.id.editTxtAppointmentCourseSet, "Appointment Course");
-        assertDisplayed(R.id.editTxtAppointmentTitleSet, "Appointment Title");
+        clickOn(R.id.appointementCreationBtnReset);
+        assertDisplayed(R.id.appointmentCreationTxtStartTime, "Start Time");
+        assertNotDisplayed(R.id.appointmentCreationtxtError);
+        assertDisplayed(R.id.appointmentCreationTxtEndTime, "End Time");
+        assertDisplayed(R.id.appointmentCreationEditTxtAppointmentCourseSet, "Appointment Course");
+        assertDisplayed(R.id.appointmentCreationEditTxtAppointmentTitleSet, "Appointment Title");
     }
 }

@@ -21,15 +21,15 @@ public class AppointmentActivity extends AppCompatActivity {
     public static final String EXTRA_USER = "user";
     public static final String EXTRA_APPOINTMENT = "appointment";
     public static final String ERROR_TXT = "Error : Start and end time must result in a correct time slot";
-    EditText editTitle, editCourse;
-    Button btnStartTime, btnEndTime, btnCreate, btnReset;
-    Calendar calendarStartTime, calendarEndTime;
-    TextView txtError, txtStartTime, txtEndTime;
+    private EditText editTitle, editCourse;
+    private Button btnStartTime, btnEndTime, btnCreate, btnReset;
+    private Calendar calendarStartTime, calendarEndTime;
+    private TextView txtError, txtStartTime, txtEndTime;
 
-    User user;
+    private User user;
 
     //A calendar is a wait to get time using year/month... and allows to transform it to epoch time
-    Calendar date;
+    private Calendar date;
     //Function which first displays a DatePicker then a TimePicker and stores all the information in Calendar date
     public void showDateTimePicker(TextView textView, boolean isStart) {
         final Calendar currentDate = Calendar.getInstance();
@@ -122,14 +122,14 @@ public class AppointmentActivity extends AppCompatActivity {
     };
 
     private void attributeSetters() {
-        editTitle = findViewById(R.id.editTxtAppointmentTitleSet);
-        editCourse = findViewById(R.id.editTxtAppointmentCourseSet);
-        btnStartTime = findViewById(R.id.btnStartTime);
-        btnEndTime = findViewById(R.id.btnEndTime);
-        btnCreate = findViewById(R.id.btnCreateAppointment);
-        btnReset = findViewById(R.id.btnReset);
-        txtError = findViewById(R.id.txtError);
-        txtStartTime = findViewById(R.id.txtStartTime);
-        txtEndTime = findViewById(R.id.txtEndTime);
+        editTitle = findViewById(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+        editCourse = findViewById(R.id.appointmentCreationEditTxtAppointmentCourseSet);
+        btnStartTime = findViewById(R.id.appointmentCreationBtnStartTime);
+        btnEndTime = findViewById(R.id.appointmentCreationBtnEndTime);
+        btnCreate = findViewById(R.id.appointmentCreationbtnCreateAppointment);
+        btnReset = findViewById(R.id.appointementCreationBtnReset);
+        txtError = findViewById(R.id.appointmentCreationtxtError);
+        txtStartTime = findViewById(R.id.appointmentCreationTxtStartTime);
+        txtEndTime = findViewById(R.id.appointmentCreationTxtEndTime);
     }
 }

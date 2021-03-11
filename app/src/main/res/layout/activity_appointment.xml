@@ -8,19 +8,19 @@
     tools:context=".appointments.AppointmentActivity">
 
     <TextView
-        android:id="@+id/txtEndTime"
+        android:id="@+id/appointmentCreationTxtEndTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="End Time"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/btnReset"
+        app:layout_constraintBottom_toTopOf="@id/appointementCreationBtnReset"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnEndTime" />
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreationBtnEndTime" />
 
     <EditText
-        android:id="@+id/editTxtAppointmentTitleSet"
+        android:id="@+id/appointmentCreationEditTxtAppointmentTitleSet"
         android:layout_width="268dp"
         android:layout_height="50dp"
         android:layout_marginTop="40dp"
@@ -40,7 +40,7 @@
         app:layout_constraintVertical_bias="0.0" />
 
     <EditText
-        android:id="@+id/editTxtAppointmentCourseSet"
+        android:id="@+id/appointmentCreationEditTxtAppointmentCourseSet"
         android:layout_width="246dp"
         android:layout_height="58dp"
         android:layout_marginTop="160dp"
@@ -60,7 +60,7 @@
         app:layout_constraintVertical_bias="0.308" />
 
     <Button
-        android:id="@+id/btnStartTime"
+        android:id="@+id/appointmentCreationBtnStartTime"
         android:layout_width="186dp"
         android:layout_height="46dp"
         android:text="@string/pick_start_time"
@@ -72,41 +72,41 @@
         app:layout_constraintVertical_bias="0.322" />
 
     <Button
-        android:id="@+id/btnEndTime"
+        android:id="@+id/appointmentCreationBtnEndTime"
         android:layout_width="180dp"
         android:layout_height="47dp"
         android:layout_marginTop="52dp"
         android:layout_marginBottom="56dp"
         android:text="@string/pick_end_time"
-        app:layout_constraintBottom_toTopOf="@+id/btnReset"
+        app:layout_constraintBottom_toTopOf="@+id/appointementCreationBtnReset"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnStartTime" />
+        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationBtnStartTime" />
 
     <Button
-        android:id="@+id/btnCreateAppointment"
+        android:id="@+id/appointmentCreationbtnCreateAppointment"
         android:layout_width="328dp"
         android:layout_height="64dp"
         android:layout_marginTop="16dp"
         android:text="@string/done_create_appointment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnReset" />
+        app:layout_constraintTop_toBottomOf="@+id/appointementCreationBtnReset" />
 
     <Button
-        android:id="@+id/btnReset"
+        android:id="@+id/appointementCreationBtnReset"
         android:layout_width="88dp"
         android:layout_height="48dp"
         android:layout_marginBottom="16dp"
         android:text="@string/reset"
-        app:layout_constraintBottom_toTopOf="@+id/btnCreateAppointment"
+        app:layout_constraintBottom_toTopOf="@+id/appointmentCreationbtnCreateAppointment"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/txtError"
+        android:id="@+id/appointmentCreationtxtError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -115,10 +115,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCreateAppointment" />
+        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationbtnCreateAppointment" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/appointmentCreationTxtWarning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="60dp"
@@ -128,17 +128,17 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnCreateAppointment"
+        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationbtnCreateAppointment"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
-        android:id="@+id/txtStartTime"
+        android:id="@+id/appointmentCreationTxtStartTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Start Time"
         android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@id/btnEndTime"
+        app:layout_constraintBottom_toTopOf="@id/appointmentCreationBtnEndTime"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/btnStartTime" />
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreationBtnStartTime" />
 </androidx.constraintlayout.widget.ConstraintLayout>
