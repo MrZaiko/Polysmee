@@ -1,5 +1,8 @@
 package io.github.polysmee.database;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -7,7 +10,6 @@ import java.util.Set;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 
-//todo : implement when database is working
 public final class DatabaseUser implements User {
 
     private final String self_id;
@@ -38,12 +40,22 @@ public final class DatabaseUser implements User {
 
     @Override
     public void addAppointment(Appointment newAppointment) {
-
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").child(newAppointment.getId()).setValue(true);
     }
 
     @Override
     public void removeAppointment(Appointment appointment) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
+    }
 
+    @Override
+    public void getNameAndThen(StringValueListener valueListener) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getAppointmentsAndThen(AppointmentsValueListener valueListener) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
     }
 
     @Override

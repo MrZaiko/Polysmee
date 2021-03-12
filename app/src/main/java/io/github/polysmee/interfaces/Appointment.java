@@ -13,6 +13,7 @@ public interface Appointment {
      *
      * @return the appointment's start time
      */
+    @Deprecated
     long getStartTime();
 
     /**
@@ -21,13 +22,17 @@ public interface Appointment {
      *
      * @return the appointment's duration
      */
+    @Deprecated
     long getDuration();
+
+    default String getId(){return null;}
 
     /**
      * Retrieves the appointment's course
      *
      * @return the appointment's course
      */
+    @Deprecated
     String getCourse();
 
     /**
@@ -35,6 +40,7 @@ public interface Appointment {
      *
      * @return the appointment's title
      */
+    @Deprecated
     String getTitle();
 
     /**
@@ -42,6 +48,7 @@ public interface Appointment {
      *
      * @return the appointment's participants in an unmodifiable set
      */
+    @Deprecated
     Set<User> getParticipants();
 
     /**
@@ -49,6 +56,7 @@ public interface Appointment {
      *
      * @return the appointment's owner
      */
+    @Deprecated
     User getOwner();
 
     /**
