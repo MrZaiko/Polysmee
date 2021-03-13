@@ -1,6 +1,7 @@
 package io.github.polysmee.database;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,14 +13,15 @@ import io.github.polysmee.interfaces.User;
 
 public class FakeDatabaseUser implements User {
 
-    private final String id;
-    private final String name;
-    private final Set<String> appointments;
-    private final List<StringSetValueListener> appListeners;
-    private final List<StringValueListener> nameListeners;
+    public String id;
+    public String name;
+    public Set<Appointment> appointments;
+
+    public List<StringSetValueListener> appListeners;
+    public List<StringValueListener> nameListeners;
 
 
-    public FakeDatabaseUser(String id, String name, FakeDatabase db) {
+    public FakeDatabaseUser(String id, String name) {
         this.id = id;
         this.name = name;
         this.appointments = new HashSet<>();
@@ -49,26 +51,31 @@ public class FakeDatabaseUser implements User {
 
     @Override
     public Set<Appointment> getAppointments() {
-        return null;
+        return Collections.unmodifiableSet(appointments);
     }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
-
+        Set<String> res = new HashSet<>();
+        for(Appointment elem : appointments)
+            res.add(elem.getId());
+        valueListener.onDone(res);
     }
 
     @Override
     public void addAppointment(Appointment newAppointment) {
-
+        appointments.add(newAppointment);
     }
 
     @Override
     public void removeAppointment(Appointment appointment) {
-
+        appointments.remove(appointment);
     }
 
     @Override
     public String createNewUserAppointment(long start, long duration, String course, String name) {
-        return null;
+        long id = FakeDatabase.idGenerator.incrementAndGet();
+        FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
+        return "" + id;
     }
 }

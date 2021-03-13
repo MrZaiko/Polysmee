@@ -13,17 +13,11 @@ import io.github.polysmee.interfaces.User;
 public class FakeDatabaseAppointment implements Appointment {
 
     public final String id;
-    public final String name;
-    public final String course;
-    public final long start;
-    public final long duration;
+    private final TestAppointmentInfo appointmentInfo;
 
-    public FakeDatabaseAppointment(String id, String name, String course, long start, long duration){
+    public FakeDatabaseAppointment(String id){
         this.id = id;
-        this.name = name;
-        this.course = course;
-        this.start = start;
-        this.duration = duration;
+        this.appointmentInfo = FakeDatabase.appId2App.get(id);
     }
     @Override
     public long getStartTime() {
@@ -32,7 +26,7 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
-
+        l.onDone(appointmentInfo.start);
     }
 
     @Override
@@ -42,7 +36,7 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void getDurationAndThen(LongValueListener l) {
-
+        l.onDone(appointmentInfo.duration);
     }
 
     @Override
@@ -57,7 +51,7 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void getCourseAndThen(StringValueListener s) {
-
+        s.onDone(appointmentInfo.course);
     }
 
     @Override
@@ -67,7 +61,7 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void getTitleAndThen(StringValueListener s) {
-
+        s.onDone(appointmentInfo.name);
     }
 
     @Override
@@ -87,27 +81,29 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void getOwnerIdAndThen(StringValueListener s) {
-
+        s.onDone(appointmentInfo.owner.getId());
     }
 
     @Override
     public boolean setStartTime(long startTime) {
-        return false;
+        appointmentInfo.start = startTime;
+        return true;
     }
 
     @Override
     public boolean setDuration(long duration) {
-        return false;
+        appointmentInfo.duration = duration;
+        return true;
     }
 
     @Override
     public void setCourse(String course) {
-
+        appointmentInfo.course = course;
     }
 
     @Override
     public void setTitle(String title) {
-
+        appointmentInfo.name = title;
     }
 
     @Override
