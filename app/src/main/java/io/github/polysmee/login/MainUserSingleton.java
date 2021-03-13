@@ -15,4 +15,8 @@ public class MainUserSingleton {
         }
         return inst;
     }
+
+    public static void reboot() {
+        inst = null;
+    }
 }

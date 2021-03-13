@@ -3,10 +3,14 @@ package io.github.polysmee.database;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 
@@ -25,12 +29,12 @@ public final class DatabaseUser implements User {
 
     @Override
     public String getName() {
-        return "";
+        return "YOU USED GETNAME";
     }
 
     @Override
     public String getSurname() {
-        return "";
+        return "YOU USED GETSURNAME";
     }
 
     @Override
@@ -54,8 +58,20 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void getAppointmentsAndThen(AppointmentsValueListener valueListener) {
+    public void getAppointmentsAndThen(StringSetValueListener valueListener) {
         FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
+    }
+
+    @Override
+    public String createNewUserAppointment() {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("appointments").push();
+        Map<String, Object> newAppo = new HashMap<>();
+        newAppo.put("owner", self_id);
+        newAppo.put("id", ref.getKey());
+        newAppo.put("members", new HashMap<String, Boolean>().put("owner", true));
+        ref.setValue(true);
+        addAppointment(new DatabaseAppointment(ref.getKey()));
+        return ref.getKey();
     }
 
     @Override

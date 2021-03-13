@@ -1,4 +1,4 @@
-package io.github.polysmee.database;
+package io.github.polysmee.database.databaselisteners;
 
 import androidx.annotation.NonNull;
 
@@ -10,9 +10,9 @@ import java.util.Set;
 
 import io.github.polysmee.interfaces.Appointment;
 
-public interface AppointmentsValueListener extends ValueEventListener {
+public interface StringSetValueListener extends ValueEventListener {
 
-    void onDone(Set<Appointment> o);
+    void onDone(Set<String> o);
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -24,7 +24,7 @@ public interface AppointmentsValueListener extends ValueEventListener {
 
     }
 
-    default Set<Appointment> stringToAppointments(String str) {
+    default Set<String> stringToAppointments(String str) {
         throw new IllegalStateException("not implemented");
     }
 }

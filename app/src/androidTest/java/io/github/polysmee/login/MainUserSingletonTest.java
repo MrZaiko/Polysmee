@@ -26,6 +26,7 @@ public class MainUserSingletonTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        MainUserSingleton.reboot();
     }
 
     @After
