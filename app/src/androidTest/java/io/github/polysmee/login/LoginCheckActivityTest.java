@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,6 +30,14 @@ public class LoginCheckActivityTest {
     public void setUp() throws Exception {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+    }
+
+    @After
+    public void delete() throws ExecutionException, InterruptedException {
+        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
     }
 
     @Test
@@ -44,15 +53,12 @@ public class LoginCheckActivityTest {
 
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
             intending(hasComponent(MainActivity.class.getName()));
         }
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
         Intents.release();
     }
 }
