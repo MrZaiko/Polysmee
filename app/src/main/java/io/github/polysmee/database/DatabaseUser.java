@@ -43,8 +43,8 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void addAppointment(Appointment newAppointment) {
-        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").child(newAppointment.getId()).setValue(true);
+    public void addAppointment(Appointment appointment) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(true);
     }
 
     @Override
@@ -63,12 +63,16 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public String createNewUserAppointment() {
+    public String createNewUserAppointment(long start, long duration, String course, String name) {
         DatabaseReference ref = FirebaseDatabase.getInstance().getReference("appointments").push();
         Map<String, Object> newAppo = new HashMap<>();
         newAppo.put("owner", self_id);
         newAppo.put("id", ref.getKey());
-        newAppo.put("members", new HashMap<String, Boolean>().put("owner", true));
+        newAppo.put("members", new HashMap<String, Boolean>().put(self_id, true));
+        newAppo.put("start", start);
+        newAppo.put("duration", duration);
+        newAppo.put("course", course);
+        newAppo.put("name", name);
         ref.setValue(true);
         addAppointment(new DatabaseAppointment(ref.getKey()));
         return ref.getKey();

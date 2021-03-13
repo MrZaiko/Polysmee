@@ -104,7 +104,7 @@ public class DatabaseUserTest {
 
     @Test
     public void createNewUserAppointment() {
-        String id = MainUserSingleton.getInstance().createNewUserAppointment();
+        String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév");
         String ac = FirebaseDatabase.getInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
         FirebaseDatabase.getInstance().getReference("appointments").child(id).setValue(null);

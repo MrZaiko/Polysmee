@@ -20,7 +20,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("start_time").addValueEventListener(l);
+        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("start").addValueEventListener(l);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class DatabaseAppointment implements Appointment {
         if(startTime < 0)
             return false;
 
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("start_time").setValue(startTime);
+        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("start").setValue(startTime);
         return true;
     }
 
