@@ -12,8 +12,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -60,7 +62,7 @@ public class DatabaseUserTest {
 
     @Test
     public void getAppointments() {
-        assertEquals(MainUserSingleton.getInstance().getSurname(), "YOU USED GETSURNAME");
+        assertEquals(MainUserSingleton.getInstance().getAppointments(), new HashSet<>());
     }
 
     @Test
@@ -111,7 +113,31 @@ public class DatabaseUserTest {
     }
 
     @Test
-    public void getAppointmentsAndThen() {
+    public void getAppointmentsAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean oneElem = new AtomicBoolean(false);
+
+        MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
+
+        lock.lock();
+        try {
+            MainUserSingleton.getInstance().getAppointmentsAndThen(
+                    (name) -> {
+                        lock.lock();
+                        oneElem.set(name.size() == 1);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
+            );
+            while(!bool.get())
+                cv.await();
+            assertTrue(oneElem.get());
+        } finally {
+            lock.unlock();
+        }
     }
 
     @Test
