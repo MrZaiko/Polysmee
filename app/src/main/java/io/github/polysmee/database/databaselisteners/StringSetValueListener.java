@@ -9,6 +9,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +21,9 @@ public interface StringSetValueListener extends ValueEventListener {
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
-        onDone(stringToAppointments((String) snapshot.getValue()));
+        HashMap<String, Object> retrieved = (HashMap<String, Object>) snapshot.getValue();
+        if(retrieved != null)
+            onDone(retrieved.keySet());
     }
 
     @Override
@@ -28,16 +31,4 @@ public interface StringSetValueListener extends ValueEventListener {
 
     }
 
-    default Set<String> stringToAppointments(String str) {
-        try {
-            JSONObject reader = new JSONObject(str);
-            Set<String> ids = new HashSet<>();
-            for(int i = 0; i < reader.names().length(); ++i)
-                ids.add((String) reader.names().get(i));
-            return ids;
-        } catch (JSONException e) {
-            return new HashSet<>();
-        }
-
-    }
 }

@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.Console;
 import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -127,6 +128,7 @@ public class DatabaseUserTest {
                     (name) -> {
                         lock.lock();
                         oneElem.set(name.size() == 1);
+
                         bool.set(Boolean.TRUE);
                         cv.signal();
                         lock.unlock();

@@ -73,7 +73,7 @@ public final class DatabaseUser implements User {
         newAppo.put("duration", duration);
         newAppo.put("course", course);
         newAppo.put("name", name);
-        ref.setValue(true);
+        ref.setValue(newAppo);
         addAppointment(new DatabaseAppointment(ref.getKey()));
         return ref.getKey();
     }
