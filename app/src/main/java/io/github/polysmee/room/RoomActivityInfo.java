@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.Date;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.interfaces.Appointment;
 
 /**
@@ -22,10 +23,11 @@ public class RoomActivityInfo extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_info);
-        Appointment appointment = (Appointment) getIntent().getSerializableExtra(APPOINTMENT_KEY);
-        ((TextView) findViewById(R.id.roomInfoTitle)).setText(appointment.getTitle());
-        ((TextView) findViewById(R.id.roomInfoCourse)).setText(appointment.getCourse());
-        ((TextView) findViewById(R.id.roomInfoStartDate)).setText(new Date(appointment.getStartTime()).toString());
+        String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);
+        Appointment appointment = new DatabaseAppointment(appointmentKey);
+        appointment.getTitleAndThen((title) -> ((TextView) findViewById(R.id.roomInfoTitle)).setText(title));
+        appointment.getCourseAndThen((course) -> ((TextView) findViewById(R.id.roomInfoCourse)).setText(course));
+        appointment.getStartTimeAndThen((startTime) -> ((TextView) findViewById(R.id.roomInfoStartDate)).setText(new Date(startTime).toString()));
     }
 
     @Override

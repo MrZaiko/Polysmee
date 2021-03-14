@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.room.fragments.roomActivityMessagesFragment;
 import io.github.polysmee.room.fragments.roomActivityParticipantsFragment;
@@ -37,15 +38,16 @@ public class RoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
 
-        this.appointment = (Appointment) getIntent().getSerializableExtra(APPOINTMENT_KEY);
-        if (appointment != null)
-            setTitle(appointment.getTitle());
+        String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);
+        this.appointment = new DatabaseAppointment(appointmentKey);
+
+        appointment.getTitleAndThen(this::setTitle);
 
 
         //Fragment Creation
         List<Fragment> list = new ArrayList<>();
         list.add(new roomActivityMessagesFragment());
-        list.add(new roomActivityParticipantsFragment(appointment != null ? appointment.getParticipants() : null));
+        //list.add(new roomActivityParticipantsFragment(appointment));
 
 
         ViewPager2 pager = findViewById(R.id.roomActivityPager);
@@ -71,7 +73,7 @@ public class RoomActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.roomMenuInfo:
                 Intent intent = new Intent(this, RoomActivityInfo.class);
-                intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, (Serializable) appointment);
+                intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointment.getId());
                 startActivityForResult(intent, RESULT_OK);
                 return true;
             default:

@@ -14,6 +14,7 @@ import io.github.polysmee.appointments.TestUser;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 
 public class MainActivity extends AppCompatActivity {
@@ -26,8 +27,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToRoomActivity(View view) {
         Intent intent = new Intent(this, RoomActivity.class);
-        Appointment appo = new BasicAppointment(633636, 25, "AICC", "Révisions", new TestUser("baba", "bébé"));
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, (Serializable) appo);
+        //String id = MainUserSingleton.getInstance().createNewUserAppointment(231321321, 3600, "AICC", "AHAHAHAHA");
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, "-MVk0XzuK0Dc4XrG4dYZ");
         startActivity(intent);
     }
 
