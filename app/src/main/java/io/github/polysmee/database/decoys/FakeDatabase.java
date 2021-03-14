@@ -1,10 +1,8 @@
-package io.github.polysmee.database;
+package io.github.polysmee.database.decoys;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-
-import io.github.polysmee.interfaces.Appointment;
 
 public final class FakeDatabase {
     private FakeDatabase(){}

@@ -1,9 +1,7 @@
-package io.github.polysmee.database;
+package io.github.polysmee.database.decoys;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
@@ -17,16 +15,11 @@ public class FakeDatabaseUser implements User {
     public String name;
     public Set<Appointment> appointments;
 
-    public List<StringSetValueListener> appListeners;
-    public List<StringValueListener> nameListeners;
-
 
     public FakeDatabaseUser(String id, String name) {
         this.id = id;
         this.name = name;
         this.appointments = new HashSet<>();
-        this.appListeners = new ArrayList<>();
-        this.nameListeners = new ArrayList<>();
     }
 
     @Override
@@ -75,6 +68,7 @@ public class FakeDatabaseUser implements User {
     @Override
     public String createNewUserAppointment(long start, long duration, String course, String name) {
         long id = FakeDatabase.idGenerator.incrementAndGet();
+        appointments.add(new FakeDatabaseAppointment("" + id));
         FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
         return "" + id;
     }
