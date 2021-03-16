@@ -23,7 +23,6 @@ import io.github.polysmee.R;
  * It is the broadcast receiver class that will receive broadcasts at certain times (specified in
  * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
- *
  **/
 public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
@@ -35,6 +34,7 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
     //"It's safe to call this repeatedly because creating an existing notification channel performs no operation."
     //Later when doing the notification with ressource file move it to the app launch as suggested
     private void createNotificationChannel(Context context) {
+        assert context != null;
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -58,6 +58,9 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
      */
     @Override
     public void onReceive(Context context, Intent intent) {
+        if (context == null || intent == null) {
+            throw new IllegalArgumentException("The context or the intent passed as argument should not be null");
+        }
         Intent fullScreenIntent = new Intent(context, MainActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
