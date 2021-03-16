@@ -15,7 +15,7 @@ import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
  * Pager adapter that handles the room specific fragments
  */
 public class RoomPagerAdapter extends FragmentStateAdapter {
-    private String appointmentId;
+    private final String appointmentId;
     public static String[] FRAGMENT_NAME = new String[]{"MESSAGES", "PARTICIPANTS"};
     private final static int FRAGMENTS_NUMBER = 2;
 

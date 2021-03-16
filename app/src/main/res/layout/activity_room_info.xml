@@ -8,86 +8,63 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/roomInfoTitle"
-        android:layout_width="232dp"
-        android:layout_height="69dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="24dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="TextView"
-        android:textSize="23dp"
-        app:layout_constraintBottom_toTopOf="@+id/roomInfoStartDate"
-        app:layout_constraintEnd_toStartOf="@+id/button5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roomInfoCourse" />
-
-    <TextView
-        android:id="@+id/roomInfoCourse"
-        android:layout_width="211dp"
-        android:layout_height="52dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="TextView"
-        android:textSize="23dp"
-        tools:layout_editor_absoluteX="30dp"
-        tools:layout_editor_absoluteY="37dp" />
-
-    <TextView
-        android:id="@+id/roomInfoStartDate"
-        android:layout_width="226dp"
-        android:layout_height="65dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:layout_weight="1"
-        android:gravity="center"
-        android:text="TextView"
-        android:textSize="23dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/button6"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/roomInfoTitle" />
-
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="122dp"
-        android:layout_height="51dp"
-        android:text="Button"
-        tools:layout_editor_absoluteX="274dp"
-        tools:layout_editor_absoluteY="37dp" />
-
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="122dp"
+        android:id="@+id/roomInfoTitleTextView"
+        android:layout_width="0dp"
         android:layout_height="46dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="550dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Title"
+        android:textSize="23dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/roomInfoTitleEditButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/roomInfoCourseTextView" />
+
+    <TextView
+        android:id="@+id/roomInfoCourseTextView"
+        android:layout_width="0dp"
+        android:layout_height="46dp"
+        android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/roomInfoStartDate"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/roomInfoTitle"
-        app:layout_constraintTop_toBottomOf="@+id/button4"
-        app:layout_constraintVertical_bias="0.45" />
+        android:layout_marginBottom="64dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="Course"
+        android:textSize="23dp"
+        app:layout_constraintBottom_toTopOf="@+id/roomInfoTitleTextView"
+        app:layout_constraintEnd_toStartOf="@+id/roomInfoCourseEditButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/button6"
-        android:layout_width="122dp"
-        android:layout_height="59dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="171dp"
+        android:id="@+id/roomInfoTitleEditButton"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="32dp"
-        android:text="Button"
+        android:layout_marginBottom="550dp"
+        android:text="Edit"
+        android:onClick="editTitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/roomInfoStartDate"
-        app:layout_constraintTop_toBottomOf="@+id/button5"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintStart_toEndOf="@+id/roomInfoTitleTextView"
+        app:layout_constraintTop_toBottomOf="@+id/roomInfoCourseEditButton" />
+
+    <Button
+        android:id="@+id/roomInfoCourseEditButton"
+        android:layout_width="wrap_content"
+        android:layout_height="46dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="64dp"
+        android:text="Edit"
+        android:onClick="editCourse"
+        app:layout_constraintBottom_toTopOf="@+id/roomInfoTitleEditButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/roomInfoCourseTextView"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
