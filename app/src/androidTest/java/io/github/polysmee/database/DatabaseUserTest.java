@@ -122,15 +122,15 @@ public class DatabaseUserTest {
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicBoolean oneElem = new AtomicBoolean(false);
 
-        MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
+        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
 
         lock.lock();
         try {
             MainUserSingleton.getInstance().getAppointmentsAndThen(
                     (set) -> {
                         lock.lock();
-                        oneElem.set(set.size() == 1);
-                        Log.d("METAAPP", "size was " + set.size());
+                        oneElem.set(set.size() > 0);
+                        Log.d("METAAPP", "" + oneElem.get());
                         bool.set(Boolean.TRUE);
                         cv.signal();
                         lock.unlock();
@@ -141,6 +141,7 @@ public class DatabaseUserTest {
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
+            FirebaseDatabase.getInstance().getReference("appointments").child(apid).setValue(null);
         }
     }
 
