@@ -2,6 +2,8 @@ package io.github.polysmee.appointments;
 
 import org.junit.Test;
 
+import java.util.HashSet;
+
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.DatabaseUser;
 
@@ -16,13 +18,15 @@ public class BasicAppointmentTest {
 
     @Test
     public void constructorTest() {
-        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
-        BasicAppointment c = new BasicAppointment(3600000, 100000000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser, false);
+        BasicAppointment c = new BasicAppointment(3600000, 100000000, "AICC", "Serie AICC", testUser, true, new HashSet<>(), new HashSet<>());
         assertEquals(a.getStartTime(), 3600000);
         assertEquals(a.getDuration(), 1800000);
         assertEquals(b.getStartTime(), 0);
         assertEquals(b.getDuration(), 0);
         assertEquals(c.getDuration(), 3600000*4);
+        assertFalse(b.isPrivate());
+        assertTrue(c.isPrivate());
     }
 
     @Test
@@ -102,5 +106,35 @@ public class BasicAppointmentTest {
         assertTrue(b.removeParticipant(testUser2));
         assertFalse(b.getParticipants().contains(testUser2));
         assertFalse(b.removeParticipant(testUser));
+    }
+
+    @Test
+    public void isPrivate() {
+        assertFalse(a.isPrivate());
+    }
+
+    @Test
+    public void getBans() {
+        assertEquals(0, a.getBans().size());
+        HashSet<User> h = new HashSet<>();
+        User u = new DatabaseUser("u");
+        h.add(u);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser, false, h, new HashSet<>());
+        assertTrue(b.getBans().contains(u));
+        assertEquals(1, b.getBans().size());
+    }
+
+    @Test
+    public void addAndRemoveBan() {
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        User u = new DatabaseUser("u");
+        assertFalse(b.removeBan(u));
+        assertFalse(b.addBan(testUser));
+        assertFalse(b.removeBan(testUser));
+        assertEquals(0, b.getBans().size());
+        assertTrue(b.addBan(u));
+        assertEquals(1, b.getBans().size());
+        assertTrue(b.removeBan(u));
+        assertEquals(0, b.getBans().size());
     }
 }

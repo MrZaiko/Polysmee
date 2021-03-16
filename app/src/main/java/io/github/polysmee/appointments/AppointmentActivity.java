@@ -13,12 +13,14 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
-
-import static io.github.polysmee.login.MainUserSingleton.getInstance;
+import io.github.polysmee.login.DatabaseUser;
 
 public class AppointmentActivity extends AppCompatActivity {
     public static final String EXTRA_APPOINTMENT = "appointment";
@@ -28,8 +30,10 @@ public class AppointmentActivity extends AppCompatActivity {
     private Button btnStartTime, btnEndTime, btnCreate, btnReset, btnSettings;
     private Calendar calendarStartTime, calendarEndTime;
     private TextView txtError, txtStartTime, txtEndTime;
-
+    private boolean isPrivate;
     private User user;
+    private Set<User> invites;
+    private Set<User> bans;
 
     //A calendar is a wait to get time using year/month... and allows to transform it to epoch time
     private Calendar date;
@@ -75,7 +79,8 @@ public class AppointmentActivity extends AppCompatActivity {
         txtError.setVisibility(View.INVISIBLE);
 
         //We need to know who is trying to create an appointment as they are the owner, see BasicAppointment implementation
-        user = getInstance();
+        user = new DatabaseUser("owner");
+        //user = getInstance();          This will be how we will get the user in the end but right now we can't access the database
 
         btnStartTime.setOnClickListener(v -> {
             showDateTimePicker(txtStartTime, true);
@@ -104,7 +109,7 @@ public class AppointmentActivity extends AppCompatActivity {
                 //create Appointment according to user input and return to the activity which called this one
                 String title = editTitle.getText().toString();
                 String course = editCourse.getText().toString();
-                BasicAppointment appointment = new BasicAppointment(calendarStartTime.getTimeInMillis(), calendarEndTime.getTimeInMillis() - calendarStartTime.getTimeInMillis(), course, title, user);
+                BasicAppointment appointment = new BasicAppointment(calendarStartTime.getTimeInMillis(), calendarEndTime.getTimeInMillis() - calendarStartTime.getTimeInMillis(), course, title, user, isPrivate, bans, invites);
                 Intent returnIntent = new Intent();
                 returnIntent.putExtra(EXTRA_APPOINTMENT, appointment);
                 setResult(Activity.RESULT_OK, returnIntent);
@@ -113,12 +118,9 @@ public class AppointmentActivity extends AppCompatActivity {
         }
     };
 
-    View.OnClickListener settingsClickListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent settingsIntent = new Intent(AppointmentActivity.this, AppointmentSettingsActivity.class);
-            startActivityForResult(settingsIntent, SETTINGS_ACTIVITY_CODE);
-        }
+    View.OnClickListener settingsClickListener = v -> {
+        Intent settingsIntent = new Intent(AppointmentActivity.this, AppointmentSettingsActivity.class);
+        startActivityForResult(settingsIntent, SETTINGS_ACTIVITY_CODE);
     };
 
     View.OnClickListener resetClickListener = new View.OnClickListener() {
@@ -146,6 +148,9 @@ public class AppointmentActivity extends AppCompatActivity {
         txtError = findViewById(R.id.appointmentCreationtxtError);
         txtStartTime = findViewById(R.id.appointmentCreationTxtStartTime);
         txtEndTime = findViewById(R.id.appointmentCreationTxtEndTime);
+        isPrivate = false;
+        invites = new HashSet<>();
+        bans = new HashSet<>();
     }
 
     @Override
@@ -154,7 +159,17 @@ public class AppointmentActivity extends AppCompatActivity {
 
         if (requestCode == SETTINGS_ACTIVITY_CODE) {
             if(resultCode == Activity.RESULT_OK) {
-                
+                if(data != null) {
+                    isPrivate = data.getBooleanExtra("private", false);
+                    ArrayList<String> tmpInvites = data.getStringArrayListExtra("invites");
+                    for(String s : tmpInvites) {
+                        invites.add(new DatabaseUser(s));
+                    }
+                    ArrayList<String> tmpBans = data.getStringArrayListExtra("bans");
+                    for(String s : tmpBans) {
+                        bans.add(new DatabaseUser(s));
+                    }
+                }
             }
         }
     }

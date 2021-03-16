@@ -44,11 +44,25 @@ public interface Appointment {
     Set<User> getParticipants();
 
     /**
+     * Retrieves all users banned from this appointment
+     *
+     * @return the appointment's banned users in an unmodifiable set
+     */
+    Set<User> getBans();
+
+    /**
      * Retrieves the appointment's owner
      *
      * @return the appointment's owner
      */
     User getOwner();
+
+    /**
+     * Says whether or not this is a private appointment
+     *
+     * @return true if the appointment is private
+     */
+    boolean isPrivate();
 
     /**
      * Adds the given user to the set of participant
@@ -66,4 +80,21 @@ public interface Appointment {
      * @return true if the participant was successfully removed
      */
     boolean removeParticipant(User participant);
+
+    /**
+     * Adds the given user to the set of banned users
+     * Cannot ban the owner
+     *
+     * @param banned the user to be banned
+     * @return true if the user was successfully banned
+     */
+    boolean addBan(User banned);
+
+    /**
+     * Removes the given user from the set of banned users
+     *
+     * @param unbanned the user to be unbanned
+     * @return true if the user was successfully unbanned
+     */
+    boolean removeBan(User unbanned);
 }

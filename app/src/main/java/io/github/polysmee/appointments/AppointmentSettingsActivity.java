@@ -37,11 +37,17 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
     }
 
     View.OnClickListener btnInviteListener = v -> {
-        invites.add(searchInvite.getQuery().toString());
+        String s = searchInvite.getQuery().toString();
+        if(!invites.contains(s)) {
+            invites.add(s);
+        }
     };
 
     View.OnClickListener btnBanListener = v -> {
-        bans.add(searchBan.getQuery().toString());
+        String s = searchBan.getQuery().toString();
+        if(!bans.contains(s)) {
+            bans.add(s);
+        }
     };
 
     View.OnClickListener btnDoneListener = v -> {

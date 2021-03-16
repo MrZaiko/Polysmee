@@ -15,8 +15,18 @@ public class BasicAppointment implements Appointment, Serializable {
     private String title;
     private final Set<User> participants;
     private final User owner;
+    private final Set<User> bans;
+    private final boolean isPrivate;
 
     public BasicAppointment(long startTime, long duration, String course, String title, User owner) {
+        this(startTime, duration, course, title, owner, false, new HashSet<>(), new HashSet<>());
+    }
+
+    public BasicAppointment(long startTime, long duration, String course, String title, User owner, boolean isPrivate) {
+        this(startTime, duration, course, title, owner, isPrivate, new HashSet<>(), new HashSet<>());
+    }
+
+    public BasicAppointment(long startTime, long duration, String course, String title, User owner, boolean isPrivate, Set<User> bans, Set<User> invites) {
         if(startTime < 0) {
             this.startTime = 0;
         } else {
@@ -35,6 +45,9 @@ public class BasicAppointment implements Appointment, Serializable {
         participants = new HashSet<User>();
         participants.add(owner);
         this.owner = owner;
+        this.isPrivate = isPrivate;
+        this.bans = bans;
+        participants.addAll(invites);
     }
 
     @Override
@@ -63,8 +76,18 @@ public class BasicAppointment implements Appointment, Serializable {
     }
 
     @Override
+    public Set<User> getBans() {
+        return Collections.unmodifiableSet(bans);
+    }
+
+    @Override
     public User getOwner() {
         return owner;
+    }
+
+    @Override
+    public boolean isPrivate() {
+        return isPrivate;
     }
 
     public boolean setStartTime(long startTime) {
@@ -93,6 +116,9 @@ public class BasicAppointment implements Appointment, Serializable {
 
     @Override
     public boolean addParticipant(User newParticipant) {
+        if (bans.contains(newParticipant)) {
+            return false;
+        }
         return participants.add(newParticipant);
     }
 
@@ -102,5 +128,18 @@ public class BasicAppointment implements Appointment, Serializable {
             return false;
         }
         return participants.remove(participant);
+    }
+
+    @Override
+    public boolean addBan(User banned) {
+        if(banned.equals(owner)) {
+            return false;
+        }
+        return bans.add(banned);
+    }
+
+    @Override
+    public boolean removeBan(User unbanned) {
+        return bans.remove(unbanned);
     }
 }
