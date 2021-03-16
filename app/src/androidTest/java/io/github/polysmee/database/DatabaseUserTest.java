@@ -129,8 +129,8 @@ public class DatabaseUserTest {
             MainUserSingleton.getInstance().getAppointmentsAndThen(
                     (set) -> {
                         lock.lock();
-                        oneElem.set(set.size() != 0);
-                        Log.e("METAAPP", "size was" + set.size());
+                        oneElem.set(set.size() == 1);
+                        Log.d("METAAPP", "size was " + set.size());
                         bool.set(Boolean.TRUE);
                         cv.signal();
                         lock.unlock();

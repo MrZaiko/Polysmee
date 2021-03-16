@@ -87,7 +87,7 @@ public class RoomActivityTest {
         }
     }
 
-    @Test
+    /*@Test
     public void participantsShouldBeCorrectlyDisplayed() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
         String name1 = "Daniel";
@@ -110,5 +110,5 @@ public class RoomActivityTest {
             assertContains(surname1);
             assertContains(surname2);
         }
-    }
+    }*/
 }
