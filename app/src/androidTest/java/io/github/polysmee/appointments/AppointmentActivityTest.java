@@ -13,10 +13,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import io.github.polysmee.R;
-import io.github.polysmee.appointments.AppointmentActivity;
-import io.github.polysmee.appointments.TestUser;
 import io.github.polysmee.interfaces.Appointment;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -27,7 +26,6 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class AppointmentActivityTest {
-    private static final TestUser TEST_USER = new TestUser("username", "koko");
     String title = "title";
     String course = "course";
     String startTime = "23/03/2021   -   17:02";
@@ -47,8 +45,10 @@ public class AppointmentActivityTest {
         setTimeOnPicker(18, 2);
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointmentCreationbtnCreateAppointment);
 
@@ -76,8 +76,10 @@ public class AppointmentActivityTest {
         setTimeOnPicker(16, 2);
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointmentCreationbtnCreateAppointment);
         assertDisplayed(R.id.appointmentCreationtxtError, AppointmentActivity.ERROR_TXT);
@@ -112,8 +114,10 @@ public class AppointmentActivityTest {
         setTimeOnPicker(18, 2);
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointementCreationBtnReset);
         assertDisplayed(R.id.appointmentCreationTxtStartTime, "Start Time");

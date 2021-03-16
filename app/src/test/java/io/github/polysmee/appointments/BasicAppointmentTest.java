@@ -2,23 +2,22 @@ package io.github.polysmee.appointments;
 
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Set;
-
-import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.DatabaseUser;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class BasicAppointmentTest {
-    User testUser = new TestUser("1");
-    User testUser2 = new TestUser("2");
-    Appointment a = new BasicAppointment(3600000, 1800000, "AICC", "Serie AICC", testUser);
+    User testUser = new DatabaseUser("1");
+    User testUser2 = new DatabaseUser("2");
+    BasicAppointment a = new BasicAppointment(3600000, 1800000, "AICC", "Serie AICC", testUser);
 
     @Test
     public void constructorTest() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
-        Appointment c = new BasicAppointment(3600000, 100000000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment c = new BasicAppointment(3600000, 100000000, "AICC", "Serie AICC", testUser);
         assertEquals(a.getStartTime(), 3600000);
         assertEquals(a.getDuration(), 1800000);
         assertEquals(b.getStartTime(), 0);
@@ -59,7 +58,7 @@ public class BasicAppointmentTest {
 
     @Test
     public void setStartTime() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
         assertTrue(b.setStartTime(50000));
         assertEquals(50000, b.getStartTime());
         assertFalse(b.setStartTime(-10000));
@@ -67,7 +66,7 @@ public class BasicAppointmentTest {
 
     @Test
     public void setDuration() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
         assertTrue(b.setDuration(50000));
         assertEquals(50000, b.getDuration());
         assertFalse(b.setDuration(-10000));
@@ -76,21 +75,21 @@ public class BasicAppointmentTest {
 
     @Test
     public void setCourse() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
         b.setCourse("CSN");
         assertEquals(b.getCourse(), "CSN");
     }
 
     @Test
     public void setTitle() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
         b.setTitle("Serie CSN");
         assertEquals(b.getTitle(), "Serie CSN");
     }
 
     @Test
     public void addParticipant() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
         assertTrue(b.addParticipant(testUser2));
         assertEquals(2, b.getParticipants().size());
         assertTrue(b.getParticipants().contains(testUser2));
@@ -98,7 +97,7 @@ public class BasicAppointmentTest {
 
     @Test
     public void removeParticipant() {
-        Appointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
+        BasicAppointment b = new BasicAppointment(-2000, -1800000, "AICC", "Serie AICC", testUser);
         b.addParticipant(testUser2);
         assertTrue(b.removeParticipant(testUser2));
         assertFalse(b.getParticipants().contains(testUser2));

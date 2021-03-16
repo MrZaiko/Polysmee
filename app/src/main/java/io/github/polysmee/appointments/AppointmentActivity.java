@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.Calendar;
@@ -17,12 +18,14 @@ import java.util.Calendar;
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
 
+import static io.github.polysmee.login.MainUserSingleton.getInstance;
+
 public class AppointmentActivity extends AppCompatActivity {
-    public static final String EXTRA_USER = "user";
     public static final String EXTRA_APPOINTMENT = "appointment";
     public static final String ERROR_TXT = "Error : Start and end time must result in a correct time slot";
+    private static final int SETTINGS_ACTIVITY_CODE = 1;
     private EditText editTitle, editCourse;
-    private Button btnStartTime, btnEndTime, btnCreate, btnReset;
+    private Button btnStartTime, btnEndTime, btnCreate, btnReset, btnSettings;
     private Calendar calendarStartTime, calendarEndTime;
     private TextView txtError, txtStartTime, txtEndTime;
 
@@ -72,7 +75,7 @@ public class AppointmentActivity extends AppCompatActivity {
         txtError.setVisibility(View.INVISIBLE);
 
         //We need to know who is trying to create an appointment as they are the owner, see BasicAppointment implementation
-        user = (User) getIntent().getSerializableExtra(EXTRA_USER);
+        user = getInstance();
 
         btnStartTime.setOnClickListener(v -> {
             showDateTimePicker(txtStartTime, true);
@@ -85,6 +88,8 @@ public class AppointmentActivity extends AppCompatActivity {
         btnCreate.setOnClickListener(createClickListener);
 
         btnReset.setOnClickListener(resetClickListener);
+
+        btnSettings.setOnClickListener(settingsClickListener);
     }
 
     View.OnClickListener createClickListener = new View.OnClickListener() {
@@ -105,6 +110,14 @@ public class AppointmentActivity extends AppCompatActivity {
                 setResult(Activity.RESULT_OK, returnIntent);
                 finish();
             }
+        }
+    };
+
+    View.OnClickListener settingsClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent settingsIntent = new Intent(AppointmentActivity.this, AppointmentSettingsActivity.class);
+            startActivityForResult(settingsIntent, SETTINGS_ACTIVITY_CODE);
         }
     };
 
@@ -129,8 +142,20 @@ public class AppointmentActivity extends AppCompatActivity {
         btnEndTime = findViewById(R.id.appointmentCreationBtnEndTime);
         btnCreate = findViewById(R.id.appointmentCreationbtnCreateAppointment);
         btnReset = findViewById(R.id.appointementCreationBtnReset);
+        btnSettings = findViewById(R.id.appointmentCreationBtnSettings);
         txtError = findViewById(R.id.appointmentCreationtxtError);
         txtStartTime = findViewById(R.id.appointmentCreationTxtStartTime);
         txtEndTime = findViewById(R.id.appointmentCreationTxtEndTime);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == SETTINGS_ACTIVITY_CODE) {
+            if(resultCode == Activity.RESULT_OK) {
+                
+            }
+        }
     }
 }

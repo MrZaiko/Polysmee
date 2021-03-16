@@ -1,6 +1,5 @@
 package io.github.polysmee.interfaces;
 
-import java.io.Serializable;
 import java.util.Set;
 
 /**
@@ -50,36 +49,6 @@ public interface Appointment {
      * @return the appointment's owner
      */
     User getOwner();
-
-    /**
-     * Sets the appointment's start time
-     *
-     * @param startTime the new start time
-     * @return true if the time was set, false if it had an incorrect value (<0);
-     */
-    boolean setStartTime(long startTime);
-
-    /**
-     * Sets the appointment's duration, which cannot be longer than 4 hours
-     *
-     * @param duration the new duration
-     * @return true if the time was set, false if it had an incorrect value (<0 or more than 4 hours);
-     */
-    boolean setDuration(long duration);
-
-    /**
-     * Sets the appointment's course
-     *
-     * @param course the new course
-     */
-    void setCourse(String course);
-
-    /**
-     * Sets the appointment's title
-     *
-     * @param title the new title
-     */
-    void setTitle(String title);
 
     /**
      * Adds the given user to the set of participant

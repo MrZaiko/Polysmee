@@ -52,26 +52,6 @@ public class AppointmentTestClass implements Appointment {
     }
 
     @Override
-    public boolean setStartTime(long startTime) {
-        return false;
-    }
-
-    @Override
-    public boolean setDuration(long duration) {
-        return false;
-    }
-
-    @Override
-    public void setCourse(String course) {
-
-    }
-
-    @Override
-    public void setTitle(String title) {
-
-    }
-
-    @Override
     public boolean addParticipant(User newParticipant) {
         users.add(newParticipant);
         return false;

@@ -67,7 +67,6 @@ public class BasicAppointment implements Appointment, Serializable {
         return owner;
     }
 
-    @Override
     public boolean setStartTime(long startTime) {
         if (startTime < 0) {
             return false;
@@ -76,7 +75,6 @@ public class BasicAppointment implements Appointment, Serializable {
         return true;
     }
 
-    @Override
     public boolean setDuration(long duration) {
         if(duration > 3600000*4 || duration < 0) {
             return false;
@@ -85,12 +83,10 @@ public class BasicAppointment implements Appointment, Serializable {
         return true;
     }
 
-    @Override
     public void setCourse(String course) {
         this.course = course;
     }
 
-    @Override
     public void setTitle(String title) {
         this.title = title;
     }
