@@ -2,7 +2,6 @@ package io.github.polysmee.roomActivityTests;
 
 import android.content.Intent;
 
-import androidx.test.InstrumentationRegistry;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
@@ -20,7 +19,6 @@ import org.junit.runner.RunWith;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
@@ -29,7 +27,6 @@ import io.github.polysmee.room.RoomActivityInfo;
 
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -41,7 +38,6 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
-import static com.schibsted.spain.barista.internal.viewaction.SwipeActions.swipeLeft;
 
 @RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {

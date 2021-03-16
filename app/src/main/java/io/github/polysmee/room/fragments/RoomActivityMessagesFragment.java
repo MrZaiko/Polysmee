@@ -22,7 +22,7 @@ import io.github.polysmee.R;
 /**
  * Fragment that handles messaging (Send, receive, display)
  */
-public class roomActivityMessagesFragment extends Fragment {
+public class RoomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
 
     @Nullable
@@ -35,11 +35,6 @@ public class roomActivityMessagesFragment extends Fragment {
         receive.setOnClickListener(this::receiveMessage);
 
         return rootView;
-    }
-
-    @Override
-    public String toString() {
-        return "Messages";
     }
 
     /**

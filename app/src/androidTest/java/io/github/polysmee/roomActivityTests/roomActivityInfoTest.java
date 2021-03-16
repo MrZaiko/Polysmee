@@ -1,9 +1,7 @@
 package io.github.polysmee.roomActivityTests;
 
-import android.app.Activity;
 import android.content.Intent;
 
-import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.room.RoomActivityInfo;
 
@@ -19,7 +17,6 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 
 @RunWith(JUnit4.class)

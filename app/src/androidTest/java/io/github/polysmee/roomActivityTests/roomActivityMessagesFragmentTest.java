@@ -1,26 +1,11 @@
 package io.github.polysmee.roomActivityTests;
 
-import androidx.fragment.app.testing.FragmentScenario;
-
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
-
-import io.github.polysmee.R;
-import io.github.polysmee.room.fragments.roomActivityMessagesFragment;
-
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
-import static androidx.test.espresso.action.ViewActions.scrollTo;
-import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
-import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
-import static com.schibsted.spain.barista.internal.viewaction.SleepViewAction.sleep;
 
 //@RunWith(JUnit4.class)
 public class roomActivityMessagesFragmentTest {

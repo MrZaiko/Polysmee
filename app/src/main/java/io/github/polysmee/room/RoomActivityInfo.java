@@ -22,6 +22,7 @@ public class RoomActivityInfo extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle("Room info");
         setContentView(R.layout.activity_room_info);
         String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);
         Appointment appointment = new DatabaseAppointment(appointmentKey);
