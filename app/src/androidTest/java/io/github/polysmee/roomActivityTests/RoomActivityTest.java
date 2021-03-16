@@ -1,4 +1,3 @@
-
 package io.github.polysmee.roomActivityTests;
 
 import android.content.Intent;
@@ -118,6 +117,4 @@ public class RoomActivityTest {
             assertContains(surname2);
         }
     }*/
-
 }
-
