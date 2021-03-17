@@ -2,6 +2,7 @@ package io.github.polysmee.room.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,20 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import io.github.polysmee.Messages.Message;
 import io.github.polysmee.R;
 
 /**
@@ -24,6 +39,9 @@ import io.github.polysmee.R;
  */
 public class roomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
+    DatabaseReference databaseReference;
+    Set<String> messagesDisplayed = new HashSet<String>();
+    Map<String, TextView> map = new HashMap<String, TextView>();
 
     @Nullable
     @Override
@@ -33,6 +51,81 @@ public class roomActivityMessagesFragment extends Fragment {
         send.setOnClickListener(this::sendMessage);
         Button receive = rootView.findViewById(R.id.roomActivityReceiveMessageButton);
         receive.setOnClickListener(this::receiveMessage);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("messages");
+
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                rootView.findViewById(R.id.rommActivityScrollViewLayout);
+                for(DataSnapshot ds: snapshot.getChildren()) {
+                    String key = ds.getKey();
+                    String user = ds.child("sender").getValue(String.class);
+                    String content = ds.child("content").getValue(String.class);
+                    Long time = ds.child("messageTime").getValue(Long.class);
+                    Message message = new Message(user, content, time);//ds.getValue(Message.class);
+
+                    if (!messagesDisplayed.contains(key)) {
+                        //System.out.println(messagesDisplayed);
+                        messagesDisplayed.add(key);
+
+
+                        TextView messageToAddTextView = generateMessageTextView(content, true);
+                        map.put(key, messageToAddTextView);
+
+                        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
+                        messages.addView(messageToAddTextView);
+                        //Blank text view to add a space between messages
+                        messages.addView(new TextView(rootView.getContext()));
+
+                        //Scroll down the view to see the latest messages
+                        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
+                        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
+                    }
+
+                    else if(!map.get(key).getText().toString().equals(content)) {
+                        map.get(key).setText(content);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        /*databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override.
+            ...........00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                for(DataSnapshot ds: snapshot.getChildren()) {
+                    String user = ds.child("sender").getValue(String.class);
+                    String content = ds.child("content").getValue(String.class);
+                    Long time = ds.child("messageTime").getValue(Long.class);
+                    Message message = new Message(user, content, time);//ds.getValue(Message.class);
+
+                    TextView messageToAddTextView = generateMessageTextView(content, true);
+
+                    LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
+                    messages.addView(messageToAddTextView);
+                    //Blank text view to add a space between messages
+                    messages.addView(new TextView(rootView.getContext()));
+
+                    //Scroll down the view to see the latest messages
+                    ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
+                    scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });*/
+
 
         return rootView;
     }
@@ -52,18 +145,20 @@ public class roomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
+        //Message.sendMessage(messageToAdd, "currentRoomId", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        databaseReference.push().setValue(new Message(FirebaseAuth.getInstance().getCurrentUser().getUid(), messageToAdd, System.currentTimeMillis()));
         messageEditText.setText("");
 
         TextView messageToAddTextView = generateMessageTextView(messageToAdd, true);
 
         LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-        messages.addView(messageToAddTextView);
+        //messages.addView(messageToAddTextView);
         //Blank text view to add a space between messages
-        messages.addView(new TextView(rootView.getContext()));
+        //messages.addView(new TextView(rootView.getContext()));
 
         //Scroll down the view to see the latest messages
-        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+        //ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
+        //scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     /**
