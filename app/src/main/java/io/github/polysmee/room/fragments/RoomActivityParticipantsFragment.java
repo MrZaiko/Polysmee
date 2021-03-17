@@ -46,6 +46,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
         return rootView;
     }
 
+    /*
+     * Generate a text view for each participant
+     */
     private void generateParticipantsView() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 

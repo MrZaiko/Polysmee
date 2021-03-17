@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.intent.Intents.intended;
 
 import org.junit.AfterClass;
@@ -27,6 +28,7 @@ import org.junit.runner.RunWith;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
@@ -112,28 +114,17 @@ public class RoomActivityTest {
         }
     }
 
-    /*@Test
-    public void participantsShouldBeCorrectlyDisplayed() {
+    @Test
+    public void participantsAreCorrectlyDisplayed() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
-        String name1 = "Daniel";
-        String name2 = "Jacques";
-        String surname1 = "Dupont";
-        String surname2 = "Petrov";
-        User testUser1 = new TestUser("jhbjk", name1, surname1, null);
-        User testUser2 = new TestUser("jhbjk", name2, surname2, null);
-        Set<User> set = new HashSet<>();
-        set.add(testUser1);
-        set.add(testUser2);
-        TestAppointment expectedAppointment = new TestAppointment(10,4654564,"fdsdfsfs", "kljkjsdhfjklfsd", set);
 
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, expectedAppointment);
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            swipeViewPagerForward(R.id.roomActivityPager);
-            assertContains(name1);
-            assertContains(name2);
-            assertContains(surname1);
-            assertContains(surname2);
+            swipeViewPagerForward();
+            sleep(2, TimeUnit.SECONDS);
+            assertDisplayed(username1);
+            assertDisplayed(username2);
         }
-    }**/
+    }
 }

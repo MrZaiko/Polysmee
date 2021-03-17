@@ -86,7 +86,6 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     private void closeKeyboard() {
-        //Close the keyboard
         try {
             InputMethodManager inputManager = (InputMethodManager)
                     rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
