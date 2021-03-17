@@ -50,8 +50,8 @@ public class RoomActivityInfo extends AppCompatActivity {
         LayoutInflater inflater = getLayoutInflater();
 
         View dialogView = inflater.inflate(R.layout.dialog_room_info_edit, null);
-        EditText editText = (EditText) dialogView.findViewById(R.id.roomInfoDialogEdit);
-
+        EditText editText = dialogView.findViewById(R.id.roomInfoDialogEdit);
+        appointment.getTitleAndThen(editText::setHint);
         builder.setView(dialogView);
 
 
@@ -70,11 +70,12 @@ public class RoomActivityInfo extends AppCompatActivity {
 
     public void editCourse(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Edit title");
+        builder.setTitle("Edit Course");
         LayoutInflater inflater = getLayoutInflater();
 
         View dialogView = inflater.inflate(R.layout.dialog_room_info_edit, null);
-        EditText editText = (EditText) dialogView.findViewById(R.id.roomInfoDialogEdit);
+        EditText editText = dialogView.findViewById(R.id.roomInfoDialogEdit);
+        appointment.getCourseAndThen(editText::setHint);
 
         builder.setView(dialogView);
 
