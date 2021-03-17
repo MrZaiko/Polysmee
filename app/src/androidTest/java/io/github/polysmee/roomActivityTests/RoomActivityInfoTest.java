@@ -31,7 +31,10 @@ import java.util.concurrent.ExecutionException;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogNegativeButton;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -98,7 +101,7 @@ public class RoomActivityInfoTest {
             clickOn(R.id.roomInfoTitleEditButton);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
-            clickOn("OK");
+            clickDialogPositiveButton();
             sleep(2, SECONDS);
             assertDisplayed(newValue);
         }

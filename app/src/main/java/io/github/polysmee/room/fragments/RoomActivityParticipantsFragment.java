@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -50,14 +51,24 @@ public class RoomActivityParticipantsFragment extends Fragment {
             layout.removeAllViewsInLayout();
 
             for (String id : p) {
-               System.out.println(id);
-               User user = new DatabaseUser(id);
-               TextView participant = new TextView(rootView.getContext());
-               user.getNameAndThen(participant::setText);
-               participant.setTextSize(20);
-               participant.setBackgroundColor(Color.GRAY);
-               layout.addView(participant);
-               layout.addView(new TextView(rootView.getContext()));
+                LinearLayout participantLayout = new LinearLayout(rootView.getContext());
+                participantLayout.setOrientation(LinearLayout.HORIZONTAL);
+
+                User user = new DatabaseUser(id);
+                TextView participant = new TextView(rootView.getContext());
+                user.getNameAndThen(participant::setText);
+                participant.setTextSize(20);
+                participant.setBackgroundColor(Color.GRAY);
+
+                Button removeButton = new Button(rootView.getContext());
+                removeButton.setText("Remove "+id);
+                removeButton.setOnClickListener(s -> appointment.removeParticipant(new DatabaseUser(id)));
+
+                participantLayout.addView(participant);
+                participantLayout.addView(removeButton);
+
+                layout.addView(participantLayout);
+                layout.addView(new TextView(rootView.getContext()));
             }
         });
 

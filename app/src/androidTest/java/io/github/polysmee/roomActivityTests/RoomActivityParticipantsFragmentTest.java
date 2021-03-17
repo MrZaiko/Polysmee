@@ -4,11 +4,14 @@ import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.NoMatchingViewException;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
+
+import junit.framework.AssertionFailedError;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -19,12 +22,18 @@ import org.junit.runners.JUnit4;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
@@ -71,6 +80,29 @@ public class RoomActivityParticipantsFragmentTest {
         sleep(3, SECONDS);
         assertDisplayed(username1);
         assertDisplayed(username2);
+    }
+
+    @Test
+    public void removeButtonShouldRemoveTheParticipant() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(2, SECONDS);
+        clickOn("Remove "+id2);
+        sleep(2, SECONDS);
+
+        boolean thrown = false;
+
+        try {
+            onView(withText(username2)).check(matches(isDisplayed()));
+        } catch (NoMatchingViewException e) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
+
+        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+
     }
 
 }
