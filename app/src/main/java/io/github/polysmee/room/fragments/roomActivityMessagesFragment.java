@@ -40,8 +40,7 @@ import io.github.polysmee.R;
 public class roomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
     DatabaseReference databaseReference;
-    Set<String> messagesDisplayed = new HashSet<String>();
-    Map<String, TextView> map = new HashMap<String, TextView>();
+    Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
 
     @Nullable
     @Override
@@ -65,13 +64,11 @@ public class roomActivityMessagesFragment extends Fragment {
                     Long time = ds.child("messageTime").getValue(Long.class);
                     Message message = new Message(user, content, time);//ds.getValue(Message.class);
 
-                    if (!messagesDisplayed.contains(key)) {
+                    if (!messagesDisplayed.containsKey(key)) {
                         //System.out.println(messagesDisplayed);
-                        messagesDisplayed.add(key);
 
-
-                        TextView messageToAddTextView = generateMessageTextView(content, true);
-                        map.put(key, messageToAddTextView);
+                        TextView messageToAddTextView = generateMessageTextView(content, user.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                        messagesDisplayed.put(key, messageToAddTextView);
 
                         LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
                         messages.addView(messageToAddTextView);
@@ -84,8 +81,8 @@ public class roomActivityMessagesFragment extends Fragment {
 
                     }
 
-                    else if(!map.get(key).getText().toString().equals(content)) {
-                        map.get(key).setText(content);
+                    else if(!messagesDisplayed.get(key).getText().toString().equals(content)) {
+                        messagesDisplayed.get(key).setText(content);
                     }
                 }
             }
@@ -96,35 +93,6 @@ public class roomActivityMessagesFragment extends Fragment {
             }
         });
 
-        /*databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override.
-            ...........00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                for(DataSnapshot ds: snapshot.getChildren()) {
-                    String user = ds.child("sender").getValue(String.class);
-                    String content = ds.child("content").getValue(String.class);
-                    Long time = ds.child("messageTime").getValue(Long.class);
-                    Message message = new Message(user, content, time);//ds.getValue(Message.class);
-
-                    TextView messageToAddTextView = generateMessageTextView(content, true);
-
-                    LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-                    messages.addView(messageToAddTextView);
-                    //Blank text view to add a space between messages
-                    messages.addView(new TextView(rootView.getContext()));
-
-                    //Scroll down the view to see the latest messages
-                    ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-                    scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });*/
 
 
         return rootView;
