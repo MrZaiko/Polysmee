@@ -22,7 +22,7 @@ import java.util.Set;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 
-@RunWith(JUnit4.class)
+//@RunWith(JUnit4.class)
 public class roomActivityInfoTest {
     @Test
     public void appointmentShouldBeDisplayed() {

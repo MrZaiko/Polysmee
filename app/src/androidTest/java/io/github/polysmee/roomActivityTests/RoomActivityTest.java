@@ -43,9 +43,9 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static com.schibsted.spain.barista.internal.viewaction.SwipeActions.swipeLeft;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
-    @Rule
+    /*@Rule
     public ActivityScenarioRule<RoomActivity> testRule = new ActivityScenarioRule<>(RoomActivity.class);
 
     @Test
@@ -85,6 +85,6 @@ public class RoomActivityTest {
             intended(hasExtra(RoomActivityInfo.APPOINTMENT_KEY, expectedAppointment));
             Intents.release();
         }
-    }
+    }*/
 
 }
