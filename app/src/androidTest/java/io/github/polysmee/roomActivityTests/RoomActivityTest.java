@@ -87,28 +87,4 @@ public class RoomActivityTest {
         }
     }
 
-    @Test
-    public void participantsShouldBeCorrectlyDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
-        String name1 = "Daniel";
-        String name2 = "Jacques";
-        String surname1 = "Dupont";
-        String surname2 = "Petrov";
-        User testUser1 = new TestUser("jhbjk", name1, surname1, null);
-        User testUser2 = new TestUser("jhbjk", name2, surname2, null);
-        Set<User> set = new HashSet<>();
-        set.add(testUser1);
-        set.add(testUser2);
-        TestAppointment expectedAppointment = new TestAppointment(10,4654564,"fdsdfsfs", "kljkjsdhfjklfsd", set);
-
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, expectedAppointment);
-
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            swipeViewPagerForward(R.id.roomActivityPager);
-            assertContains(name1);
-            assertContains(name2);
-            assertContains(surname1);
-            assertContains(surname2);
-        }
-    }
 }
