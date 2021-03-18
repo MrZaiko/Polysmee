@@ -88,7 +88,8 @@ public class RoomActivityParticipantsFragmentTest {
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
         sleep(2, SECONDS);
-        clickOn("Remove "+id2);
+        clickOn(username2);
+        clickOn("Remove");
         sleep(2, SECONDS);
 
         boolean thrown = false;
@@ -102,7 +103,6 @@ public class RoomActivityParticipantsFragmentTest {
         assertTrue(thrown);
 
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-
     }
 
 }

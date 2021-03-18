@@ -1,5 +1,6 @@
 package io.github.polysmee.room.fragments;
 
+import android.app.AlertDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -51,23 +52,32 @@ public class RoomActivityParticipantsFragment extends Fragment {
             layout.removeAllViewsInLayout();
 
             for (String id : p) {
-                LinearLayout participantLayout = new LinearLayout(rootView.getContext());
-                participantLayout.setOrientation(LinearLayout.HORIZONTAL);
-
                 User user = new DatabaseUser(id);
                 TextView participant = new TextView(rootView.getContext());
                 user.getNameAndThen(participant::setText);
                 participant.setTextSize(20);
                 participant.setBackgroundColor(Color.GRAY);
+                participant.setClickable(true);
+                participant.setOnClickListener(onClick -> {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(rootView.getContext());
+                    builder.setTitle("Edit participant");
+                    LayoutInflater inflater = getLayoutInflater();
 
-                Button removeButton = new Button(rootView.getContext());
-                removeButton.setText("Remove "+id);
-                removeButton.setOnClickListener(s -> appointment.removeParticipant(new DatabaseUser(id)));
+                    View dialogView = inflater.inflate(R.layout.dialog_room_participant_edit, null);
+                    Button removeButton = dialogView.findViewById(R.id.roomActivityParticipantDialogRemoveButton);
 
-                participantLayout.addView(participant);
-                participantLayout.addView(removeButton);
+                    builder.setView(dialogView);
 
-                layout.addView(participantLayout);
+                    AlertDialog dialog = builder.create();
+                    removeButton.setOnClickListener(s -> {
+                        appointment.removeParticipant(user);
+                        dialog.cancel();
+                    });
+
+                    dialog.show();
+                });
+
+                layout.addView(participant);
                 layout.addView(new TextView(rootView.getContext()));
             }
         });
