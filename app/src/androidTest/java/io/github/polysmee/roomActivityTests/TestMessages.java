@@ -127,6 +127,7 @@ public class TestMessages {
         DataSnapshot ds = Tasks.await(ref.child(key).get());
         String user = ds.child("sender").getValue(String.class);
         String text = ds.child("content").getValue(String.class);
+        Thread.sleep(3000);
         Tasks.await(ref.child(key).removeValue());
         assertEquals(userId, user);
         assertEquals(content, text);
