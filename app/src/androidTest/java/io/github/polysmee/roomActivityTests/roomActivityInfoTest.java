@@ -42,6 +42,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(JUnit4.class)
 public class RoomActivityInfoTest {
+
     private static final String username1 = "Mathis L'utilisateur";
     private static final String id2 = "-SFDkjsfdl";
     private static final String username2 = "Sami L'imposteur";

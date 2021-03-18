@@ -38,6 +38,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
 
+
     private static final String username1 = "Mathis L'utilisateur";
     private static final String id2 = "-SFDkjsfdl";
     private static final String username2 = "Sami L'imposteur";
