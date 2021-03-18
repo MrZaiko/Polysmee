@@ -91,13 +91,13 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUserSingleton.getInstance().getNameAndThen(
-                (name) -> {
-                    lock.lock();
-                    gotName.set(name);
-                    bool.set(Boolean.TRUE);
-                    cv.signal();
-                    lock.unlock();
-                }
+                    (name) -> {
+                        lock.lock();
+                        gotName.set(name);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
             );
             while(!bool.get())
                 cv.await();
