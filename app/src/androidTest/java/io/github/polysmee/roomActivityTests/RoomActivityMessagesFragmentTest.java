@@ -1,12 +1,23 @@
 package io.github.polysmee.roomActivityTests;
 
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.core.app.ApplicationProvider;
 
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.concurrent.ExecutionException;
+
 import io.github.polysmee.R;
+import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -22,6 +33,24 @@ import static com.schibsted.spain.barista.internal.viewaction.SleepViewAction.sl
 
 @RunWith(JUnit4.class)
 public class RoomActivityMessagesFragmentTest {
+
+    private static final String username1 = "Mathis L'utilisateur";
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        FirebaseApp.clearInstancesForTest();
+        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+    }
+
+    @AfterClass
+    public static void delete() throws ExecutionException, InterruptedException {
+        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+    }
+
     @Test
     public void sendButtonShouldClearMessageText() {
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class);
@@ -39,6 +68,7 @@ public class RoomActivityMessagesFragmentTest {
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
+        sleep(2000);
         assertDisplayed(message);
     }
 
@@ -60,6 +90,7 @@ public class RoomActivityMessagesFragmentTest {
         assertDisplayed(R.id.roomActivityMessageText, message);
         onView(withId(R.id.roomActivityReceiveMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
+        sleep(2000);
         assertContains(message);
     }
 }
