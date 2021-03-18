@@ -1,5 +1,7 @@
 package io.github.polysmee.Messages;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseReference;
 
 import java.io.Serializable;
@@ -20,11 +22,8 @@ public class Message  {
      * @param messageTime
      * Creates a new Message with given time, senderId and content
      */
-    public Message(String sender, String content, long messageTime) {
+    public Message(@NonNull String sender, @NonNull String content, long messageTime) {
 
-        if(sender == null || content == null) {
-            throw new IllegalArgumentException("null argument");
-        }
 
         this.sender = sender;
         this.content = content;
@@ -37,10 +36,7 @@ public class Message  {
      * @param newContent
      * Replaces the content of the message by the one given as argument
      */
-    public void editContent(String newContent) {
-        if(newContent == null) {
-            throw new IllegalArgumentException("null argument");
-        }
+    public void editContent(@NonNull String newContent) {
 
         this.content = newContent;
     }
@@ -78,7 +74,8 @@ public class Message  {
      *
      * Adds a new message to the database at the path given as reference, with sender and content given as argument and current time as message time
      */
-    public static String sendMessage(String content, DatabaseReference ref, String userId) {
+    public static String sendMessage(@NonNull String content, @NonNull DatabaseReference ref, @NonNull String userId) {
+
        String key = ref.push().getKey();
        ref.child(key).setValue(new Message(userId, content, System.currentTimeMillis()));
        return key;
