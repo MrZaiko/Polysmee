@@ -36,8 +36,8 @@ import io.github.polysmee.R;
  */
 public class RoomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
-    DatabaseReference databaseReference;
-    Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
+    private DatabaseReference databaseReference;
+    private Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
 
     @Nullable
     @Override
