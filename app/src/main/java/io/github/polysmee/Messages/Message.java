@@ -46,6 +46,7 @@ public class Message  {
      * @return the uid of the sender
      */
     public String getSender() {
+        assert(sender != null);
         return sender;
     }
 
@@ -54,6 +55,7 @@ public class Message  {
      * @return the content of the message
      */
     public String getContent() {
+        assert(content != null);
         return content;
     }
 
