@@ -23,6 +23,7 @@
 
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
+
         <activity android:name=".login.LoginCheckActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

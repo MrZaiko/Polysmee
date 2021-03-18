@@ -9,8 +9,9 @@
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/roomActivityTabs"
-        android:layout_width="411dp"
-        android:layout_height="54dp"
+        android:layout_width="419dp"
+        android:layout_height="57dp"
+        app:layout_constraintBottom_toTopOf="@+id/roomActivityPager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">

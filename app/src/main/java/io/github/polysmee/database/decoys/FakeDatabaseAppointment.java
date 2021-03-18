@@ -3,6 +3,9 @@ package io.github.polysmee.database.decoys;
 import androidx.annotation.Nullable;
 
 import java.util.HashSet;
+
+import java.util.Objects;
+
 import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.LongValueListener;
@@ -72,8 +75,11 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void getParticipantsIdAndThen(StringSetValueListener s) {
-        Set<String> ids = new HashSet<>();
-        s.onDone(ids);
+
+        Set<String> hashed = new HashSet<>();
+        hashed.add(appointmentInfo.owner.getId());
+        s.onDone(hashed);
+
     }
 
     @Override
@@ -119,12 +125,15 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public int hashCode() {
-        return super.hashCode();
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FakeDatabaseAppointment that = (FakeDatabaseAppointment) o;
+        return id.equals(that.id);
     }
 
     @Override
-    public boolean equals(@Nullable Object obj) {
-        return super.equals(obj);
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

@@ -12,7 +12,9 @@ public interface LongValueListener extends ValueEventListener {
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
-        onDone((Long) snapshot.getValue());
+        Long value = (Long) snapshot.getValue();
+        if(value != null)
+            onDone(value);
     }
 
     @Override

@@ -80,6 +80,7 @@ public final class DatabaseUser implements User {
         newAppo.put("title", title);
         ref.setValue(newAppo);
         addAppointment(new DatabaseAppointment(ref.getKey()));
+        new DatabaseAppointment(ref.getKey()).addParticipant(new DatabaseUser(self_id));
         return ref.getKey();
     }
 

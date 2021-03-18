@@ -1,4 +1,4 @@
-package io.github.polysmee.login;
+ package io.github.polysmee.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -10,6 +10,8 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Collections;
 import java.util.List;
@@ -77,6 +79,12 @@ public class LoginActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
 
             // Successfully signed in
+            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            db.getReference("users")
+                    .child(MainUserSingleton.getInstance().getId())
+                    .child("name")
+                    .setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+
             startActivity(new Intent(this, MainActivity.class));
             finish();
 
