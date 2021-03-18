@@ -1,6 +1,4 @@
-package io.github.polysmee.login;
-
-import com.google.firebase.auth.FirebaseAuth;
+package io.github.polysmee.database;
 
 import java.util.HashSet;
 import java.util.Objects;

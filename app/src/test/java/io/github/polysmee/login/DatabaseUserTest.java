@@ -4,6 +4,7 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 
 import static org.junit.Assert.*;
