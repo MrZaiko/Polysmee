@@ -42,8 +42,8 @@
         android:id="@+id/calendarActivityDemoButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginBottom="67dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginBottom="55dp"
         android:text="@string/calendarActivityDemoButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
