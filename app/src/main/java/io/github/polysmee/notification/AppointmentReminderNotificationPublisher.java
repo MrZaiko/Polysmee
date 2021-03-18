@@ -14,8 +14,8 @@ import androidx.core.app.NotificationManagerCompat;
 
 import java.util.concurrent.TimeUnit;
 
-import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
+import io.github.polysmee.login.LoginCheckActivity;
 
 
 /**
@@ -58,9 +58,9 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
      */
     @Override
     public void onReceive(Context context, Intent intent) {
-        Intent fullScreenIntent = new Intent(context, MainActivity.class);
+        Intent fullScreenIntent = new Intent(context, LoginCheckActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                fullScreenIntent, 0);
 
         createNotificationChannel(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
@@ -73,7 +73,10 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
-                .setSound(Settings.System.DEFAULT_RINGTONE_URI);
+                .setSound(Settings.System.DEFAULT_RINGTONE_URI)
+                .setContentIntent(fullScreenPendingIntent)
+                .setAutoCancel(true);
+        ;
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
     }
