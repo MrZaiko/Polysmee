@@ -54,7 +54,7 @@ public final class MainUserSingleton implements User {
     private static long getTimeOfReminderNotification(Appointment appointment) {
         assert appointment != null;
         assert mContext != null;
-        long to_return = appointment.getStartTime() - mContext.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms);
+        long to_return = appointment.getStartTime() - TimeUnit.MINUTES.toMillis(mContext.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_min));
         return to_return < appointment.getStartTime() ? to_return : appointment.getStartTime();
     }
 
@@ -158,9 +158,8 @@ public final class MainUserSingleton implements User {
         assert databaseUser != null;
         databaseUser.addAppointment(newAppointment);
         long timeOfNotification = getTimeOfReminderNotification(newAppointment);
-        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(mContext.ALARM_SERVICE);
+        AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
         alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, timeOfNotification, getReminderNotificationPendingIntent(newAppointment));
-
     }
 
 
@@ -179,7 +178,7 @@ public final class MainUserSingleton implements User {
         assert databaseUser != null;
         databaseUser.removeAppointment(appointment);
         if (!existAppointmentWithSameStartTimeId(appointment)) {
-            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(mContext.ALARM_SERVICE);
+            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(getReminderNotificationPendingIntent(appointment));
         }
 
