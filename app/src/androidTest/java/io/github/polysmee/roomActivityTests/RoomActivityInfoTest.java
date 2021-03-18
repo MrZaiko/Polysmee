@@ -2,59 +2,46 @@ package io.github.polysmee.roomActivityTests;
 
 import android.content.Intent;
 
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.intent.Intents;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
-import static androidx.test.espresso.action.ViewActions.click;
-import static androidx.test.espresso.action.ViewActions.swipeLeft;
-import static androidx.test.espresso.intent.Intents.intended;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-
 import io.github.polysmee.R;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.room.RoomActivityInfo;
 
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.isNotChecked;
-import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.core.app.ApplicationProvider;
+
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.FirebaseDatabase;
+
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
-import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogNegativeButton;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
+import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
-import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-//@RunWith(AndroidJUnit4.class)
-public class RoomActivityTest {
-
-
+@RunWith(JUnit4.class)
+public class RoomActivityInfoTest {
     private static final String username1 = "Mathis L'utilisateur";
     private static final String id2 = "-SFDkjsfdl";
     private static final String username2 = "Sami L'imposteur";
@@ -89,45 +76,56 @@ public class RoomActivityTest {
         Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
     }
 
-
     @Test
-    public void titleOfTheActivityShouldBeTheAppointmentTitle() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+    public void appointmentShouldBeDisplayed() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivityInfo.class);
 
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            assertContains(appointmentTitle);
+        intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId);
+
+        try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
+            sleep(2, SECONDS);
+            assertDisplayed(appointmentCourse);
+            assertDisplayed(appointmentTitle);
         }
     }
 
     @Test
-    public void infoItemMenuShouldFireAnIntentWithTheCurrentAppointment() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+    public void editTitleShouldEditDatabaseValue() {
+        String newValue = "Hey hey, I'm a new title";
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivityInfo.class);
 
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+        intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId);
 
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
-            Intents.init();
-            onView(withText("Info")).perform(click());
-            intended(hasExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId));
-            Intents.release();
+        try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
+            sleep(2, SECONDS);
+            clickOn(R.id.roomInfoTitleEditButton);
+            writeTo(R.id.roomInfoDialogEdit, newValue);
+            closeSoftKeyboard();
+            clickDialogPositiveButton();
+            sleep(2, SECONDS);
+            assertDisplayed(newValue);
         }
+
+        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
     }
 
+   @Test
+    public void editCourseShouldEditDatabaseValue() {
+        String newValue = "Ok, ok it's SWENG";
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivityInfo.class);
 
+        intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId);
 
-    @Test
-    public void participantsAreCorrectlyDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
-
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
-
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            swipeViewPagerForward();
-            sleep(2, TimeUnit.SECONDS);
-            assertDisplayed(username1);
-            assertDisplayed(username2);
+        try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
+            sleep(2, SECONDS);
+            clickOn(R.id.roomInfoCourseEditButton);
+            writeTo(R.id.roomInfoDialogEdit, newValue);
+            closeSoftKeyboard();
+            clickOn("OK");
+            sleep(2, SECONDS);
+            assertDisplayed(newValue);
         }
+
+        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
     }
 }

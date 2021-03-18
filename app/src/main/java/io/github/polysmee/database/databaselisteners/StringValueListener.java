@@ -1,4 +1,4 @@
-package io.github.polysmee.database;
+package io.github.polysmee.database.databaselisteners;
 
 import androidx.annotation.NonNull;
 
@@ -12,7 +12,11 @@ public interface StringValueListener extends ValueEventListener {
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
-        onDone((String) snapshot.getValue());
+        String data = (String) snapshot.getValue();
+        if(data != null)
+            onDone(data);
+        else
+            onDone("");
     }
 
     @Override

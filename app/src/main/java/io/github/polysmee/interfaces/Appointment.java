@@ -3,6 +3,10 @@ package io.github.polysmee.interfaces;
 import java.io.Serializable;
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
+
 /**
  * A generic appointment
  */
@@ -13,7 +17,10 @@ public interface Appointment {
      *
      * @return the appointment's start time
      */
+    @Deprecated
     long getStartTime();
+
+    default void getStartTimeAndThen(LongValueListener l) {}
 
     /**
      * Retrieves the appointment's duration in milliseconds to stay consistent with the EPOCH
@@ -21,35 +28,54 @@ public interface Appointment {
      *
      * @return the appointment's duration
      */
+    @Deprecated
     long getDuration();
+
+    default void getDurationAndThen(LongValueListener l) {}
+
+
+    default String getId(){return null;}
 
     /**
      * Retrieves the appointment's course
      *
      * @return the appointment's course
      */
+    @Deprecated
     String getCourse();
+
+    default void getCourseAndThen(StringValueListener s) {}
 
     /**
      * Retrieves the appointment's title
      *
      * @return the appointment's title
      */
+    @Deprecated
     String getTitle();
+
+    default void getTitleAndThen(StringValueListener s) {}
 
     /**
      * Retrieves all users taking part in this appointment
      *
      * @return the appointment's participants in an unmodifiable set
      */
+    @Deprecated
     Set<User> getParticipants();
+
+    default void getParticipantsIdAndThen(StringSetValueListener s) {}
+
 
     /**
      * Retrieves the appointment's owner
      *
      * @return the appointment's owner
      */
+    @Deprecated
     User getOwner();
+
+    default void getOwnerIdAndThen(StringValueListener s) {}
 
     /**
      * Sets the appointment's start time

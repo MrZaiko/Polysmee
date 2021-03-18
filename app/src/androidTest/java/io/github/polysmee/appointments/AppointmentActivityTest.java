@@ -17,6 +17,7 @@ import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.appointments.TestUser;
 import io.github.polysmee.interfaces.Appointment;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -47,8 +48,10 @@ public class AppointmentActivityTest {
         setTimeOnPicker(18, 2);
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointmentCreationbtnCreateAppointment);
 
@@ -76,8 +79,10 @@ public class AppointmentActivityTest {
         setTimeOnPicker(16, 2);
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointmentCreationbtnCreateAppointment);
         assertDisplayed(R.id.appointmentCreationtxtError, AppointmentActivity.ERROR_TXT);
@@ -112,8 +117,10 @@ public class AppointmentActivityTest {
         setTimeOnPicker(18, 2);
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointementCreationBtnReset);
         assertDisplayed(R.id.appointmentCreationTxtStartTime, "Start Time");

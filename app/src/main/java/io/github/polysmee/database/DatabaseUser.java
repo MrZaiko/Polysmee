@@ -1,13 +1,19 @@
 package io.github.polysmee.database;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 
-//todo : implement when database is working
 public final class DatabaseUser implements User {
 
     private final String self_id;
@@ -23,12 +29,12 @@ public final class DatabaseUser implements User {
 
     @Override
     public String getName() {
-        return "";
+        return "YOU USED GETNAME";
     }
 
     @Override
     public String getSurname() {
-        return "";
+        return "YOU USED GETSURNAME";
     }
 
     @Override
@@ -37,13 +43,45 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void addAppointment(Appointment newAppointment) {
-
+    public void addAppointment(Appointment appointment) {
+        FirebaseDatabase.getInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .setValue(true);
     }
 
     @Override
     public void removeAppointment(Appointment appointment) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
+    }
 
+    @Override
+    public void getNameAndThen(StringValueListener valueListener) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getAppointmentsAndThen(StringSetValueListener valueListener) {
+        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
+    }
+
+    @Override
+    public String createNewUserAppointment(long start, long duration, String course, String title) {
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("appointments").push();
+        Map<String, Object> newAppo = new HashMap<>();
+        newAppo.put("owner", self_id);
+        newAppo.put("id", ref.getKey());
+        newAppo.put("members", new HashMap<String, Boolean>().put(self_id, true));
+        newAppo.put("start", start);
+        newAppo.put("duration", duration);
+        newAppo.put("course", course);
+        newAppo.put("title", title);
+        ref.setValue(newAppo);
+        addAppointment(new DatabaseAppointment(ref.getKey()));
+        new DatabaseAppointment(ref.getKey()).addParticipant(new DatabaseUser(self_id));
+        return ref.getKey();
     }
 
     @Override

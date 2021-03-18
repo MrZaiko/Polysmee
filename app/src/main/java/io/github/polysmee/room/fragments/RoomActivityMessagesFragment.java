@@ -34,7 +34,7 @@ import io.github.polysmee.R;
 /**
  * Fragment that handles messaging (Send, receive, display)
  */
-public class roomActivityMessagesFragment extends Fragment {
+public class RoomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
     DatabaseReference databaseReference;
     Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
@@ -104,11 +104,6 @@ public class roomActivityMessagesFragment extends Fragment {
         return rootView;
     }
 
-    @Override
-    public String toString() {
-        return "Messages";
-    }
-
     /**
      * Display the message written in the PlainText RoomActivityMessageTest in the ScrollView
      * RoomActivityMessagesScrollView with a sent_message_background style
@@ -152,7 +147,6 @@ public class roomActivityMessagesFragment extends Fragment {
     }
 
     private void closeKeyboard() {
-        //Close the keyboard
         try {
             InputMethodManager inputManager = (InputMethodManager)
                     rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
