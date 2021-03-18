@@ -2,6 +2,7 @@ package io.github.polysmee.database.decoys;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
@@ -68,8 +69,21 @@ public class FakeDatabaseUser implements User {
     @Override
     public String createNewUserAppointment(long start, long duration, String course, String name) {
         long id = FakeDatabase.idGenerator.incrementAndGet();
-        appointments.add(new FakeDatabaseAppointment("" + id));
+        addAppointment(new FakeDatabaseAppointment("" + id));
         FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
         return "" + id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FakeDatabaseUser that = (FakeDatabaseUser) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

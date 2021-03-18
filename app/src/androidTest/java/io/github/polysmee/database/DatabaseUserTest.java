@@ -72,7 +72,7 @@ public class DatabaseUserTest {
     public void addAppointment() throws ExecutionException, InterruptedException {
         MainUserSingleton.getInstance().addAppointment(new DatabaseAppointment("AZERTY"));
         FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String id = (String) Tasks.await(db.getReference()
+        String id = Tasks.await(db.getReference()
                 .child("users")
                 .child(MainUserSingleton.getInstance().getId())
                 .child("appointments")
@@ -116,7 +116,7 @@ public class DatabaseUserTest {
     }
 
     @Test
-    public void getAppointmentsAndThen() throws InterruptedException {
+    public void getAppointmentsAndThen() throws InterruptedException, ExecutionException {
         ReentrantLock lock = new ReentrantLock();
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
@@ -141,7 +141,7 @@ public class DatabaseUserTest {
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            FirebaseDatabase.getInstance().getReference("appointments").child(apid).setValue(null);
+            Tasks.await(FirebaseDatabase.getInstance().getReference("appointments").child(apid).removeValue());
         }
     }
 
