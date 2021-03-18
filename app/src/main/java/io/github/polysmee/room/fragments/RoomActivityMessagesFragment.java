@@ -17,13 +17,27 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import io.github.polysmee.Messages.Message;
 import io.github.polysmee.R;
 
 /**
  * Fragment that handles messaging (Send, receive, display)
  */
-public class roomActivityMessagesFragment extends Fragment {
+public class RoomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
+    private DatabaseReference databaseReference;
+    private Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
 
     @Nullable
     @Override
@@ -34,12 +48,60 @@ public class roomActivityMessagesFragment extends Fragment {
         Button receive = rootView.findViewById(R.id.roomActivityReceiveMessageButton);
         receive.setOnClickListener(this::receiveMessage);
 
-        return rootView;
-    }
+        //Initialize the database reference to the right path (default path for now)
+        databaseReference = FirebaseDatabase.getInstance().getReference("messages");
 
-    @Override
-    public String toString() {
-        return "Messages";
+        //add a value listener on the value of the database in order to display the messages and update them
+        databaseReference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+
+                //iterate over messages to display them
+                for(DataSnapshot ds: snapshot.getChildren()) {
+
+                    String key = ds.getKey();
+                    String user = ds.child("sender").getValue(String.class);
+                    String content = ds.child("content").getValue(String.class);
+                    Long time = ds.child("messageTime").getValue(Long.class);
+                    Message message = new Message(user, content, time);
+
+                    /**
+                     * Avoid displaying the same message multiple times by storing them in a hashMap
+                     */
+                    if (!messagesDisplayed.containsKey(key)) {
+
+                        //check for each message whether the sender is the current user or not in order to adapt the background of the message (grey or blue) in the room
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        TextView messageToAddTextView = generateMessageTextView(content, user.equals(userId));
+                        messagesDisplayed.put(key, messageToAddTextView);
+
+                        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
+                        messages.addView(messageToAddTextView);
+
+                        //Blank text view to add a space between messages
+                        messages.addView(new TextView(rootView.getContext()));
+
+                        //Scroll down the view to see the latest messages
+                        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
+                        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+
+                    }
+                    //check whether the content of the message was updated
+                    else if(!messagesDisplayed.get(key).getText().toString().equals(content)) {
+                        messagesDisplayed.get(key).setText(content);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+
+
+        return rootView;
     }
 
     /**
@@ -52,18 +114,12 @@ public class roomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //sends the message using the uid of the current user and the text from the EditText of the room
+        Message.sendMessage(messageToAdd, databaseReference, userId);
         messageEditText.setText("");
 
-        TextView messageToAddTextView = generateMessageTextView(messageToAdd, true);
-
-        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-        messages.addView(messageToAddTextView);
-        //Blank text view to add a space between messages
-        messages.addView(new TextView(rootView.getContext()));
-
-        //Scroll down the view to see the latest messages
-        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     /**
@@ -91,7 +147,6 @@ public class roomActivityMessagesFragment extends Fragment {
     }
 
     private void closeKeyboard() {
-        //Close the keyboard
         try {
             InputMethodManager inputManager = (InputMethodManager)
                     rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);

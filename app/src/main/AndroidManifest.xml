@@ -11,8 +11,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee">
+        <activity android:name=".calendar.CalendarEntryDetailsActivity" />
+        <activity android:name=".calendar.CalendarActivity"/>
         <activity android:name=".appointments.AppointmentSettingsActivity" />
-        <activity android:name=".calendar.CalendarActivity" />
+
         <activity android:name=".appointments.AppointmentActivity" />
 
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
@@ -22,6 +24,7 @@
         <activity android:name=".room.RoomActivityInfo" />
 
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
+
 
         <activity android:name=".login.LoginCheckActivity">
             <intent-filter>

@@ -7,8 +7,11 @@
 
     <string name="calendarActivityTodaysDate">Date</string>
     <string name="calendarActivityRefreshButton">Refresh</string>
+    <string name="calendarActivityDemoButton">Demo</string>
     <string name="calendarEntryDescription">Description</string>
     <string name="calendarEntryDetailsButton">Details</string>
+    <string name="calendarEntryDetailActivityModifyButton">Modify</string>
+    <string name="calendarEntryDetailsActivityBanButton">Ban</string>
 
     <string name="title_activity_appointment">AppointmentActivity</string>
     <string name="title_activity_login_check">LoginCheckActivity</string>
@@ -24,6 +27,7 @@
     <string name="appointment_creation_maximum_duration_of_an_appointment_is_4h">Maximum duration of an appointment is 4h</string>
     <string name="appointment_creation_end_time_txt">End Time</string>
     <string name="appointment_creation_start_time_txt">Start Time</string>
+
     <string name="appointment_creation_settings">Settings</string>
     <string name="appointment_settings_invite">Invite people</string>
     <string name="appointment_settings_ban">Ban people</string>

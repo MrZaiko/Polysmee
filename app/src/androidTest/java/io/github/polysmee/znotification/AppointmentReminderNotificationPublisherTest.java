@@ -11,6 +11,8 @@ import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
 
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -28,17 +30,22 @@ public class AppointmentReminderNotificationPublisherTest {
             ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left);
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-    private void clearAllNotifications(UiDevice uiDevice) {
+
+    @Before
+    @After
+    public void resetStateNotification() {
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         uiDevice.openNotification();
         UiObject2 clear_all_notification = uiDevice.findObject(By.desc("Clear all notifications."));
         if (clear_all_notification!=null){
             clear_all_notification.click();
         }
+        Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        ApplicationProvider.getApplicationContext().sendBroadcast(closeIntent);
     }
     @Test
     public void notification_launch_with_good_title_and_text(){
-        /*UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        clearAllNotifications(uiDevice);
+        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         AppointmentReminderNotificationPublisher publisher = new AppointmentReminderNotificationPublisher();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(ApplicationProvider.getApplicationContext(), intent);
@@ -46,6 +53,5 @@ public class AppointmentReminderNotificationPublisherTest {
         uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)),TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(notification_text)));
-        clearAllNotifications(uiDevice);*/
     }
 }

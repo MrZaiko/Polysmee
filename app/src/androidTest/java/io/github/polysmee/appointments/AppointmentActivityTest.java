@@ -21,10 +21,12 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.login.DatabaseUser;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -140,6 +142,11 @@ public class AppointmentActivityTest {
         assertDisplayed(R.id.appointmentCreationTxtEndTime, "End Time");
         assertDisplayed(R.id.appointmentCreationEditTxtAppointmentCourseSet, "");
         assertDisplayed(R.id.appointmentCreationEditTxtAppointmentTitleSet, "");
+    }
+
+    @Test
+    public void trashTest(){
+        assertEquals(1,1);
     }
 
     public static ViewAction typeSearchViewText(final String text){
