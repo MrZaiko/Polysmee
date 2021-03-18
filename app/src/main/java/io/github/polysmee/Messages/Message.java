@@ -1,14 +1,13 @@
 package io.github.polysmee.Messages;
 
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.Serializable;
 
-import io.github.polysmee.login.MainUserSingleton;
-
-public class Message implements Serializable {
+/**
+ *
+ */
+public class Message  {
 
     private final String sender;
     private String content;
@@ -27,8 +26,16 @@ public class Message implements Serializable {
     }
 
 
+    /**
+     *
+     * @param newContent
+     */
     public void editContent(String newContent) {
-        this.content = content;
+        if(newContent == null) {
+            throw new IllegalArgumentException("null argument");
+        }
+
+        this.content = newContent;
     }
 
     public String getSender() {
@@ -43,9 +50,10 @@ public class Message implements Serializable {
         return messageTime;
     }
 
-    public static void sendMessage(String content, String roomId, String userId) {
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        database.getReference("rooms/currentRoomId/messages").push().setValue(new Message(userId, content, System.currentTimeMillis()));
+    public static String sendMessage(String content, DatabaseReference ref, String userId) {
+       String key = ref.push().getKey();
+       ref.child(key).setValue(new Message(userId, content, System.currentTimeMillis()));
+       return key;
     }
 
     @Override
@@ -54,7 +62,7 @@ public class Message implements Serializable {
             return false;
         }
         Message otherMessage = (Message) other;
-        return otherMessage.content.equals(content) && otherMessage.messageTime == messageTime && otherMessage.sender == sender;
+        return otherMessage.content.equals(content) && otherMessage.messageTime == messageTime && otherMessage.sender.equals(sender);
 
     }
 
