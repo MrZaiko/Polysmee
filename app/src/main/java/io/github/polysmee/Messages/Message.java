@@ -5,7 +5,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.io.Serializable;
 
 /**
- *
+ * Class representing the message object
  */
 public class Message  {
 
@@ -13,7 +13,12 @@ public class Message  {
     private String content;
     private final long messageTime;
 
-
+    /**
+     *
+     * @param sender
+     * @param content
+     * @param messageTime
+     */
     public Message(String sender, String content, long messageTime) {
 
         if(sender == null || content == null) {

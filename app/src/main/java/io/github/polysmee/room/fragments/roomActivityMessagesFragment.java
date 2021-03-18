@@ -58,20 +58,22 @@ public class roomActivityMessagesFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 rootView.findViewById(R.id.rommActivityScrollViewLayout);
                 for(DataSnapshot ds: snapshot.getChildren()) {
+
                     String key = ds.getKey();
                     String user = ds.child("sender").getValue(String.class);
                     String content = ds.child("content").getValue(String.class);
                     Long time = ds.child("messageTime").getValue(Long.class);
-                    Message message = new Message(user, content, time);//ds.getValue(Message.class);
+                    Message message = new Message(user, content, time);
 
                     if (!messagesDisplayed.containsKey(key)) {
-                        //System.out.println(messagesDisplayed);
 
-                        TextView messageToAddTextView = generateMessageTextView(content, user.equals(FirebaseAuth.getInstance().getCurrentUser().getUid()));
+                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        TextView messageToAddTextView = generateMessageTextView(content, user.equals(userId));
                         messagesDisplayed.put(key, messageToAddTextView);
 
                         LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
                         messages.addView(messageToAddTextView);
+
                         //Blank text view to add a space between messages
                         messages.addView(new TextView(rootView.getContext()));
 
@@ -113,20 +115,10 @@ public class roomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
-        //Message.sendMessage(messageToAdd, "currentRoomId", FirebaseAuth.getInstance().getCurrentUser().getUid());
-        databaseReference.push().setValue(new Message(FirebaseAuth.getInstance().getCurrentUser().getUid(), messageToAdd, System.currentTimeMillis()));
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        Message.sendMessage(messageToAdd, databaseReference, userId);
         messageEditText.setText("");
 
-        TextView messageToAddTextView = generateMessageTextView(messageToAdd, true);
-
-        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-        //messages.addView(messageToAddTextView);
-        //Blank text view to add a space between messages
-        //messages.addView(new TextView(rootView.getContext()));
-
-        //Scroll down the view to see the latest messages
-        //ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-        //scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     /**
