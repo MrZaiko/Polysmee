@@ -2,7 +2,6 @@ package io.github.polysmee.room.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 import io.github.polysmee.Messages.Message;
 import io.github.polysmee.R;
@@ -51,12 +48,15 @@ public class roomActivityMessagesFragment extends Fragment {
         Button receive = rootView.findViewById(R.id.roomActivityReceiveMessageButton);
         receive.setOnClickListener(this::receiveMessage);
 
+        //Initialize the database reference to the right path (default path for now)
         databaseReference = FirebaseDatabase.getInstance().getReference("messages");
 
+        //add a value listener on the value of the database in order to display the messages and update them
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                rootView.findViewById(R.id.rommActivityScrollViewLayout);
+
+                //iterate over messages to display them
                 for(DataSnapshot ds: snapshot.getChildren()) {
 
                     String key = ds.getKey();
@@ -65,8 +65,12 @@ public class roomActivityMessagesFragment extends Fragment {
                     Long time = ds.child("messageTime").getValue(Long.class);
                     Message message = new Message(user, content, time);
 
+                    /**
+                     * Avoid displaying the same message multiple times by storing them in a hashMap
+                     */
                     if (!messagesDisplayed.containsKey(key)) {
 
+                        //check for each message whether the sender is the current user or not in order to adapt the background of the message (grey or blue) in the room
                         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                         TextView messageToAddTextView = generateMessageTextView(content, user.equals(userId));
                         messagesDisplayed.put(key, messageToAddTextView);
@@ -82,7 +86,7 @@ public class roomActivityMessagesFragment extends Fragment {
                         scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
 
                     }
-
+                    //check whether the content of the message was updated
                     else if(!messagesDisplayed.get(key).getText().toString().equals(content)) {
                         messagesDisplayed.get(key).setText(content);
                     }
@@ -116,6 +120,8 @@ public class roomActivityMessagesFragment extends Fragment {
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+        //sends the message using the uid of the current user and the text from the EditText of the room
         Message.sendMessage(messageToAdd, databaseReference, userId);
         messageEditText.setText("");
 

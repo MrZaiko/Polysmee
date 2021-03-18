@@ -18,6 +18,7 @@ public class Message  {
      * @param sender
      * @param content
      * @param messageTime
+     * Creates a new Message with given time, senderId and content
      */
     public Message(String sender, String content, long messageTime) {
 
@@ -34,6 +35,7 @@ public class Message  {
     /**
      *
      * @param newContent
+     * Replaces the content of the message by the one given as argument
      */
     public void editContent(String newContent) {
         if(newContent == null) {
@@ -43,18 +45,39 @@ public class Message  {
         this.content = newContent;
     }
 
+    /**
+     *
+     * @return the uid of the sender
+     */
     public String getSender() {
         return sender;
     }
 
+    /**
+     *
+     * @return the content of the message
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     *
+     * @return the send time of the message
+     */
     public long getMessageTime() {
         return messageTime;
     }
 
+    /**
+     *
+     * @param content
+     * @param ref
+     * @param userId
+     * @return the key of the message in the database
+     *
+     * Adds a new message to the database at the path given as reference, with sender and content given as argument and current time as message time
+     */
     public static String sendMessage(String content, DatabaseReference ref, String userId) {
        String key = ref.push().getKey();
        ref.child(key).setValue(new Message(userId, content, System.currentTimeMillis()));
