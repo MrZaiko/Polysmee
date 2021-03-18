@@ -25,11 +25,8 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
 
     private String appointmentId;
     private Appointment appointment;
-
-    private User user = FakeDatabaseUser.getInstance();
-    //private User user = MainUserSingleton.getInstance();
-
-    //Only for tests
+    private String userType;
+    //Only for the fake user
     public final static String APPOINTMENT_DETAIL_CALENDAR_MODIFY_TITLE  = "APPOINTMENT_MODIFY_TITLE";
     public final static String APPOINTMENT_DETAIL_CALENDAR_MODIFY_COURSE = "APPOINTMENT_MODIFY_COURSE";
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_TO = "APPOINTMENT_DETAIL_CALENDAR_ID_TO";
@@ -39,13 +36,19 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_calendar_entry_details);
 
         appointmentId = (String)getIntent().getSerializableExtra(CalendarActivity.APPOINTMENT_DETAIL_CALENDAR_ID_FROM);
-        if(user.getClass() == FakeDatabaseUser.class)
-            appointment = new FakeDatabaseAppointment(appointmentId);
-        else
+        userType = getIntent().getStringExtra(CalendarActivity.UserTypeCode);
+        if(userType.equals("Real"))
             appointment = new DatabaseAppointment(appointmentId);
-
+        else
+            appointment = new FakeDatabaseAppointment(appointmentId);
         List<Fragment> list = new ArrayList<>();
-        list.add(new calendarEntryDetailsGeneralFragment(appointmentId));
+
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(CalendarActivity.UserTypeCode,userType);
+        calendarEntryDetailsGeneralFragment detailsGeneralFragment = new calendarEntryDetailsGeneralFragment(appointmentId);
+        detailsGeneralFragment.setArguments(bundle);
+
+        list.add(detailsGeneralFragment);
         //list.add(new calendarEntryDetailsParticipantsFragments(appointmentId));
 
         ViewPager2 pager = findViewById(R.id.calendarEntryDetailActivityPager);
@@ -64,9 +67,8 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
         Intent intent = new Intent();
-        if(user.getClass() == FakeDatabaseUser.class){
+        if(!userType.equals("Real")){
             appointment.getTitleAndThen((title) ->{
                 intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_MODIFY_TITLE, title);
             });

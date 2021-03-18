@@ -1,6 +1,7 @@
 package io.github.polysmee.calendar;
 
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
@@ -41,21 +42,29 @@ import io.github.polysmee.interfaces.User;
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityTest {
 
+    private static final Intent intent;
+    static {
+        intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(CalendarActivity.UserTypeCode, "Fake");
+        intent.putExtras(bundle);
+    }
     @Rule
-    public ActivityScenarioRule<CalendarActivity> testRule = new ActivityScenarioRule<>(CalendarActivity.class);
+    public ActivityScenarioRule<CalendarActivity> testRule = new ActivityScenarioRule<>(intent);
     private static final int constraintLayoutIdForTests = 284546;
-    private User user = FakeDatabaseUser.getInstance() ;
 
     @Before
     public void initUser(){
-        user = FakeDatabaseUser.getInstance();
         FakeDatabase.idGenerator = new AtomicLong(0);
     }
 
 
     @Test
     public void writtenDateIsCorrectTest(){
-        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
+
+        //Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
+      //  intent.putExtra(CalendarActivity.UserTypeCode,"Fake");
+
         Date date = new Date(DailyCalendar.todayEpochTimeAtMidnight()*1000);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
@@ -72,9 +81,9 @@ public class CalendarActivityTest {
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.todayEpochTimeAtMidnight() + i*60,50,""+i,user,i);
+                    DailyCalendar.todayEpochTimeAtMidnight() + i*60,50,""+i,null,i);
         }
-        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
+
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
             for(int i = 0; i < number_of_appointments; ++i)

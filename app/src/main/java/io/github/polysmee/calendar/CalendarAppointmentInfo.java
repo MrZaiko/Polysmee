@@ -7,7 +7,7 @@ import io.github.polysmee.interfaces.User;
 
 /**
  * This class serves as a way to keep an appointment's information
- * to display them on the calendar.
+ * to display them on the calendar without having to use callbacks all the time.
  */
 public class CalendarAppointmentInfo {
 
@@ -29,53 +29,84 @@ public class CalendarAppointmentInfo {
     }
 
     /**
-     * Sets the
-     * @param course
+     * Sets the appointment's description's course
+     * @param course the course we chose to set
      */
     public void setCourse(String course) {
         this.course = course;
     }
 
+    /**
+     * Sets the appointment's description's duration
+     * @param duration the duration we chose to set
+     */
     public void setDuration(long duration) {
         this.duration = duration;
     }
 
+    /**
+     * Sets the appointment's description start time
+     * @param startTime the startime we chose to set
+     */
     public void setStartTime(long startTime) {
         this.startTime = startTime;
     }
 
+    /**
+     * Sets the appointment's description title
+     * @param title the title we chose to set
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Gets the appointment's stored duration
+     * @return the appointment's duration
+     */
     public long getDuration() {
         return duration;
     }
-
+    /**
+     * Gets the appointment's stored start time
+     * @return the appointment's start time
+     */
     public long getStartTime() {
         return startTime;
     }
-
+    /**
+     * Gets the appointment's stored course
+     * @return the appointment's course
+     */
     public String getCourse() {
         return course;
     }
-
+    /**
+     * Gets the appointment's stored id
+     * @return the appointment's id
+     */
     public String getId() {
         return id;
     }
-
+    /**
+     * Gets the appointment's stored title
+     * @return the appointment's title
+     */
     public String getTitle() {
         return title;
     }
-
+    /**
+     * Gets the appointment's stored index in the list of all descriptions added
+     * @return the appointment's index
+     */
     public int getIndex() {
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
+    /**
+     * Gets the appointment's stored owner
+     * @return the appointment's owner
+     */
     public User getOwner() {
         return owner;
     }

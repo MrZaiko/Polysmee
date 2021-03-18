@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
@@ -28,9 +29,6 @@ public class calendarEntryDetailsGeneralFragment extends Fragment {
     private ViewGroup rootView;
     private final String appointmentId;
 
-    private User user = FakeDatabaseUser.getInstance();
-    //private User user = MainUserSingleton.getInstance();
-
     private Appointment appointment;
     public calendarEntryDetailsGeneralFragment(String id_appointment){
         this.appointmentId = id_appointment;
@@ -39,7 +37,9 @@ public class calendarEntryDetailsGeneralFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_calendar_entry_detail_general_fragment, container, false);
-        if(user.getClass() == DatabaseUser.class)
+        Bundle bundle = this.getArguments();
+        String userType = (String)bundle.getSerializable(CalendarActivity.UserTypeCode);
+        if(userType.equals("Real"))
           appointment = new DatabaseAppointment(appointmentId);
         else
             appointment = new FakeDatabaseAppointment(appointmentId);

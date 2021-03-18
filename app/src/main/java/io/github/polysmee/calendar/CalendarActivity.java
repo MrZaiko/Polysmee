@@ -27,29 +27,35 @@
     import io.github.polysmee.database.decoys.FakeDatabaseUser;
     import io.github.polysmee.interfaces.Appointment;
     import io.github.polysmee.interfaces.User;
+    import io.github.polysmee.login.MainUserSingleton;
 
-public class CalendarActivity extends AppCompatActivity{
+    public class CalendarActivity extends AppCompatActivity{
 
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
 
     private static final int constraintLayoutIdForTests = 284546;
-    //private User user = MainUserSingleton.getInstance();
 
-    private User user = FakeDatabaseUser.getInstance();
-
+    private User user;
+    public final static String UserTypeCode = "TYPE_OF_USER";
+    private String userType ;
     private int demo_indexer = 0;
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
-    private final List<CalendarAppointmentInfo> appointmentInfosToday = new ArrayList<>();
+    private final List<CalendarAppointmentInfo> appointmentInfos = new ArrayList<>();
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
 
     private Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        userType = (String) getIntent().getSerializableExtra(UserTypeCode);
         setContentView(R.layout.activity_calendar2);
-
+        if(userType.equals("Real")){
+            user = MainUserSingleton.getInstance();
+        }
+        else{
+            user = FakeDatabaseUser.getInstance();
+        }
         scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -61,6 +67,9 @@ public class CalendarActivity extends AppCompatActivity{
     }
 
 
+        /**
+         * Function that will be used only in the demos to show how the calendar works.
+         */
     private void demoAddAppointment(){
         user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
         "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
@@ -84,9 +93,16 @@ public class CalendarActivity extends AppCompatActivity{
         }
     }
 
+        /**
+         * Method that will launch the CalendarEntryDetailsActivity for the appointment
+         * with the given id. It will launch when clicking on the "Details" button next
+         * to the corresponding appointment.
+         * @param id the appointment of interest' id
+         */
     protected void goToAppointmentDetails(String id){
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
         intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
+        intent.putExtra(UserTypeCode,userType);
         startActivityForResult(intent,51);
     }
 
@@ -128,10 +144,6 @@ public class CalendarActivity extends AppCompatActivity{
      * @param i integer parameter used to create unique ids (at least in the calendar's current layout) for the calendar entry
      */
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int i){
-        //layout: on one part add description as text, on another button "details" to be able to join
-
-
-        //int i = appointment.getIndex() + constraintLayoutId;
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
         TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
         Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
@@ -166,13 +178,10 @@ public class CalendarActivity extends AppCompatActivity{
     }
 
     /**
-     * Refreshes the calendar's layout and the date on top if the day changes
+     * Adds a listener to the user's appointments so that everytime one is added/removed, the layout
+     * is updated. It also takes care of determining what should happen to the calendar's layout
+     * if an appointment's parameters changes.
      */
-    /*protected void refresh(){
-        scrollLayout.removeAllViewsInLayout();
-        changeCurrentCalendarLayout();
-        setTodayDateText();
-    }*/
 
     protected void addListenerToUserAppointments(){
         user.getAppointmentsAndThen((setOfIds)->{
@@ -197,13 +206,13 @@ public class CalendarActivity extends AppCompatActivity{
                                     if(checkIfAlreadyInList(id)){
                                         scrollLayout.removeAllViewsInLayout();
                                         appointmentSet.remove(getElementInList(id));
-                                        appointmentInfosToday.remove(getElementInList(id));
+                                        appointmentInfos.remove(getElementInList(id));
                                         appointmentSet.add(appointmentInfo);
-                                        appointmentInfosToday.add(appointmentInfo);
+                                        appointmentInfos.add(appointmentInfo);
                                     }
                                     else{
                                         scrollLayout.removeAllViewsInLayout();
-                                        appointmentInfosToday.add(appointmentInfo);
+                                        appointmentInfos.add(appointmentInfo);
                                         appointmentSet.add(appointmentInfo);
                                     }
                                     changeCurrentCalendarLayout(appointmentSet);
@@ -218,8 +227,16 @@ public class CalendarActivity extends AppCompatActivity{
         });
     }
 
+        /**
+         * Function to be used in pair with "getElementInList" method to manage the
+         * calendar appointment infos. This function checks if the appointment description
+         * with the corresponding id was already added to the list of all description.
+         * It is used to update the set of descriptions when needed
+         * @param id the appointment's id whose description we want to check the existence of in the list
+         * @return true if and only if the appointment's description was already added to the list
+         * */
     protected boolean checkIfAlreadyInList(String id){
-        for(CalendarAppointmentInfo infos: appointmentInfosToday){
+        for(CalendarAppointmentInfo infos: appointmentInfos){
             if(infos.getId().equals(id)){
                 return true;
             }
@@ -227,8 +244,15 @@ public class CalendarActivity extends AppCompatActivity{
         return false;
     }
 
+        /**
+         * Function to be used in pair with "checkIfAlreadyInList". This function will return
+         * the appointment's description stored in the list of all descriptions, so we can update
+         * it.
+         * @param id the appointment's id whose description we want to get
+         * @return the appointment's description, or null if it wasn't added
+         */
     protected CalendarAppointmentInfo getElementInList(String id){
-        for(CalendarAppointmentInfo infos: appointmentInfosToday){
+        for(CalendarAppointmentInfo infos: appointmentInfos){
             if(infos.getId().equals(id)){
                 return infos;
             }

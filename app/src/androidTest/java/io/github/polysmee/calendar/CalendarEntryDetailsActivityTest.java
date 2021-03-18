@@ -2,6 +2,7 @@ package io.github.polysmee.calendar;
 
 
 import android.content.Intent;
+import android.os.Bundle;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
@@ -33,19 +34,23 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 public class CalendarEntryDetailsActivityTest {
 
     private static final int constraintLayoutIdForTests = 284546;
-    private User user ;
 
+    private static final Intent intent;
+    static {
+        intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(CalendarActivity.UserTypeCode, "Fake");
+        intent.putExtras(bundle);
+    }
     @Before
     public void initUser(){
-        user = FakeDatabaseUser.getInstance();
         FakeDatabase.idGenerator = new AtomicLong(0);
     }
 
     @Test
     public void appointmentDetailsAreCorrect(){
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
-                DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",user,0);
-        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
+                DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             int j = 0;
 
@@ -63,11 +68,10 @@ public class CalendarEntryDetailsActivityTest {
 
     @Test
     public void appointmentModificationIsSeenOnCalendar(){
-        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
         String newTitle = "NewTitleTest";
         String newCourse = "NewCourseTest";
         CalendarAppointmentInfo info = new CalendarAppointmentInfo(newCourse, newTitle,
-                DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",user,0);
+                DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             int j = 0;
 

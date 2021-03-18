@@ -31,11 +31,6 @@ public class DailyCalendar {
         return calendar.getTimeInMillis()/1000; //get today's time at midnight in seconds epoch
     }
 
-    public static boolean appointmentIsToday(long startTime){
-        long midnightTime = todayEpochTimeAtMidnight();
-        return startTime >= midnightTime && startTime < (midnightTime + 3600*24);
-    }
-
     /**
      * For a given set of user appointments, gets the ones that are programmed to happen
      * on the day the calendar is accessed. The appointments are ordered according
