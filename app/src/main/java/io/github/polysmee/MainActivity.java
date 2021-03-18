@@ -1,22 +1,16 @@
 package io.github.polysmee;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.Serializable;
 
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.appointments.TestUser;
 import io.github.polysmee.calendar.CalendarActivity;
-<<<<<<< HEAD
-=======
-import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.interfaces.Appointment;
->>>>>>> origin/database_retry
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.room.RoomActivity;
 
