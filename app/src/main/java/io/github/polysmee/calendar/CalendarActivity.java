@@ -1,74 +1,92 @@
-package io.github.polysmee.calendar;
+    package io.github.polysmee.calendar;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.TextView;
+    import android.content.Context;
+    import android.content.Intent;
+    import android.os.Bundle;
+    import android.view.LayoutInflater;
+    import android.view.View;
+    import android.widget.Button;
+    import android.widget.LinearLayout;
+    import android.widget.TextView;
 
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+    import androidx.annotation.Nullable;
+    import androidx.appcompat.app.AppCompatActivity;
+    import androidx.constraintlayout.widget.ConstraintLayout;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+    import java.text.SimpleDateFormat;
+    import java.util.ArrayList;
+    import java.util.Date;
+    import java.util.HashSet;
+    import java.util.List;
+    import java.util.Set;
+    import java.util.concurrent.atomic.AtomicInteger;
 
-import io.github.polysmee.R;
-import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.interfaces.User;
-import io.github.polysmee.login.MainUserSingleton;
+    import io.github.polysmee.R;
+    import io.github.polysmee.database.DatabaseAppointment;
+    import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
+    import io.github.polysmee.database.decoys.FakeDatabaseUser;
+    import io.github.polysmee.interfaces.Appointment;
+    import io.github.polysmee.interfaces.User;
 
 public class CalendarActivity extends AppCompatActivity{
 
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
-    private static final int constraintLayoutId = 284546;
-    private User user = MainUserSingleton.getInstance();
+
+    private static final int constraintLayoutIdForTests = 284546;
+    //private User user = MainUserSingleton.getInstance();
+
+    private User user = FakeDatabaseUser.getInstance();
+
     private int demo_indexer = 0;
-    public static final String APPOINTMENT_DETAIL_CALENDAR = "APPOINTMENT_DETAIL_CALENDAR";
+    public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
     private final List<CalendarAppointmentInfo> appointmentInfosToday = new ArrayList<>();
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
+
+    private Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar2);
-        addListenerToUserAppointments();
+
         scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
         setTodayDateText();
 
-
-        /*Button refreshButton = (Button) findViewById(R.id.calendarActivityRefreshButton);
-        refreshButton.setOnClickListener((v) -> {refresh();});*/
-
-       /* Button demoButton    = (Button) findViewById(R.id.calendarActivityDemoButton);
-        demoButton.setOnClickListener((v)->{demoAddAppointment();});*/
+        Button demoButton    = (Button) findViewById(R.id.calendarActivityDemoButton);
+        demoButton.setOnClickListener((v)->{demoAddAppointment();});
+        addListenerToUserAppointments();
     }
 
 
-/*    private void demoAddAppointment(){
-        user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60,50,"bonjaeo","rwougnwf");
+    private void demoAddAppointment(){
+        user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
+        "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
         demo_indexer += 1;
-    }*/
+        if(user.getClass() == FakeDatabaseUser.class)
+            addListenerToUserAppointments();
+    }
 
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        //FOR THE TESTS ONLY
+        if(user.getClass() == FakeDatabaseUser.class){
+            String title = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_TITLE);
+            String course = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_COURSE);
+            String id = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_ID_TO);
+            System.out.println(title); System.out.println(course);
+            CalendarAppointmentInfo info = getElementInList(id);
+            info.setCourse(course); info.setTitle(title); addListenerToUserAppointments();
+        }
     }
 
     protected void goToAppointmentDetails(String id){
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
-        intent.putExtra(APPOINTMENT_DETAIL_CALENDAR,id);
+        intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
         startActivityForResult(intent,51);
     }
 
@@ -77,7 +95,14 @@ public class CalendarActivity extends AppCompatActivity{
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
      */
-
+    protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos){
+        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos);
+        int i = 0;
+        for(CalendarAppointmentInfo appointment : todayAppointments){
+            addAppointmentToCalendarLayout(appointment,i);
+            i+=3;
+        }
+    }
 
     /**
      * Creates an appointment's textual description following a certain format
@@ -100,20 +125,22 @@ public class CalendarActivity extends AppCompatActivity{
     /**
      * Adds an appointment to the calendar layout, as a calendar entry
      * @param appointment the appointment to add
-     * @param j integer parameter used to create unique ids (at least in the calendar's current layout) for the calendar entry
+     * @param i integer parameter used to create unique ids (at least in the calendar's current layout) for the calendar entry
      */
-    protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int j){
+    protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int i){
         //layout: on one part add description as text, on another button "details" to be able to join
 
-        synchronized (scrollLayout){
-        int i = appointment.getIndex() + constraintLayoutId;
+
+        //int i = appointment.getIndex() + constraintLayoutId;
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
         TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
         Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
-       // appointmentLayout.setId(constraintLayoutId + i);
-        //appointmentDescription.setId(constraintLayoutId + i + 1);
-        //detailsButton.setId(constraintLayoutId + i + 2);
+        if(user.getClass()==FakeDatabaseUser.class){
+            appointmentLayout.setId(constraintLayoutIdForTests + i);
+            appointmentDescription.setId(constraintLayoutIdForTests + i + 1);
+            detailsButton.setId(constraintLayoutIdForTests + i + 2);
+        }
         detailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -122,8 +149,8 @@ public class CalendarActivity extends AppCompatActivity{
         });
 
         this.scrollLayout.addView(appointmentLayout);
-        //childrenCounters.addAndGet(3);
-        }
+
+
 
     }
 
@@ -150,42 +177,62 @@ public class CalendarActivity extends AppCompatActivity{
     protected void addListenerToUserAppointments(){
         user.getAppointmentsAndThen((setOfIds)->{
             scrollLayout.removeAllViewsInLayout();
-            Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
             for(String id : setOfIds){
-                DatabaseAppointment appointment = new DatabaseAppointment(id);
+                Appointment appointment;
+                if(user.getClass() == FakeDatabaseUser.class)
+                    appointment = new FakeDatabaseAppointment(id);
+                else
+                    appointment = new DatabaseAppointment(id);
 
                 CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id,user,childrenCounters.getAndIncrement());
 
-                appointment.getDurationAndThen((duration) ->{
-                    appointmentInfo.setDuration(duration);
-                    appointment.getStartTimeAndThen((start) ->{
+                appointment.getStartTimeAndThen((start)->{
                         appointmentInfo.setStartTime(start);
-                        appointment.getTitleAndThen((title) ->{
-                            appointmentInfo.setTitle((title));
-                            appointment.getCourseAndThen((course) ->{
-                                appointmentInfo.setCourse(course);
-                                if(checkIfAlreadyInList(id)){
-                                    scrollLayout.removeViewAt(appointmentInfo.getIndex());
-                                    addAppointmentToCalendarLayout(appointmentInfo,childrenCounters.get());
-                                }
-                                else{
-                                    addAppointmentToCalendarLayout(appointmentInfo,childrenCounters.get());
-                                    appointmentInfosToday.add(appointmentInfo);
-                                }
+                        appointment.getDurationAndThen((duration) -> {
+                            appointmentInfo.setDuration(duration);
+                            appointment.getTitleAndThen((title) ->{
+                                appointmentInfo.setTitle((title));
+                                appointment.getCourseAndThen((course) ->{
+                                    appointmentInfo.setCourse(course);
+                                    if(checkIfAlreadyInList(id)){
+                                        scrollLayout.removeAllViewsInLayout();
+                                        appointmentSet.remove(getElementInList(id));
+                                        appointmentInfosToday.remove(getElementInList(id));
+                                        appointmentSet.add(appointmentInfo);
+                                        appointmentInfosToday.add(appointmentInfo);
+                                    }
+                                    else{
+                                        scrollLayout.removeAllViewsInLayout();
+                                        appointmentInfosToday.add(appointmentInfo);
+                                        appointmentSet.add(appointmentInfo);
+                                    }
+                                    changeCurrentCalendarLayout(appointmentSet);
+
+                                });
                             });
                         });
-                    });
+
                 });
+
             }
         });
     }
 
-    private boolean checkIfAlreadyInList(String id){
+    protected boolean checkIfAlreadyInList(String id){
         for(CalendarAppointmentInfo infos: appointmentInfosToday){
             if(infos.getId().equals(id)){
                 return true;
             }
         }
         return false;
+    }
+
+    protected CalendarAppointmentInfo getElementInList(String id){
+        for(CalendarAppointmentInfo infos: appointmentInfosToday){
+            if(infos.getId().equals(id)){
+                return infos;
+            }
+        }
+        return null;
     }
 }

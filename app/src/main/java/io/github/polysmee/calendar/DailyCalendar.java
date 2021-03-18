@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import io.github.polysmee.interfaces.Appointment;
-
 /**
  * This class will be used to show the user his daily appointments on
  * the base of all his appointments through static methods
@@ -31,6 +29,11 @@ public class DailyCalendar {
         calendar.set(Calendar.SECOND,0);
         calendar.set(Calendar.MILLISECOND,0);
         return calendar.getTimeInMillis()/1000; //get today's time at midnight in seconds epoch
+    }
+
+    public static boolean appointmentIsToday(long startTime){
+        long midnightTime = todayEpochTimeAtMidnight();
+        return startTime >= midnightTime && startTime < (midnightTime + 3600*24);
     }
 
     /**

@@ -1,34 +1,37 @@
 package io.github.polysmee.calendar.detailsFragments;
 
-import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
-
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.CalendarActivity;
-import io.github.polysmee.calendar.CalendarEntryDetailsActivity;
 import io.github.polysmee.database.DatabaseAppointment;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
+import io.github.polysmee.database.decoys.FakeDatabaseUser;
+import io.github.polysmee.interfaces.Appointment;
+import io.github.polysmee.interfaces.User;
 
 
 public class calendarEntryDetailsGeneralFragment extends Fragment {
 
     private ViewGroup rootView;
     private final String appointmentId;
-    private DatabaseAppointment appointment;
+
+    private User user = FakeDatabaseUser.getInstance();
+    //private User user = MainUserSingleton.getInstance();
+
+    private Appointment appointment;
     public calendarEntryDetailsGeneralFragment(String id_appointment){
         this.appointmentId = id_appointment;
     }
@@ -36,7 +39,10 @@ public class calendarEntryDetailsGeneralFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_calendar_entry_detail_general_fragment, container, false);
-        appointment = new DatabaseAppointment(appointmentId);
+        if(user.getClass() == DatabaseUser.class)
+          appointment = new DatabaseAppointment(appointmentId);
+        else
+            appointment = new FakeDatabaseAppointment(appointmentId);
         appointment.getStartTimeAndThen((start)->{
             TextView textView = rootView.findViewById(R.id.calendarEntryDetailActivityStart);
             Date startTime = new Date(start * 1000);
@@ -78,6 +84,10 @@ public class calendarEntryDetailsGeneralFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * Method that will be called when clicking on the "modify" button in the CalendarEntryDetailsActivity;
+     * when called, the corresponding appointment's course and title will be set to the typed values.
+     */
     public void doneModifying(){
         appointment.setCourse(((EditText)rootView.findViewById(R.id.calendarEntryDetailActivityCourseSet)).getText().toString());
         appointment.setTitle(((EditText)rootView.findViewById(R.id.calendarEntryDetailActivityTitleSet)).getText().toString());

@@ -1,7 +1,14 @@
 package io.github.polysmee.calendar;
 
+import androidx.annotation.Nullable;
+
 import io.github.polysmee.interfaces.User;
 
+
+/**
+ * This class serves as a way to keep an appointment's information
+ * to display them on the calendar.
+ */
 public class CalendarAppointmentInfo {
 
     private String course;
@@ -21,6 +28,10 @@ public class CalendarAppointmentInfo {
         this.index = index;
     }
 
+    /**
+     * Sets the
+     * @param course
+     */
     public void setCourse(String course) {
         this.course = course;
     }
@@ -67,5 +78,16 @@ public class CalendarAppointmentInfo {
 
     public User getOwner() {
         return owner;
+    }
+
+    @Override
+    public boolean equals(@Nullable Object obj) {
+        if(this == obj) return true;
+        if(obj == null || obj.getClass() != this.getClass()) return false;
+        CalendarAppointmentInfo objToCompare = (CalendarAppointmentInfo)obj;
+        return objToCompare.owner.getId().equals(this.owner.getId()) && this.course.equals(objToCompare.course)
+                && this.title.equals(objToCompare.title) && this.startTime == objToCompare.startTime
+                && this.duration == objToCompare.duration &&  this.id.equals(objToCompare.id)
+                && this.index == objToCompare.index;
     }
 }

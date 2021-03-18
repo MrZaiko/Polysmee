@@ -20,7 +20,10 @@ import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicLong;
 
 import io.github.polysmee.R;
 
@@ -29,6 +32,9 @@ import static androidx.test.espresso.matcher.ViewMatchers.*;
 import static org.hamcrest.Matchers.*;
 
 
+import io.github.polysmee.database.decoys.FakeDatabase;
+import io.github.polysmee.database.decoys.FakeDatabaseUser;
+import io.github.polysmee.database.decoys.TestAppointmentInfo;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 
@@ -37,13 +43,15 @@ public class CalendarActivityTest {
 
     @Rule
     public ActivityScenarioRule<CalendarActivity> testRule = new ActivityScenarioRule<>(CalendarActivity.class);
-    private static final int constraintLayoutId = 284546;
-    private User user ;
+    private static final int constraintLayoutIdForTests = 284546;
+    private User user = FakeDatabaseUser.getInstance() ;
 
     @Before
     public void initUser(){
-        user = PseudoLoggedUser.getSingletonPseudoUser("idMagique");
+        user = FakeDatabaseUser.getInstance();
+        FakeDatabase.idGenerator = new AtomicLong(0);
     }
+
 
     @Test
     public void writtenDateIsCorrectTest(){
@@ -56,69 +64,34 @@ public class CalendarActivityTest {
         }
     }
 
-
     @Test
-    public void scrollViewContentIsCoherentAtStartup(){
+    public void scrollViewContentIsCoherentAfterAddingAppointments(){
         Random rand = new Random();
-        int size = rand.nextInt(9) + 1;
-        long[] times = new long[size]; // the 5th won't be today
-        Appointment[] appointments = new AppointmentTestClass[size];
+        int number_of_appointments = rand.nextInt(9) + 1;
 
-        for (int i = 0; i<size-1; ++i){
-            times[i] = DailyCalendar.todayEpochTimeAtMidnight() + i * 60;
-        }
-        times[size-1] = times[0] + 3600 *24;
-        for(int i = 0; i < times.length;++i){
-            Appointment a = new AppointmentTestClass(times[i],60,"ML"+i,"Title"+i);
-            user.addAppointment(a);
-            appointments[i] = a;
+        CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
+        for(int i = 0; i<number_of_appointments; ++i){
+            infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
+                    DailyCalendar.todayEpochTimeAtMidnight() + i*60,50,""+i,user,i);
         }
         Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
-
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
+            for(int i = 0; i < number_of_appointments; ++i)
+                demoButton.perform(ViewActions.click()); //add the appointments to layout
             int j = 0;
-            for(int i = 0; i<times.length -1; ++i){
-                ViewInteraction calendarEntryDescription = Espresso.onView(withId(constraintLayoutId + j + 1));
+            for(int i = 0; i<number_of_appointments;++i){
+                ViewInteraction calendarEntryDescription = Espresso.onView(withId(constraintLayoutIdForTests + j + 1));
                 j+=3;
-                calendarEntryDescription.check(ViewAssertions.matches(
-                        withText(formatAppointmentDescription(appointments[i]))));
-            }
-
-        }
-    }
-    @Test
-    public void scrollViewContentAfterRefreshIsCoherentWithUserAdds(){
-        Random rand = new Random();
-        int size = rand.nextInt(9) + 1;
-        long[] times = new long[size]; // the 5th won't be today
-        Appointment[] appointments = new AppointmentTestClass[size];
-
-        for (int i = 0; i<size-1; ++i){
-            times[i] = DailyCalendar.todayEpochTimeAtMidnight() + i * 60;
-        }
-        times[size-1] = times[0] + 3600 *24;
-
-        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            for(int i = 0; i < times.length;++i){
-                Appointment a = new AppointmentTestClass(times[i],60,"ML"+i,"Title"+i);
-                user.addAppointment(a);
-                appointments[i] = a;
-            }
-            ViewInteraction onRefreshButton = Espresso.onView(withId(R.id.calendarActivityRefreshButton));
-            onRefreshButton.perform(ViewActions.click());
-            int j = 0;
-            for(int i = 0; i<times.length -1; ++i){
-                ViewInteraction calendarEntryDescription = Espresso.onView(withId(constraintLayoutId + j + 1));
-                j+=3;
-                calendarEntryDescription.check(ViewAssertions.matches(
-                        withText(formatAppointmentDescription(appointments[i]))));
+                calendarEntryDescription.check(ViewAssertions.matches(withText(formatAppointmentDescription(infos[i]))));
             }
 
         }
     }
 
-    private String formatAppointmentDescription(Appointment appointment){
+
+
+    private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Reunion name : ").append(appointment.getTitle());
         stringBuilder.append("\n");
