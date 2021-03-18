@@ -47,28 +47,18 @@ public class AppointmentTestClass implements Appointment {
     }
 
     @Override
+    public Set<User> getBans() {
+        return null;
+    }
+
+    @Override
     public User getOwner() {
         return null;
     }
 
     @Override
-    public boolean setStartTime(long startTime) {
+    public boolean isPrivate() {
         return false;
-    }
-
-    @Override
-    public boolean setDuration(long duration) {
-        return false;
-    }
-
-    @Override
-    public void setCourse(String course) {
-
-    }
-
-    @Override
-    public void setTitle(String title) {
-
     }
 
     @Override
@@ -80,6 +70,16 @@ public class AppointmentTestClass implements Appointment {
     @Override
     public boolean removeParticipant(User participant) {
         users.add(participant);
+        return false;
+    }
+
+    @Override
+    public boolean addBan(User banned) {
+        return false;
+    }
+
+    @Override
+    public boolean removeBan(User unbanned) {
         return false;
     }
 

@@ -1,7 +1,6 @@
 package io.github.polysmee.login;
 
-import com.google.firebase.auth.FirebaseAuth;
-
+import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -10,7 +9,7 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 
 //todo : implement when database is working
-public final class DatabaseUser implements User {
+public final class DatabaseUser implements User, Serializable {
 
     private final String self_id;
 

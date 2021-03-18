@@ -1,6 +1,6 @@
 package io.github.polysmee.interfaces;
 
-import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -45,6 +45,15 @@ public interface Appointment {
     Set<User> getParticipants();
 
     /**
+     * Retrieves all users banned from this appointment
+     *
+     * @return the appointment's banned users in an unmodifiable set
+     */
+    default Set<User> getBans() {
+        return new HashSet<>();
+    }
+
+    /**
      * Retrieves the appointment's owner
      *
      * @return the appointment's owner
@@ -52,34 +61,13 @@ public interface Appointment {
     User getOwner();
 
     /**
-     * Sets the appointment's start time
+     * Says whether or not this is a private appointment
      *
-     * @param startTime the new start time
-     * @return true if the time was set, false if it had an incorrect value (<0);
+     * @return true if the appointment is private
      */
-    boolean setStartTime(long startTime);
-
-    /**
-     * Sets the appointment's duration, which cannot be longer than 4 hours
-     *
-     * @param duration the new duration
-     * @return true if the time was set, false if it had an incorrect value (<0 or more than 4 hours);
-     */
-    boolean setDuration(long duration);
-
-    /**
-     * Sets the appointment's course
-     *
-     * @param course the new course
-     */
-    void setCourse(String course);
-
-    /**
-     * Sets the appointment's title
-     *
-     * @param title the new title
-     */
-    void setTitle(String title);
+    default boolean isPrivate() {
+        return false;
+    }
 
     /**
      * Adds the given user to the set of participant
@@ -97,4 +85,25 @@ public interface Appointment {
      * @return true if the participant was successfully removed
      */
     boolean removeParticipant(User participant);
+
+    /**
+     * Adds the given user to the set of banned users
+     * Cannot ban the owner
+     *
+     * @param banned the user to be banned
+     * @return true if the user was successfully banned
+     */
+    default boolean addBan(User banned) {
+        return false;
+    }
+
+    /**
+     * Removes the given user from the set of banned users
+     *
+     * @param unbanned the user to be unbanned
+     * @return true if the user was successfully unbanned
+     */
+    default boolean removeBan(User unbanned) {
+        return false;
+    }
 }

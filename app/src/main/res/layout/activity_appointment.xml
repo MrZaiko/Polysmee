@@ -141,4 +141,20 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/appointmentCreationBtnStartTime" />
+
+    <Button
+        android:id="@+id/appointmentCreationBtnSettings"
+        android:layout_width="109dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="233dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/appointment_creation_settings"
+        app:layout_constraintBottom_toTopOf="@+id/appointmentCreationbtnCreateAppointment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toEndOf="@+id/appointementCreationBtnReset"
+        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationEditTxtAppointmentCourseSet"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
