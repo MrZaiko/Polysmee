@@ -3,41 +3,31 @@ package io.github.polysmee.calendar;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.test.core.app.ActivityScenario;
+import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
+import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-
 import org.junit.Before;
-
-import androidx.test.core.app.ActivityScenario;
-import androidx.test.espresso.Espresso;
-import androidx.test.espresso.assertion.ViewAssertions;
-
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.decoys.FakeDatabase;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-import static androidx.test.espresso.matcher.ViewMatchers.*;
-import static org.hamcrest.Matchers.*;
-
-
-import io.github.polysmee.database.decoys.FakeDatabase;
-import io.github.polysmee.database.decoys.FakeDatabaseUser;
-import io.github.polysmee.database.decoys.TestAppointmentInfo;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static org.hamcrest.Matchers.containsString;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityTest {

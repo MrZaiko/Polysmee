@@ -17,11 +17,8 @@ import java.util.Date;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
-import io.github.polysmee.database.decoys.FakeDatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 
 
 public class calendarEntryDetailsGeneralFragment extends Fragment {

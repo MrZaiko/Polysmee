@@ -21,14 +21,12 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.decoys.FakeDatabase;
-import io.github.polysmee.database.decoys.FakeDatabaseUser;
-import io.github.polysmee.interfaces.User;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarEntryDetailsActivityTest {
