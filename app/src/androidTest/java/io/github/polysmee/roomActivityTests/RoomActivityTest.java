@@ -51,8 +51,9 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
+
 
     private static final String username1 = "Mathis L'utilisateur";
     private static final String id2 = "-SFDkjsfdl";
@@ -113,6 +114,8 @@ public class RoomActivityTest {
             Intents.release();
         }
     }
+
+
 
     @Test
     public void participantsAreCorrectlyDisplayed() {
