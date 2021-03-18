@@ -1,5 +1,6 @@
 package io.github.polysmee.interfaces;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -48,7 +49,9 @@ public interface Appointment {
      *
      * @return the appointment's banned users in an unmodifiable set
      */
-    Set<User> getBans();
+    default Set<User> getBans() {
+        return new HashSet<>();
+    }
 
     /**
      * Retrieves the appointment's owner
@@ -62,7 +65,9 @@ public interface Appointment {
      *
      * @return true if the appointment is private
      */
-    boolean isPrivate();
+    default boolean isPrivate() {
+        return false;
+    }
 
     /**
      * Adds the given user to the set of participant
@@ -88,7 +93,9 @@ public interface Appointment {
      * @param banned the user to be banned
      * @return true if the user was successfully banned
      */
-    boolean addBan(User banned);
+    default boolean addBan(User banned) {
+        return false;
+    }
 
     /**
      * Removes the given user from the set of banned users
@@ -96,5 +103,7 @@ public interface Appointment {
      * @param unbanned the user to be unbanned
      * @return true if the user was successfully unbanned
      */
-    boolean removeBan(User unbanned);
+    default boolean removeBan(User unbanned) {
+        return false;
+    }
 }

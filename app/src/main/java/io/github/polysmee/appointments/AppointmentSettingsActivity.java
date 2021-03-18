@@ -37,6 +37,7 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
     }
 
     View.OnClickListener btnInviteListener = v -> {
+        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchInvite.getQuery().toString();
         if(!invites.contains(s)) {
             invites.add(s);
@@ -44,6 +45,7 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
     };
 
     View.OnClickListener btnBanListener = v -> {
+        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchBan.getQuery().toString();
         if(!bans.contains(s)) {
             bans.add(s);
@@ -51,6 +53,7 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
     };
 
     View.OnClickListener btnDoneListener = v -> {
+        //Create the return intent and attach all necessary information to it before finishing
         Intent returnIntent = new Intent();
         returnIntent.putExtra("private", isPrivate);
         returnIntent.putStringArrayListExtra("invites", (ArrayList<String>) invites);

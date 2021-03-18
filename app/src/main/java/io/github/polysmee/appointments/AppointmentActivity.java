@@ -119,6 +119,7 @@ public class AppointmentActivity extends AppCompatActivity {
     };
 
     View.OnClickListener settingsClickListener = v -> {
+        //go to the settings activity
         Intent settingsIntent = new Intent(AppointmentActivity.this, AppointmentSettingsActivity.class);
         startActivityForResult(settingsIntent, SETTINGS_ACTIVITY_CODE);
     };
@@ -157,10 +158,12 @@ public class AppointmentActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //this method is called when the settings activity finishes with a result, so we get this data and store it to later create the appointment
         if (requestCode == SETTINGS_ACTIVITY_CODE) {
             if(resultCode == Activity.RESULT_OK) {
                 if(data != null) {
                     isPrivate = data.getBooleanExtra("private", false);
+                    //it is possible to put an arrayList of strings but not a set in an intent, so we need to create these sets now
                     ArrayList<String> tmpInvites = data.getStringArrayListExtra("invites");
                     for(String s : tmpInvites) {
                         invites.add(new DatabaseUser(s));
