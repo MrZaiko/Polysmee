@@ -28,6 +28,7 @@
     import io.github.polysmee.interfaces.Appointment;
     import io.github.polysmee.interfaces.User;
     import io.github.polysmee.login.MainUserSingleton;
+    import io.github.polysmee.room.RoomActivity;
 
     public class CalendarActivity extends AppCompatActivity{
 
@@ -43,6 +44,7 @@
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
     private final List<CalendarAppointmentInfo> appointmentInfos = new ArrayList<>();
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
+    private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
     private Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
     @Override
@@ -103,7 +105,7 @@
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
         intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
         intent.putExtra(UserTypeCode,userType);
-        startActivityForResult(intent,51);
+        startActivityForResult(intent, CALENDAR_ENTRY_DETAIL_CODE);
     }
 
 
@@ -138,6 +140,18 @@
         return stringBuilder.toString();
     }
 
+
+        /**
+         * Everytime the user clicks on an appointment's description in his daily, the corresponding
+         * room activity is launched.
+         * @param appointmentId the appointment's id which will see its room launched
+         * when clicking on its description.
+         */
+    protected void launchRoomActivityWhenClickingOnDescription(String appointmentId){
+        Intent roomActivityIntent = new Intent(this, RoomActivity.class);
+        roomActivityIntent.putExtra(RoomActivity.APPOINTMENT_KEY,appointmentId);
+        startActivity(roomActivityIntent);
+    }
     /**
      * Adds an appointment to the calendar layout, as a calendar entry
      * @param appointment the appointment to add
@@ -146,6 +160,7 @@
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int i){
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
         TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
+        appointmentDescription.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
         Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
         if(user.getClass()==FakeDatabaseUser.class){
