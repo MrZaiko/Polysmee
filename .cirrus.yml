@@ -22,8 +22,8 @@ check_android_task:
     path: firebase/firebase.json
     variable_name: FIREBASE_CONFIG
   firebase_db_rules_file:
-    path: firebase/firebase.json
-    variable_name: FIREBASE_CONFIG
+    path: firebase/database.rules.json
+    variable_name: FIREBASE_DB_RULES
   setup_firebase_script: |
     cd firebase
     curl -sL https://firebase.tools/bin/linux/latest -o firebase-tools
