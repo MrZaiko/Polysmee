@@ -11,6 +11,7 @@ check_android_task:
     cpu: 8
     memory: 10G
   environment:
+    FIREBASE_PROJECT: ENCRYPTED[bc6620afb409572960c61f926317a3b87fa7d409fff320107e8931264eb228ab8f1f7fe93992a0a1399ff34590c8f182]
     FIREBASE_TOKEN: ENCRYPTED[2ca65f1d768a93e43027b6809f27c9b2a777b229de540efb6409ef9fc26cfc5467126970d23f1f82460b11c29b728e04]
     FIREBASE_CONFIG: ENCRYPTED[a0d16f4fe9b01f4321fff5d923eac48a6a4f5aead5b618175964c65ee9f0e869254a61b0c0675cde35750d37c109df0a]
     FIREBASE_DB_RULES : ENCRYPTED[6e05671a2de103c196cbd4037eb207a75d066d5cd031b4fc01998f348fe4917b31cc983e5efdc61816354917bd243fee]
@@ -24,6 +25,9 @@ check_android_task:
   firebase_db_rules_file:
     path: firebase/database.rules.json
     variable_name: FIREBASE_DB_RULES
+  firebase_project_file:
+    path: firebase/.firebaserc
+    variable_name: FIREBASE_PROJECT
   setup_firebase_script: |
     cd firebase
     curl -sL https://firebase.tools/bin/linux/latest -o firebase-tools
