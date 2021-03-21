@@ -20,32 +20,32 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("start").addValueEventListener(l);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("start").addValueEventListener(l);
     }
 
     @Override
     public void getDurationAndThen(LongValueListener l) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("duration").addValueEventListener(l);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("duration").addValueEventListener(l);
     }
 
     @Override
     public void getCourseAndThen(StringValueListener s) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("course").addValueEventListener(s);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("course").addValueEventListener(s);
     }
 
     @Override
     public void getTitleAndThen(StringValueListener s) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("title").addValueEventListener(s);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("title").addValueEventListener(s);
     }
 
     @Override
     public void getParticipantsIdAndThen(StringSetValueListener s) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("participants").addValueEventListener(s);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("participants").addValueEventListener(s);
     }
 
     @Override
     public void getOwnerIdAndThen(StringValueListener s) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("owner").addValueEventListener(s);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("owner").addValueEventListener(s);
     }
 
     @Override
@@ -88,7 +88,7 @@ public class DatabaseAppointment implements Appointment {
         if(startTime < 0)
             return false;
 
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("start").setValue(startTime);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("start").setValue(startTime);
         return true;
     }
 
@@ -97,29 +97,29 @@ public class DatabaseAppointment implements Appointment {
         if(duration < 0 || duration > 3600*4)
             return false;
 
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("duration").setValue(duration);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("duration").setValue(duration);
         return true;
     }
 
     @Override
     public void setCourse(String course) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("course").setValue(course);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("course").setValue(course);
     }
 
     @Override
     public void setTitle(String title) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("title").setValue(title);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("title").setValue(title);
     }
 
     @Override
     public boolean addParticipant(User newParticipant) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("participants").child(newParticipant.getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("participants").child(newParticipant.getId()).setValue(true);
         return true;
     }
 
     @Override
     public boolean removeParticipant(User participant) {
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).child("participants").child(participant.getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("participants").child(participant.getId()).setValue(null);
         return true;
     }
 }

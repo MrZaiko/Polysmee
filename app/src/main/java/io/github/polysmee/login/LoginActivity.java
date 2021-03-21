@@ -18,6 +18,7 @@ import java.util.List;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseFactory;
 
 //Copyright 2017 github.com/firebase
 
@@ -79,11 +80,11 @@ public class LoginActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
 
             // Successfully signed in
-            FirebaseDatabase db = FirebaseDatabase.getInstance();
+            FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
             db.getReference("users")
                     .child(MainUserSingleton.getInstance().getId())
                     .child("name")
-                    .setValue(FirebaseAuth.getInstance().getCurrentUser().getDisplayName());
+                    .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
 
             startActivity(new Intent(this, MainActivity.class));
             finish();

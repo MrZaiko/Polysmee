@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
 import static org.junit.Assert.*;
@@ -33,17 +34,17 @@ public class DatabaseAppointmentTest {
     public static void setUp() throws Exception {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee14@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee14@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
         apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro");
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee14@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
-        FirebaseDatabase.getInstance().getReference("appointments").child(apid).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee14@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).setValue(null);
     }
 
     @Test

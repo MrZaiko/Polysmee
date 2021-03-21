@@ -30,18 +30,18 @@ public class LoginCheckActivityTest {
     public static void setUp() throws Exception {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Test
     public void firesLoginWhenNotLoggedIn() {
-        FirebaseAuth.getInstance().signOut();
+        AuthenticationFactory.getAdaptedInstance().signOut();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginCheckActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
@@ -52,7 +52,7 @@ public class LoginCheckActivityTest {
 
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
