@@ -28,7 +28,7 @@ check_android_task:
     cd firebase
     curl -sL https://firebase.tools/bin/linux/latest -o firebase-tools
     chmod u+x firebase-tools
-    ./firebase-tools emulators:start --only firestore &
+    ./firebase-tools emulators:start --only auth,database &
   build_script: |
     chmod +x gradlew
     ./gradlew assembleDebugAndroidTest
