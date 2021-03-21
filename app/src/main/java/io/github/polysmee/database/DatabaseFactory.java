@@ -12,7 +12,7 @@ public final class DatabaseFactory {
     public static FirebaseDatabase getAdaptedInstance(){
         if(isTest) {
             FirebaseDatabase fb = FirebaseDatabase.getInstance();
-            fb.useEmulator("localhost", 8080);
+            fb.useEmulator("localhost", 9000);
             return fb;
         } else {
             return FirebaseDatabase.getInstance();
