@@ -12,7 +12,7 @@ public final class AuthenticationFactory {
     public static FirebaseAuth getAdaptedInstance(){
         if(isTest) {
             FirebaseAuth fb = FirebaseAuth.getInstance();
-            fb.useEmulator("localhost", 9099);
+            fb.useEmulator("10.0.2.2", 9099);
             return fb;
         } else {
             return FirebaseAuth.getInstance();

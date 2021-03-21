@@ -3,6 +3,7 @@ package io.github.polysmee.database;
 import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -15,6 +16,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 
 import java.io.Console;
 import java.util.HashSet;
@@ -30,15 +33,13 @@ import io.github.polysmee.login.MainUserSingleton;
 
 import static org.junit.Assert.*;
 
+@RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";
     @BeforeClass
     public static void setUp() throws Exception {
-        FirebaseApp.clearInstancesForTest();
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+
     }
 
     @AfterClass
@@ -50,7 +51,11 @@ public class DatabaseUserTest {
 
 
     @Test
-    public void getId() {
+    public void getId() throws ExecutionException, InterruptedException {
+        FirebaseApp.clearInstancesForTest();
+        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
         assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
     }
 
