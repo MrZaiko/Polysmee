@@ -39,7 +39,10 @@ public class DatabaseUserTest {
     private static final String username = "Mathis L'utilisateur";
     @BeforeClass
     public static void setUp() throws Exception {
-
+        FirebaseApp.clearInstancesForTest();
+        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
     }
 
     @AfterClass
@@ -51,11 +54,7 @@ public class DatabaseUserTest {
 
 
     @Test
-    public void getId() throws ExecutionException, InterruptedException {
-        FirebaseApp.clearInstancesForTest();
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+    public void getId() {
         assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
     }
 
