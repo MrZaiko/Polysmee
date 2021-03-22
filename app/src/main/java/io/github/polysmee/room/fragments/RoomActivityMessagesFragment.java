@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -35,6 +36,8 @@ import io.github.polysmee.R;
  * Fragment that handles messaging (Send, receive, display)
  */
 public class RoomActivityMessagesFragment extends Fragment {
+    public static String MESSAGES_KEY = "io.github.polysme.room.fragments.roomActivityMessagesFragment.MESSAGES_KEY";
+
     private ViewGroup rootView;
     private DatabaseReference databaseReference;
     private Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
@@ -43,70 +46,17 @@ public class RoomActivityMessagesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_room_messages_fragment, container, false);
+
         Button send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
-        Button receive = rootView.findViewById(R.id.roomActivityReceiveMessageButton);
-        receive.setOnClickListener(this::receiveMessage);
 
-        //Initialize the database reference to the right path (default path for now)
-        databaseReference = FirebaseDatabase.getInstance().getReference("messages");
-
-        //add a value listener on the value of the database in order to display the messages and update them
-        databaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                //iterate over messages to display them
-                for(DataSnapshot ds: snapshot.getChildren()) {
-
-                    String key = ds.getKey();
-                    String user = ds.child("sender").getValue(String.class);
-                    String content = ds.child("content").getValue(String.class);
-                    Long time = ds.child("messageTime").getValue(Long.class);
-                    Message message = new Message(user, content, time);
-
-                    /**
-                     * Avoid displaying the same message multiple times by storing them in a hashMap
-                     */
-                    if (!messagesDisplayed.containsKey(key)) {
-
-                        //check for each message whether the sender is the current user or not in order to adapt the background of the message (grey or blue) in the room
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-                        TextView messageToAddTextView = generateMessageTextView(content, user.equals(userId));
-                        messagesDisplayed.put(key, messageToAddTextView);
-
-                        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-                        messages.addView(messageToAddTextView);
-
-                        //Blank text view to add a space between messages
-                        messages.addView(new TextView(rootView.getContext()));
-
-                        //Scroll down the view to see the latest messages
-                        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-                        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
-
-                    }
-                    //check whether the content of the message was updated
-                    else if(!messagesDisplayed.get(key).getText().toString().equals(content)) {
-                        messagesDisplayed.get(key).setText(content);
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-
+        initializeAndDisplayDatabase();
 
         return rootView;
     }
 
     /**
-     * Display the message written in the PlainText RoomActivityMessageTest in the ScrollView
-     * RoomActivityMessagesScrollView with a sent_message_background style
+     *
      * @param view
      */
     public void sendMessage(View view) {
@@ -119,32 +69,30 @@ public class RoomActivityMessagesFragment extends Fragment {
         //sends the message using the uid of the current user and the text from the EditText of the room
         Message.sendMessage(messageToAdd, databaseReference, userId);
         messageEditText.setText("");
-
     }
 
     /**
-     * Display the message written in the PlainText RoomActivityMessageTest in the ScrollView
-     * RoomActivityMessagesScrollView with a received_message_background style
-     * @param view
+     *
+     * @param messageKey
+     * @param newContent
+     *
+     * Edits the content of the message whose key is messageKey to newContent in the database
      */
-    public void receiveMessage(View view) {
-        closeKeyboard();
-
-        EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
-        String messageToAdd = messageEditText.getText().toString();
-        messageEditText.setText("");
-        System.out.println(messageToAdd);
-        TextView messageToAddTextView = generateMessageTextView(messageToAdd, false);
-
-        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-        messages.addView(messageToAddTextView);
-        //Blank text view to add a space between messages
-        messages.addView(new TextView(rootView.getContext()));
-
-        //Scroll down the view to see the latest messages
-        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+    public void editMessage(String messageKey, String newContent) {
+        databaseReference.child(messageKey).child("content").setValue(newContent);
     }
+
+    /**
+     *
+     * @param messageKey
+     *
+     * deletes the message whose key is messageKey from the database
+     */
+    public void deleteMessage(String messageKey) {
+        databaseReference.child(messageKey).removeValue();
+    }
+
+
 
     private void closeKeyboard() {
         try {
@@ -170,5 +118,70 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         return messageView;
     }
+
+    /**
+     * Initializes the path of the database, displays the messages from the database and adds an event listener on the value of the messages
+     * in order to update them in case of changes
+     */
+    private void initializeAndDisplayDatabase() {
+
+        //Initialize the database reference to the right path
+        String appointmentId = requireArguments().getString(MESSAGES_KEY);
+        databaseReference = FirebaseDatabase.getInstance().getReference("appointments/"+appointmentId+"/messages");
+
+
+        databaseReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                Message message = snapshot.getValue(Message.class);
+
+                String key = snapshot.getKey();
+                String currentID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                TextView messageToAddTextView = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()));
+                messagesDisplayed.put(key, messageToAddTextView);
+
+                LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
+                messages.addView(messageToAddTextView);
+
+                //Blank text view to add a space between messages
+                messages.addView(new TextView(rootView.getContext()));
+
+                //Scroll down the view to see the latest messages
+                ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
+                scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                //update the corresponding textView
+                Message message = snapshot.getValue(Message.class);
+                String key = snapshot.getKey();
+                messagesDisplayed.get(key).setText(message.getContent());
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                String key = snapshot.getKey();
+                LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
+                TextView viewToRemove = messagesDisplayed.get(key);
+                int indexOfMessage = messages.indexOfChild(viewToRemove);
+                //remove the white space under the message and the message itself from the LinearLayout
+                messages.removeViewAt(indexOfMessage + 1);
+                messages.removeView(messagesDisplayed.get(key));
+                messagesDisplayed.remove(key);
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
 
 }

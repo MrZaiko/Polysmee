@@ -19,6 +19,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.login.MainUserSingleton;
@@ -37,22 +38,28 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
+    private static String userEmail;
 
     private static final String username1 = "Mathis L'utilisateur";
-    private static final String id2 = "-SFDkjsfdl";
+    private static String id2;
     private static final String username2 = "Sami L'imposteur";
 
     private static final String appointmentTitle = "It's a title";
-    private static final String appointmentId = "-lsdqfkhfdlksjhmf";
+    private static String appointmentId;
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
 
     @BeforeClass
     public static void setUp() throws Exception {
+        Random idGen = new Random();
+        RoomActivityParticipantsFragmentTest.id2 = Long.toString(idGen.nextLong());
+        RoomActivityParticipantsFragmentTest.appointmentId = Long.toString(idGen.nextLong());
+        RoomActivityParticipantsFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
         FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         FirebaseDatabase.getInstance().getReference("users").child(id2).child("name").setValue(username2);
 
@@ -65,7 +72,7 @@ public class RoomActivityParticipantsFragmentTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);

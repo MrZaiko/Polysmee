@@ -54,5 +54,4 @@ public interface User{
     void removeAppointment(Appointment appointment);
 
     default String createNewUserAppointment(long start, long duration, String course, String name){return null;}
-
 }

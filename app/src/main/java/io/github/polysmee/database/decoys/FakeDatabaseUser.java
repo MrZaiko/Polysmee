@@ -15,7 +15,13 @@ public class FakeDatabaseUser implements User {
     public String id;
     public String name;
     public Set<Appointment> appointments;
+    private static User user = null;
 
+    public static User getInstance(){
+
+        user = new FakeDatabaseUser("TestId","TestName");
+        return user;
+    }
 
     public FakeDatabaseUser(String id, String name) {
         this.id = id;
