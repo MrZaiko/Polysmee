@@ -41,6 +41,9 @@ public class DatabaseAppointmentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
+
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
