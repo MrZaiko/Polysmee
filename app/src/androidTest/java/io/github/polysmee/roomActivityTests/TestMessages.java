@@ -118,7 +118,7 @@ public class TestMessages {
 
     /*@Test
     public void sendMessageBehavesProperlyWithValidArgs() throws ExecutionException, InterruptedException {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("messages");
+        DatabaseReference ref = DatabaseFactory.getAdaptedInstance().getReference("messages");
         String content = "content";
         String userId = "testUser";
         String key = Message.sendMessage(content, ref, userId);
