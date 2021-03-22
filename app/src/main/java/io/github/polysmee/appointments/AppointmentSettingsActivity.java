@@ -1,6 +1,7 @@
 package io.github.polysmee.appointments;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,6 +10,7 @@ import android.widget.CompoundButton;
 import android.widget.SearchView;
 import android.widget.Switch;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
@@ -19,7 +21,7 @@ import io.github.polysmee.R;
 public class AppointmentSettingsActivity extends AppCompatActivity {
     private Switch switchPrivate;
     private SearchView searchInvite, searchBan;
-    private Button btnInvite, btnBan, btnDone;
+    private Button btnInvite, btnBan, btnDone, btnCheckInvites, btnCheckBans;
     private List<String> invites;
     private List<String> bans;
     private boolean isPrivate;
@@ -33,6 +35,8 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         btnInvite.setOnClickListener(btnInviteListener);
         btnBan.setOnClickListener(btnBanListener);
         btnDone.setOnClickListener(btnDoneListener);
+        btnCheckInvites.setOnClickListener(btnSeeInvitesListener);
+        btnCheckBans.setOnClickListener(btnSeeBansListener);
         switchPrivate.setOnCheckedChangeListener(switchPrivateListener);
     }
 
@@ -62,6 +66,16 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         finish();
     };
 
+    View.OnClickListener btnSeeInvitesListener = v -> {
+        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
+        showUsersList(invites, "invites");
+    };
+
+    View.OnClickListener btnSeeBansListener = v -> {
+        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
+        showUsersList(bans, "bans");
+    };
+
     CompoundButton.OnCheckedChangeListener switchPrivateListener = (buttonView, isChecked) -> {
         if (isChecked) {
             isPrivate = true;
@@ -78,8 +92,40 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         btnInvite = findViewById(R.id.appointmentSettingsBtnInvite);
         btnBan = findViewById(R.id.appointmentSettingsBtnBan);
         btnDone = findViewById(R.id.appointmentSettingsBtnDone);
+        btnCheckInvites = findViewById(R.id.appointmentSettingsBtnSeeInvites);
+        btnCheckBans = findViewById(R.id.appointmentSettingsBtnSeeBans);
         invites = new ArrayList<>();
         bans = new ArrayList<>();
         isPrivate = false;
+    }
+
+    private void showUsersList(List<String> users, String type) {
+        List<Integer> selectedItems = new ArrayList<>();
+
+        // setup the alert builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select which " + type + " to remove");
+        boolean[] checkedItems = {true, false, false, true, false};
+        builder.setMultiChoiceItems(users.toArray(new CharSequence[0]), null, (dialog, which, isChecked) -> {
+            if (isChecked) {
+                // If the user checked the item, add it to the selected items
+                selectedItems.add(which);
+            } else if (selectedItems.contains(which)) {
+                // Else, if the item is already in the array, remove it
+                selectedItems.remove(Integer.valueOf(which));
+            }
+        });
+
+        // add OK and Cancel buttons
+        builder.setPositiveButton("OK", (dialog, which) -> {
+            for (int i : selectedItems) {
+                users.remove(i);
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+
+        // create and show the alert dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
 }

@@ -13,7 +13,13 @@
         android:theme="@style/Theme.Polysmee">
         <activity android:name=".calendar.CalendarEntryDetailsActivity" />
         <activity android:name=".calendar.CalendarActivity"/>
-        <activity android:name=".appointments.AppointmentSettingsActivity" />
+        <activity android:name=".appointments.AppointmentSettingsActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity android:name=".appointments.AppointmentActivity" />
 
