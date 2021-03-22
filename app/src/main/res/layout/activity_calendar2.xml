@@ -13,10 +13,10 @@
         android:layout_height="376dp"
         android:layout_marginStart="2dp"
         android:layout_marginEnd="2dp"
-        app:layout_constraintBottom_toTopOf="@+id/guideline7"
+        app:layout_constraintBottom_toTopOf="@+id/calendarActivityGuidelineAtTheEnd"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline6">
+        app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAt20pourcent">
 
         <LinearLayout
             android:id="@+id/calendarActivityScrollLayout"
@@ -36,7 +36,7 @@
         android:text="@string/calendarActivityTodaysDate"
         android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline2" />
+        app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAtBeginning" />
 
     <Button
         android:id="@+id/calendarActivityDemoButton"
@@ -47,10 +47,10 @@
         android:text="@string/calendarActivityDemoButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/guideline7" />
+        app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAtTheEnd" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline2"
+        android:id="@+id/calendarActivityGuidelineAtBeginning"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -58,7 +58,7 @@
         app:layout_constraintGuide_percent="0.0" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline6"
+        android:id="@+id/calendarActivityGuidelineAt20pourcent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -66,7 +66,7 @@
         app:layout_constraintGuide_percent="0.20" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guideline7"
+        android:id="@+id/calendarActivityGuidelineAtTheEnd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
