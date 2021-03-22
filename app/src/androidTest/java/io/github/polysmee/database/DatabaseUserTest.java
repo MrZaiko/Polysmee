@@ -3,6 +3,7 @@ package io.github.polysmee.database;
 import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -15,6 +16,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+
 
 import java.io.Console;
 import java.util.HashSet;
@@ -25,10 +28,12 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
 import static org.junit.Assert.*;
 
+@RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";
@@ -36,21 +41,21 @@ public class DatabaseUserTest {
     public static void setUp() throws Exception {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
 
     @Test
     public void getId() {
-        assertEquals(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
+        assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
     }
 
     @Test
@@ -71,7 +76,7 @@ public class DatabaseUserTest {
     @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
         MainUserSingleton.getInstance().addAppointment(new DatabaseAppointment("AZERTY"));
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
         String id = Tasks.await(db.getReference()
                 .child("users")
                 .child(MainUserSingleton.getInstance().getId())
@@ -110,9 +115,9 @@ public class DatabaseUserTest {
     @Test
     public void createNewUserAppointment() {
         String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév");
-        String ac = FirebaseDatabase.getInstance().getReference("appointments").child(id).getKey();
+        String ac = DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
     }
 
     @Test
@@ -141,7 +146,7 @@ public class DatabaseUserTest {
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            Tasks.await(FirebaseDatabase.getInstance().getReference("appointments").child(apid).removeValue());
+            Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
 

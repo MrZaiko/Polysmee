@@ -30,6 +30,8 @@ import java.util.Map;
 
 import io.github.polysmee.Messages.Message;
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.login.AuthenticationFactory;
 
 /**
  * Fragment that handles messaging (Send, receive, display)
@@ -52,7 +54,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         send.setOnClickListener(this::sendMessage);
 
         //Initialize the database reference to the right path (default path for now)
-        databaseReference = FirebaseDatabase.getInstance().getReference("appointments/"+appointmentId+"/messages");
+        databaseReference = DatabaseFactory.getAdaptedInstance().getReference("appointments/"+appointmentId+"/messages");
 
         //add a value listener on the value of the database in order to display the messages and update them
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -71,7 +73,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                     if (!messagesDisplayed.containsKey(key)) {
 
                         //check for each message whether the sender is the current user or not in order to adapt the background of the message (grey or blue) in the room
-                        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                        String userId = AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid();
                         TextView messageToAddTextView = generateMessageTextView(content, user.equals(userId));
                         messagesDisplayed.put(key, messageToAddTextView);
 
@@ -112,7 +114,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid();
 
         //sends the message using the uid of the current user and the text from the EditText of the room
         Message.sendMessage(messageToAdd, databaseReference, userId);
