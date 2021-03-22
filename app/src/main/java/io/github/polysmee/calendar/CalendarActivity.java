@@ -159,7 +159,7 @@
      */
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int i){
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
-        TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
+        Button appointmentDescription = appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
         appointmentDescription.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
         Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
