@@ -3,7 +3,8 @@
     <string name="appointment_reminder_notification_chanel_name">appointment reminder notification</string>
     <string name="appointment_reminder_notification_chanel_description">Notification chanel used to remind the user that he/she has an appointment coming soon</string>
     <string name="appointment_reminder_notification_notification_title">Appointment reminder :)</string>
-    <integer name="appointment_reminder_notification_time_from_appointment_ms">300000</integer>
+    <integer name="appointment_reminder_notification_default_time_from_appointment_min">10</integer>
     <string name="appointment_reminder_notification_notification_text_prepend_time_left">You have a appointment starting in</string>
     <string name="appointment_reminder_notification_notification_text_append_time_left">min</string>
+    <string name="appointment_reminder_notification_time_from_appointment_min_preference_key">appointment_reminder_notification_time_from_appointment_min</string>
 </resources>

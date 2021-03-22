@@ -31,7 +31,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
     @Override
     public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
         // Instantiate the new Fragment
-        final Bundle args = pref.getExtras();
+            final Bundle args = pref.getExtras();
         final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
                 getClassLoader(),
                 pref.getFragment());

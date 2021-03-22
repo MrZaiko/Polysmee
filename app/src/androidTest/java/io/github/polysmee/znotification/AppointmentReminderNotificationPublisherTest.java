@@ -2,6 +2,7 @@ package io.github.polysmee.znotification;
 
 import android.content.Intent;
 
+import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -26,7 +27,9 @@ import static org.junit.Assert.assertNotNull;
 @RunWith(AndroidJUnit4.class)
 public class AppointmentReminderNotificationPublisherTest {
     public final String notification_text = ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left)+" "+
-            TimeUnit.MILLISECONDS.toMinutes(ApplicationProvider.getApplicationContext().getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_ms))+
+            PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()).getInt(
+                    ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_time_from_appointment_min_preference_key)
+                    ,ApplicationProvider.getApplicationContext().getResources().getInteger(R.integer.appointment_reminder_notification_default_time_from_appointment_min))+
             ApplicationProvider.getApplicationContext().getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left);
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
