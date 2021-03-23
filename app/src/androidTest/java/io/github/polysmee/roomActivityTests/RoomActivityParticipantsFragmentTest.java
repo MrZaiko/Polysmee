@@ -88,7 +88,7 @@ public class RoomActivityParticipantsFragmentTest {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-        sleep(3, SECONDS);
+        sleep(1, SECONDS);
         assertDisplayed(username1);
         assertDisplayed(username2);
     }
@@ -98,10 +98,9 @@ public class RoomActivityParticipantsFragmentTest {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-        sleep(2, SECONDS);
+        sleep(1, SECONDS);
         clickOn(username2);
         clickOn("Remove");
-        sleep(2, SECONDS);
 
         boolean thrown = false;
 

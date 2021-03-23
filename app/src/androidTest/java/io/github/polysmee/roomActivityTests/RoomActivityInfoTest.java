@@ -95,7 +95,7 @@ public class RoomActivityInfoTest {
         intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId);
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
-            sleep(2, SECONDS);
+            sleep(1, SECONDS);
             assertDisplayed(appointmentCourse);
             assertDisplayed(appointmentTitle);
         }
@@ -109,12 +109,11 @@ public class RoomActivityInfoTest {
         intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId);
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
-            sleep(2, SECONDS);
+            sleep(1, SECONDS);
             clickOn(R.id.roomInfoTitleEditButton);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickDialogPositiveButton();
-            sleep(2, SECONDS);
             assertDisplayed(newValue);
         }
 
@@ -129,12 +128,11 @@ public class RoomActivityInfoTest {
         intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId);
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
-            sleep(2, SECONDS);
+            sleep(1, SECONDS);
             clickOn(R.id.roomInfoCourseEditButton);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickOn("OK");
-            sleep(2, SECONDS);
             assertDisplayed(newValue);
         }
 

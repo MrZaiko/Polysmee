@@ -7,8 +7,6 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -33,8 +31,8 @@ import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
-import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
-import static com.schibsted.spain.barista.internal.viewaction.SleepViewAction.sleep;
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @RunWith(JUnit4.class)
 public class RoomActivityMessagesFragmentTest {
@@ -87,7 +85,7 @@ public class RoomActivityMessagesFragmentTest {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
-        sleep(2000);
+        sleep(1, SECONDS);
         assertDisplayed(firstMessage);
     }
 
@@ -98,7 +96,6 @@ public class RoomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         String message = "A message";
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
-        sleep(1000);
         assertDisplayed(R.id.roomActivityMessageText, message);
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertContains(R.id.roomActivityMessageText, "");
@@ -113,7 +110,6 @@ public class RoomActivityMessagesFragmentTest {
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
-        sleep(2000);
         assertDisplayed(message);
     }
 }
