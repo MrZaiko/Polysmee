@@ -44,7 +44,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void addAppointment(Appointment appointment) {
-        FirebaseDatabase.getInstance()
+        DatabaseFactory.getAdaptedInstance()
                 .getReference("users")
                 .child(self_id)
                 .child("appointments")
@@ -54,22 +54,22 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeAppointment(Appointment appointment) {
-        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
     }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
-        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
     }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
-        FirebaseDatabase.getInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
     }
 
     @Override
     public String createNewUserAppointment(long start, long duration, String course, String title) {
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("appointments").push();
+        DatabaseReference ref = DatabaseFactory.getAdaptedInstance().getReference("appointments").push();
         Map<String, Object> newAppo = new HashMap<>();
         newAppo.put("owner", self_id);
         newAppo.put("id", ref.getKey());

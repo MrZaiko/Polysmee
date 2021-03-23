@@ -17,6 +17,8 @@ import org.junit.runners.JUnit4;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
@@ -38,17 +40,19 @@ public class RoomActivityMessagesFragmentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Test

@@ -21,6 +21,8 @@ import org.junit.runners.JUnit4;
 
 import java.util.concurrent.ExecutionException;
 
+import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
@@ -50,26 +52,28 @@ public class RoomActivityParticipantsFragmentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).child("name").setValue(username2);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
 
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Test
@@ -102,7 +106,7 @@ public class RoomActivityParticipantsFragmentTest {
 
         assertTrue(thrown);
 
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
 }
