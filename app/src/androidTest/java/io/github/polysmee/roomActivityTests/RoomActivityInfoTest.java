@@ -64,7 +64,6 @@ public class RoomActivityInfoTest {
         RoomActivityInfoTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityInfoTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
-<<<<<<< HEAD
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
@@ -76,7 +75,6 @@ public class RoomActivityInfoTest {
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-=======
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -90,24 +88,20 @@ public class RoomActivityInfoTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
 
->>>>>>> main
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-<<<<<<< HEAD
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);
         Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
-=======
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
         Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
->>>>>>> main
     }
 
     @Test
