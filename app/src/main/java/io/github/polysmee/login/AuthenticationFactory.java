@@ -7,7 +7,7 @@ import static io.github.polysmee.BuildConfig.DEBUG;
 public final class AuthenticationFactory {
     private AuthenticationFactory(){}
 
-    private static final boolean isTest = DEBUG;
+    private static boolean isTest = false;
 
     public static FirebaseAuth getAdaptedInstance(){
         if(isTest) {
@@ -17,5 +17,9 @@ public final class AuthenticationFactory {
         } else {
             return FirebaseAuth.getInstance();
         }
+    }
+
+    public static void setTest() {
+        isTest = true;
     }
 }

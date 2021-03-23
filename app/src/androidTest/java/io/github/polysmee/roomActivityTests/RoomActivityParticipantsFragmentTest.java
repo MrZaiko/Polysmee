@@ -59,6 +59,8 @@ public class RoomActivityParticipantsFragmentTest {
         RoomActivityParticipantsFragmentTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityParticipantsFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));

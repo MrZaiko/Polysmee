@@ -7,7 +7,7 @@ import static io.github.polysmee.BuildConfig.DEBUG;
 public final class DatabaseFactory {
     private DatabaseFactory(){}
 
-    private static final boolean isTest = DEBUG;
+    private static boolean isTest = false;
 
     public static FirebaseDatabase getAdaptedInstance(){
         if(isTest) {
@@ -17,5 +17,9 @@ public final class DatabaseFactory {
         } else {
             return FirebaseDatabase.getInstance();
         }
+    }
+
+    public static void setTest() {
+        isTest = true;
     }
 }
