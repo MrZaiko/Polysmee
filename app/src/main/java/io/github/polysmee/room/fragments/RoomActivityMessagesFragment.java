@@ -18,11 +18,9 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
@@ -46,7 +44,7 @@ public class RoomActivityMessagesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_room_messages_fragment, container, false);
+        this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_messages, container, false);
 
         String appointmentId = requireArguments().getString(MESSAGES_KEY);
 

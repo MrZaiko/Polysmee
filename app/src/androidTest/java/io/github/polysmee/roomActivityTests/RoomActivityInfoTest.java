@@ -110,7 +110,7 @@ public class RoomActivityInfoTest {
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
             sleep(1, SECONDS);
-            clickOn(R.id.roomInfoTitleEditButton);
+            clickOn(appointmentTitle);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickDialogPositiveButton();
@@ -129,7 +129,7 @@ public class RoomActivityInfoTest {
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
             sleep(1, SECONDS);
-            clickOn(R.id.roomInfoCourseEditButton);
+            clickOn(appointmentCourse);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickOn("OK");
