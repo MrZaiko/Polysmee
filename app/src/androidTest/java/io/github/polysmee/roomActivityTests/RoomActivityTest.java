@@ -26,6 +26,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.HashSet;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -53,27 +54,32 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static org.junit.Assert.assertEquals;
 
-//@RunWith(AndroidJUnit4.class)
+@RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
-
+    private static String userEmail;
 
     private static final String username1 = "Mathis L'utilisateur";
-    private static final String id2 = "-SFDkjsfdl";
+    private static String id2;
     private static final String username2 = "Sami L'imposteur";
 
     private static final String appointmentTitle = "It's a title";
-    private static final String appointmentId = "-lsdqfkhfdlksjhmf";
+    private static String appointmentId;
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
 
     @BeforeClass
     public static void setUp() throws Exception {
+        Random idGen = new Random();
+        RoomActivityTest.id2 = Long.toString(idGen.nextLong());
+        RoomActivityTest.appointmentId = Long.toString(idGen.nextLong());
+        RoomActivityTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
 
@@ -86,7 +92,7 @@ public class RoomActivityTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
