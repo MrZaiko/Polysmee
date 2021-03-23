@@ -13,11 +13,8 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
-import java.util.concurrent.TimeUnit;
-
 import io.github.polysmee.R;
 import io.github.polysmee.login.LoginCheckActivity;
-import io.github.polysmee.settings.AppointmentReminderSettingsFragment;
 
 
 /**
@@ -25,7 +22,6 @@ import io.github.polysmee.settings.AppointmentReminderSettingsFragment;
  * It is the broadcast receiver class that will receive broadcasts at certain times (specified in
  * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
- *
  **/
 public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
@@ -70,8 +66,8 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
                 .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
                 .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " "
                         + PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                                context.getResources().getString(R.string.appointment_reminder_notification_time_from_appointment_min_preference_key)
-                                ,context.getResources().getInteger(R.integer.appointment_reminder_notification_default_time_from_appointment_min))
+                        context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes)
+                        , context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))
                         + context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left))
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
