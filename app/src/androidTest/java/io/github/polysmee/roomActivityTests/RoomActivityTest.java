@@ -32,7 +32,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.room.RoomActivityInfo;
@@ -73,6 +75,7 @@ public class RoomActivityTest {
         RoomActivityTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
+<<<<<<< HEAD
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
@@ -84,15 +87,38 @@ public class RoomActivityTest {
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+=======
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
+        FirebaseApp.clearInstancesForTest();
+        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+>>>>>>> main
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
+<<<<<<< HEAD
         Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
         FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);
         Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+=======
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+>>>>>>> main
     }
 
 

@@ -1,6 +1,9 @@
 package io.github.polysmee.database;
 
+import android.util.Log;
+
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -12,7 +15,11 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
+
+import java.security.SecureRandom;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
@@ -20,30 +27,37 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
 import static org.junit.Assert.*;
 
+@RunWith(AndroidJUnit4.class)
 public class DatabaseAppointmentTest {
 
     private static final String username = "Mathis L'utilisateur";
     private static String apid;
+    private static long idadded = 0;
 
     @BeforeClass
     public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
+
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee14@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+
+        idadded = new SecureRandom().nextLong();
+
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee14" + idadded + "@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
         apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro");
     }
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee14@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
-        FirebaseDatabase.getInstance().getReference("appointments").child(apid).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee14" + idadded + "@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Test
@@ -147,31 +161,6 @@ public class DatabaseAppointmentTest {
     }
 
     @Test
-    public void getParticipantsIdAndThen() throws InterruptedException {
-        ReentrantLock lock = new ReentrantLock();
-        Condition cv = lock.newCondition();
-        AtomicBoolean bool = new AtomicBoolean(false);
-        AtomicBoolean onePerson = new AtomicBoolean(false);
-        lock.lock();
-        try {
-            new DatabaseAppointment(apid).getParticipantsIdAndThen(
-                    (name) -> {
-                        lock.lock();
-                        onePerson.set(name.size() == 1);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
-            while(!bool.get())
-                cv.await();
-            assertTrue(onePerson.get());
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    @Test
     public void getOwnerIdAndThen() throws InterruptedException {
         ReentrantLock lock = new ReentrantLock();
         Condition cv = lock.newCondition();
@@ -231,39 +220,5 @@ public class DatabaseAppointmentTest {
         assertNull(new DatabaseAppointment(apid).getOwner());
     }
 
-    @Test
-    public void setStartTime() throws InterruptedException {
-        new DatabaseAppointment(apid).setStartTime(1999);
-        new DatabaseAppointment(apid).setStartTime(0);
-        getStartTimeAndThen();
-    }
-
-    @Test
-    public void setDuration() throws InterruptedException {
-        new DatabaseAppointment(apid).setDuration(3601);
-        new DatabaseAppointment(apid).setDuration(3600);
-        getDurationAndThen();
-    }
-
-    @Test
-    public void setCourse() {
-        new DatabaseAppointment(apid).setCourse("AZUIAH");
-        new DatabaseAppointment(apid).setCourse("AU");
-        getCourse();
-    }
-
-    @Test
-    public void setTitle() {
-        new DatabaseAppointment(apid).setTitle("AZUIAH");
-        new DatabaseAppointment(apid).setTitle("chihiro");
-        getTitle();
-    }
-
-    @Test
-    public void addAndRemoveParticipant() throws InterruptedException {
-        new DatabaseAppointment(apid).addParticipant(new DatabaseUser("3"));
-        new DatabaseAppointment(apid).removeParticipant(new DatabaseUser("3"));
-        getParticipantsIdAndThen();
-    }
 
 }

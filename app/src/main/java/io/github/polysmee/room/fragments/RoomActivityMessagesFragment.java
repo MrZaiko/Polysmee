@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 
 import com.google.firebase.auth.FirebaseAuth;
+
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -31,6 +32,9 @@ import java.util.Map;
 
 import io.github.polysmee.Messages.Message;
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.MainUserSingleton;
 
 /**
  * Fragment that handles messaging (Send, receive, display)
@@ -45,18 +49,20 @@ public class RoomActivityMessagesFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_room_messages_fragment, container, false);
+        this.rootView = (ViewGroup) inflater.inflate(R.layout.activity_room_messages_fragment, container, false);
 
         Button send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
 
         initializeAndDisplayDatabase();
 
+
+
         return rootView;
+
     }
 
     /**
-     *
      * @param view
      */
     public void sendMessage(View view) {
@@ -64,7 +70,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        String userId = MainUserSingleton.getInstance().getId();
 
         //sends the message using the uid of the current user and the text from the EditText of the room
         Message.sendMessage(messageToAdd, databaseReference, userId);
@@ -72,21 +78,15 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     /**
-     *
      * @param messageKey
-     * @param newContent
-     *
-     * Edits the content of the message whose key is messageKey to newContent in the database
+     * @param newContent Edits the content of the message whose key is messageKey to newContent in the database
      */
     public void editMessage(String messageKey, String newContent) {
         databaseReference.child(messageKey).child("content").setValue(newContent);
     }
 
     /**
-     *
-     * @param messageKey
-     *
-     * deletes the message whose key is messageKey from the database
+     * @param messageKey deletes the message whose key is messageKey from the database
      */
     public void deleteMessage(String messageKey) {
         databaseReference.child(messageKey).removeValue();
@@ -127,7 +127,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         //Initialize the database reference to the right path
         String appointmentId = requireArguments().getString(MESSAGES_KEY);
-        databaseReference = FirebaseDatabase.getInstance().getReference("appointments/"+appointmentId+"/messages");
+        databaseReference = DatabaseFactory.getAdaptedInstance().getReference("appointments/" + appointmentId + "/messages");
 
 
         databaseReference.addChildEventListener(new ChildEventListener() {
@@ -136,7 +136,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 Message message = snapshot.getValue(Message.class);
 
                 String key = snapshot.getKey();
-                String currentID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+                String currentID = MainUserSingleton.getInstance().getId();
                 TextView messageToAddTextView = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()));
                 messagesDisplayed.put(key, messageToAddTextView);
 

@@ -1,35 +1,36 @@
-    package io.github.polysmee.calendar;
+package io.github.polysmee.calendar;
 
-    import android.content.Context;
-    import android.content.Intent;
-    import android.os.Bundle;
-    import android.view.LayoutInflater;
-    import android.view.View;
-    import android.widget.Button;
-    import android.widget.LinearLayout;
-    import android.widget.TextView;
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
-    import androidx.annotation.Nullable;
-    import androidx.appcompat.app.AppCompatActivity;
-    import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
-    import java.text.SimpleDateFormat;
-    import java.util.ArrayList;
-    import java.util.Date;
-    import java.util.HashSet;
-    import java.util.List;
-    import java.util.Set;
-    import java.util.concurrent.atomic.AtomicInteger;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
-    import io.github.polysmee.R;
-    import io.github.polysmee.database.DatabaseAppointment;
-    import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
-    import io.github.polysmee.database.decoys.FakeDatabaseUser;
-    import io.github.polysmee.interfaces.Appointment;
-    import io.github.polysmee.interfaces.User;
-    import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseAppointment;
+import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
+import io.github.polysmee.database.decoys.FakeDatabaseUser;
+import io.github.polysmee.interfaces.Appointment;
+import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.room.RoomActivity;
 
-    public class CalendarActivity extends AppCompatActivity{
+public class CalendarActivity extends AppCompatActivity{
 
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
@@ -43,6 +44,7 @@
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
     private final List<CalendarAppointmentInfo> appointmentInfos = new ArrayList<>();
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
+    private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
     private Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
     @Override
@@ -67,12 +69,12 @@
     }
 
 
-        /**
-         * Function that will be used only in the demos to show how the calendar works.
-         */
+    /**
+     * Function that will be used only in the demos to show how the calendar works.
+     */
     private void demoAddAppointment(){
         user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
-        "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
+                "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
         demo_indexer += 1;
         if(user.getClass() == FakeDatabaseUser.class)
             addListenerToUserAppointments();
@@ -93,17 +95,17 @@
         }
     }
 
-        /**
-         * Method that will launch the CalendarEntryDetailsActivity for the appointment
-         * with the given id. It will launch when clicking on the "Details" button next
-         * to the corresponding appointment.
-         * @param id the appointment of interest' id
-         */
+    /**
+     * Method that will launch the CalendarEntryDetailsActivity for the appointment
+     * with the given id. It will launch when clicking on the "Details" button next
+     * to the corresponding appointment.
+     * @param id the appointment of interest' id
+     */
     protected void goToAppointmentDetails(String id){
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
         intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
         intent.putExtra(UserTypeCode,userType);
-        startActivityForResult(intent,51);
+        startActivityForResult(intent, CALENDAR_ENTRY_DETAIL_CODE);
     }
 
 
@@ -138,6 +140,18 @@
         return stringBuilder.toString();
     }
 
+
+    /**
+     * Everytime the user clicks on an appointment's description in his daily, the corresponding
+     * room activity is launched.
+     * @param appointmentId the appointment's id which will see its room launched
+     * when clicking on its description.
+     */
+    protected void launchRoomActivityWhenClickingOnDescription(String appointmentId){
+        Intent roomActivityIntent = new Intent(this, RoomActivity.class);
+        roomActivityIntent.putExtra(RoomActivity.APPOINTMENT_KEY,appointmentId);
+        startActivity(roomActivityIntent);
+    }
     /**
      * Adds an appointment to the calendar layout, as a calendar entry
      * @param appointment the appointment to add
@@ -145,7 +159,8 @@
      */
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int i){
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
-        TextView appointmentDescription = (TextView) appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
+        Button appointmentDescription = appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
+        appointmentDescription.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
         Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
         if(user.getClass()==FakeDatabaseUser.class){
@@ -196,30 +211,30 @@
                 CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id,user,childrenCounters.getAndIncrement());
 
                 appointment.getStartTimeAndThen((start)->{
-                        appointmentInfo.setStartTime(start);
-                        appointment.getDurationAndThen((duration) -> {
-                            appointmentInfo.setDuration(duration);
-                            appointment.getTitleAndThen((title) ->{
-                                appointmentInfo.setTitle((title));
-                                appointment.getCourseAndThen((course) ->{
-                                    appointmentInfo.setCourse(course);
-                                    if(checkIfAlreadyInList(id)){
-                                        scrollLayout.removeAllViewsInLayout();
-                                        appointmentSet.remove(getElementInList(id));
-                                        appointmentInfos.remove(getElementInList(id));
-                                        appointmentSet.add(appointmentInfo);
-                                        appointmentInfos.add(appointmentInfo);
-                                    }
-                                    else{
-                                        scrollLayout.removeAllViewsInLayout();
-                                        appointmentInfos.add(appointmentInfo);
-                                        appointmentSet.add(appointmentInfo);
-                                    }
-                                    changeCurrentCalendarLayout(appointmentSet);
+                    appointmentInfo.setStartTime(start);
+                    appointment.getDurationAndThen((duration) -> {
+                        appointmentInfo.setDuration(duration);
+                        appointment.getTitleAndThen((title) ->{
+                            appointmentInfo.setTitle((title));
+                            appointment.getCourseAndThen((course) ->{
+                                appointmentInfo.setCourse(course);
+                                if(checkIfAlreadyInList(id)){
+                                    scrollLayout.removeAllViewsInLayout();
+                                    appointmentSet.remove(getElementInList(id));
+                                    appointmentInfos.remove(getElementInList(id));
+                                    appointmentSet.add(appointmentInfo);
+                                    appointmentInfos.add(appointmentInfo);
+                                }
+                                else{
+                                    scrollLayout.removeAllViewsInLayout();
+                                    appointmentInfos.add(appointmentInfo);
+                                    appointmentSet.add(appointmentInfo);
+                                }
+                                changeCurrentCalendarLayout(appointmentSet);
 
-                                });
                             });
                         });
+                    });
 
                 });
 
@@ -227,14 +242,14 @@
         });
     }
 
-        /**
-         * Function to be used in pair with "getElementInList" method to manage the
-         * calendar appointment infos. This function checks if the appointment description
-         * with the corresponding id was already added to the list of all description.
-         * It is used to update the set of descriptions when needed
-         * @param id the appointment's id whose description we want to check the existence of in the list
-         * @return true if and only if the appointment's description was already added to the list
-         * */
+    /**
+     * Function to be used in pair with "getElementInList" method to manage the
+     * calendar appointment infos. This function checks if the appointment description
+     * with the corresponding id was already added to the list of all description.
+     * It is used to update the set of descriptions when needed
+     * @param id the appointment's id whose description we want to check the existence of in the list
+     * @return true if and only if the appointment's description was already added to the list
+     * */
     protected boolean checkIfAlreadyInList(String id){
         for(CalendarAppointmentInfo infos: appointmentInfos){
             if(infos.getId().equals(id)){
@@ -244,13 +259,13 @@
         return false;
     }
 
-        /**
-         * Function to be used in pair with "checkIfAlreadyInList". This function will return
-         * the appointment's description stored in the list of all descriptions, so we can update
-         * it.
-         * @param id the appointment's id whose description we want to get
-         * @return the appointment's description, or null if it wasn't added
-         */
+    /**
+     * Function to be used in pair with "checkIfAlreadyInList". This function will return
+     * the appointment's description stored in the list of all descriptions, so we can update
+     * it.
+     * @param id the appointment's id whose description we want to get
+     * @return the appointment's description, or null if it wasn't added
+     */
     protected CalendarAppointmentInfo getElementInList(String id){
         for(CalendarAppointmentInfo infos: appointmentInfos){
             if(infos.getId().equals(id)){

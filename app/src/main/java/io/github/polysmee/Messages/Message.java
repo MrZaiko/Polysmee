@@ -38,6 +38,7 @@ public class Message  {
     }
 
 
+
     /**
      *
      * @param newContent
@@ -87,7 +88,6 @@ public class Message  {
        ref.child(key).setValue(new Message(userId, content, System.currentTimeMillis()));
        return key;
     }
-
 
     @Override
     public boolean equals(Object other) {
