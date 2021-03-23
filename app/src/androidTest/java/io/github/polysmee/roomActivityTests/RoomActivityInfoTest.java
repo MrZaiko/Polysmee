@@ -43,7 +43,7 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(JUnit4.class)
+//@RunWith(JUnit4.class)
 public class RoomActivityInfoTest {
     private static String userEmail;
 

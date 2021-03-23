@@ -33,7 +33,7 @@ import io.github.polysmee.login.MainUserSingleton;
 
 import static org.junit.Assert.*;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";

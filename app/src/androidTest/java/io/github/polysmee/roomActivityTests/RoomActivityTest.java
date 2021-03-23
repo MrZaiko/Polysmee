@@ -54,7 +54,7 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
     private static String userEmail;
 
