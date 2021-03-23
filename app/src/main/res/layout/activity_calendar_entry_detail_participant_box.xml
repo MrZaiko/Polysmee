@@ -27,12 +27,12 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
-        android:id="@+id/calendarEntryDetailActivityBanButton"
+        android:id="@+id/calendarEntryDetailActivityKickButton"
         android:layout_width="105dp"
         android:layout_height="match_parent"
         android:layout_marginTop="1dp"
         android:background="@android:color/black"
-        android:text="@string/calendarEntryDetailsActivityBanButton"
+        android:text="@string/calendarEntryDetailsActivityKickButton"
         app:layout_constraintStart_toEndOf="@+id/calendarEntryDetailActivityUserId"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

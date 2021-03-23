@@ -21,13 +21,13 @@ import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
 import io.github.polysmee.interfaces.Appointment;
 
 
-public class calendarEntryDetailsGeneralFragment extends Fragment {
+public class CalendarEntryDetailsGeneralFragment extends Fragment {
 
     private ViewGroup rootView;
     private final String appointmentId;
 
     private Appointment appointment;
-    public calendarEntryDetailsGeneralFragment(String id_appointment){
+    public CalendarEntryDetailsGeneralFragment(String id_appointment){
         this.appointmentId = id_appointment;
     }
     @Nullable
