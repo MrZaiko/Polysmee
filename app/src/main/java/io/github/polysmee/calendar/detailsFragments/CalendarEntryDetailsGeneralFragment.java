@@ -24,18 +24,18 @@ import io.github.polysmee.interfaces.Appointment;
 public class CalendarEntryDetailsGeneralFragment extends Fragment {
 
     private ViewGroup rootView;
-    private final String appointmentId;
+    private  String appointmentId;
 
     private Appointment appointment;
-    public CalendarEntryDetailsGeneralFragment(String id_appointment){
-        this.appointmentId = id_appointment;
-    }
+    public static String APPOINTMENT_DETAIL_GENERAL_ID = "APPOINTMENT_DETAIL_GENERAL_ID";
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_calendar_entry_detail_general_fragment, container, false);
         Bundle bundle = this.getArguments();
         String userType = (String)bundle.getSerializable(CalendarActivity.UserTypeCode);
+        appointmentId = (String)bundle.getSerializable(APPOINTMENT_DETAIL_GENERAL_ID);
         if(userType.equals("Real"))
           appointment = new DatabaseAppointment(appointmentId);
         else

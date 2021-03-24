@@ -163,11 +163,10 @@
         appointmentDescription.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
         Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
-        if(user.getClass()==FakeDatabaseUser.class){
-            appointmentLayout.setId(constraintLayoutIdForTests + i);
-            appointmentDescription.setId(constraintLayoutIdForTests + i + 1);
-            detailsButton.setId(constraintLayoutIdForTests + i + 2);
-        }
+        appointmentLayout.setId(constraintLayoutIdForTests + i);
+        appointmentDescription.setId(constraintLayoutIdForTests + i + 1);
+        detailsButton.setId(constraintLayoutIdForTests + i + 2);
+
         detailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

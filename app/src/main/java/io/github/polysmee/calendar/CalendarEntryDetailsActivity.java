@@ -45,19 +45,27 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putSerializable(CalendarActivity.UserTypeCode,userType);
-        CalendarEntryDetailsGeneralFragment detailsGeneralFragment = new CalendarEntryDetailsGeneralFragment(appointmentId);
+        bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId);
+        CalendarEntryDetailsGeneralFragment detailsGeneralFragment = new CalendarEntryDetailsGeneralFragment();
 
         Bundle bundle2 = new Bundle();
         bundle2.putSerializable(CalendarActivity.UserTypeCode,userType);
-        CalendarEntryDetailsParticipantsFragments participantsFragments = new CalendarEntryDetailsParticipantsFragments(appointmentId);
+        bundle2.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+        CalendarEntryDetailsParticipantsFragments participantsFragments = new CalendarEntryDetailsParticipantsFragments();
 
+        Bundle bundle3 = new Bundle();
+        bundle3.putSerializable(CalendarActivity.UserTypeCode,userType);
+        bundle3.putSerializable(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID,appointmentId);
         CalendarEntryDetailAddBanParticipantsFragment manageParticipantsFragment = new CalendarEntryDetailAddBanParticipantsFragment();
 
         detailsGeneralFragment.setArguments(bundle);
         participantsFragments.setArguments(bundle2);
+        manageParticipantsFragment.setArguments(bundle3);
+
         list.add(detailsGeneralFragment);
         list.add(participantsFragments);
         list.add(manageParticipantsFragment);
+
         ViewPager2 pager = findViewById(R.id.calendarEntryDetailActivityPager);
         FragmentStateAdapter pagerAdapter = new CalendarDetailPagerAdapter(this, list);
 

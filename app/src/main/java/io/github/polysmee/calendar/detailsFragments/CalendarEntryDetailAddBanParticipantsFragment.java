@@ -21,6 +21,7 @@ public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
 
     private ViewGroup rootView;
     private Appointment appointment = new DatabaseAppointment("temporary");
+    public static String APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID = "APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID";
 
     @Nullable
     @Override

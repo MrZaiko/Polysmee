@@ -26,20 +26,19 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
 
     private String appointmentId;
     private Appointment appointment;
-    private LayoutInflater fragmentInflater;
-    public CalendarEntryDetailsParticipantsFragments(String appointmentId){
-        this.appointmentId = appointmentId;
-    }
+
+    public static String APPOINTMENT_DETAIL_PARTICIPANT_ID = "APPOINTMENT_DETAIL_PARTICIPANT_ID";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_calendar_entry_detail_participants_fragments, container, false);
-        fragmentInflater = inflater;
+
         LinearLayout linearLayout = rootView.findViewById(R.id.calendarEntryDetailActivityParticipantsLayout);
 
         Bundle bundle = this.getArguments();
         String userType = (String)bundle.getSerializable(CalendarActivity.UserTypeCode);
+        appointmentId = (String)bundle.getSerializable(APPOINTMENT_DETAIL_PARTICIPANT_ID);
         if(userType.equals("Real"))
             appointment = new DatabaseAppointment(appointmentId);
         else
@@ -56,10 +55,27 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                     usernameTextView.setTextSize(20);
                 });
                 Button button = layout.findViewById(R.id.calendarEntryDetailActivityKickButton);
+
+                button.setVisibility(View.INVISIBLE);
+                button.setClickable(false);
+
+                appointment.getOwnerIdAndThen((ownerId) ->{
+                    if(ownerId.equals(user.getId())){
+                        if(!id.equals(user.getId())){
+                            button.setVisibility(View.VISIBLE);
+                            button.setClickable(true);
+                            button.setOnClickListener((v) ->{
+                                kickUserButton(id);
+                            });
+                        }
+
+                    }
+                });
+
                 button.setVisibility(View.INVISIBLE);
 
                 appointment.getOwnerIdAndThen((ownerId) ->{
-                    if(ownerId.equals(null)){
+                    if(ownerId.equals(user.getId())){
                         button.setClickable(false);
                     }
                     else{
@@ -69,7 +85,7 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                         });
                     }
                 });
-                //button.setOnClickListener((v) -> banUserButton(id));
+
                 linearLayout.addView(layout);
                 TextView emptySpace = new TextView(rootView.getContext());
                 emptySpace.setText("");
@@ -82,26 +98,6 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
         return rootView;
     }
 
-  /*  private void demoRefreshed(){
-        LinearLayout linearLayout = rootView.findViewById(R.id.calendarEntryDetailActivityParticipantsLayout);
-        linearLayout.removeAllViewsInLayout();
-        for(String id: usersIds){
-            ConstraintLayout layout = (ConstraintLayout) fragmentInflater.inflate(R.layout.activity_calendar_entry_detail_participant_box,null);
-            TextView textView = layout.findViewById(R.id.calendarEntryDetailActivityUserId);
-            usersIds.add(id);
-            textView.setText(id);
-            textView.setTextSize(20);
-            Button button = layout.findViewById(R.id.calendarEntryDetailActivityBanButton);
-            button.setOnClickListener((v) -> banUserButton(id));
-            button.setBackgroundColor(Color.BLACK);
-            linearLayout.addView(layout);
-            TextView emptySpace = new TextView(rootView.getContext());
-            emptySpace.setText("");
-            emptySpace.setWidth(306);
-            emptySpace.setHeight(20);
-            linearLayout.addView(emptySpace);
-        }
-    }*/
     protected void kickUserButton(String id){
         User user = new DatabaseUser(id);
         user.removeAppointment(appointment);
