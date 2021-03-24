@@ -28,6 +28,16 @@ public class Message  {
         this.messageTime = messageTime;
     }
 
+    /**
+     * A default constructor is needed for firebase database
+     */
+    public Message() {
+        this.sender = "";
+        this.content = "";
+        this.messageTime = 0;
+    }
+
+
 
     /**
      *

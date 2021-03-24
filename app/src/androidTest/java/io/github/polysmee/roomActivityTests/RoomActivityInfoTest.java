@@ -120,7 +120,7 @@ public class RoomActivityInfoTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
     }
 
-   @Test
+    @Test
     public void editCourseShouldEditDatabaseValue() {
         String newValue = "Ok, ok it's SWENG";
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivityInfo.class);

@@ -24,7 +24,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class LoginCheckActivityTest {
 
     @BeforeClass
