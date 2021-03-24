@@ -52,7 +52,7 @@ public class FragmentSettingsAppointmentsReminderTest {
     }
 
     @Test
-    public void checkFragmentIsWellDisplayedr(){
+    public void checkFragmentIsWellDisplayed(){
         checkFragmentIsDisplayed();
     }
 
