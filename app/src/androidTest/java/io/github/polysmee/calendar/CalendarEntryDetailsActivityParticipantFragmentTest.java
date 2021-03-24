@@ -34,7 +34,7 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
     private static final String username1 = "Youssef le magnifique";
 
     private static final String id2 = "-SFDkjfddl";
-    private static final String username2 = "Thomas la magouille";
+    private static final String username2 = "Thomas le beau";
 
     private static final String appointmentTitle = "Some titke";
     private static final String appointmentId = "-lsdqfkhfduisjhmf";
