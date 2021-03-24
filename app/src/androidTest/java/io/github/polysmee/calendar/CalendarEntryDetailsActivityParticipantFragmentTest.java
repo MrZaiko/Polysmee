@@ -49,7 +49,7 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee154@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee1541@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
 
@@ -65,11 +65,11 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        //Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee154@gmail.com", "fakePassword"));
-        //DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        //DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
-        //DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
-        //Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+        /*Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1541@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());*/
     }
 
   @Test
@@ -97,6 +97,6 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
       Espresso.onView(withText("Kick")).perform(ViewActions.click());
       sleep(3,SECONDS);
       assertDisplayed(username1);
-      (Espresso.onView(withText(username2)).check(doesNotExist());
+      Espresso.onView(withText(username2)).check(doesNotExist());
   }
 }
