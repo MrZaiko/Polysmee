@@ -55,6 +55,7 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").child(MainUserSingleton.getInstance().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
