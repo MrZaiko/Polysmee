@@ -63,7 +63,7 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
 
                 appointment.getOwnerIdAndThen((ownerId) ->{
                     if(ownerId.equals(MainUserSingleton.getInstance().getId())){
-                        if(!id.equals(user.getId())){
+                        if(!id.equals(MainUserSingleton.getInstance().getId())){
                             button.setVisibility(View.VISIBLE);
                             button.setText("Kick");
                             button.setClickable(true);
