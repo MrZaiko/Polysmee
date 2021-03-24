@@ -54,7 +54,7 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static org.junit.Assert.assertEquals;
 
-//@RunWith(AndroidJUnit4.class)
+@RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
     private static String userEmail;
 
@@ -75,17 +75,6 @@ public class RoomActivityTest {
         RoomActivityTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
-        FirebaseApp.clearInstancesForTest();
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).child("name").setValue(username2);
-
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -103,11 +92,6 @@ public class RoomActivityTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);

@@ -7,8 +7,6 @@ import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -57,16 +55,6 @@ public class RoomActivityMessagesFragmentTest {
         RoomActivityMessagesFragmentTest.firstMessageId = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
-        FirebaseApp.clearInstancesForTest();
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).child("name").setValue(username2);
-
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("content").setValue(firstMessage);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("sender").setValue(id2);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
 
@@ -85,11 +73,6 @@ public class RoomActivityMessagesFragmentTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
@@ -102,7 +85,6 @@ public class RoomActivityMessagesFragmentTest {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
-        sleep(2000);
         sleep(1, SECONDS);
         assertDisplayed(firstMessage);
     }
@@ -114,7 +96,6 @@ public class RoomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         String message = "A message";
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
-        sleep(1000);
         assertDisplayed(R.id.roomActivityMessageText, message);
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertContains(R.id.roomActivityMessageText, "");
@@ -129,7 +110,6 @@ public class RoomActivityMessagesFragmentTest {
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
-        sleep(2000);
         assertDisplayed(message);
     }
 }

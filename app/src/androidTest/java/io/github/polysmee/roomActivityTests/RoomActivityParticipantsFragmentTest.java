@@ -11,6 +11,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
+import junit.framework.AssertionFailedError;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -37,7 +38,7 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 
-//@RunWith(JUnit4.class)
+@RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
     private static String userEmail;
 
@@ -58,17 +59,6 @@ public class RoomActivityParticipantsFragmentTest {
         RoomActivityParticipantsFragmentTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityParticipantsFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
-        FirebaseApp.clearInstancesForTest();
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).child("name").setValue(username2);
-
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -86,11 +76,6 @@ public class RoomActivityParticipantsFragmentTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        FirebaseDatabase.getInstance().getReference("users").child(id2).setValue(null);
-        FirebaseDatabase.getInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
