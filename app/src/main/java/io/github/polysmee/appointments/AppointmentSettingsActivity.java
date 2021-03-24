@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.CursorAdapter;
+import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Switch;
 
@@ -38,12 +40,14 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         btnCheckInvites.setOnClickListener(btnSeeInvitesListener);
         btnCheckBans.setOnClickListener(btnSeeBansListener);
         switchPrivate.setOnCheckedChangeListener(switchPrivateListener);
+        searchInvite.setQueryHint("Type names here");
+        searchBan.setQueryHint("Type names here");
     }
 
     View.OnClickListener btnInviteListener = v -> {
         //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchInvite.getQuery().toString();
-        if(!invites.contains(s)) {
+        if(!invites.contains(s) && !s.isEmpty()) {
             invites.add(s);
         }
     };
@@ -51,7 +55,7 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
     View.OnClickListener btnBanListener = v -> {
         //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchBan.getQuery().toString();
-        if(!bans.contains(s)) {
+        if(!bans.contains(s) && !s.isEmpty()) {
             bans.add(s);
         }
     };

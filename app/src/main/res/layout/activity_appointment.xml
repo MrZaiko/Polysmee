@@ -84,12 +84,13 @@
         app:layout_constraintTop_toBottomOf="@+id/appointmentCreationBtnStartTime" />
 
     <Button
-        android:id="@+id/appointmentCreationbtnCreateAppointment"
+        android:id="@+id/appointmentCreationbtnDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:text="@string/appointment_creation_done_create_appointment"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/appointementCreationBtnReset" />
 
@@ -99,7 +100,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:text="@string/appointment_creation_reset_btn_txt"
-        app:layout_constraintBottom_toTopOf="@+id/appointmentCreationbtnCreateAppointment"
+        app:layout_constraintBottom_toTopOf="@+id/appointmentCreationbtnDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent" />
@@ -114,7 +115,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationbtnCreateAppointment" />
+        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationbtnDone" />
 
     <TextView
         android:id="@+id/appointmentCreationTxtWarning"
@@ -127,7 +128,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationbtnCreateAppointment"
+        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationbtnDone"
         app:layout_constraintVertical_bias="0.0" />
 
     <TextView
@@ -150,10 +151,10 @@
         android:layout_marginEnd="15dp"
         android:layout_marginBottom="16dp"
         android:text="@string/appointment_creation_settings"
-        app:layout_constraintBottom_toTopOf="@+id/appointmentCreationbtnCreateAppointment"
+        app:layout_constraintBottom_toTopOf="@+id/appointmentCreationbtnDone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/appointementCreationBtnReset"
         app:layout_constraintTop_toBottomOf="@+id/appointmentCreationEditTxtAppointmentCourseSet"
-        app:layout_constraintVertical_bias="1.0" />
+        app:layout_constraintVertical_bias="0.583" />
 </androidx.constraintlayout.widget.ConstraintLayout>
