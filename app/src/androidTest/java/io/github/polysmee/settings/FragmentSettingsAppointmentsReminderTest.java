@@ -37,7 +37,6 @@ public class FragmentSettingsAppointmentsReminderTest {
     @Before
     public void createFragment(){
         FragmentScenario.launchInContainer(FragmentSettingsAppointmentsReminder.class);
-
         sleep(1, SECONDS);
     }
 
@@ -59,8 +58,9 @@ public class FragmentSettingsAppointmentsReminderTest {
 
     @Test
     public void preference_time_from_appointment_default() {
-
-
+        int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min);
+        int preference_value_time_from_appointment = getSettingsTimeFromAppointmentValueWithDefault0();
+        Assert.assertEquals(expectedPreferenceValue, preference_value_time_from_appointment);
     }
 
     @Test
@@ -68,7 +68,6 @@ public class FragmentSettingsAppointmentsReminderTest {
         int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)+1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_RIGHT);
-        expectedPreferenceValue+=1;
         sleep(1, SECONDS);
         int preference_value_time_from_appointment = getSettingsTimeFromAppointmentValueWithDefault0();
         Assert.assertEquals(expectedPreferenceValue, preference_value_time_from_appointment);
@@ -80,7 +79,6 @@ public class FragmentSettingsAppointmentsReminderTest {
         int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)-1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_LEFT);
-        expectedPreferenceValue-=1;
         sleep(1, SECONDS);
         int preference_value_time_from_appointment = getSettingsTimeFromAppointmentValueWithDefault0();
         Assert.assertEquals(expectedPreferenceValue, preference_value_time_from_appointment);
