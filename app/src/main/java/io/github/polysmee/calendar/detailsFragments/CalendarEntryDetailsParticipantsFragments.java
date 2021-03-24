@@ -20,6 +20,7 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.MainUserSingleton;
 
 public class CalendarEntryDetailsParticipantsFragments extends Fragment {
     private ViewGroup rootView;
@@ -61,7 +62,7 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                 button.setClickable(false);
 
                 appointment.getOwnerIdAndThen((ownerId) ->{
-                    if(ownerId.equals(user.getId())){
+                    if(ownerId.equals(MainUserSingleton.getInstance().getId())){
                         if(!id.equals(user.getId())){
                             button.setVisibility(View.VISIBLE);
                             button.setText("Kick");
