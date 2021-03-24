@@ -85,7 +85,7 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
 
   }
   @Test
-  public void kickingAUserInParticipantScreenInEntryDetailsWorks(){
+  public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
       Bundle bundle = new Bundle();
 
       bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
