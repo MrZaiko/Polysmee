@@ -57,12 +57,14 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                 Button button = layout.findViewById(R.id.calendarEntryDetailActivityKickButton);
 
                 button.setVisibility(View.INVISIBLE);
+                button.setText("NotKickable");
                 button.setClickable(false);
 
                 appointment.getOwnerIdAndThen((ownerId) ->{
                     if(ownerId.equals(user.getId())){
                         if(!id.equals(user.getId())){
                             button.setVisibility(View.VISIBLE);
+                            button.setText("Kick");
                             button.setClickable(true);
                             button.setOnClickListener((v) ->{
                                 kickUserButton(id);
