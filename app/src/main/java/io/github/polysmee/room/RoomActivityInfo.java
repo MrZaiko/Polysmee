@@ -62,7 +62,7 @@ public class RoomActivityInfo extends AppCompatActivity {
 
     public void onlyOwnerToast(View view) {
         Context context = getApplicationContext();
-        CharSequence text = "Only the owner can change settings";
+        CharSequence text = getString(R.string.roomInfoNotOwnerToastMessage);
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);

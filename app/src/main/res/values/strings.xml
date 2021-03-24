@@ -4,6 +4,7 @@
     <string name="roomActivitySendButton">Send</string>
     <string name="roomActivityMessagesTab">Messages</string>
     <string name="roomActivityParticipantsTab">Participants</string>
+    <string name="roomInfoNotOwnerToastMessage">"Only the owner can change settings"</string>
 
     <string name="calendarActivityTodaysDate">Date</string>
     <string name="calendarActivityRefreshButton">Refresh</string>
