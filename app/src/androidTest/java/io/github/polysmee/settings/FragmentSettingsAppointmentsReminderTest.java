@@ -37,7 +37,7 @@ public class FragmentSettingsAppointmentsReminderTest {
     @Before
     public void createFragment(){
         FragmentScenario.launchInContainer(FragmentSettingsAppointmentsReminder.class);
-        sleep(1, SECONDS);
+        sleep(2, SECONDS);
     }
 
     // Clear all app's SharedPreferences
