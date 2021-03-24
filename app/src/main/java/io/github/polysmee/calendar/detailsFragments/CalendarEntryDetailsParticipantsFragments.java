@@ -72,20 +72,6 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                     }
                 });
 
-                button.setVisibility(View.INVISIBLE);
-
-                appointment.getOwnerIdAndThen((ownerId) ->{
-                    if(ownerId.equals(user.getId())){
-                        button.setClickable(false);
-                    }
-                    else{
-                        button.setVisibility(View.VISIBLE);
-                        button.setOnClickListener((v) ->{
-                            kickUserButton(id);
-                        });
-                    }
-                });
-
                 linearLayout.addView(layout);
                 TextView emptySpace = new TextView(rootView.getContext());
                 emptySpace.setText("");
