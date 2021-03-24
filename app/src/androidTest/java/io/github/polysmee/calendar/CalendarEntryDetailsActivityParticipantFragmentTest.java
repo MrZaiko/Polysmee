@@ -23,6 +23,7 @@ import io.github.polysmee.calendar.detailsFragments.CalendarEntryDetailsParticip
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
@@ -96,6 +97,6 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
       Espresso.onView(withText("Kick")).perform(ViewActions.click());
       sleep(3,SECONDS);
       assertDisplayed(username1);
-      assertNotDisplayed(username2);
+      (Espresso.onView(withText(username2)).check(doesNotExist());
   }
 }
