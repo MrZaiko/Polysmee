@@ -1,5 +1,6 @@
 package io.github.polysmee.room.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.Gravity;
@@ -17,23 +18,17 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-
-import com.google.firebase.auth.FirebaseAuth;
-
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.polysmee.Messages.Message;
+import io.github.polysmee.messages.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
 /**
@@ -44,19 +39,19 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private ViewGroup rootView;
     private DatabaseReference databaseReference;
-    private Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
+    private final Map<String, TextView> messagesDisplayed = new HashMap<>();
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.rootView = (ViewGroup) inflater.inflate(R.layout.activity_room_messages_fragment, container, false);
+        this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_messages, container, false);
+
+        String appointmentId = requireArguments().getString(MESSAGES_KEY);
 
         Button send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
 
         initializeAndDisplayDatabase();
-
-
 
         return rootView;
 
@@ -92,8 +87,6 @@ public class RoomActivityMessagesFragment extends Fragment {
         databaseReference.child(messageKey).removeValue();
     }
 
-
-
     private void closeKeyboard() {
         try {
             InputMethodManager inputManager = (InputMethodManager)
@@ -103,7 +96,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         } catch (Exception ignored) {}
     }
 
-    private TextView generateMessageTextView(String message, boolean isSent) {
+    private TextView generateMessageTextView(String message, boolean isSent, String messageKey) {
         TextView messageView = new TextView(rootView.getContext());
         messageView.setText(message);
 
@@ -111,12 +104,45 @@ public class RoomActivityMessagesFragment extends Fragment {
         params.gravity = isSent ? Gravity.END : Gravity.START;
         messageView.setLayoutParams(params);
 
-        if (isSent)
+        if (isSent) {
             messageView.setBackgroundResource(R.drawable.sent_message_background);
+            messageView.setOnLongClickListener(v -> {
+                generateEditMessageDialog(messageKey, messageView).show();
+                return true;
+            });
+        }
         else
             messageView.setBackgroundResource(R.drawable.received_message_background);
 
         return messageView;
+    }
+
+    private AlertDialog generateEditMessageDialog(String messageKey, TextView messageView) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Edit message");
+
+        LayoutInflater inflater = getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.dialog_room_activity_edit_and_delete, null);
+
+        EditText editMessage = dialogView.findViewById(R.id.roomActivityEditDialogText);
+        editMessage.setHint(messageView.getText());
+
+        builder.setPositiveButton("Edit", (dialog, id) -> {
+            editMessage(messageKey, editMessage.getText().toString());
+        });
+
+        builder.setNegativeButton("Delete", (dialog, id) -> {
+            deleteMessage(messageKey);
+        });
+
+        builder.setNeutralButton("Cancel", (dialog, id) -> {
+            //Nothing to do
+        });
+
+
+        builder.setView(dialogView);
+
+        return builder.create();
     }
 
     /**
@@ -137,7 +163,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                 String key = snapshot.getKey();
                 String currentID = MainUserSingleton.getInstance().getId();
-                TextView messageToAddTextView = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()));
+                TextView messageToAddTextView = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()), key);
                 messagesDisplayed.put(key, messageToAddTextView);
 
                 LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);

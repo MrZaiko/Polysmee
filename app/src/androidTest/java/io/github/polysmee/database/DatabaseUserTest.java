@@ -7,29 +7,26 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
-import java.io.Console;
+import java.security.SecureRandom;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static org.junit.Assert.*;
 
@@ -37,23 +34,18 @@ import static org.junit.Assert.*;
 public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";
+
+
     @BeforeClass
     public static void setUp() throws Exception {
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+        Thread.sleep(1000);
     }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
-    }
-
 
     @Test
     public void getId() {
@@ -161,7 +153,4 @@ public class DatabaseUserTest {
     public void testHashCode() {
         assertEquals(new DatabaseUser("hello").hashCode(), new DatabaseUser("hello").hashCode());
     }
-
-
-
 }

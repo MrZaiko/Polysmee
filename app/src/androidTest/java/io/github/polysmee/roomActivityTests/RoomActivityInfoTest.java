@@ -11,6 +11,7 @@ import io.github.polysmee.room.RoomActivityInfo;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.NoMatchingViewException;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
@@ -26,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
@@ -33,6 +35,11 @@ import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -40,52 +47,38 @@ import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityInfoTest {
-    private static String userEmail;
-
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2;
+    private static String id2 = "kjghkjgkjgbkjbhgkjb";
     private static final String username2 = "Sami L'imposteur";
 
     private static final String appointmentTitle = "It's a title";
-    private static String appointmentId;
+    private static String appointmentId = "qsemdrTofilghnujbk";
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new Random();
-        RoomActivityInfoTest.id2 = Long.toString(idGen.nextLong());
-        RoomActivityInfoTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityInfoTest.userEmail = idGen.nextInt(500) +"@gmail.com";
-
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityInfoTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-
-    }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail, "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Test
@@ -110,10 +103,11 @@ public class RoomActivityInfoTest {
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
             sleep(1, SECONDS);
-            clickOn(R.id.roomInfoTitleEditButton);
+            clickOn(appointmentTitle);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickDialogPositiveButton();
+            sleep(2, SECONDS);
             assertDisplayed(newValue);
         }
 
@@ -129,10 +123,11 @@ public class RoomActivityInfoTest {
 
         try(ActivityScenario ignored = ActivityScenario.launch(intent)) {
             sleep(1, SECONDS);
-            clickOn(R.id.roomInfoCourseEditButton);
+            clickOn(appointmentCourse);
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickOn("OK");
+            sleep(2, SECONDS);
             assertDisplayed(newValue);
         }
 
