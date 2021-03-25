@@ -7,23 +7,17 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
-import java.io.Console;
 import java.util.HashSet;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
@@ -36,7 +30,7 @@ import static org.junit.Assert.*;
 @RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
 
-    private static final String username = "Mathis L'utilisateur";
+    /*private static final String username = "Mathis L'utilisateur";
     @BeforeClass
     public static void setUp() throws Exception {
         DatabaseFactory.setTest();
@@ -160,7 +154,7 @@ public class DatabaseUserTest {
     @Test
     public void testHashCode() {
         assertEquals(new DatabaseUser("hello").hashCode(), new DatabaseUser("hello").hashCode());
-    }
+    }*/
 
 
 
