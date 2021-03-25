@@ -28,12 +28,19 @@ public class RoomPagerAdapter extends FragmentStateAdapter {
     @NonNull
     @Override
     public Fragment createFragment(int position) {
+        Fragment fragment;
+        Bundle bundle;
+
         switch (position) {
             case 0:
-                return new RoomActivityMessagesFragment();
+                fragment = new RoomActivityMessagesFragment();
+                bundle = new Bundle();
+                bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+                fragment.setArguments(bundle);
+                return fragment;
             case 1:
-                Fragment fragment = new RoomActivityParticipantsFragment();
-                Bundle bundle = new Bundle();
+                fragment = new RoomActivityParticipantsFragment();
+                bundle = new Bundle();
                 bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
                 fragment.setArguments(bundle);
                 return fragment;
