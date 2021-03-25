@@ -49,6 +49,7 @@ public class DatabaseAppointmentTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
         apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro");
+        Thread.sleep(1000);
     }
 
     @Test
