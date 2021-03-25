@@ -73,6 +73,7 @@ public class FragmentSettingsAppointmentsReminderTest {
 
     @Test
     public void preference_time_from_appointment_change_settings_value_up() {
+        Assert.assertEquals(context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min), getSettingsTimeFromAppointmentValueWithDefault0());
         int expectedPreferenceValue = context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)+1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_RIGHT);
@@ -83,6 +84,7 @@ public class FragmentSettingsAppointmentsReminderTest {
 
     @Test
     public void preference_time_from_appointment_change_settings_value_down() {
+        Assert.assertEquals(context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min), getSettingsTimeFromAppointmentValueWithDefault0());
         int expectedPreferenceValue = context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)-1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_LEFT);
