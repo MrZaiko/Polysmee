@@ -13,7 +13,6 @@ import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
@@ -22,10 +21,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -37,6 +32,9 @@ import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.allOf;
@@ -78,11 +76,11 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
 
     @AfterClass
     public static void delete() throws ExecutionException, InterruptedException {
-        /*Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee2410@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee2410@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());*/
+        //Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Test

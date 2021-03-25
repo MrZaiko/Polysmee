@@ -33,7 +33,9 @@ public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
     }
 
 
-
+    /**
+     * Defines the behavior of both
+     */
     protected void setInviteAndBanSearchBehavior(){
 
         Button inviteButton = rootView.findViewById(R.id.calendarEntryDetailActivityInviteButton);
