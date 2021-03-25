@@ -2,6 +2,7 @@ package io.github.polysmee.interfaces;
 
 import java.util.Set;
 
+import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -54,4 +55,8 @@ public interface User{
     void removeAppointment(Appointment appointment);
 
     default String createNewUserAppointment(long start, long duration, String course, String name){return null;}
+
+    public static void getAllUsersIdsAndThenOnce(StringSetValueListener valueListener){
+        DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
+    }
 }
