@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.NoMatchingViewException;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -27,12 +28,21 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogNegativeButton;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
+import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityMessagesFragmentTest {
@@ -46,6 +56,9 @@ public class RoomActivityMessagesFragmentTest {
     private static String firstMessageId;
     private static final String firstMessage = "I'm a message";
 
+    private static String secondMessageId;
+    private static final String secondMessage = "I'm a better message";
+
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -53,6 +66,7 @@ public class RoomActivityMessagesFragmentTest {
         RoomActivityMessagesFragmentTest.id2 = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.firstMessageId = Long.toString(idGen.nextLong());
+        RoomActivityMessagesFragmentTest.secondMessageId = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
         DatabaseFactory.setTest();
@@ -63,12 +77,13 @@ public class RoomActivityMessagesFragmentTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("content").setValue(firstMessage);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("sender").setValue(id2);
-
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUserSingleton.getInstance().getId());
     }
 
 
@@ -79,6 +94,44 @@ public class RoomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         sleep(1, SECONDS);
         assertDisplayed(firstMessage);
+        assertDisplayed(secondMessage);
+    }
+
+    @Test
+    public void currentUserCanEditItsMessages() {
+        String newMsg = "OMG, it's working";
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
+        sleep(1, SECONDS);
+        longClickOn(secondMessage);
+        writeTo(R.id.roomActivityEditDialogText, newMsg);
+        closeSoftKeyboard();
+        clickDialogPositiveButton();
+        assertDisplayed(newMsg);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
+    }
+
+    @Test
+    public void currentUserCanDeleteItsMessages() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
+        sleep(1, SECONDS);
+        longClickOn(secondMessage);
+        clickDialogNegativeButton();
+
+        boolean thrown = false;
+        try {
+            onView(withText(secondMessage)).check(matches(isDisplayed()));
+        } catch (NoMatchingViewException e) {
+            thrown = true;
+        }
+
+        assertTrue(thrown);
+
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUserSingleton.getInstance().getId());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
     }
 
     @Test
@@ -86,7 +139,8 @@ public class RoomActivityMessagesFragmentTest {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
-        String message = "A message";
+        sleep(1, SECONDS);
+        String message = "Sent message 1";
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
         assertDisplayed(R.id.roomActivityMessageText, message);
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
@@ -98,10 +152,21 @@ public class RoomActivityMessagesFragmentTest {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
-        String message = "A message";
+        sleep(1, SECONDS);
+        String message = "Sent message 2";
         onView(withId(R.id.roomActivityMessageText)).perform(typeText(message), closeSoftKeyboard());
         onView(withId(R.id.roomActivitySendMessageButton)).perform(click());
         assertNotContains(R.id.roomActivityMessageText, message);
         assertDisplayed(message);
+    }
+
+    @Test
+    public void longClickOnItsMessagesShouldOpenEditDialog() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
+        sleep(1, SECONDS);
+        longClickOn(secondMessage);
+        assertDisplayed(R.id.roomActivityEditDialogText);
     }
 }

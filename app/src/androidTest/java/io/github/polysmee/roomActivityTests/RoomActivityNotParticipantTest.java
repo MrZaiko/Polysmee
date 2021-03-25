@@ -1,48 +1,51 @@
 package io.github.polysmee.roomActivityTests;
 
-import android.os.Bundle;
+import android.app.Activity;
+import android.content.Intent;
 
-import androidx.fragment.app.testing.FragmentScenario;
+import androidx.lifecycle.Lifecycle;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.intent.Intents;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
+import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.runner.MonitoringInstrumentation;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-
-import junit.framework.AssertionFailedError;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
+import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.room.RoomActivityInfo;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.assertion.ViewAssertions.matches;
-import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.action.ViewActions.click;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
-import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.Matchers.not;
+import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(JUnit4.class)
-public class RoomActivityParticipantsFragmentTest {
+@RunWith(AndroidJUnit4.class)
+public class RoomActivityNotParticipantTest {
     private static String userEmail;
 
     private static final String username1 = "Mathis L'utilisateur";
@@ -58,9 +61,9 @@ public class RoomActivityParticipantsFragmentTest {
     @BeforeClass
     public static void setUp() throws Exception {
         Random idGen = new Random();
-        RoomActivityParticipantsFragmentTest.id2 = Long.toString(idGen.nextLong());
-        RoomActivityParticipantsFragmentTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityParticipantsFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+        RoomActivityNotParticipantTest.id2 = Long.toString(idGen.nextLong());
+        RoomActivityNotParticipantTest.appointmentId = Long.toString(idGen.nextLong());
+        RoomActivityNotParticipantTest.userEmail = idGen.nextInt(500) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
@@ -72,42 +75,31 @@ public class RoomActivityParticipantsFragmentTest {
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
     @Test
-    public void participantsAreCorrectlyDisplayed() {
-        Bundle bundle = new Bundle();
-        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-        sleep(1, SECONDS);
-        assertDisplayed(username1);
-        assertDisplayed(username2);
-    }
+    public void onlyParticipantCanJoinARoom() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
-    @Test
-    public void removeButtonShouldRemoveTheParticipant() {
-        Bundle bundle = new Bundle();
-        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-        sleep(1, SECONDS);
-        clickOn(username2);
-        clickOn("Remove");
-
-        boolean thrown = false;
-
-        try {
-            onView(withText(username2)).check(matches(isDisplayed()));
-        } catch (NoMatchingViewException e) {
-            thrown = true;
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+           assertDisplayed(R.id.roomActivityRemovedDialogText);
+           assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
         }
-
-        assertTrue(thrown);
-
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
+    @Test
+    public void quitButtonShouldFinishTheActivity() throws InterruptedException {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+
+        ActivityScenario<RoomActivity> scenario = ActivityScenario.launch(intent);
+        sleep(1, TimeUnit.SECONDS);
+        clickOn(R.id.roomActivityRemovedDialogQuitButton);
+        assertEquals(Activity.RESULT_CANCELED, scenario.getResult().getResultCode());
+        Thread.sleep(1000);
+        scenario.close();
+    }
 }
