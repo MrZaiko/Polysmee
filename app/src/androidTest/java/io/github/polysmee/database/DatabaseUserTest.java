@@ -15,7 +15,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 
+import java.security.SecureRandom;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -24,30 +26,30 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static org.junit.Assert.*;
 
 @RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
 
-    /*private static final String username = "Mathis L'utilisateur";
+    private static final String username = "Mathis L'utilisateur";
+
+    private static String userEmail;
+
+
     @BeforeClass
     public static void setUp() throws Exception {
+        Random idGen = new SecureRandom();
+        userEmail = idGen.nextInt(2000) +"@gmail.com";
+
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail+"@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
     }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
-    }
-
 
     @Test
     public void getId() {
@@ -154,8 +156,5 @@ public class DatabaseUserTest {
     @Test
     public void testHashCode() {
         assertEquals(new DatabaseUser("hello").hashCode(), new DatabaseUser("hello").hashCode());
-    }*/
-
-
-
+    }
 }

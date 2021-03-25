@@ -25,6 +25,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.security.SecureRandom;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -70,10 +71,10 @@ public class RoomActivityTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new Random();
+        Random idGen = new SecureRandom();
         RoomActivityTest.id2 = Long.toString(idGen.nextLong());
         RoomActivityTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+        RoomActivityTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();

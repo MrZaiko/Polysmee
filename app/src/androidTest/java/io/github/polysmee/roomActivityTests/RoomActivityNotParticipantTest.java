@@ -19,6 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -60,10 +61,10 @@ public class RoomActivityNotParticipantTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new Random();
+        Random idGen = new SecureRandom();
         RoomActivityNotParticipantTest.id2 = Long.toString(idGen.nextLong());
         RoomActivityNotParticipantTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityNotParticipantTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+        RoomActivityNotParticipantTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();

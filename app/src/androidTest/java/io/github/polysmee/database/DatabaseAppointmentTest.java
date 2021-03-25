@@ -54,12 +54,6 @@ public class DatabaseAppointmentTest {
         apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro");
     }
 
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee14" + idadded + "@gmail.com", "fakePassword"));
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
-    }
-
     @Test
     public void getStartTimeAndThen() throws InterruptedException {
         ReentrantLock lock = new ReentrantLock();

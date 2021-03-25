@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.security.SecureRandom;
 import java.util.Random;
 
 import io.github.polysmee.R;
@@ -50,10 +51,10 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new Random();
+        Random idGen = new SecureRandom();
         RoomActivityParticipantsFragmentNotOwnerTest.id2 = Long.toString(idGen.nextLong());
         RoomActivityParticipantsFragmentNotOwnerTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityParticipantsFragmentNotOwnerTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+        RoomActivityParticipantsFragmentNotOwnerTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();

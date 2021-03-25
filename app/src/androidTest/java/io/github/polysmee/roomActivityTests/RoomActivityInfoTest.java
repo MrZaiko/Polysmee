@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.io.Serializable;
+import java.security.SecureRandom;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Random;
@@ -67,10 +68,10 @@ public class RoomActivityInfoTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new Random();
+        Random idGen = new SecureRandom();
         RoomActivityInfoTest.id2 = Long.toString(idGen.nextLong());
         RoomActivityInfoTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityInfoTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+        RoomActivityInfoTest.userEmail = idGen.nextInt(200) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
@@ -113,6 +114,7 @@ public class RoomActivityInfoTest {
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickDialogPositiveButton();
+            sleep(2, SECONDS);
             assertDisplayed(newValue);
         }
 
@@ -132,6 +134,7 @@ public class RoomActivityInfoTest {
             writeTo(R.id.roomInfoDialogEdit, newValue);
             closeSoftKeyboard();
             clickOn("OK");
+            sleep(2, SECONDS);
             assertDisplayed(newValue);
         }
 

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.security.SecureRandom;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
@@ -62,12 +63,12 @@ public class RoomActivityMessagesFragmentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new Random();
+        Random idGen = new SecureRandom();
         RoomActivityMessagesFragmentTest.id2 = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.appointmentId = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.firstMessageId = Long.toString(idGen.nextLong());
         RoomActivityMessagesFragmentTest.secondMessageId = Long.toString(idGen.nextLong());
-        RoomActivityMessagesFragmentTest.userEmail = idGen.nextInt(500) +"@gmail.com";
+        RoomActivityMessagesFragmentTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
