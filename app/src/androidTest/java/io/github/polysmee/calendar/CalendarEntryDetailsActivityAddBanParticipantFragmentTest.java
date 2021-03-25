@@ -2,10 +2,14 @@ package io.github.polysmee.calendar;
 
 
 import android.os.Bundle;
+import android.view.View;
+import android.widget.SearchView;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.UiController;
+import androidx.test.espresso.ViewAction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -13,10 +17,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.hamcrest.Matcher;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
+import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 
 import java.util.Set;
@@ -31,6 +39,7 @@ import io.github.polysmee.login.MainUserSingleton;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
@@ -85,7 +94,7 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
 
         FragmentScenario.launchInContainer(CalendarEntryDetailAddBanParticipantsFragment.class,bundle);
         sleep(5, SECONDS);
-        Espresso.onView(withId(R.id.calendarEntryDetailActivityInviteSearch)).perform(ViewActions.typeTextIntoFocusedView("Thomas le beau"));
+        Espresso.onView(withId(R.id.calendarEntryDetailActivityInviteSearch)).perform(typeSearchViewText(username2));
         Espresso.onView(withId(R.id.calendarEntryDetailActivityInviteButton)).perform(ViewActions.click());
         sleep(3,SECONDS);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").addListenerForSingleValueEvent(new StringSetValueListener() {
@@ -95,5 +104,25 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
                 assertEquals(true,o.contains(MainUserSingleton.getInstance().getId()));
             }
         });
+    }
+
+    public static ViewAction typeSearchViewText(final String text){
+        return new ViewAction(){
+            @Override
+            public Matcher<View> getConstraints() {
+                //Ensure that only apply if it is a SearchView and if it is visible.
+                return allOf(isDisplayed(), isAssignableFrom(SearchView.class));
+            }
+
+            @Override
+            public String getDescription() {
+                return "Change view text";
+            }
+
+            @Override
+            public void perform(UiController uiController, View view) {
+                ((SearchView) view).setQuery(text,false);
+            }
+        };
     }
 }
