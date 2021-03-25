@@ -48,11 +48,11 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
 
     private static final String username1 = "Youssef le magnifique";
 
-    private static final String id2 = "-SFDkjfddl";
+    private static final String id2 = "-BUDDkjfddl";
     private static final String username2 = "Thomas le beau";
 
     private static final String appointmentTitle = "Some titke";
-    private static final String appointmentId = "-lsdqfkhfduisjhmf";
+    private static final String appointmentId = "-lsdqrhrhreisjhmf";
     private static final String appointmentCourse = "SDP";
     private static final long appointmentStart = 265655445;
     @BeforeClass

@@ -35,7 +35,7 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
     private static final String username1 = "Youssef le magnifique";
 
     private static final String id2 = "-SFDkjfddl";
-    private static final String username2 = "Thomas le beau";
+    private static final String username2 = "La magouille";
 
     private static final String appointmentTitle = "Some titke";
     private static final String appointmentId = "-lsdqfkhfduisjhmf";
@@ -95,7 +95,7 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
       FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
       sleep(3,SECONDS);
       Espresso.onView(withText("Kick")).perform(ViewActions.click());
-      sleep(3,SECONDS);
+      sleep(5,SECONDS);
       assertDisplayed(username1);
       Espresso.onView(withText(username2)).check(doesNotExist());
   }
