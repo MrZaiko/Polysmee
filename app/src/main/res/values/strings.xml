@@ -12,7 +12,11 @@
     <string name="calendarEntryDescription">Description</string>
     <string name="calendarEntryDetailsButton">Details</string>
     <string name="calendarEntryDetailActivityModifyButton">Modify</string>
+    <string name="calendarEntryDetailsActivityKickButton">Kick</string>
+    <string name="calendarEntryDetailsActivityInviteButton">Add</string>
     <string name="calendarEntryDetailsActivityBanButton">Ban</string>
+    <string name="calendarEntryDetailsActivityInviteHint">Who do you want to add?</string>
+    <string name="calendarEntryDetailsActivityBanHint">Who do you want to ban?</string>
 
     <string name="title_activity_appointment">AppointmentActivity</string>
     <string name="title_activity_login_check">LoginCheckActivity</string>
@@ -59,3 +63,4 @@
     <string name="title_activity_settings">SettingsActivity</string>
 
 </resources>
+

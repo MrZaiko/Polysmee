@@ -26,10 +26,10 @@ import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.junit.Assert.assertEquals;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 
 @RunWith(AndroidJUnit4.class)
-public class CalendarEntryDetailsActivityTest {
+public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
     private static final int constraintLayoutIdForTests = 284546;
 
@@ -50,12 +50,11 @@ public class CalendarEntryDetailsActivityTest {
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
                 DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            int j = 0;
 
             ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
             demoButton.perform(ViewActions.click());
 
-            ViewInteraction calendarEntryDetailButton = Espresso.onView(withId(constraintLayoutIdForTests + j + 2));
+            ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
             calendarEntryDetailButton.perform(ViewActions.click());
             ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
             titleDetails.check(ViewAssertions.matches(withText(info.getTitle())));
@@ -71,12 +70,11 @@ public class CalendarEntryDetailsActivityTest {
         CalendarAppointmentInfo info = new CalendarAppointmentInfo(newCourse, newTitle,
                 DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            int j = 0;
 
             ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
             demoButton.perform(ViewActions.click());
 
-            ViewInteraction calendarEntryDetailButton = Espresso.onView(withId(constraintLayoutIdForTests + j + 2));
+            ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
             calendarEntryDetailButton.perform(ViewActions.click());
 
             ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
@@ -92,9 +90,7 @@ public class CalendarEntryDetailsActivityTest {
             ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
             modifyButton.perform(ViewActions.click());
 
-            ViewInteraction calendarEntryDescription = Espresso.onView(withId(constraintLayoutIdForTests + j + 1));
-            calendarEntryDescription.check(ViewAssertions.matches(withText(formatAppointmentDescription(info))));
-            assertEquals(1,1);
+            assertDisplayed(formatAppointmentDescription(info));
         }
     }
 
