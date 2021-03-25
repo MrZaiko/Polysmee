@@ -16,10 +16,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.security.SecureRandom;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -33,13 +36,7 @@ public class LoginCheckActivityTest {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-    }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
     }
 
     @Test
@@ -55,7 +52,7 @@ public class LoginCheckActivityTest {
 
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){

@@ -21,7 +21,7 @@ import io.github.polysmee.database.DatabaseFactory;
 
 import static org.junit.Assert.*;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class MainUserSingletonTest {
 
     @BeforeClass
@@ -30,14 +30,7 @@ public class MainUserSingletonTest {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-    }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
     }
 
     @Test(expected = NullPointerException.class)
@@ -48,7 +41,7 @@ public class MainUserSingletonTest {
 
     @Test
     public void getInstanceWorks() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
         assertEquals(MainUserSingleton.getInstance().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
     }
 }

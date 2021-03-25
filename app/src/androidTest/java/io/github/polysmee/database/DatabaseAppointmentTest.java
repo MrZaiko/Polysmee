@@ -37,7 +37,6 @@ public class DatabaseAppointmentTest {
 
     private static final String username = "Mathis L'utilisateur";
     private static String apid;
-    private static long idadded = 0;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -47,17 +46,10 @@ public class DatabaseAppointmentTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
-        idadded = new SecureRandom().nextLong();
-
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee14" + idadded + "@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
         apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro");
-    }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee14" + idadded + "@gmail.com", "fakePassword"));
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+        Thread.sleep(1000);
     }
 
     @Test

@@ -19,6 +19,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.MainUserSingleton;
 
 /**
  * Fragment that display all participants given in argument
@@ -32,7 +33,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_room_participant_fragment, container, false);
+        this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_participant, container, false);
 
         String appointmentId = requireArguments().getString(PARTICIPANTS_KEY);
         this.appointment = new DatabaseAppointment(appointmentId);
@@ -56,31 +57,39 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 TextView participant = new TextView(rootView.getContext());
                 user.getNameAndThen(participant::setText);
                 participant.setTextSize(20);
-                participant.setBackgroundColor(Color.GRAY);
+                participant.setBackgroundColor(id.equals(MainUserSingleton.getInstance().getId()) ? Color.GRAY : Color.LTGRAY);
                 participant.setClickable(true);
-                participant.setOnClickListener(onClick -> {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(rootView.getContext());
-                    builder.setTitle("Edit participant");
-                    LayoutInflater inflater = getLayoutInflater();
-
-                    View dialogView = inflater.inflate(R.layout.dialog_room_participant_edit, null);
-                    Button removeButton = dialogView.findViewById(R.id.roomActivityParticipantDialogRemoveButton);
-
-                    builder.setView(dialogView);
-
-                    AlertDialog dialog = builder.create();
-                    removeButton.setOnClickListener(s -> {
-                        appointment.removeParticipant(user);
-                        dialog.cancel();
-                    });
-
-                    dialog.show();
-                });
+                participant.setOnClickListener(onClick -> generateEditParticipantDialog(user));
 
                 layout.addView(participant);
                 layout.addView(new TextView(rootView.getContext()));
             }
         });
+    }
 
+    private void generateEditParticipantDialog(User user) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(rootView.getContext());
+        builder.setTitle("Edit participant");
+        LayoutInflater inflater = getLayoutInflater();
+
+        View dialogView = inflater.inflate(R.layout.dialog_room_participant_edit, null);
+        Button removeButton = dialogView.findViewById(R.id.roomActivityParticipantDialogRemoveButton);
+
+        builder.setView(dialogView);
+
+        AlertDialog dialog = builder.create();
+        removeButton.setVisibility(user.getId().equals(MainUserSingleton.getInstance().getId()) ? View.VISIBLE : View.GONE);
+        removeButton.setText(user.getId().equals(MainUserSingleton.getInstance().getId()) ? "Quit" : "Remove");
+        removeButton.setOnClickListener(s -> {
+            appointment.removeParticipant(user);
+            dialog.cancel();
+        });
+
+        appointment.getOwnerIdAndThen(id -> {
+            if (MainUserSingleton.getInstance().getId().equals(id))
+                removeButton.setVisibility(View.VISIBLE);
+        });
+
+        dialog.show();
     }
 }

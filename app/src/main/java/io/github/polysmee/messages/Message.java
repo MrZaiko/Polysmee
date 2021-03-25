@@ -1,10 +1,8 @@
-package io.github.polysmee.Messages;
+package io.github.polysmee.messages;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DatabaseReference;
-
-import java.io.Serializable;
 
 /**
  * Class representing the message object
@@ -27,6 +25,16 @@ public class Message  {
         this.content = content;
         this.messageTime = messageTime;
     }
+
+    /**
+     * A default constructor is needed for firebase database
+     */
+    public Message() {
+        this.sender = "";
+        this.content = "";
+        this.messageTime = 0;
+    }
+
 
 
     /**
