@@ -1,9 +1,11 @@
 package io.github.polysmee.appointments;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.view.View;
 import android.widget.SearchView;
 
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.UiController;
 import androidx.test.espresso.ViewAction;
@@ -37,6 +39,7 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.room.RoomActivity;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 
@@ -116,7 +119,9 @@ public class AppointmentActivityTest {
     public ActivityScenarioRule<AppointmentActivity> testRule = new ActivityScenarioRule<>(AppointmentActivity.class);
 
     @Test
-    public void btnCreateCreatesCorrectAppointment() {
+    public void btnCreateCreatesCorrectAppointment() throws Exception{
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
+        ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
         clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2022, 3, 23);
         setTimeOnPicker(17, 2);
@@ -133,18 +138,21 @@ public class AppointmentActivityTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
 
-        assertThat(testRule.getScenario().getResult(), hasResultCode(Activity.RESULT_OK));
+
+        assertThat(scenario.getResult(), hasResultCode(Activity.RESULT_OK));
+        Thread.sleep(1000);
+        scenario.close();
+
         /*String aptId = (String) testRule.getScenario().getResult().getResultData().getSerializableExtra(AppointmentActivity.EXTRA_APPOINTMENT);
         Appointment appointment = new DatabaseAppointment(aptId);
-        sleep(2, TimeUnit.SECONDS);
         appointment.getTitleAndThen(o -> assertEquals(title, o));
         appointment.getCourseAndThen(o -> assertEquals(course, o));
         appointment.getParticipantsIdAndThen(o -> assertEquals(1, o.size()));
         Calendar startCalendar = new GregorianCalendar();
-        startCalendar.set(2022, 3, 23, 17, 2, 0);
+        startCalendar.set(2022, 2, 23, 17, 2, 0);
         startCalendar.set(Calendar.MILLISECOND, 0);
         Calendar endCalendar = new GregorianCalendar();
-        endCalendar.set(2022, 3, 23, 18, 2, 0);
+        endCalendar.set(2022, 2, 23, 18, 2, 0);
         endCalendar.set(Calendar.MILLISECOND, 0);
         appointment.getStartTimeAndThen(o -> assertEquals(startCalendar.getTimeInMillis()/1000, o));
         appointment.getDurationAndThen(o -> assertEquals(endCalendar.getTimeInMillis()/1000 - startCalendar.getTimeInMillis()/1000, o));*/
@@ -233,7 +241,9 @@ public class AppointmentActivityTest {
     }
 
     @Test
-    public void btnSettingsLaunchesActivityAndActivityReturnsCorrectSettings(){
+    public void btnSettingsLaunchesActivityAndActivityReturnsCorrectSettings() throws Exception{
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
+        ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
         clickOn(R.id.appointmentCreationBtnSettings);
         onView(withId(R.id.appointmentSettingsSearchInvite)).perform(typeSearchViewText(username3));
         closeSoftKeyboard();
@@ -269,6 +279,8 @@ public class AppointmentActivityTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
 
-        assertThat(testRule.getScenario().getResult(), hasResultCode(Activity.RESULT_OK));
+        assertThat(scenario.getResult(), hasResultCode(Activity.RESULT_OK));
+        Thread.sleep(1000);
+        scenario.close();
     }
 }
