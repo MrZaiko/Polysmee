@@ -71,6 +71,10 @@ public class AppointmentActivityTest {
     private static final String id3 = "-SFDkjsfdkwefwef";
     private static final String username2 = "Sami L'imposteur";
     private static final String username3 = "Leo le testeur";
+    private static final String id4 = "-SFDkjsfdl";
+    private static final String id5 = "-SFDkjsfdkwefwef";
+    private static final String username4 = "Thomas";
+    private static final String username5 = "Adrien";
 
     private static final String appointmentTitle = "It's a title";
     private static final String appointmentId = "-lsdqfkhfdlksjhmf";
@@ -88,6 +92,8 @@ public class AppointmentActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id4).child("name").setValue(username4);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id5).child("name").setValue(username5);
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
@@ -235,6 +241,21 @@ public class AppointmentActivityTest {
         closeSoftKeyboard();
         clickOn(R.id.appointmentSettingsBtnInvite);
         clickOn(R.id.appointmentSettingsBtnBan);
+        onView(withId(R.id.appointmentSettingsSearchInvite)).perform(typeSearchViewText(username4));
+        closeSoftKeyboard();
+        onView(withId(R.id.appointmentSettingsSearchBan)).perform(typeSearchViewText(username5));
+        closeSoftKeyboard();
+        clickOn(R.id.appointmentSettingsBtnInvite);
+        clickOn(R.id.appointmentSettingsBtnBan);
+
+        clickOn(R.id.appointmentSettingsBtnSeeInvites);
+        clickOn(username4);
+        clickOn("OK");
+
+        clickOn(R.id.appointmentSettingsBtnSeeBans);
+        clickOn(username5);
+        clickOn("OK");
+
         clickOn(R.id.appointmentSettingsSwitchPrivate);
         clickOn(R.id.appointmentSettingsBtnDone);
 

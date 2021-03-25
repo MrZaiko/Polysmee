@@ -109,7 +109,6 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         // setup the alert builder
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Select which " + type + " to remove");
-        boolean[] checkedItems = {true, false, false, true, false};
         builder.setMultiChoiceItems(users.toArray(new CharSequence[0]), null, (dialog, which, isChecked) -> {
             if (isChecked) {
                 // If the user checked the item, add it to the selected items
