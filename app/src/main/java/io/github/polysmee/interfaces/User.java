@@ -56,7 +56,7 @@ public interface User{
 
     default String createNewUserAppointment(long start, long duration, String course, String name){return null;}
 
-    public static void getAllUsersIdsAndThenOnce(StringSetValueListener valueListener){
+    static void getAllUsersIdsAndThenOnce(StringSetValueListener valueListener){
         DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
     }
 }

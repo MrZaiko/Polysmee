@@ -14,12 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.detailsFragments.calendarEntryDetailsGeneralFragment;
+import io.github.polysmee.calendar.detailsFragments.CalendarEntryDetailAddBanParticipantsFragment;
+import io.github.polysmee.calendar.detailsFragments.CalendarEntryDetailsGeneralFragment;
+import io.github.polysmee.calendar.detailsFragments.CalendarEntryDetailsParticipantsFragments;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
-import io.github.polysmee.database.decoys.FakeDatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 
 public class CalendarEntryDetailsActivity extends AppCompatActivity {
 
@@ -45,11 +45,26 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putSerializable(CalendarActivity.UserTypeCode,userType);
-        calendarEntryDetailsGeneralFragment detailsGeneralFragment = new calendarEntryDetailsGeneralFragment(appointmentId);
+        bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId);
+        CalendarEntryDetailsGeneralFragment detailsGeneralFragment = new CalendarEntryDetailsGeneralFragment();
+
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable(CalendarActivity.UserTypeCode,userType);
+        bundle2.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+        CalendarEntryDetailsParticipantsFragments participantsFragments = new CalendarEntryDetailsParticipantsFragments();
+
+        Bundle bundle3 = new Bundle();
+        bundle3.putSerializable(CalendarActivity.UserTypeCode,userType);
+        bundle3.putSerializable(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID,appointmentId);
+        CalendarEntryDetailAddBanParticipantsFragment manageParticipantsFragment = new CalendarEntryDetailAddBanParticipantsFragment();
+
         detailsGeneralFragment.setArguments(bundle);
+        participantsFragments.setArguments(bundle2);
+        manageParticipantsFragment.setArguments(bundle3);
 
         list.add(detailsGeneralFragment);
-        //list.add(new calendarEntryDetailsParticipantsFragments(appointmentId));
+        list.add(participantsFragments);
+        list.add(manageParticipantsFragment);
 
         ViewPager2 pager = findViewById(R.id.calendarEntryDetailActivityPager);
         FragmentStateAdapter pagerAdapter = new CalendarDetailPagerAdapter(this, list);
@@ -57,7 +72,7 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
         Button button = (Button)findViewById(R.id.calendarEntryDetailActivityDoneModifyButton);
         appointment.getOwnerIdAndThen((id)->{
                 button.setOnClickListener((v)->{
-                    ((calendarEntryDetailsGeneralFragment)list.get(0)).doneModifying();
+                    ((CalendarEntryDetailsGeneralFragment)list.get(0)).doneModifying();
                     onBackPressed();
                 });
         });

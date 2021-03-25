@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_settings_appointments_reminder">Appointments reminder settings</string>
+    <string name="preference_key_appointments_reminder_notification_time_from_appointment_minutes">appointment_reminder_notification_time_from_appointment_min</string>
+    <string name="title_settings_appointments_reminder_notification_time_from_appointment">Remind me before</string>
+    <integer name="default_appointment_reminder_notification__time_from_appointment_min">10</integer>
+    <string name="summary_settings_appointments_reminder_notification_time_from_appointment">Set how much time before a appointment you should be reminded (in minutes)</string>
+</resources>

@@ -10,6 +10,7 @@ import io.github.polysmee.appointments.AppointmentActivity;
 
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.settings.SettingsActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -35,5 +36,11 @@ public class MainActivity extends AppCompatActivity {
     public void goToCreate(View view) {
         Intent intent = new Intent(this, AppointmentActivity.class);
         startActivity(intent);
+    }
+
+    public void goToSettings(View view){
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+
     }
 }
