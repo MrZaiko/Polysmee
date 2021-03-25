@@ -20,20 +20,21 @@ import io.github.polysmee.interfaces.User;
 public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
 
     private ViewGroup rootView;
-    private Appointment appointment = new DatabaseAppointment("temporary");
+    private Appointment appointment;
     public static String APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID = "APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID";
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_calendar_entry_detail_add_ban_participants_fragment,container,false);
-        setInviteAndBanBehavior();
+        appointment = new DatabaseAppointment((String) getArguments().getSerializable(APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID));
+        setInviteAndBanSearchBehavior();
         return rootView;
     }
 
 
 
-        protected void setInviteAndBanBehavior(){
+    protected void setInviteAndBanSearchBehavior(){
 
         Button inviteButton = rootView.findViewById(R.id.calendarEntryDetailActivityInviteButton);
         Button banButton    = rootView.findViewById(R.id.calendarEntryDetailActivityBanButton);
@@ -42,25 +43,34 @@ public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
 
         inviteButton.setOnClickListener((v)->{
             String inviteName = inviteSearch.getQuery().toString();
+            inviteSearch.setQuery("",false);
+            inviteSearch.clearFocus();
             User.getAllUsersIdsAndThenOnce((setOfUserIds) -> {
-                for(String userId : setOfUserIds){
-                    User user = new DatabaseUser(userId);
-                    user.getNameAndThen((name) ->{
-                        if(name.equals(inviteName)){
-                            user.addAppointment(appointment);
-                            appointment.addParticipant(user);
-                        }
-                    });
-                }
+                appointment.getParticipantsIdAndThen((participants) ->{
+                    for(String userId : setOfUserIds){
+                        User user = new DatabaseUser(userId);
+                        user.getNameAndThen((name) ->{
+                            if(name.equals(inviteName) && !participants.contains(userId)){
+                                user.addAppointment(appointment);
+                                appointment.addParticipant(user);
+                            }
+                        });
+                    }
+                });
+
             });
+
         });
+
         banButton.setOnClickListener((v)->{
             String bannedName = banSearch.getQuery().toString();
             User.getAllUsersIdsAndThenOnce((setOfUserIds) -> {
                 for(String userId: setOfUserIds){
                     User user = new DatabaseUser(userId);
                     user.getNameAndThen((name) -> {
-                        appointment.addBan(user);
+                        if(name.equals(bannedName)){
+                            appointment.addBan(user);
+                        }
                     });
                 }
             });
