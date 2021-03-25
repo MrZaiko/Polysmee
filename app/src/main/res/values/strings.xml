@@ -35,5 +35,7 @@
     <string name="appointment_settings_btn_invite">Invite</string>
     <string name="appointment_settings_btn_ban">Ban</string>
     <string name="appointment_settings_btn_done">Done</string>
+    <string name="appointment_settings_check_invites">See/Delete invites</string>
+    <string name="appointment_settings_check_bans">See/Delete bans</string>
 
 </resources>
