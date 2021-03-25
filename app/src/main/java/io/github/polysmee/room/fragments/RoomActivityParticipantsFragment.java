@@ -82,6 +82,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         removeButton.setText(user.getId().equals(MainUserSingleton.getInstance().getId()) ? "Quit" : "Remove");
         removeButton.setOnClickListener(s -> {
             appointment.removeParticipant(user);
+            user.removeAppointment(appointment);
             dialog.cancel();
         });
 
