@@ -28,21 +28,28 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @RunWith(AndroidJUnit4.class)
 public class FragmentSettingsAppointmentsReminderTest {
 
-    private static Context context = ApplicationProvider.getApplicationContext();
+    private static Context context(){
+        return ApplicationProvider.getApplicationContext();
+    }
+
     private static int getSettingsTimeFromAppointmentValueWithDefault0(){
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getInt(context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes), 0);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context());
+        return sharedPreferences.getInt(context().getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes), 0);
     }
 
     @Before
-    public void resetPreferenceAndCreateFragment(){
-        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(
-                context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-                context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)).commit();
+    public void resetPreference(){
+        PreferenceManager.getDefaultSharedPreferences(context()).edit().putInt(
+                context().getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)).commit();
+    }
+    @Before
+    public void createFragment(){
         FragmentScenario.launchInContainer(FragmentSettingsAppointmentsReminder.class);
         sleep(1, SECONDS);
     }
 
+    //used in tests (this test or any other) to know if the fragment is been displayed
     public static void checkFragmentIsDisplayed(){
         assertDisplayed(R.string.title_settings_appointments_reminder_notification_time_from_appointment);
         assertDisplayed(R.string.summary_settings_appointments_reminder_notification_time_from_appointment);
@@ -56,14 +63,14 @@ public class FragmentSettingsAppointmentsReminderTest {
 
     @Test
     public void preference_time_from_appointment_default() {
-        int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min);
+        int expectedPreferenceValue = context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min);
         int preference_value_time_from_appointment = getSettingsTimeFromAppointmentValueWithDefault0();
         Assert.assertEquals(expectedPreferenceValue, preference_value_time_from_appointment);
     }
 
     @Test
     public void preference_time_from_appointment_change_settings_value_up() {
-        int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)+1;
+        int expectedPreferenceValue = context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)+1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_RIGHT);
         sleep(1, SECONDS);
@@ -73,7 +80,7 @@ public class FragmentSettingsAppointmentsReminderTest {
 
     @Test
     public void preference_time_from_appointment_change_settings_value_down() {
-        int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)-1;
+        int expectedPreferenceValue = context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)-1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_LEFT);
         sleep(1, SECONDS);

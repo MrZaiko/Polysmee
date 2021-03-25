@@ -29,6 +29,7 @@ public class FragmentSettingsMainTest {
         sleep(1, SECONDS);
     }
 
+    //used in tests (this test or any other) to know if the fragment is been displayed
     public static void checkFragmentIsDisplayed(){
         assertDisplayed(R.string.title_settings_appointments_reminder);
     }
