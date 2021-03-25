@@ -70,7 +70,7 @@ public class CalendarActivityTest {
         }
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
+            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
             for(int i = 0; i < number_of_appointments; ++i)
                 demoButton.perform(ViewActions.click()); //add the appointments to layout
             if(number_of_appointments > 6){
