@@ -30,6 +30,7 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.settings.SettingsActivity;
 
 public class CalendarActivity extends AppCompatActivity{
 
@@ -88,6 +89,11 @@ public class CalendarActivity extends AppCompatActivity{
             Intent intent = new Intent(this, AppointmentActivity.class);
             startActivity(intent);
         }
+    }
+
+    public void launchSettings(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
 
