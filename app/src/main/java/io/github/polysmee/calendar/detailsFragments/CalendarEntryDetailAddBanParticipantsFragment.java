@@ -42,23 +42,20 @@ public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
      */
     protected void setInviteAndBanSearchBehavior(){
 
-        setInviteSearchBehavior();
-        setBanSearchBehavior();
-    }
-
-    protected void setInviteSearchBehavior(){
-        SearchView inviteSearch = rootView.findViewById(R.id.calendarEntryDetailActivityInviteSearch);
         Button inviteButton = rootView.findViewById(R.id.calendarEntryDetailActivityInviteButton);
+        Button banButton    = rootView.findViewById(R.id.calendarEntryDetailActivityBanButton);
+        SearchView inviteSearch = rootView.findViewById(R.id.calendarEntryDetailActivityInviteSearch);
+        SearchView banSearch = rootView.findViewById(R.id.calendarEntryDetailActivityBanSearch);
+
         inviteButton.setOnClickListener((v)->{
             String inviteName = inviteSearch.getQuery().toString();
             inviteSearch.setQuery("",false);
             inviteSearch.clearFocus();
             User.getAllUsersIdsAndThenOnce((setOfUserIds) -> {
-                appointment.getParticipantsIdAndThen((participants) ->{
                     for(String userId : setOfUserIds){
                         User user = new DatabaseUser(userId);
                         user.getNameAndThen((name) ->{
-                            if(name.equals(inviteName) && !participants.contains(userId)){
+                            if(name.equals(inviteName)){
                                 user.addAppointment(appointment);
                                 appointment.addParticipant(user);
                             }
@@ -66,13 +63,7 @@ public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
                     }
                 });
 
-            });
-
         });
-    }
-    protected void setBanSearchBehavior(){
-        Button banButton    = rootView.findViewById(R.id.calendarEntryDetailActivityBanButton);
-        SearchView banSearch = rootView.findViewById(R.id.calendarEntryDetailActivityBanSearch);
 
         banButton.setOnClickListener((v)->{
             String bannedName = banSearch.getQuery().toString();

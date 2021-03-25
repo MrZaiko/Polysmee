@@ -30,13 +30,6 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
     public final static String APPOINTMENT_DETAIL_CALENDAR_MODIFY_TITLE  = "APPOINTMENT_MODIFY_TITLE";
     public final static String APPOINTMENT_DETAIL_CALENDAR_MODIFY_COURSE = "APPOINTMENT_MODIFY_COURSE";
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_TO = "APPOINTMENT_DETAIL_CALENDAR_ID_TO";
-
-    protected Bundle createBundle(String key){
-        Bundle bundle = new Bundle();
-        bundle.putSerializable(CalendarActivity.UserTypeCode,userType);
-        bundle.putSerializable(key,appointmentId);
-        return bundle;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,15 +43,24 @@ public class CalendarEntryDetailsActivity extends AppCompatActivity {
             appointment = new FakeDatabaseAppointment(appointmentId);
         List<Fragment> list = new ArrayList<>();
 
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(CalendarActivity.UserTypeCode,userType);
+        bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId);
         CalendarEntryDetailsGeneralFragment detailsGeneralFragment = new CalendarEntryDetailsGeneralFragment();
 
+        Bundle bundle2 = new Bundle();
+        bundle2.putSerializable(CalendarActivity.UserTypeCode,userType);
+        bundle2.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
         CalendarEntryDetailsParticipantsFragments participantsFragments = new CalendarEntryDetailsParticipantsFragments();
 
-       CalendarEntryDetailAddBanParticipantsFragment manageParticipantsFragment = new CalendarEntryDetailAddBanParticipantsFragment();
+        Bundle bundle3 = new Bundle();
+        bundle3.putSerializable(CalendarActivity.UserTypeCode,userType);
+        bundle3.putSerializable(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID,appointmentId);
+        CalendarEntryDetailAddBanParticipantsFragment manageParticipantsFragment = new CalendarEntryDetailAddBanParticipantsFragment();
 
-        detailsGeneralFragment.setArguments(createBundle(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID));
-        participantsFragments.setArguments(createBundle(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID));
-        manageParticipantsFragment.setArguments(createBundle(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID));
+        detailsGeneralFragment.setArguments(bundle);
+        participantsFragments.setArguments(bundle2);
+        manageParticipantsFragment.setArguments(bundle3);
 
         list.add(detailsGeneralFragment);
         list.add(participantsFragments);
