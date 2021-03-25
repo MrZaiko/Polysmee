@@ -87,6 +87,12 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
         return rootView;
     }
 
+    /**
+     * Method that will be called when the appointment's owner clicks on the "Kick" button next
+     * to the corresponding user. It will delete the appointment from the user's list of appointments,
+     * and the user from the appointment's list of users
+     * @param id the user's id which will be kicked from the appointment
+     */
     protected void kickUserButton(String id){
         User user = new DatabaseUser(id);
         user.removeAppointment(appointment);

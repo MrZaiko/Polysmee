@@ -34,7 +34,11 @@ public class CalendarEntryDetailAddBanParticipantsFragment extends Fragment {
 
 
     /**
-     * Defines the behavior of both
+     * Defines the behavior of the add and ban users search bars; after entering the
+     * correct username in the corresponding search bar and clicking on the right button,
+     * it either adds or invites the user.
+     * NOTE: the banning system not having been implemented yet, the ban part
+     * does nothing for now
      */
     protected void setInviteAndBanSearchBehavior(){
 
