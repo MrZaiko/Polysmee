@@ -38,14 +38,13 @@ public class DatabaseUserTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new SecureRandom();
-
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+        Thread.sleep(1000);
     }
 
     @Test

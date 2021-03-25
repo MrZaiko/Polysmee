@@ -56,7 +56,6 @@ public class RoomActivityParticipantsFragmentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
