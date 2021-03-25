@@ -80,7 +80,7 @@ public class FragmentSettingsAppointmentsReminderTest {
         sleep(1, SECONDS);
         int preference_value_time_from_appointment = getSettingsTimeFromAppointmentValueWithDefault0();
         Assert.assertEquals(expectedPreferenceValue, preference_value_time_from_appointment);
-    }**/
+    }
 
     @Test
     public void preference_time_from_appointment_change_settings_value_down() {
@@ -92,6 +92,6 @@ public class FragmentSettingsAppointmentsReminderTest {
         int preference_value_time_from_appointment = getSettingsTimeFromAppointmentValueWithDefault0();
         Assert.assertEquals(expectedPreferenceValue, preference_value_time_from_appointment);
 
-    }
+    }**/
 
 }
