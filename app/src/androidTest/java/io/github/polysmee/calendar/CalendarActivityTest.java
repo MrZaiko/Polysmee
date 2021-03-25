@@ -7,7 +7,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
-import androidx.test.espresso.assertion.ViewAssertions;
+import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -26,8 +26,7 @@ import io.github.polysmee.database.decoys.FakeDatabase;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
-import static org.hamcrest.Matchers.containsString;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityTest {
@@ -52,14 +51,10 @@ public class CalendarActivityTest {
     @Test
     public void writtenDateIsCorrectTest(){
 
-        //Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
-      //  intent.putExtra(CalendarActivity.UserTypeCode,"Fake");
-
         Date date = new Date(DailyCalendar.todayEpochTimeAtMidnight()*1000);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            Espresso.onView(withId(R.id.todayDateCalendarActivity)).check(ViewAssertions.matches(
-                    withText(containsString("Appointments on the " + formatter.format(date) +" : " ))));
+            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
         }
     }
 
@@ -78,11 +73,14 @@ public class CalendarActivityTest {
             ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
             for(int i = 0; i < number_of_appointments; ++i)
                 demoButton.perform(ViewActions.click()); //add the appointments to layout
-            int j = 0;
-            for(int i = 0; i<number_of_appointments;++i){
-                ViewInteraction calendarEntryDescription = Espresso.onView(withId(constraintLayoutIdForTests + j + 1));
-                j+=3;
-                calendarEntryDescription.check(ViewAssertions.matches(withText(formatAppointmentDescription(infos[i]))));
+            if(number_of_appointments > 6){
+                for(int i = 0; i<6;++i){
+                    assertDisplayed(formatAppointmentDescription(infos[i]));
+                }
+                ViewInteraction scrollLayout = Espresso.onView(ViewMatchers.withId(R.id.calendarActivityAppointmentScroll)).perform(ViewActions.swipeUp());
+                for (int i = 6; i < number_of_appointments; ++i){
+                    assertDisplayed(formatAppointmentDescription(infos[i]));
+                }
             }
 
         }
