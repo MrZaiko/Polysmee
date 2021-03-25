@@ -37,6 +37,8 @@ import io.github.polysmee.login.AuthenticationFactory;
  * Fragment that handles messaging (Send, receive, display)
  */
 public class RoomActivityMessagesFragment extends Fragment {
+    public static String MESSAGES_KEY = "io.github.polysme.room.fragments.roomActivityMessagesFragment.MESSAGES_KEY";
+
     private ViewGroup rootView;
     private DatabaseReference databaseReference;
     private Map<String, TextView> messagesDisplayed = new HashMap<String, TextView>();
@@ -45,13 +47,14 @@ public class RoomActivityMessagesFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_room_messages_fragment, container, false);
+
+        String appointmentId = requireArguments().getString(MESSAGES_KEY);
+
         Button send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
-        Button receive = rootView.findViewById(R.id.roomActivityReceiveMessageButton);
-        receive.setOnClickListener(this::receiveMessage);
 
         //Initialize the database reference to the right path (default path for now)
-        databaseReference = DatabaseFactory.getAdaptedInstance().getReference("messages");
+        databaseReference = DatabaseFactory.getAdaptedInstance().getReference("appointments/"+appointmentId+"/messages");
 
         //add a value listener on the value of the database in order to display the messages and update them
         databaseReference.addValueEventListener(new ValueEventListener() {
@@ -65,11 +68,8 @@ public class RoomActivityMessagesFragment extends Fragment {
                     String user = ds.child("sender").getValue(String.class);
                     String content = ds.child("content").getValue(String.class);
                     Long time = ds.child("messageTime").getValue(Long.class);
-                    Message message = new Message(user, content, time);
 
-                    /**
-                     * Avoid displaying the same message multiple times by storing them in a hashMap
-                     */
+                     //Avoid displaying the same message multiple times by storing them in a hashMap
                     if (!messagesDisplayed.containsKey(key)) {
 
                         //check for each message whether the sender is the current user or not in order to adapt the background of the message (grey or blue) in the room
@@ -101,8 +101,6 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
         });
 
-
-
         return rootView;
     }
 
@@ -121,31 +119,6 @@ public class RoomActivityMessagesFragment extends Fragment {
         //sends the message using the uid of the current user and the text from the EditText of the room
         Message.sendMessage(messageToAdd, databaseReference, userId);
         messageEditText.setText("");
-
-    }
-
-    /**
-     * Display the message written in the PlainText RoomActivityMessageTest in the ScrollView
-     * RoomActivityMessagesScrollView with a received_message_background style
-     * @param view
-     */
-    public void receiveMessage(View view) {
-        closeKeyboard();
-
-        EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
-        String messageToAdd = messageEditText.getText().toString();
-        messageEditText.setText("");
-        System.out.println(messageToAdd);
-        TextView messageToAddTextView = generateMessageTextView(messageToAdd, false);
-
-        LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-        messages.addView(messageToAddTextView);
-        //Blank text view to add a space between messages
-        messages.addView(new TextView(rootView.getContext()));
-
-        //Scroll down the view to see the latest messages
-        ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-        scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
     }
 
     private void closeKeyboard() {
