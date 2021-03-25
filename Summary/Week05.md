@@ -27,6 +27,12 @@ Next week, I'll try to implement the possibility for the user to select any date
 
 ## Mathis
 
+This week, I implemented a way to call the firebase emulator while running on Cirrus, so that the tests stop thrashing our production database with garbage.
+It enables tests to create fake users and appointments and answers queries, while deleting all data at the end of the cirrus run.
+
+I managed to stay mostly within the 8 hour time bound.
+
+Next week, I will work on a new database implementation that enables group owners to ban users from a group.
 
 ## Thomas
 
