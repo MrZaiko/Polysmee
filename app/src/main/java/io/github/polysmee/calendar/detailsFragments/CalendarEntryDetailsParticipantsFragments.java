@@ -45,6 +45,13 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
         else
             appointment = new FakeDatabaseAppointment(appointmentId);
 
+
+        generateParticipants(linearLayout, inflater);
+        return rootView;
+    }
+
+
+    protected void generateParticipants(LinearLayout linearLayout, LayoutInflater inflater){
         appointment.getParticipantsIdAndThen((setOfParticipants) ->{
             linearLayout.removeAllViewsInLayout();
             for(String id : setOfParticipants){
@@ -56,11 +63,9 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                     usernameTextView.setTextSize(20);
                 });
                 Button button = layout.findViewById(R.id.calendarEntryDetailActivityKickButton);
-
                 button.setVisibility(View.INVISIBLE);
                 button.setText("NotKickable");
                 button.setClickable(false);
-
                 appointment.getOwnerIdAndThen((ownerId) ->{
                     if(ownerId.equals(MainUserSingleton.getInstance().getId())){
                         if(!id.equals(MainUserSingleton.getInstance().getId())){
@@ -71,10 +76,8 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                                 kickUserButton(id);
                             });
                         }
-
                     }
                 });
-
                 linearLayout.addView(layout);
                 TextView emptySpace = new TextView(rootView.getContext());
                 emptySpace.setText("");
@@ -83,10 +86,7 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
                 linearLayout.addView(emptySpace);
             }
         });
-
-        return rootView;
     }
-
     /**
      * Method that will be called when the appointment's owner clicks on the "Kick" button next
      * to the corresponding user. It will delete the appointment from the user's list of appointments,
