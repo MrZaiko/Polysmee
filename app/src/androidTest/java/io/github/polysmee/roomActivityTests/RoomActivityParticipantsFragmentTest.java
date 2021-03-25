@@ -44,30 +44,24 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
-    private static String userEmail;
-
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2;
+    private static String id2 = "poiqsdhfgreidfgknbcbv";
     private static final String username2 = "Sami L'imposteur";
 
     private static final String appointmentTitle = "It's a title";
-    private static String appointmentId;
+    private static String appointmentId = "nbcwxuhcjgvwxcuftyqf";
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new SecureRandom();
-        RoomActivityParticipantsFragmentTest.id2 = Long.toString(idGen.nextLong());
-        RoomActivityParticipantsFragmentTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityParticipantsFragmentTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
 

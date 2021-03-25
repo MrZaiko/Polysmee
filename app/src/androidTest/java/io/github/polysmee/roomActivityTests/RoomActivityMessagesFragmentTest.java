@@ -47,35 +47,27 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityMessagesFragmentTest {
-    private static String userEmail;
-
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2;
+    private static String id2 = "azeeazsqdsq";
     private static final String username2 = "Sami L'imposteur";
 
-    private static String appointmentId;
-    private static String firstMessageId;
+    private static String appointmentId = "lkdfjswxcuyt";
+    private static String firstMessageId = "jkxwcoihjcwxp";
     private static final String firstMessage = "I'm a message";
 
-    private static String secondMessageId;
+    private static String secondMessageId = "poisdoufoiq";
     private static final String secondMessage = "I'm a better message";
 
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new SecureRandom();
-        RoomActivityMessagesFragmentTest.id2 = Long.toString(idGen.nextLong());
-        RoomActivityMessagesFragmentTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityMessagesFragmentTest.firstMessageId = Long.toString(idGen.nextLong());
-        RoomActivityMessagesFragmentTest.secondMessageId = Long.toString(idGen.nextLong());
-        RoomActivityMessagesFragmentTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityMessagesFragmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());

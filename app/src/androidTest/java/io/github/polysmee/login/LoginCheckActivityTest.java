@@ -27,20 +27,16 @@ import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 
-//@RunWith(AndroidJUnit4.class)
+@RunWith(AndroidJUnit4.class)
 public class LoginCheckActivityTest {
-    private static String userEmail;
 
     @BeforeClass
     public static void setUp() throws Exception {
-        Random idGen = new SecureRandom();
-        userEmail = idGen.nextInt(2000) +"@gmail.com";
-
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail+"@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
     }
 
     @Test
@@ -56,7 +52,7 @@ public class LoginCheckActivityTest {
 
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword(userEmail+"@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){

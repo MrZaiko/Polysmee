@@ -35,19 +35,16 @@ public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";
 
-    private static String userEmail;
-
 
     @BeforeClass
     public static void setUp() throws Exception {
         Random idGen = new SecureRandom();
-        userEmail = idGen.nextInt(2000) +"@gmail.com";
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail+"@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
     }
 

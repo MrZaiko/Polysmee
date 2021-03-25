@@ -38,8 +38,6 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityInfoNotOwnerTest {
-    private static String userEmail;
-
     private static final String username1 = "Mathis L'utilisateur";
     private static String id2;
     private static final String username2 = "Sami L'imposteur";
@@ -53,15 +51,14 @@ public class RoomActivityInfoNotOwnerTest {
     @BeforeClass
     public static void setUp() throws Exception {
         Random idGen = new SecureRandom();
-        RoomActivityInfoNotOwnerTest.id2 = Long.toString(idGen.nextLong());
-        RoomActivityInfoNotOwnerTest.appointmentId = Long.toString(idGen.nextLong());
-        RoomActivityInfoNotOwnerTest.userEmail = idGen.nextInt(2000) +"@gmail.com";
+        id2 = Long.toString(idGen.nextLong());
+        appointmentId = Long.toString(idGen.nextLong());
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityInfoNotOwnerTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
