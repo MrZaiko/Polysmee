@@ -26,7 +26,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.polysmee.Messages.Message;
+import io.github.polysmee.messages.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.MainUserSingleton;

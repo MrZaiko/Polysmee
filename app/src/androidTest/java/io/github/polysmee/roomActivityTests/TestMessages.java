@@ -1,19 +1,13 @@
 package io.github.polysmee.roomActivityTests;
 
-import com.google.android.gms.tasks.Tasks;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.concurrent.ExecutionException;
 
 import static org.junit.Assert.*;
 
 
-import io.github.polysmee.Messages.Message;
+import io.github.polysmee.messages.Message;
 
 public class TestMessages {
 

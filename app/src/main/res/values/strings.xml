@@ -36,5 +36,8 @@
     <string name="appointment_settings_btn_invite">Invite</string>
     <string name="appointment_settings_btn_ban">Ban</string>
     <string name="appointment_settings_btn_done">Done</string>
+    <string name="roomActivityParticipantDialogRemoveButton">Remove</string>
+    <string name="roomInfoTitleText">Title</string>
+    <string name="roomInfoCourseText">Course</string>
 
 </resources>
