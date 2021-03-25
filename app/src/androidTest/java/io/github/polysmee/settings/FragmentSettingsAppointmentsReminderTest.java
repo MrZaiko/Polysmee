@@ -35,15 +35,13 @@ public class FragmentSettingsAppointmentsReminderTest {
     }
 
     @Before
-    public void createFragment(){
+    public void resetPreferenceAndCreateFragment(){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().putInt(
+                context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)).commit();
         FragmentScenario.launchInContainer(FragmentSettingsAppointmentsReminder.class);
-        sleep(2, SECONDS);
+        sleep(1, SECONDS);
     }
-
-    // Clear all app's SharedPreferences
-    @Rule
-    public ClearPreferencesRule clearPreferencesRule = new ClearPreferencesRule();
-
 
     public static void checkFragmentIsDisplayed(){
         assertDisplayed(R.string.title_settings_appointments_reminder_notification_time_from_appointment);
@@ -75,7 +73,6 @@ public class FragmentSettingsAppointmentsReminderTest {
 
     @Test
     public void preference_time_from_appointment_change_settings_value_down() {
-
         int expectedPreferenceValue = context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)-1;
         UiDevice device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         device.pressKeyCode(KeyEvent.KEYCODE_DPAD_LEFT);
