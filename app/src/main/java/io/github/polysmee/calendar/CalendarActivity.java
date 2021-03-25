@@ -79,8 +79,15 @@ public class CalendarActivity extends AppCompatActivity{
      * Function that will be used only in the demos to show how the calendar works.
      */
     private void createAppointment(){
-        Intent intent = new Intent(this, AppointmentActivity.class);
-        startActivity(intent);
+        if (user.getClass() == FakeDatabaseUser.class) {
+            user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
+                    "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
+            demo_indexer += 1;
+            addListenerToUserAppointments();
+        } else {
+            Intent intent = new Intent(this, AppointmentActivity.class);
+            startActivity(intent);
+        }
     }
 
 
