@@ -13,6 +13,7 @@ import androidx.test.uiautomator.UiDevice;
 
 import com.schibsted.spain.barista.rule.cleardata.ClearPreferencesRule;
 
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
@@ -39,7 +40,7 @@ public class FragmentSettingsAppointmentsReminderTest {
     }
 
     @Before
-    @AfterClass
+    @After
     public void resetPreference(){
         PreferenceManager.getDefaultSharedPreferences(context()).edit().putInt(
                 context().getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
