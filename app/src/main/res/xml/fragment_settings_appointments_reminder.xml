@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <SeekBarPreference
+        android:max="120"
+        app:key="@string/preference_key_appointments_reminder_notification_time_from_appointment_minutes"
+        app:min="1"
+        app:showSeekBarValue="true"
+        app:summary="@string/summary_settings_appointments_reminder_notification_time_from_appointment"
+        app:title="@string/title_settings_appointments_reminder_notification_time_from_appointment"
+        app:defaultValue="@integer/default_appointment_reminder_notification__time_from_appointment_min"
+        app:icon="@drawable/settings_appointments_reminder_time_before_appointments"
+        app:adjustable="true"
+        app:seekBarIncrement="1"
+        />
+
+
+</PreferenceScreen>
