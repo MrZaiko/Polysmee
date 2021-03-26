@@ -22,6 +22,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseUser;
@@ -29,6 +30,7 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.settings.SettingsActivity;
 
 public class CalendarActivity extends AppCompatActivity{
 
@@ -63,21 +65,35 @@ public class CalendarActivity extends AppCompatActivity{
 
         setTodayDateText();
 
-        Button demoButton    = (Button) findViewById(R.id.calendarActivityDemoButton);
-        demoButton.setOnClickListener((v)->{demoAddAppointment();});
+        Button createAppointmentButton    = findViewById(R.id.calendarActivityCreateAppointmentButton);
+        createAppointmentButton.setOnClickListener((v) -> createAppointment());
         addListenerToUserAppointments();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        addListenerToUserAppointments();
+    }
 
-    /**
+    /*
      * Function that will be used only in the demos to show how the calendar works.
      */
-    private void demoAddAppointment(){
-        user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
-                "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
-        demo_indexer += 1;
-        if(user.getClass() == FakeDatabaseUser.class)
+    private void createAppointment(){
+        if (user.getClass() == FakeDatabaseUser.class) {
+            user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
+                    "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
+            demo_indexer += 1;
             addListenerToUserAppointments();
+        } else {
+            Intent intent = new Intent(this, AppointmentActivity.class);
+            startActivity(intent);
+        }
+    }
+
+    public void launchSettings(View view) {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
     }
 
 

@@ -18,6 +18,7 @@ import java.util.List;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseFactory;
 
 //Copyright 2017 github.com/firebase
@@ -86,7 +87,9 @@ public class LoginActivity extends AppCompatActivity {
                     .child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
 
-            startActivity(new Intent(this, MainActivity.class));
+            Intent intent = new Intent(this, CalendarActivity.class);
+            intent.putExtra(CalendarActivity.UserTypeCode,"Real");
+            startActivity(intent);
             finish();
 
         } else if(response == null) {

@@ -8,7 +8,7 @@
 
     <string name="calendarActivityTodaysDate">Date</string>
     <string name="calendarActivityRefreshButton">Refresh</string>
-    <string name="calendarActivityDemoButton">Demo</string>
+    <string name="calendarActivityCreateAppointmentButton">Create</string>
     <string name="calendarEntryDescription">Description</string>
     <string name="calendarEntryDetailsButton">Details</string>
     <string name="calendarEntryDetailActivityModifyButton">Modify</string>

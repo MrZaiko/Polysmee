@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.CalendarActivity;
 
 public class LoginCheckActivity extends AppCompatActivity {
 
@@ -22,7 +23,9 @@ public class LoginCheckActivity extends AppCompatActivity {
         if(user == null) {
             startActivity(new Intent(this, LoginActivity.class));
         } else {
-            startActivity(new Intent(this, MainActivity.class));
+            Intent intent = new Intent(this,CalendarActivity.class);
+            intent.putExtra(CalendarActivity.UserTypeCode,"Real");
+            startActivity(intent);
         }
         finish();
     }

@@ -51,7 +51,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
                 DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
-            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
+            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
             demoButton.perform(ViewActions.click());
 
             ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
@@ -71,7 +71,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
                 DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
-            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityDemoButton));
+            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
             demoButton.perform(ViewActions.click());
 
             ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));

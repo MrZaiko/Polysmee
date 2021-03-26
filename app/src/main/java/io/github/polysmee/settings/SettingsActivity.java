@@ -10,7 +10,8 @@ import androidx.preference.PreferenceFragmentCompat;
 
 import io.github.polysmee.R;
 
-/*  greatly inspired from https://developer.android.com/guide/topics/ui/settings
+/*
+ *  greatly inspired from https://developer.android.com/guide/topics/ui/settings
  *  It is the Settings activity, the user interface for the overall settings of the application
  */
 public class SettingsActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {

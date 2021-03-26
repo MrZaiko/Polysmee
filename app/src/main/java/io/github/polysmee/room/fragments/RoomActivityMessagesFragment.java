@@ -72,18 +72,17 @@ public class RoomActivityMessagesFragment extends Fragment {
         messageEditText.setText("");
     }
 
-    /**
-     * @param messageKey
-     * @param newContent Edits the content of the message whose key is messageKey to newContent in the database
+    /*
+     * Edits the content of the message whose key is messageKey to newContent in the database
      */
-    public void editMessage(String messageKey, String newContent) {
+    private void editMessage(String messageKey, String newContent) {
         databaseReference.child(messageKey).child("content").setValue(newContent);
     }
 
-    /**
-     * @param messageKey deletes the message whose key is messageKey from the database
+    /*
+     * Deletes the message whose key is messageKey from the database
      */
-    public void deleteMessage(String messageKey) {
+    private void deleteMessage(String messageKey) {
         databaseReference.child(messageKey).removeValue();
     }
 

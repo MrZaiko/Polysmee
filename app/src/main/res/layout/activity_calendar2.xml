@@ -39,15 +39,28 @@
         app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAtBeginning" />
 
     <Button
-        android:id="@+id/calendarActivityDemoButton"
+        android:id="@+id/calendarActivityCreateAppointmentButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
         android:layout_marginBottom="55dp"
-        android:text="@string/calendarActivityDemoButton"
+        android:text="@string/calendarActivityCreateAppointmentButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAtTheEnd" />
+
+    <Button
+        android:id="@+id/calendarActivitySettingsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="32dp"
+        android:layout_marginBottom="55dp"
+        android:text="Settings"
+        android:onClick="launchSettings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAtTheEnd"
+        app:layout_constraintVertical_bias="0.511" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/calendarActivityGuidelineAtBeginning"

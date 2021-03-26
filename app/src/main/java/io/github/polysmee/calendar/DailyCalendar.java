@@ -50,12 +50,7 @@ public class DailyCalendar {
                 todaysAppointments.add(appointment);
             }
         }
-        Collections.sort(todaysAppointments, new Comparator<CalendarAppointmentInfo>() {
-            @Override
-            public int compare(CalendarAppointmentInfo calendarAppointmentInfo, CalendarAppointmentInfo t1) {
-                return Long.compare(calendarAppointmentInfo.getStartTime(),t1.getStartTime());
-            }
-        });
+        Collections.sort(todaysAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(),t1.getStartTime()));
 
         return Collections.unmodifiableList(todaysAppointments);
     }
