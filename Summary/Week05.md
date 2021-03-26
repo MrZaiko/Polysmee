@@ -35,6 +35,11 @@ I managed to stay mostly within the 8 hour time bound.
 Next week, I will work on a new database implementation that enables group owners to ban users from a group.
 
 ## Thomas
+This week I implemented a user interface to change the time at which a user will be reminded, it took me much more time than predicted as it was a special case of android. The testing of the implementation was not easy.
+
+I didn't manage to do all the tasks that I wanted to do, I only did the implementation of a setting interface.
+
+Next week, I will work on the tasks that I did not implemented this week.
 
 
 ## Adrien
