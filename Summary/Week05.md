@@ -39,6 +39,11 @@ Next week, I will work on a new database implementation that enables group owner
 
 ## Adrien
 
+This week I first refactored the database reader of the room to make it more efficient, then I implemented the back-end part of the edit/delete message feature.
+
+My time estimate was fine.
+
+Next week I'll try not to waste time in merging conflict so that I can focus more on the code.
 
 ## Overall team:
 
