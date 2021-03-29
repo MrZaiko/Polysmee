@@ -54,7 +54,7 @@ public class CalendarActivityTest {
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
     }
 
-    @Test
+  /*  @Test
     public void choosingAnotherDateChangesDisplayedDate(){
         int year = 2021;
         int month = 1;
@@ -67,7 +67,7 @@ public class CalendarActivityTest {
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
         }
-    }
+    }*/
 
     @Test
     public void writtenDateIsCorrectTest(){
