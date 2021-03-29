@@ -36,11 +36,13 @@ import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarEntryDetailsActivityGeneralFragmentTest {
-    private static final String username1 = "Youssef le dindon";
-    private static final String appointmentId = "-lsdqrhrrdtisjhmf";
+    private static final String username1 = "Youssef le bonabo";
+    private static final String appointmentId = "-lw87drhrrdtisjhmf";
     @BeforeClass
     public static void setUp() throws Exception {
 
@@ -76,10 +78,9 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
                 DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
-
-
             ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
             calendarEntryDetailButton.perform(ViewActions.click());
+            sleep(3,SECONDS);
             ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
             titleDetails.check(ViewAssertions.matches(withText(info.getTitle())));
             ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
@@ -98,6 +99,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
             ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
             calendarEntryDetailButton.perform(ViewActions.click());
+            sleep(3,SECONDS);
 
             ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
             titleDetails.perform(ViewActions.clearText());
@@ -111,6 +113,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
             ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
             modifyButton.perform(ViewActions.click());
+            sleep(3,SECONDS);
 
             assertDisplayed(formatAppointmentDescription(info));
         }
