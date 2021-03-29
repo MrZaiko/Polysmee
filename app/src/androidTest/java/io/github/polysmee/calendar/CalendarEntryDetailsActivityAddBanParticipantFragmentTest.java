@@ -74,21 +74,10 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
-   /* @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee2410@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
-        //Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
-    }*/
 
     @Test
     public void addingUserThroughSearchAddsTheUser(){
         Bundle bundle = new Bundle();
-
-        bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-        bundle.putSerializable(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID,appointmentId);
 
         FragmentScenario.launchInContainer(CalendarEntryDetailAddBanParticipantsFragment.class,bundle);
         sleep(5, SECONDS);

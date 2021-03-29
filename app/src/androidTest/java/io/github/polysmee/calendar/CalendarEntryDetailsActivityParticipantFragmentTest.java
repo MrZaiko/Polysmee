@@ -62,23 +62,9 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
-    /*@AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1541@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
-        //Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
-    }*/
-
   @Test
   public void participantsNamesInCalendarEntryDetailsAreDisplayed(){
-      Bundle bundle = new Bundle();
-
-      bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-      bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
-
-      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
+      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class);
       sleep(5, SECONDS);
       assertDisplayed(username1);
       assertDisplayed(username2);
@@ -86,12 +72,8 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
   }
   @Test
   public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
-      Bundle bundle = new Bundle();
 
-      bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-      bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
-
-      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
+      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class);
       sleep(3,SECONDS);
       Espresso.onView(withText("Kick")).perform(ViewActions.click());
       sleep(5,SECONDS);

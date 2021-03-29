@@ -128,11 +128,8 @@ public class CalendarActivityTest {
 
 
     private static final String username1 = "Youssef le dindon";
-
-    private static final String appointmentTitle = "coucouchou";
     private static final String appointmentId = "-lsdqrhrrdtisjhmf";
-    private static final String appointmentCourse = "SDP";
-    private static final long appointmentStart = 265655445;
+
     @BeforeClass
     public static void setUp() throws Exception {
 
@@ -142,14 +139,6 @@ public class CalendarActivityTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee241098@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-
-        /*DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
-
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);*/
 
 
     }
@@ -163,9 +152,6 @@ public class CalendarActivityTest {
     @Test
     public void writtenDateIsCorrectTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
@@ -179,9 +165,6 @@ public class CalendarActivityTest {
         int month = 1;
         int day = 13;
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             clickOn(R.id.todayDateCalendarActivity);
@@ -197,10 +180,6 @@ public class CalendarActivityTest {
     public void scrollViewContentIsCoherentAfterAddingAppointments(){
 
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
-
 
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
@@ -216,7 +195,7 @@ public class CalendarActivityTest {
         }
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            
+
             for(int i = 0; i< number_of_appointments; ++i){
                 DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(infos[i].getTitle());
                 DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(infos[i].getCourse());

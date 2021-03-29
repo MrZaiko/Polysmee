@@ -88,7 +88,6 @@ public class LoginActivity extends AppCompatActivity {
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
 
             Intent intent = new Intent(this, CalendarActivity.class);
-            intent.putExtra(CalendarActivity.UserTypeCode,"Real");
             startActivity(intent);
             finish();
 
