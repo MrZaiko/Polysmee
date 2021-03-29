@@ -181,6 +181,8 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(CalendarActivity.UserTypeCode, "Real");
+        intent.putExtras(bundle);
+
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             clickOn(R.id.todayDateCalendarActivity);
             setDateOnPicker(year,month,day);
@@ -197,6 +199,8 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString(CalendarActivity.UserTypeCode, "Real");
+        intent.putExtras(bundle);
+
 
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
@@ -230,6 +234,7 @@ public class CalendarActivityTest {
 
     private void createAppointment(int day, int month, int year, int hour, int minute, String title, String course){
         clickOn((R.id.calendarActivityCreateAppointmentButton));
+        sleep(2,SECONDS);
         setStartTime(day,month,year,hour,minute);
         setEndTime(day,month,year,hour+2,minute);
 
