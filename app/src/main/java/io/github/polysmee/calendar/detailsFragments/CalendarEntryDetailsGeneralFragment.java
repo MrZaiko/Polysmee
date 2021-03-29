@@ -34,8 +34,12 @@ public class CalendarEntryDetailsGeneralFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.activity_calendar_entry_detail_general_fragment, container, false);
         Bundle bundle = this.getArguments();
+        String userType = (String)bundle.getSerializable(CalendarActivity.UserTypeCode);
         appointmentId = (String)bundle.getSerializable(APPOINTMENT_DETAIL_GENERAL_ID);
-        appointment = new DatabaseAppointment(appointmentId);
+        if(userType.equals("Real"))
+            appointment = new DatabaseAppointment(appointmentId);
+        else
+            appointment = new FakeDatabaseAppointment(appointmentId);
         appointment.getStartTimeAndThen((start)->{
             TextView textView = rootView.findViewById(R.id.calendarEntryDetailActivityStart);
             Date startTime = new Date(start * 1000);

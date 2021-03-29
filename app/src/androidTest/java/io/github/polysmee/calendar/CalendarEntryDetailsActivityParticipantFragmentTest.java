@@ -62,22 +62,40 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
-  @Test
-  public void participantsNamesInCalendarEntryDetailsAreDisplayed(){
-      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class);
-      sleep(5, SECONDS);
-      assertDisplayed(username1);
-      assertDisplayed(username2);
+    /*@AfterClass
+    public static void delete() throws ExecutionException, InterruptedException {
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee1541@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
+        //Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+    }*/
 
-  }
-  @Test
-  public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
+    @Test
+    public void participantsNamesInCalendarEntryDetailsAreDisplayed(){
+        Bundle bundle = new Bundle();
 
-      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class);
-      sleep(3,SECONDS);
-      Espresso.onView(withText("Kick")).perform(ViewActions.click());
-      sleep(5,SECONDS);
-      assertDisplayed(username1);
-      Espresso.onView(withText(username2)).check(doesNotExist());
-  }
+        bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
+        bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+
+        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
+        sleep(5, SECONDS);
+        assertDisplayed(username1);
+        assertDisplayed(username2);
+
+    }
+    @Test
+    public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
+        bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+
+        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
+        sleep(3,SECONDS);
+        Espresso.onView(withText("Kick")).perform(ViewActions.click());
+        sleep(5,SECONDS);
+        assertDisplayed(username1);
+        Espresso.onView(withText(username2)).check(doesNotExist());
+    }
 }

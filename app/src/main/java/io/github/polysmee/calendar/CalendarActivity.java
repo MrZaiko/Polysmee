@@ -55,8 +55,14 @@ public class CalendarActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        userType = (String) getIntent().getSerializableExtra(UserTypeCode);
         setContentView(R.layout.activity_calendar2);
-        user = MainUserSingleton.getInstance();
+        if(userType.equals("Real")){
+            user = MainUserSingleton.getInstance();
+        }
+        else{
+            user = FakeDatabaseUser.getInstance();
+        }
         scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -108,8 +114,15 @@ public class CalendarActivity extends AppCompatActivity{
      * Function that will be used only in the demos to show how the calendar works.
      */
     private void createAppointment(){
+        if (user.getClass() == FakeDatabaseUser.class) {
+            user.createNewUserAppointment(DailyCalendar.getDayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
+                    "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
+            demo_indexer += 1;
+            addListenerToUserAppointments();
+        } else {
             Intent intent = new Intent(this, AppointmentActivity.class);
             startActivity(intent);
+        }
     }
 
     public void launchSettings(View view) {
@@ -121,7 +134,15 @@ public class CalendarActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
+        //FOR THE TESTS ONLY
+        if(user.getClass() == FakeDatabaseUser.class){
+            String title = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_TITLE);
+            String course = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_COURSE);
+            String id = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_ID_TO);
+            System.out.println(title); System.out.println(course);
+            CalendarAppointmentInfo info = getElementInList(id);
+            info.setCourse(course); info.setTitle(title); addListenerToUserAppointments();
+        }
     }
 
     /**
@@ -133,6 +154,7 @@ public class CalendarActivity extends AppCompatActivity{
     protected void goToAppointmentDetails(String id){
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
         intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
+        intent.putExtra(UserTypeCode,userType);
         startActivityForResult(intent, CALENDAR_ENTRY_DETAIL_CODE);
     }
 
@@ -144,11 +166,11 @@ public class CalendarActivity extends AppCompatActivity{
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos){
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos);
         if(!todayAppointments.isEmpty()){
-        int i = 0;
-        for(CalendarAppointmentInfo appointment : todayAppointments){
-            addAppointmentToCalendarLayout(appointment,i);
-            i+=3;
-        }
+            int i = 0;
+            for(CalendarAppointmentInfo appointment : todayAppointments){
+                addAppointmentToCalendarLayout(appointment,i);
+                i+=3;
+            }
         }
     }
 

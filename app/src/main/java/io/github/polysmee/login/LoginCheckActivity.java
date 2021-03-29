@@ -24,6 +24,7 @@ public class LoginCheckActivity extends AppCompatActivity {
             startActivity(new Intent(this, LoginActivity.class));
         } else {
             Intent intent = new Intent(this,CalendarActivity.class);
+            intent.putExtra(CalendarActivity.UserTypeCode,"Real");
             startActivity(intent);
         }
         finish();

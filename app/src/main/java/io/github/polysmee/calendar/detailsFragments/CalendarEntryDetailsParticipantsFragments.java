@@ -38,8 +38,12 @@ public class CalendarEntryDetailsParticipantsFragments extends Fragment {
         LinearLayout linearLayout = rootView.findViewById(R.id.calendarEntryDetailActivityParticipantsLayout);
 
         Bundle bundle = this.getArguments();
+        String userType = (String)bundle.getSerializable(CalendarActivity.UserTypeCode);
         appointmentId = (String)bundle.getSerializable(APPOINTMENT_DETAIL_PARTICIPANT_ID);
-        appointment = new DatabaseAppointment(appointmentId);
+        if(userType.equals("Real"))
+            appointment = new DatabaseAppointment(appointmentId);
+        else
+            appointment = new FakeDatabaseAppointment(appointmentId);
 
         appointment.getParticipantsIdAndThen((setOfParticipants) ->{
             linearLayout.removeAllViewsInLayout();
