@@ -10,6 +10,7 @@ import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,20 +55,20 @@ public class CalendarActivityTest {
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
     }
 
-  /*  @Test
+    @Test
     public void choosingAnotherDateChangesDisplayedDate(){
         int year = 2021;
         int month = 1;
         int day = 13;
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            Espresso.onView(withId(R.id.todayDateCalendarActivity)).perform(ViewActions.click());
+            clickOn(R.id.todayDateCalendarActivity);
             setDateOnPicker(year,month,day);
             long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
             Date date = new Date(epochTimeToday);
             SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
         }
-    }*/
+    }
 
     @Test
     public void writtenDateIsCorrectTest(){
