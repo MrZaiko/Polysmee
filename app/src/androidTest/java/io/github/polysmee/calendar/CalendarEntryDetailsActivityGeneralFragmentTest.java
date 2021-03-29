@@ -16,6 +16,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -31,8 +32,6 @@ import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.
 @RunWith(AndroidJUnit4.class)
 public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
-    private static final int constraintLayoutIdForTests = 284546;
-
     private static final Intent intent;
     static {
         intent = new Intent(getApplicationContext(), CalendarActivity.class);
@@ -45,10 +44,16 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         FakeDatabase.idGenerator = new AtomicLong(0);
     }
 
+    @Before
+    public void setTodayDateInDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+    }
+
     @Test
     public void appointmentDetailsAreCorrect(){
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
-                DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
+                DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
@@ -68,7 +73,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         String newTitle = "NewTitleTest";
         String newCourse = "NewCourseTest";
         CalendarAppointmentInfo info = new CalendarAppointmentInfo(newCourse, newTitle,
-                DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
+                DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));

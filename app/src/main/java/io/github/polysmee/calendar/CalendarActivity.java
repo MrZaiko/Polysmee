@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.app.DatePickerDialog;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -63,11 +66,42 @@ public class CalendarActivity extends AppCompatActivity{
         scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        setTodayDateText();
+        setTodayDateInDailyCalendar();
+        setDayText();
+
 
         Button createAppointmentButton    = findViewById(R.id.calendarActivityCreateAppointmentButton);
         createAppointmentButton.setOnClickListener((v) -> createAppointment());
+
+        Button chosenDateButton = findViewById(R.id.todayDateCalendarActivity);
+        chosenDateButton.setOnClickListener((v) -> {
+            chooseDate();
+        });
+
+
         addListenerToUserAppointments();
+
+    }
+
+    protected void setTodayDateInDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+    }
+
+    protected void chooseDate(){
+        long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+        Date chosenDay = new Date(epochTimeChosenDay);
+
+        Calendar calendarChosenDay = Calendar.getInstance();
+        calendarChosenDay.setTime(chosenDay);
+
+        new DatePickerDialog(CalendarActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
+            DailyCalendar.setDayEpochTimeAtMidnight(year,monthOfYear,dayOfMonth);
+            setDayText();
+            scrollLayout.removeAllViewsInLayout();
+            addListenerToUserAppointments();
+        }, calendarChosenDay.get(Calendar.YEAR), calendarChosenDay.get(Calendar.MONTH), calendarChosenDay.get(Calendar.DATE)).show();
+
     }
 
     @Override
@@ -81,7 +115,7 @@ public class CalendarActivity extends AppCompatActivity{
      */
     private void createAppointment(){
         if (user.getClass() == FakeDatabaseUser.class) {
-            user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
+            user.createNewUserAppointment(DailyCalendar.getDayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
                     "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
             demo_indexer += 1;
             addListenerToUserAppointments();
@@ -131,10 +165,12 @@ public class CalendarActivity extends AppCompatActivity{
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos){
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos);
+        if(!todayAppointments.isEmpty()){
         int i = 0;
         for(CalendarAppointmentInfo appointment : todayAppointments){
             addAppointmentToCalendarLayout(appointment,i);
             i+=3;
+        }
         }
     }
 
@@ -199,9 +235,10 @@ public class CalendarActivity extends AppCompatActivity{
     /**
      * Sets the text view on top of the calendar to the current day's date
      */
-    protected void setTodayDateText(){
-        TextView dateText = (TextView)findViewById(R.id.todayDateCalendarActivity);
-        long epochTimeToday = DailyCalendar.todayEpochTimeAtMidnight() * 1000;
+    protected void setDayText(){
+        Button dateText = findViewById(R.id.todayDateCalendarActivity);
+        dateText.setText(""); //clear it first
+        long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
         Date today = new Date(epochTimeToday);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         dateText.setText(String.format("Appointments on the %s : ", formatter.format(today)));

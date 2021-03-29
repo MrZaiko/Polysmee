@@ -3,7 +3,6 @@ package io.github.polysmee.calendar;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -14,21 +13,27 @@ import java.util.Set;
 public class DailyCalendar {
 
 
+    private static long midnightEpochTime;
     private DailyCalendar(){
         //private constructor to prevent creating instances of this class
     }
 
+
+    public static void setDayEpochTimeAtMidnight(int year, int month, int day){
+        Calendar date = Calendar.getInstance();
+        date.set(year,month,day);
+        date.set(Calendar.HOUR_OF_DAY,0);
+        date.set(Calendar.MINUTE,0);
+        date.set(Calendar.SECOND,0);
+        date.set(Calendar.MILLISECOND,0);
+        midnightEpochTime = date.getTimeInMillis()/1000;
+    }
     /**
      * Gets today's time at midnight in seconds, according to the EPOCH standard.
      * @return the time at midnight in seconds
      */
-    public static long todayEpochTimeAtMidnight(){
-        Calendar calendar =  Calendar.getInstance();
-        calendar.set(Calendar.HOUR_OF_DAY,0);
-        calendar.set(Calendar.MINUTE,0);
-        calendar.set(Calendar.SECOND,0);
-        calendar.set(Calendar.MILLISECOND,0);
-        return calendar.getTimeInMillis()/1000; //get today's time at midnight in seconds epoch
+    public static long getDayEpochTimeAtMidnight(){
+        return midnightEpochTime; //get the day of interest's time at midnight in seconds epoch
     }
 
     /**
@@ -42,7 +47,7 @@ public class DailyCalendar {
     public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments){
         if(userAppointments == null)
             throw new IllegalArgumentException();
-        long todayMidnightTime = todayEpochTimeAtMidnight();
+        long todayMidnightTime = getDayEpochTimeAtMidnight();
         long nextDayMidnightTime = todayMidnightTime + 24 * 3600; //get the epoch time in seconds of next day at midnight
         List<CalendarAppointmentInfo> todaysAppointments = new ArrayList<>();
         for(CalendarAppointmentInfo appointment : userAppointments){

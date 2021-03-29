@@ -17,13 +17,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicLong;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.decoys.FakeDatabase;
-
+import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
@@ -40,7 +41,6 @@ public class CalendarActivityTest {
     }
     @Rule
     public ActivityScenarioRule<CalendarActivity> testRule = new ActivityScenarioRule<>(intent);
-    private static final int constraintLayoutIdForTests = 284546;
 
     @Before
     public void initUser(){
@@ -48,10 +48,31 @@ public class CalendarActivityTest {
     }
 
 
+    @Before
+    public void setTodayDateInDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+    }
+
+    @Test
+    public void choosingAnotherDateChangesDisplayedDate(){
+        int year = 2021;
+        int month = 1;
+        int day = 13;
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            Espresso.onView(withId(R.id.todayDateCalendarActivity)).perform(ViewActions.click());
+            setDateOnPicker(year,month,day);
+            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+            Date date = new Date(epochTimeToday);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
+        }
+    }
+
     @Test
     public void writtenDateIsCorrectTest(){
 
-        Date date = new Date(DailyCalendar.todayEpochTimeAtMidnight()*1000);
+        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
@@ -66,7 +87,7 @@ public class CalendarActivityTest {
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.todayEpochTimeAtMidnight() + i*60,50,""+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight() + i*60,50,""+i,null,i);
         }
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
