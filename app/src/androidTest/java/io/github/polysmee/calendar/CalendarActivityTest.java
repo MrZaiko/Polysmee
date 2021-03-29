@@ -205,20 +205,26 @@ public class CalendarActivityTest {
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
 
-        int number_of_appointments = 7;
+        Random rand = new Random();
+        int number_of_appointments = rand.nextInt(9) + 1;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*2,3600*2,""+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*2,3600*2,appointmentId+i,null,i);
+
         }
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            //ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
-            for(int i = 0; i < number_of_appointments; ++i)
-                createAppointment(todayDate.get(Calendar.DATE),todayDate.get(Calendar.MONTH),todayDate.get(Calendar.YEAR),
-                        i*2,0, "FakeTitle" + i, "FakeCourse" + i ); //add the appointments to layout
-                sleep(3, SECONDS);
+            
+            for(int i = 0; i< number_of_appointments; ++i){
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(infos[i].getTitle());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(infos[i].getCourse());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(infos[i].getStartTime());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+                DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + i).setValue(true);
+            }
             if(number_of_appointments > 6){
                 for(int i = 0; i<6;++i){
                     assertDisplayed(formatAppointmentDescription(infos[i]));
@@ -232,33 +238,6 @@ public class CalendarActivityTest {
         }
     }
 
-    private void createAppointment(int day, int month, int year, int hour, int minute, String title, String course){
-        clickOn((R.id.calendarActivityCreateAppointmentButton));
-        sleep(2,SECONDS);
-        setStartTime(day,month,year,hour,minute);
-        setEndTime(day,month,year,hour+2,minute);
-
-        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
-        closeSoftKeyboard();
-
-        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
-        closeSoftKeyboard();
-
-        clickOn(R.id.appointmentCreationbtnDone);
-    }
-
-    private void setStartTime(int day, int month, int year, int hour, int minute){
-        clickOn(R.id.appointmentCreationBtnStartTime);
-        setDateOnPicker(year, month, day);
-        setTimeOnPicker(hour, minute);
-    }
-
-    private void setEndTime(int day, int month, int year, int hour, int minute){
-        clickOn(R.id.appointmentCreationBtnEndTime);
-        setDateOnPicker(year, month, day);
-        setTimeOnPicker(hour, minute);
-
-    }
     private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
         StringBuilder stringBuilder = new StringBuilder();
         stringBuilder.append("Reunion name : ").append(appointment.getTitle());
