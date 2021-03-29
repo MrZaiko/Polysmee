@@ -54,15 +54,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
 
 
-        CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
-                DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(info.getTitle());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(info.getCourse());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(info.getStartTime());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 0).setValue(true);
     }
 
     @Before
@@ -76,8 +68,15 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
                 DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(info.getTitle());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(info.getCourse());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(info.getStartTime());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 0).setValue(true);
+            sleep(3,SECONDS);
             ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
             calendarEntryDetailButton.perform(ViewActions.click());
             sleep(3,SECONDS);
@@ -96,6 +95,14 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
                 DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(info.getTitle());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(info.getCourse());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(info.getStartTime());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 0).setValue(true);
+            sleep(3,SECONDS);
 
             ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
             calendarEntryDetailButton.perform(ViewActions.click());
