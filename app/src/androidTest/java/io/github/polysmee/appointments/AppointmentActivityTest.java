@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.view.View;
 import android.widget.SearchView;
 
+import androidx.annotation.NonNull;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.UiController;
@@ -14,6 +15,10 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.GenericTypeIndicator;
+import com.google.firebase.database.ValueEventListener;
 
 import org.hamcrest.Matcher;
 import org.junit.AfterClass;
@@ -24,11 +29,13 @@ import org.junit.runner.RunWith;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.fragments.MainAppointmentCreationFragment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.DatabaseUser;
@@ -59,6 +66,7 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -69,20 +77,19 @@ public class AppointmentActivityTest {
     String startTime = "23/03/2022   -   17:02";
     String endTime = "23/03/2022   -   18:02";
 
-    private static final String username1 = "Mathis L'utilisateur";
+    private static final String username1 = "Mathis aptCreation";
     private static final String id2 = "-SFDkjsfdl";
     private static final String id3 = "-SFDkjsfdkwefwef";
-    private static final String username2 = "Sami L'imposteur";
-    private static final String username3 = "Leo le testeur";
-    private static final String id4 = "-SFDkjsfdl";
-    private static final String id5 = "-SFDkjsfdkwefwef";
-    private static final String username4 = "Thomas";
-    private static final String username5 = "Adrien";
+    private static final String username2 = "Sami aptCreation";
+    private static final String username3 = "Leo aptCreation";
+    private static final String id4 = "-SFDkjsfdlqwd";
+    private static final String id5 = "-SFDkjsfdkwefwefasdaew";
+    private static final String username4 = "Thomas aptCreation";
+    private static final String username5 = "Adrien aptCreation";
 
-    private static final String appointmentTitle = "It's a title";
-    private static final String appointmentId = "-lsdqfkhfdlksjhmf";
+    /*private static final String appointmentTitle = "It's a title";
     private static final String appointmentCourse = "Totally not SWENG";
-    private static final long appointmentStart = 265655445;
+    private static final long appointmentStart = 265655445;*/
 
 
     @BeforeClass
@@ -91,72 +98,22 @@ public class AppointmentActivityTest {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("LedDupontTestingAppointment@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id4).child("name").setValue(username4);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id5).child("name").setValue(username5);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
+        /*DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-    }
-
-    @AfterClass
-    public static void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("polysmee134@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);*/
     }
 
     @Rule
     public ActivityScenarioRule<AppointmentActivity> testRule = new ActivityScenarioRule<>(AppointmentActivity.class);
-
-    @Test
-    public void btnCreateCreatesCorrectAppointment() throws Exception{
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
-        clickOn(R.id.appointmentCreationBtnStartTime);
-        setDateOnPicker(2022, 3, 23);
-        setTimeOnPicker(17, 2);
-
-        clickOn(R.id.appointmentCreationBtnEndTime);
-        setDateOnPicker(2022, 3, 23);
-        setTimeOnPicker(18, 2);
-
-        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
-        closeSoftKeyboard();
-
-        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
-        closeSoftKeyboard();
-
-        clickOn(R.id.appointmentCreationbtnDone);
-
-
-        assertThat(scenario.getResult(), hasResultCode(Activity.RESULT_OK));
-        Thread.sleep(1000);
-        scenario.close();
-
-        /*String aptId = (String) testRule.getScenario().getResult().getResultData().getSerializableExtra(AppointmentActivity.EXTRA_APPOINTMENT);
-        Appointment appointment = new DatabaseAppointment(aptId);
-        appointment.getTitleAndThen(o -> assertEquals(title, o));
-        appointment.getCourseAndThen(o -> assertEquals(course, o));
-        appointment.getParticipantsIdAndThen(o -> assertEquals(1, o.size()));
-        Calendar startCalendar = new GregorianCalendar();
-        startCalendar.set(2022, 2, 23, 17, 2, 0);
-        startCalendar.set(Calendar.MILLISECOND, 0);
-        Calendar endCalendar = new GregorianCalendar();
-        endCalendar.set(2022, 2, 23, 18, 2, 0);
-        endCalendar.set(Calendar.MILLISECOND, 0);
-        appointment.getStartTimeAndThen(o -> assertEquals(startCalendar.getTimeInMillis()/1000, o));
-        appointment.getDurationAndThen(o -> assertEquals(endCalendar.getTimeInMillis()/1000 - startCalendar.getTimeInMillis()/1000, o));*/
-    }
 
     @Test
     public void btnCreateSaysErrorHappenedOnIncorrectStartAndEndTime() {
@@ -175,7 +132,7 @@ public class AppointmentActivityTest {
         closeSoftKeyboard();
 
         clickOn(R.id.appointmentCreationbtnDone);
-        assertDisplayed(R.id.appointmentCreationtxtError, AppointmentActivity.ERROR_TXT);
+        assertDisplayed(R.id.appointmentCreationtxtError, MainAppointmentCreationFragment.ERROR_TXT);
     }
 
     @Test
@@ -244,7 +201,7 @@ public class AppointmentActivityTest {
     public void btnSettingsLaunchesActivityAndActivityReturnsCorrectSettings() throws Exception{
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
         ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
-        clickOn(R.id.appointmentCreationBtnSettings);
+        clickOn("SETTINGS");
         onView(withId(R.id.appointmentSettingsSearchInvite)).perform(typeSearchViewText(username3));
         closeSoftKeyboard();
         onView(withId(R.id.appointmentSettingsSearchBan)).perform(typeSearchViewText(username2));
@@ -267,7 +224,13 @@ public class AppointmentActivityTest {
         clickOn("OK");
 
         clickOn(R.id.appointmentSettingsSwitchPrivate);
-        clickOn(R.id.appointmentSettingsBtnDone);
+        clickOn("MAIN");
+
+        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
+
+        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+        closeSoftKeyboard();
 
         clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2022, 3, 23);
@@ -279,8 +242,22 @@ public class AppointmentActivityTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
 
-        assertThat(scenario.getResult(), hasResultCode(Activity.RESULT_OK));
-        Thread.sleep(1000);
+        Thread.sleep(2000);
+        HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").get()).getValue();
+        assertNotNull(aptId);
+        DatabaseAppointment appointment = new DatabaseAppointment((String) aptId.keySet().iterator().next());
+        appointment.getTitleAndThen(o -> assertEquals(title, o));
+        appointment.getCourseAndThen(o -> assertEquals(course, o));
+        appointment.getParticipantsIdAndThen(o -> assertEquals(2, o.size()));
+        Calendar startCalendar = new GregorianCalendar();
+        startCalendar.set(2022, 2, 23, 17, 2, 0);
+        startCalendar.set(Calendar.MILLISECOND, 0);
+        Calendar endCalendar = new GregorianCalendar();
+        endCalendar.set(2022, 2, 23, 18, 2, 0);
+        endCalendar.set(Calendar.MILLISECOND, 0);
+        appointment.getStartTimeAndThen(o -> assertEquals(startCalendar.getTimeInMillis()/1000, o));
+        appointment.getDurationAndThen(o -> assertEquals(endCalendar.getTimeInMillis()/1000 - startCalendar.getTimeInMillis()/1000, o));
+
         scenario.close();
     }
 }
