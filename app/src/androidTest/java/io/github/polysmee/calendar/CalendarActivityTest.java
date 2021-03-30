@@ -16,6 +16,8 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 
@@ -171,6 +173,7 @@ public class CalendarActivityTest {
         bundle.putString(CalendarActivity.UserTypeCode, "Real");
         intent.putExtras(bundle);
 
+
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             clickOn(R.id.todayDateCalendarActivity);
             setDateOnPicker(year,month,day);
@@ -181,6 +184,46 @@ public class CalendarActivityTest {
             assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
         }
     }
+
+    @Test
+    public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(CalendarActivity.UserTypeCode, "Real");
+        intent.putExtras(bundle);
+
+        int year = 2021;
+        int month = 1;
+        int day = 13;
+
+        DailyCalendar.setDayEpochTimeAtMidnight(year,month,day);
+        long epochTimeOfThatDay = DailyCalendar.getDayEpochTimeAtMidnight();
+
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse", "FakeTitle",
+                    epochTimeOfThatDay,3600*2,appointmentId+11,null,0);
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(info.getTitle());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(info.getCourse());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(info.getStartTime());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 11).setValue(true);
+
+            sleep(3,SECONDS);
+            Date date = new Date(epochTimeOfThatDay*1000);
+            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
+            Espresso.onView(withText("Appointments on the " + formatter.format(date) +" : ")).check(doesNotExist());
+
+            clickOn(R.id.todayDateCalendarActivity);
+            setDateOnPicker(year,month,day);
+            sleep(3,SECONDS);
+            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+            date = new Date(epochTimeToday);
+            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
+        }
+    }
+    
     @Test
     public void scrollViewContentIsCoherentAfterAddingAppointments(){
 
