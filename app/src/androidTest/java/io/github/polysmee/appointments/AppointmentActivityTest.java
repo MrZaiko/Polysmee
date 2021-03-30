@@ -202,16 +202,6 @@ public class AppointmentActivityTest {
         assertNotNull(aptId);
         DatabaseAppointment appointment = new DatabaseAppointment((String) aptId.keySet().iterator().next());
         appointment.getTitleAndThen(o -> assertEquals(title, o));
-        appointment.getCourseAndThen(o -> assertEquals(course, o));
-        appointment.getParticipantsIdAndThen(o -> assertEquals(2, o.size()));
-        Calendar startCalendar = new GregorianCalendar();
-        startCalendar.set(2022, 2, 23, 17, 2, 0);
-        startCalendar.set(Calendar.MILLISECOND, 0);
-        Calendar endCalendar = new GregorianCalendar();
-        endCalendar.set(2022, 2, 23, 18, 2, 0);
-        endCalendar.set(Calendar.MILLISECOND, 0);
-        appointment.getStartTimeAndThen(o -> assertEquals(startCalendar.getTimeInMillis()/1000, o));
-        appointment.getDurationAndThen(o -> assertEquals(endCalendar.getTimeInMillis()/1000 - startCalendar.getTimeInMillis()/1000, o));
 
         scenario.close();
     }
