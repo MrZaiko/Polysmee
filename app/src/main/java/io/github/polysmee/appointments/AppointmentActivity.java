@@ -13,15 +13,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import io.github.polysmee.R;
-import io.github.polysmee.appointments.fragments.AptCreationSettingsFragment;
 import io.github.polysmee.appointments.fragments.DataPasser;
-import io.github.polysmee.appointments.fragments.MainAppointmentCreationFragment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.RoomPagerAdapter;
 
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
@@ -48,7 +45,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appointment_fragments);
+        setContentView(R.layout.activity_appointment_creation);
 
         ViewPager2 pager = findViewById(R.id.aptCreationActivityPager);
         FragmentStateAdapter pagerAdapter = new AptCreationPagerAdapter(this);
