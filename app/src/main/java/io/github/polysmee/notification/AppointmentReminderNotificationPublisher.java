@@ -13,6 +13,7 @@ import android.provider.Settings;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.preference.PreferenceManager;
 
 import java.util.Calendar;
 import java.util.HashSet;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
+import io.github.polysmee.login.LoginCheckActivity;
 
 
 /**
@@ -28,6 +30,7 @@ import io.github.polysmee.R;
  * It is the broadcast receiver class that will receive broadcasts at certain times (specified in
  * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
+ *
  **/
 public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
@@ -86,22 +89,27 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         if (context == null || intent == null) {
             throw new IllegalArgumentException("The context or the intent passed as argument should not be null");
         }
-        Intent fullScreenIntent = new Intent(context, MainActivity.class);
+        Intent fullScreenIntent = new Intent(context, LoginCheckActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
-                fullScreenIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+                fullScreenIntent, 0);
 
         createNotificationChannel(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
-                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " " +
-                        TimeUnit.MILLISECONDS.toMinutes(context.getResources().getInteger(R.integer.appointment_reminder_notification_time_from_appointment_min)) +
-                        context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left))
+                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " "
+                        + PreferenceManager.getDefaultSharedPreferences(context).getInt(
+                        context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes)
+                        , context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))
+                        + context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left))
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
-                .setSound(Settings.System.DEFAULT_RINGTONE_URI);
+                .setSound(Settings.System.DEFAULT_RINGTONE_URI)
+                .setContentIntent(fullScreenPendingIntent)
+                .setAutoCancel(true);
+        ;
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
     }

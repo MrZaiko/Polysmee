@@ -11,14 +11,18 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.security.SecureRandom;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.MainActivity;
+import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -26,24 +30,18 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 @RunWith(AndroidJUnit4.class)
 public class LoginCheckActivityTest {
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        MainUserSingleton.reboot();
-    }
-
-    @After
-    public void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
     }
 
     @Test
     public void firesLoginWhenNotLoggedIn() {
-        FirebaseAuth.getInstance().signOut();
+        AuthenticationFactory.getAdaptedInstance().signOut();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginCheckActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
@@ -54,7 +52,7 @@ public class LoginCheckActivityTest {
 
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){

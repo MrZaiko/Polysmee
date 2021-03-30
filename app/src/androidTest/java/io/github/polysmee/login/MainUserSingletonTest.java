@@ -7,35 +7,41 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseAuth;
 
+import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
+import io.github.polysmee.database.DatabaseFactory;
+
 import static org.junit.Assert.*;
 
-@RunWith(AndroidJUnit4.class)
+//@RunWith(AndroidJUnit4.class)
 public class MainUserSingletonTest {
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
     }
 
     @Test(expected = NullPointerException.class)
     public void getInstanceThrows() {
-        FirebaseAuth.getInstance().signOut();
+        AuthenticationFactory.getAdaptedInstance().signOut();
         MainUserSingleton.getInstance();
     }
 
     @Test
     public void getInstanceWorks() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        assertEquals(MainUserSingleton.getInstance().getId(), FirebaseAuth.getInstance().getUid());
-        Tasks.await(Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).delete());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
+        assertEquals(MainUserSingleton.getInstance().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
     }
 }

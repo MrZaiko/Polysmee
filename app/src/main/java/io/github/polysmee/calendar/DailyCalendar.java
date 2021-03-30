@@ -7,8 +7,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
-import io.github.polysmee.interfaces.Appointment;
-
 /**
  * This class will be used to show the user his daily appointments on
  * the base of all his appointments through static methods
@@ -41,23 +39,19 @@ public class DailyCalendar {
      * @throws IllegalArgumentException if the set given as argument is null
      * @return the list of ordered appointments of the user for the day
      */
-    public static List<Appointment> getAppointmentsForTheDay(Set<Appointment> userAppointments){
+    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments){
         if(userAppointments == null)
             throw new IllegalArgumentException();
         long todayMidnightTime = todayEpochTimeAtMidnight();
         long nextDayMidnightTime = todayMidnightTime + 24 * 3600; //get the epoch time in seconds of next day at midnight
-        List<Appointment> todaysAppointments = new ArrayList<>();
-        for(Appointment appointment : userAppointments){
+        List<CalendarAppointmentInfo> todaysAppointments = new ArrayList<>();
+        for(CalendarAppointmentInfo appointment : userAppointments){
             if(appointment.getStartTime() >= todayMidnightTime && appointment.getStartTime() < nextDayMidnightTime){
                 todaysAppointments.add(appointment);
             }
         }
-        Collections.sort(todaysAppointments, new Comparator<Appointment>() {
-            @Override
-            public int compare(Appointment a1, Appointment a2) {
-                return Long.compare(a1.getStartTime(),a2.getStartTime());
-            }
-        });
+        Collections.sort(todaysAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(),t1.getStartTime()));
+
         return Collections.unmodifiableList(todaysAppointments);
     }
 

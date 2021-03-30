@@ -1,54 +1,55 @@
 package io.github.polysmee.database;
 
+import android.util.Log;
+
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
-import java.io.Console;
+
+import java.security.SecureRandom;
 import java.util.HashSet;
+import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static org.junit.Assert.*;
 
+@RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
 
-    private final String username = "Mathis L'utilisateur";
-    @Before
-    public void setUp() throws Exception {
+    private static final String username = "Mathis L'utilisateur";
+
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(FirebaseAuth.getInstance().createUserWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
-        MainUserSingleton.reboot();
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+        Thread.sleep(1000);
     }
-
-    @After
-    public void delete() throws ExecutionException, InterruptedException {
-        Tasks.await(FirebaseAuth.getInstance().signInWithEmailAndPassword("polysmee1234@gmail.com", "fakePassword"));
-        FirebaseDatabase.getInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        Tasks.await(FirebaseAuth.getInstance().getCurrentUser().delete());
-    }
-
 
     @Test
     public void getId() {
-        assertEquals(FirebaseAuth.getInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
+        assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
     }
 
     @Test
@@ -69,8 +70,8 @@ public class DatabaseUserTest {
     @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
         MainUserSingleton.getInstance().addAppointment(new DatabaseAppointment("AZERTY"));
-        FirebaseDatabase db = FirebaseDatabase.getInstance();
-        String id = (String) Tasks.await(db.getReference()
+        FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
+        String id = Tasks.await(db.getReference()
                 .child("users")
                 .child(MainUserSingleton.getInstance().getId())
                 .child("appointments")
@@ -89,13 +90,13 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUserSingleton.getInstance().getNameAndThen(
-                (name) -> {
-                    lock.lock();
-                    gotName.set(name);
-                    bool.set(Boolean.TRUE);
-                    cv.signal();
-                    lock.unlock();
-                }
+                    (name) -> {
+                        lock.lock();
+                        gotName.set(name);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
             );
             while(!bool.get())
                 cv.await();
@@ -108,27 +109,27 @@ public class DatabaseUserTest {
     @Test
     public void createNewUserAppointment() {
         String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév");
-        String ac = FirebaseDatabase.getInstance().getReference("appointments").child(id).getKey();
+        String ac = DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
-        FirebaseDatabase.getInstance().getReference("appointments").child(id).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
     }
 
     @Test
-    public void getAppointmentsAndThen() throws InterruptedException {
+    public void getAppointmentsAndThen() throws InterruptedException, ExecutionException {
         ReentrantLock lock = new ReentrantLock();
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicBoolean oneElem = new AtomicBoolean(false);
 
-        MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
+        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
 
         lock.lock();
         try {
             MainUserSingleton.getInstance().getAppointmentsAndThen(
-                    (name) -> {
+                    (set) -> {
                         lock.lock();
-                        oneElem.set(name.size() == 1);
-
+                        oneElem.set(set.size() > 0);
+                        Log.d("METAAPP", "" + oneElem.get());
                         bool.set(Boolean.TRUE);
                         cv.signal();
                         lock.unlock();
@@ -139,18 +140,17 @@ public class DatabaseUserTest {
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
+            Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
 
     @Test
     public void testEquals() {
-
+        assertEquals(new DatabaseUser("hello"), new DatabaseUser("hello"));
     }
 
     @Test
     public void testHashCode() {
+        assertEquals(new DatabaseUser("hello").hashCode(), new DatabaseUser("hello").hashCode());
     }
-
-
-
 }
