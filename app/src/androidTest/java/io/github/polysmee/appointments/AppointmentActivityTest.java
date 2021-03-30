@@ -106,7 +106,7 @@ public class AppointmentActivityTest {
     public ActivityScenarioRule<AppointmentActivity> testRule = new ActivityScenarioRule<>(AppointmentActivity.class);
 
     @Test
-    public void btnCreateSaysErrorHappenedOnIncorrectStartAndEndTime() {
+    public void btnCreateSaysErrorHappenedOnIncorrectStartAndEndTimeAndBtnResetResets() {
         clickOn(R.id.appointmentCreationBtnStartTime);
         setDateOnPicker(2022, 3, 23);
         setTimeOnPicker(17, 2);
@@ -123,41 +123,6 @@ public class AppointmentActivityTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
         assertDisplayed(R.id.appointmentCreationtxtError, MainAppointmentCreationFragment.ERROR_TXT);
-    }
-
-    @Test
-    public void btnStartTimeGetsTime() {
-        clickOn(R.id.appointmentCreationBtnStartTime);
-        setDateOnPicker(2022, 3, 23);
-        setTimeOnPicker(17, 2);
-        assertDisplayed(R.id.appointmentCreationTxtStartTime, startTime);
-        assertNotDisplayed(R.id.appointmentCreationtxtError);
-    }
-
-    @Test
-    public void btnEndTimeGetsTime(){
-        clickOn(R.id.appointmentCreationBtnEndTime);
-        setDateOnPicker(2022, 3, 23);
-        setTimeOnPicker(18, 2);
-        assertDisplayed(R.id.appointmentCreationTxtEndTime, endTime);
-        assertNotDisplayed(R.id.appointmentCreationtxtError);
-    }
-
-    @Test
-    public void btnResetResets() {
-        clickOn(R.id.appointmentCreationBtnStartTime);
-        setDateOnPicker(2022, 3, 23);
-        setTimeOnPicker(17, 2);
-
-        clickOn(R.id.appointmentCreationBtnEndTime);
-        setDateOnPicker(2022, 3, 23);
-        setTimeOnPicker(18, 2);
-
-        writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
-        closeSoftKeyboard();
-
-        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
-        closeSoftKeyboard();
 
         clickOn(R.id.appointementCreationBtnReset);
         assertDisplayed(R.id.appointmentCreationTxtStartTime, "Start Time");
