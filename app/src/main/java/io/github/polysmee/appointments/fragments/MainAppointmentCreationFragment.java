@@ -14,8 +14,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Calendar;
 
 import io.github.polysmee.R;
@@ -34,7 +32,7 @@ public class MainAppointmentCreationFragment extends Fragment {
     DataPasser dataPasser;
 
     @Override
-    public void onAttach(@NotNull Context context) {
+    public void onAttach(Context context) {
         super.onAttach(context);
         dataPasser = (DataPasser) context;
     }

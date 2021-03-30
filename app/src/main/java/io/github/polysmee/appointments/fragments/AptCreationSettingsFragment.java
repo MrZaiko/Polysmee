@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Switch;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,7 +32,7 @@ public class AptCreationSettingsFragment extends Fragment {
     DataPasser dataPasser;
 
     @Override
-    public void onAttach(@NotNull Context context) {
+    public void onAttach(Context context) {
         super.onAttach(context);
         dataPasser = (DataPasser) context;
     }
