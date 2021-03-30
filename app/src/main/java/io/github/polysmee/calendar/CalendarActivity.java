@@ -83,11 +83,19 @@ public class CalendarActivity extends AppCompatActivity{
 
     }
 
+    /**
+     * Sets the date to the day when the user launches the app at startup
+     */
     protected void setTodayDateInDailyCalendar(){
         Calendar calendar = Calendar.getInstance();
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
     }
 
+    /**
+     * Behavior of the appointment date button; will pop a date picker dialog to let the user
+     * choose the date they want, and will add a listener to the user's appointment to show the appointments
+     * they have that given day.
+     */
     protected void chooseDate(){
         long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
         Date chosenDay = new Date(epochTimeChosenDay);
@@ -111,7 +119,7 @@ public class CalendarActivity extends AppCompatActivity{
     }
 
     /*
-     * Function that will be used only in the demos to show how the calendar works.
+     * Behavior of the create appointment button, depending if the user is real or fake
      */
     private void createAppointment(){
         if (user.getClass() == FakeDatabaseUser.class) {

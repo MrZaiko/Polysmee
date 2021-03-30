@@ -223,7 +223,7 @@ public class CalendarActivityTest {
             assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
         }
     }
-    
+
     @Test
     public void scrollViewContentIsCoherentAfterAddingAppointments(){
 
