@@ -17,28 +17,7 @@ public interface User{
      */
     String getId();
 
-    /**
-     * Retrieves the user's name
-     * @return user's name
-     */
-    @Deprecated
-    String getName();
-
     default void getNameAndThen(StringValueListener valueListener) {}
-
-    /**
-     * Retrieves the user's surname
-     * @return user's surname
-     */
-    @Deprecated
-    String getSurname();
-
-    /**
-     * Retrieves the set of the upcoming appointments for this user
-     * @return user's set of appointment in an unmodifiable set
-     */
-    @Deprecated
-    Set<Appointment> getAppointments();
 
     default void getAppointmentsAndThen(StringSetValueListener valueListener) {}
 
