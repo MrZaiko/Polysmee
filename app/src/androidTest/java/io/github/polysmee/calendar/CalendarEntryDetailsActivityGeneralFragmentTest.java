@@ -109,6 +109,9 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
             titleDetails.check(ViewAssertions.matches(withText(info.getTitle())));
             ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
             courseDetails.check(ViewAssertions.matches(withText(info.getCourse())));
+
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId+12).setValue(null);
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+12).setValue(null);
         }
     }
 
@@ -153,6 +156,9 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
             sleep(3,SECONDS);
             assertDisplayed(formatAppointmentDescription(info));
+
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId+13).setValue(null);
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+13).setValue(null);
         }
     }
 
