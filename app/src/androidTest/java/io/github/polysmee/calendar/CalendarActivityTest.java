@@ -58,7 +58,7 @@ public class CalendarActivityTest {
         }
     }
 
-    @Test
+    /*@Test
     public void scrollViewContentIsCoherentAfterAddingAppointments(){
         Random rand = new Random();
         int number_of_appointments = rand.nextInt(9) + 1;
@@ -84,7 +84,7 @@ public class CalendarActivityTest {
             }
 
         }
-    }
+    }*/
 
 
 

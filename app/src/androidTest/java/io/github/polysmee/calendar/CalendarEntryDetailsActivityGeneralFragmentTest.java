@@ -45,7 +45,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         FakeDatabase.idGenerator = new AtomicLong(0);
     }
 
-    @Test
+    /*@Test
     public void appointmentDetailsAreCorrect(){
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
                 DailyCalendar.todayEpochTimeAtMidnight() ,50,"0",null,0);
@@ -61,9 +61,9 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
             ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
             courseDetails.check(ViewAssertions.matches(withText(info.getCourse())));
         }
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void appointmentModificationIsSeenOnCalendar(){
         String newTitle = "NewTitleTest";
         String newCourse = "NewCourseTest";
@@ -92,7 +92,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
             assertDisplayed(formatAppointmentDescription(info));
         }
-    }
+    }*/
 
     private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
         StringBuilder stringBuilder = new StringBuilder();
