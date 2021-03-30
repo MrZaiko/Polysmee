@@ -202,11 +202,11 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse", "FakeTitle",
                     epochTimeOfThatDay,3600*2,appointmentId+11,null,0);
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(info.getTitle());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(info.getCourse());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(info.getStartTime());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("title").setValue(info.getTitle());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("course").setValue(info.getCourse());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("start").setValue(info.getStartTime());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("owner").setValue(MainUserSingleton.getInstance().getId());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
             DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 11).setValue(true);
 
             sleep(3,SECONDS);
