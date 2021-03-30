@@ -36,33 +36,24 @@ public class FakeSuite {
         //user test
         User usr = new FakeDatabaseUser(id, name);
         assertEquals(id, usr.getId());
-        assertEquals(name, usr.getName());
         usr.getNameAndThen((newname) -> assertEquals(name, newname));
 
-        assertThrows(IllegalStateException.class, usr::getSurname);
-        assertEquals(new HashSet<Appointment>(), usr.getAppointments());
         usr.getAppointmentsAndThen((apps) -> assertEquals(new HashSet<String>(), apps));
 
-        String roomId = usr.createNewUserAppointment(0, 3600, "fakeCourse", "fakeRoom");
+        String roomId = usr.createNewUserAppointment(0, 3600, "fakeCourse", "fakeRoom", false);
         usr.removeAppointment(new FakeDatabaseAppointment(roomId));
-        assertEquals(new HashSet<Appointment>(), usr.getAppointments());
 
         //appointment test
         Appointment appo = new FakeDatabaseAppointment(roomId);
-        assertEquals(appo.getStartTime(), 0);
         appo.getStartTimeAndThen((st) -> assertEquals(0, st));
 
-        assertEquals(0, appo.getDuration());
         appo.getDurationAndThen((dur) -> assertEquals(3600, dur));
         assertEquals(roomId, appo.getId());
 
-        assertNull(appo.getTitle());
         appo.getTitleAndThen((titl) -> assertEquals("fakeRoom", titl));
 
-        assertNull(appo.getParticipants());
         appo.getParticipantsIdAndThen((ids) -> assertEquals(1, ids.size()));
 
-        assertNull(appo.getOwner());
         appo.getOwnerIdAndThen((idd) -> assertEquals(id, idd));
 
         assertTrue(appo.setStartTime(1));
