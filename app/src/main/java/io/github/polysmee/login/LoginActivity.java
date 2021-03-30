@@ -86,7 +86,7 @@ public class LoginActivity extends AppCompatActivity {
                     .child(MainUserSingleton.getInstance().getId())
                     .child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
-
+            //TODO call AppointmentReminderNotificationMasterSetListener here
             Intent intent = new Intent(this, CalendarActivity.class);
             intent.putExtra(CalendarActivity.UserTypeCode,"Real");
             startActivity(intent);
