@@ -197,7 +197,7 @@ public class AppointmentActivityTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
 
-        Thread.sleep(10000);
+        Thread.sleep(2000);
         HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").get()).getValue();
         assertNotNull(aptId);
         DatabaseAppointment appointment = new DatabaseAppointment((String) aptId.keySet().iterator().next());

@@ -114,7 +114,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         if(done) {
             //create Appointment according to user input and return to the activity which called this one
             //bans and isPrivate not supported yet, will add them to the appointment when they are
-            String aptID = user.createNewUserAppointment(calendarStart.getTimeInMillis()/1000, calendarEnd.getTimeInMillis()/1000 - calendarStart.getTimeInMillis()/1000, course, title);
+            String aptID = user.createNewUserAppointment(calendarStart.getTimeInMillis(), calendarEnd.getTimeInMillis() - calendarStart.getTimeInMillis(), course, title);
             Appointment appointment = new DatabaseAppointment(aptID);
             User.getAllUsersIdsAndThenOnce((setOfUserIds) -> {
                 for(String userId : setOfUserIds){
