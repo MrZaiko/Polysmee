@@ -249,11 +249,11 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             for(int i = 0; i< number_of_appointments; ++i){
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(infos[i].getTitle());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(infos[i].getCourse());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(infos[i].getStartTime());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i ).child("title").setValue(infos[i].getTitle());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("course").setValue(infos[i].getCourse());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("start").setValue(infos[i].getStartTime());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("owner").setValue(MainUserSingleton.getInstance().getId());
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
                 DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + i).setValue(true);
             }
             if(number_of_appointments > 6){
