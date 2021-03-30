@@ -20,6 +20,7 @@ import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.notification.AppointmentReminderNotificationMaster;
 
 //Copyright 2017 github.com/firebase
 
@@ -86,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                     .child(MainUserSingleton.getInstance().getId())
                     .child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
-            //TODO call AppointmentReminderNotificationMasterSetListener here
+            AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
             Intent intent = new Intent(this, CalendarActivity.class);
             intent.putExtra(CalendarActivity.UserTypeCode,"Real");
             startActivity(intent);
