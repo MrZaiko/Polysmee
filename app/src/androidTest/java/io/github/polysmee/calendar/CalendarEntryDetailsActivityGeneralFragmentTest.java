@@ -45,6 +45,10 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         FakeDatabase.idGenerator = new AtomicLong(0);
     }
 
+    @Test
+    public void removeMe(){
+    }
+
     /*@Test
     public void appointmentDetailsAreCorrect(){
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
