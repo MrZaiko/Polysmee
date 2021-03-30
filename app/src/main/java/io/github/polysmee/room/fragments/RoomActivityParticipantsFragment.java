@@ -7,11 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import io.github.polysmee.R;
@@ -28,7 +30,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private ViewGroup rootView;
     private Appointment appointment;
+    private LayoutInflater inflater;
     public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
+    private boolean isMuted = false;
 
     @Nullable
     @Override
@@ -37,7 +41,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         String appointmentId = requireArguments().getString(PARTICIPANTS_KEY);
         this.appointment = new DatabaseAppointment(appointmentId);
-
+        this.inflater = getLayoutInflater();
         generateParticipantsView();
 
         return rootView;
@@ -54,14 +58,51 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
             for (String id : p) {
                 User user = new DatabaseUser(id);
-                TextView participant = new TextView(rootView.getContext());
-                user.getNameAndThen(participant::setText);
-                participant.setTextSize(20);
-                participant.setBackgroundColor(id.equals(MainUserSingleton.getInstance().getId()) ? Color.GRAY : Color.LTGRAY);
-                participant.setClickable(true);
-                participant.setOnClickListener(onClick -> generateEditParticipantDialog(user));
+                ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
 
-                layout.addView(participant);
+                TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
+
+                if (id.equals(MainUserSingleton.getInstance().getId()))
+                    participantName.setText("You");
+                else
+                    user.getNameAndThen(participantName::setText);
+
+                TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
+                appointment.getOwnerIdAndThen(owner -> {
+                    if (owner.equals(id))
+                        ownerTag.setVisibility(View.VISIBLE);
+                });
+
+
+                participantsLayout.setBackgroundColor(Color.LTGRAY);
+                participantsLayout.setBackgroundResource(R.drawable.participant_element_background);
+
+                ImageView removeButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementRemoveButton);
+                removeButton.setVisibility(user.getId().equals(MainUserSingleton.getInstance().getId()) ? View.VISIBLE : View.GONE);
+                removeButton.setOnClickListener(s -> {
+                    appointment.removeParticipant(user);
+                    user.removeAppointment(appointment);
+                });
+
+                ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
+                muteButton.setOnClickListener(l -> {
+                    if (isMuted) {
+                        isMuted = false;
+                        muteButton.setImageResource(R.drawable.baseline_mic);
+                    } else {
+                        isMuted = true;
+                        muteButton.setImageResource(R.drawable.baseline_mic_off);
+                    }
+                });
+
+                appointment.getOwnerIdAndThen(ow -> {
+                    if (MainUserSingleton.getInstance().getId().equals(ow))
+                        removeButton.setVisibility(View.VISIBLE);
+                });
+
+                layout.addView(participantsLayout);
+
+                //Add a blank textView to add space between participant entries
                 layout.addView(new TextView(rootView.getContext()));
             }
         });

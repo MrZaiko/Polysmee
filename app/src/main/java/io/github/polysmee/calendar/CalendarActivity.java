@@ -177,7 +177,7 @@ public class CalendarActivity extends AppCompatActivity{
         ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
         Button appointmentDescription = appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
         appointmentDescription.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
-        Button detailsButton = (Button)appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
+        Button detailsButton = appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
         appointmentDescription.setText(createAppointmentDescription(appointment));
         appointmentLayout.setId(constraintLayoutIdForTests + i);
         appointmentDescription.setId(constraintLayoutIdForTests + i + 1);
@@ -191,9 +191,6 @@ public class CalendarActivity extends AppCompatActivity{
         });
 
         this.scrollLayout.addView(appointmentLayout);
-
-
-
     }
 
     /**

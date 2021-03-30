@@ -1,9 +1,7 @@
 package io.github.polysmee.room;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,8 +11,11 @@ import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -36,22 +37,63 @@ public class RoomActivityInfo extends AppCompatActivity {
         String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);
         this.appointment = new DatabaseAppointment(appointmentKey);
 
-        TextView titleView = findViewById(R.id.roomInfoTitleTextView);
-        this.appointment.getTitleAndThen(titleView::setText);
-        titleView.setClickable(true);
-        titleView.setOnClickListener(this::onlyOwnerToast);
-
-        TextView courseView = findViewById(R.id.roomInfoCourseTextView);
-        this.appointment.getCourseAndThen(courseView::setText);
-        courseView.setClickable(true);
-        courseView.setOnClickListener(this::onlyOwnerToast);
+        setupTitle();
+        setupCourse();
+        setupDate();
 
         appointment.getOwnerIdAndThen(id -> {
             if (id.equals(MainUserSingleton.getInstance().getId())) {
-                courseView.setOnClickListener(this::editCourse);
-                titleView.setOnClickListener(this::editTitle);
+                findViewById(R.id.roomInfoCourseLayout).setOnClickListener(this::editCourse);
+                findViewById(R.id.roomInfoCourseEditButton).setVisibility(View.VISIBLE);
+                findViewById(R.id.roomInfoTitleLayout).setOnClickListener(this::editTitle);
+                findViewById(R.id.roomInfoTitleEditButton).setVisibility(View.VISIBLE);
             }
         });
+    }
+
+    private void setupCourse() {
+        ConstraintLayout courseLayout = findViewById(R.id.roomInfoCourseLayout);
+        TextView courseView = findViewById(R.id.roomInfoCourseTextView);
+        courseLayout.setBackgroundResource(R.drawable.room_info_element_background);
+        this.appointment.getCourseAndThen(courseView::setText);
+        courseLayout.setClickable(true);
+        courseLayout.setOnClickListener(this::onlyOwnerToast);
+    }
+
+    private void setupDate() {
+        TextView durationView = findViewById(R.id.roomInfoTimeRemaining);
+        durationView.setBackgroundResource(R.drawable.room_info_element_background);
+        this.appointment.getDurationAndThen(d -> {
+            this.appointment.getStartTimeAndThen( st -> {
+                String TIMESTAMP_PATTERN = "HH:mm";
+                SimpleDateFormat formatter = new SimpleDateFormat(TIMESTAMP_PATTERN, Locale.ENGLISH);
+
+                Date current = new Date(System.currentTimeMillis());
+                Date start = new Date(st*1000);
+                Date end = new Date((st+d)*1000);
+
+                String durationText;
+
+                if (current.before(start))
+                    durationText = "The appointment start at " + formatter.format(start);
+                else if (current.after(end))
+                    durationText = "The appointment has ended";
+                else
+                    durationText = "The appointment end at " + formatter.format(end);
+
+
+                durationView.setText(durationText);
+            });
+        });
+    }
+
+    private void setupTitle() {
+        ConstraintLayout titleLayout = findViewById(R.id.roomInfoTitleLayout);
+        TextView titleView = findViewById(R.id.roomInfoTitleTextView);
+        titleLayout.setBackgroundResource(R.drawable.room_info_element_background);
+        this.appointment.getTitleAndThen(titleView::setText);
+        titleLayout.setClickable(true);
+        titleLayout.setOnClickListener(this::onlyOwnerToast);
     }
 
     @Override

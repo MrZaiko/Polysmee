@@ -83,7 +83,7 @@ public class Message  {
      */
     public static String sendMessage(@NonNull String content, @NonNull DatabaseReference ref, @NonNull String userId) {
        String key = ref.push().getKey();
-       ref.child(key).setValue(new Message(userId, content, System.currentTimeMillis()));
+       ref.child(key).setValue(new Message(userId, content, System.currentTimeMillis()/1000));
        return key;
     }
 
