@@ -12,15 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            />
+            android:label="@string/title_activity_settings" />
         <activity android:name=".calendar.CalendarEntryDetailsActivity" />
         <activity android:name=".calendar.CalendarActivity" />
-        <activity android:name=".appointments.AppointmentSettingsActivity" />
-        <activity android:name=".appointments.AppointmentActivity" />
 
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 

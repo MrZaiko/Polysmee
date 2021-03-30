@@ -1,47 +1,58 @@
-package io.github.polysmee.appointments;
+package io.github.polysmee.appointments.fragments;
 
-import android.app.Activity;
-import android.content.DialogInterface;
-import android.content.Intent;
+import android.content.Context;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.Fragment;
+
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.CursorAdapter;
 import android.widget.EditText;
 import android.widget.SearchView;
 import android.widget.Switch;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.AppointmentActivity;
 
-public class AppointmentSettingsActivity extends AppCompatActivity {
+public class AptCreationSettingsFragment extends Fragment {
     private Switch switchPrivate;
     private SearchView searchInvite, searchBan;
-    private Button btnInvite, btnBan, btnDone, btnCheckInvites, btnCheckBans;
-    private List<String> invites;
-    private List<String> bans;
+    private Button btnInvite, btnBan, btnCheckInvites, btnCheckBans;
+    private ArrayList<String> invites;
+    private ArrayList<String> bans;
     private boolean isPrivate;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_appointment_settings);
+    DataPasser dataPasser;
 
-        attributeSetters();
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        dataPasser = (DataPasser) context;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        View rootView = inflater.inflate(R.layout.fragment_apt_creation_settings, container, false);
+
+        attributeSetters(rootView);
         btnInvite.setOnClickListener(btnInviteListener);
         btnBan.setOnClickListener(btnBanListener);
-        btnDone.setOnClickListener(btnDoneListener);
         btnCheckInvites.setOnClickListener(btnSeeInvitesListener);
         btnCheckBans.setOnClickListener(btnSeeBansListener);
         switchPrivate.setOnCheckedChangeListener(switchPrivateListener);
         searchInvite.setQueryHint("Type names here");
         searchBan.setQueryHint("Type names here");
+
+        return rootView;
     }
 
     View.OnClickListener btnInviteListener = v -> {
@@ -49,6 +60,10 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         String s = searchInvite.getQuery().toString();
         if(!invites.contains(s) && !s.isEmpty()) {
             invites.add(s);
+            dataPasser.dataPass(invites, AppointmentActivity.INVITES);
+            int id = searchInvite.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            EditText txtInvite = searchInvite.findViewById(id);
+            txtInvite.setText("");
         }
     };
 
@@ -57,57 +72,52 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         String s = searchBan.getQuery().toString();
         if(!bans.contains(s) && !s.isEmpty()) {
             bans.add(s);
+            dataPasser.dataPass(bans, AppointmentActivity.BANS);
+            int id = searchBan.getContext().getResources().getIdentifier("android:id/search_src_text", null, null);
+            EditText txtBan = searchBan.findViewById(id);
+            txtBan.setText("");
         }
-    };
-
-    View.OnClickListener btnDoneListener = v -> {
-        //Create the return intent and attach all necessary information to it before finishing
-        Intent returnIntent = new Intent();
-        returnIntent.putExtra("private", isPrivate);
-        returnIntent.putStringArrayListExtra("invites", (ArrayList<String>) invites);
-        returnIntent.putStringArrayListExtra("bans", (ArrayList<String>) bans);
-        setResult(Activity.RESULT_OK, returnIntent);
-        finish();
     };
 
     View.OnClickListener btnSeeInvitesListener = v -> {
         //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
-        showUsersList(invites, "invites");
+        showUsersList(invites, "invites", AppointmentActivity.INVITES);
     };
 
     View.OnClickListener btnSeeBansListener = v -> {
         //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
-        showUsersList(bans, "bans");
+        showUsersList(bans, "bans", AppointmentActivity.BANS);
     };
 
     CompoundButton.OnCheckedChangeListener switchPrivateListener = (buttonView, isChecked) -> {
         if (isChecked) {
             isPrivate = true;
+            dataPasser.dataPass(isPrivate, AppointmentActivity.PRIVATE);
         }
         else {
             isPrivate = false;
+            dataPasser.dataPass(isPrivate, AppointmentActivity.PRIVATE);
         }
     };
 
-    private void attributeSetters() {
-        switchPrivate = findViewById(R.id.appointmentSettingsSwitchPrivate);
-        searchBan = findViewById(R.id.appointmentSettingsSearchBan);
-        searchInvite = findViewById(R.id.appointmentSettingsSearchInvite);
-        btnInvite = findViewById(R.id.appointmentSettingsBtnInvite);
-        btnBan = findViewById(R.id.appointmentSettingsBtnBan);
-        btnDone = findViewById(R.id.appointmentSettingsBtnDone);
-        btnCheckInvites = findViewById(R.id.appointmentSettingsBtnSeeInvites);
-        btnCheckBans = findViewById(R.id.appointmentSettingsBtnSeeBans);
+    private void attributeSetters(View rootView) {
+        switchPrivate = rootView.findViewById(R.id.appointmentSettingsSwitchPrivate);
+        searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
+        searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchInvite);
+        btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnInvite);
+        btnBan = rootView.findViewById(R.id.appointmentSettingsBtnBan);
+        btnCheckInvites = rootView.findViewById(R.id.appointmentSettingsBtnSeeInvites);
+        btnCheckBans = rootView.findViewById(R.id.appointmentSettingsBtnSeeBans);
         invites = new ArrayList<>();
         bans = new ArrayList<>();
         isPrivate = false;
     }
 
-    private void showUsersList(List<String> users, String type) {
+    private void showUsersList(ArrayList<String> users, String type, String id) {
         List<Integer> selectedItems = new ArrayList<>();
 
         // setup the alert builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Select which " + type + " to remove");
         builder.setMultiChoiceItems(users.toArray(new CharSequence[0]), null, (dialog, which, isChecked) -> {
             if (isChecked) {
@@ -123,6 +133,7 @@ public class AppointmentSettingsActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", (dialog, which) -> {
             for (int i : selectedItems) {
                 users.remove(i);
+                dataPasser.dataPass(users, id);
             }
         });
         builder.setNegativeButton("Cancel", null);
