@@ -25,7 +25,7 @@ public class MainAppointmentCreationFragment extends Fragment {
     public static final String ERROR_TXT = "Error : Start and end time must result in a correct time slot";
     private static final int SETTINGS_ACTIVITY_CODE = 1;
     private EditText editTitle, editCourse;
-    private Button btnStartTime, btnEndTime, btnDone, btnReset;
+    private Button btnDone, btnReset;
     private Calendar calendarStartTime, calendarEndTime;
     private TextView txtError, txtStartTime, txtEndTime;
 
@@ -81,11 +81,11 @@ public class MainAppointmentCreationFragment extends Fragment {
 
         txtError.setVisibility(View.INVISIBLE);
 
-        btnStartTime.setOnClickListener(v -> {
+        rootView.findViewById(R.id.appointmentCreationStartTimeLayout).setOnClickListener(v -> {
             showDateTimePicker(txtStartTime, true);
         });
 
-        btnEndTime.setOnClickListener(v -> {
+        rootView.findViewById(R.id.appointmentCreationEndTimeLayout).setOnClickListener(v -> {
             showDateTimePicker(txtEndTime, false);
         });
 
@@ -134,13 +134,11 @@ public class MainAppointmentCreationFragment extends Fragment {
     private void attributeSetters(View rootView) {
         editTitle = rootView.findViewById(R.id.appointmentCreationEditTxtAppointmentTitleSet);
         editCourse = rootView.findViewById(R.id.appointmentCreationEditTxtAppointmentCourseSet);
-        btnStartTime = rootView.findViewById(R.id.appointmentCreationBtnStartTime);
-        btnEndTime = rootView.findViewById(R.id.appointmentCreationBtnEndTime);
         btnDone = rootView.findViewById(R.id.appointmentCreationbtnDone);
         btnReset = rootView.findViewById(R.id.appointementCreationBtnReset);
         txtError = rootView.findViewById(R.id.appointmentCreationtxtError);
-        txtStartTime = rootView.findViewById(R.id.appointmentCreationTxtStartTime);
-        txtEndTime = rootView.findViewById(R.id.appointmentCreationTxtEndTime);
+        txtStartTime = rootView.findViewById(R.id.appointmentCreationStartTime);
+        txtEndTime = rootView.findViewById(R.id.appointmentCreationEndTime);
         calendarStartTime = Calendar.getInstance();
         calendarEndTime = Calendar.getInstance();
     }

@@ -69,8 +69,8 @@ public class RoomActivityInfo extends AppCompatActivity {
                 SimpleDateFormat formatter = new SimpleDateFormat(TIMESTAMP_PATTERN, Locale.ENGLISH);
 
                 Date current = new Date(System.currentTimeMillis());
-                Date start = new Date(st*1000);
-                Date end = new Date((st+d)*1000);
+                Date start = new Date(st);
+                Date end = new Date(st+d);
 
                 String durationText;
 

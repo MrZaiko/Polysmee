@@ -1,11 +1,9 @@
 package io.github.polysmee.appointments;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 import android.widget.SearchView;
 
-import androidx.annotation.NonNull;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.UiController;
@@ -15,43 +13,25 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.GenericTypeIndicator;
-import com.google.firebase.database.ValueEventListener;
 
 import org.hamcrest.Matcher;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Set;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.MainAppointmentCreationFragment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.RoomActivity;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 
 import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.contrib.ActivityResultMatchers.hasResultCode;
 import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -125,9 +105,9 @@ public class AppointmentActivityTest {
         assertDisplayed(R.id.appointmentCreationtxtError, MainAppointmentCreationFragment.ERROR_TXT);
 
         clickOn(R.id.appointementCreationBtnReset);
-        assertDisplayed(R.id.appointmentCreationTxtStartTime, "Start Time");
+        assertDisplayed(R.id.appointmentCreationStartTime, "Start Time");
         assertNotDisplayed(R.id.appointmentCreationtxtError);
-        assertDisplayed(R.id.appointmentCreationTxtEndTime, "End Time");
+        assertDisplayed(R.id.appointmentCreationEndTime, "End Time");
         assertDisplayed(R.id.appointmentCreationEditTxtAppointmentCourseSet, "");
         assertDisplayed(R.id.appointmentCreationEditTxtAppointmentTitleSet, "");
     }

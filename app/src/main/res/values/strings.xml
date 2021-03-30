@@ -23,15 +23,15 @@
     <string name="user_prompt">Hello user ! You are not connected. Please login !</string>
     <string name="login">Login</string>
 
-    <string name="appointment_creation_appointment_title">Appointment Title</string>
-    <string name="appointment_creation_appointment_course">Appointment Course</string>
+    <string name="appointment_creation_appointment_title">Title</string>
+    <string name="appointment_creation_appointment_course">Course</string>
     <string name="appointment_creation_pick_start_time">Pick start time</string>
     <string name="appointment_creation_pick_end_time">Pick end time</string>
     <string name="appointment_creation_done_create_appointment">Done - Create Appointment</string>
     <string name="appointment_creation_reset_btn_txt">Reset</string>
     <string name="appointment_creation_maximum_duration_of_an_appointment_is_4h">Maximum duration of an appointment is 4h</string>
-    <string name="appointment_creation_end_time_txt">End Time</string>
-    <string name="appointment_creation_start_time_txt">Start Time</string>
+    <string name="appointment_creation_end_time_txt">Click to set</string>
+    <string name="appointment_creation_start_time_txt">Click to set</string>
     <string name="appointment_settings_check_invites">See/Delete invites</string>
     <string name="appointment_settings_check_bans">See/Delete bans</string>
 
