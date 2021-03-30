@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import io.github.polysmee.appointments.AppointmentActivity;
 
 import io.github.polysmee.calendar.CalendarActivity;
+import io.github.polysmee.notification.AppointmentReminderNotificationPublisher;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.settings.SettingsActivity;
 
@@ -18,6 +19,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        AppointmentReminderNotificationPublisher.appointmentReminderNotificationSetListener(getApplicationContext());
     }
 
     public void goToRoomActivity(View view) {
