@@ -17,9 +17,9 @@ public interface User{
      */
     String getId();
 
-    default void getNameAndThen(StringValueListener valueListener) {}
+    void getNameAndThen(StringValueListener valueListener);
 
-    default void getAppointmentsAndThen(StringSetValueListener valueListener) {}
+    void getAppointmentsAndThen(StringSetValueListener valueListener);
 
     /**
      * Adds the given appointment to the set of appointments
@@ -33,7 +33,10 @@ public interface User{
      */
     void removeAppointment(Appointment appointment);
 
-    default String createNewUserAppointment(long start, long duration, String course, String name){return null;}
+    @Deprecated
+    String createNewUserAppointment(long start, long duration, String course, String name);
+
+    String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate);
 
     static void getAllUsersIdsAndThenOnce(StringSetValueListener valueListener){
         DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);

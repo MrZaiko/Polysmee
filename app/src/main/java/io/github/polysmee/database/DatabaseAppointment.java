@@ -199,7 +199,13 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public boolean removeBan(User unbanned) {
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).child("banned").child(unbanned.getId()).setValue(null);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .child(unbanned.getId())
+                .setValue(null);
         return true;
     }
 }
