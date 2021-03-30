@@ -16,23 +16,19 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.android.gms.tasks.SuccessContinuation;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
-import java.net.ConnectException;
-import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.login.LoginCheckActivity;
 import io.github.polysmee.login.MainUserSingleton;
 
@@ -49,6 +45,7 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
     private final static int NOTIFICATION_LOCKSCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
+    private static Context mContext;
 
     // From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
     //"It's safe to call this repeatedly because creating an existing notification channel performs no operation."
@@ -72,25 +69,10 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
     /*
      * The return pendingIntent is uniquely identify by the android system by the start time of the appointemnt
      */
-    private static PendingIntent getReminderNotificationPendingIntent(@NonNull Context context ) {
-        Intent notificationIntent = new Intent(context, AppointmentReminderNotificationPublisher.class);
+    private static PendingIntent getReminderNotificationPendingIntent(@NonNull Context context, @NonNull String appointmentID ) {
+        Intent notificationIntent = new Intent(context, AppointmentReminderNotificationPublisher.class).setIdentifier(appointmentID);
         return PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
     }
-
-   public static void appointmentTimeSetNotification(@NonNull Set<Long> appointmentTimeSet, @NonNull Context context){
-       AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-       alarmManager.cancel(getReminderNotificationPendingIntent(context));
-       for(long time : appointmentTimeSet){
-           long appointment_reminder_notification_time_from_appointment_ms = TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                   context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-                   context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
-           long timeOfNotification = time - appointment_reminder_notification_time_from_appointment_ms;
-           if(time>=appointment_reminder_notification_time_from_appointment_ms && timeOfNotification > System.currentTimeMillis()){
-               alarmManager.setExact(AlarmManager.RTC_WAKEUP, timeOfNotification, getReminderNotificationPendingIntent(context));
-           }
-       }
-   }
-
 
    /*
     * This function is really slow it try to get a value from the server, keep that in mind when calling it in android function
@@ -98,30 +80,35 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
     *
     */
    public static void appointmentReminderNotificationSetListener(@NonNull Context context){
-       helpContext=context;
-       Task<DataSnapshot> taskGetAppointmentsOfMainUser = DatabaseFactory.getAdaptedInstance().getReference("users")
-               .child(MainUserSingleton.getInstance().getId()).child("appointments").get();
+       mContext=context;
+       //get once the value need to add a method to the user interface
+       DatabaseReference databaseReferenceMainUserListOfAppointements=DatabaseFactory.getAdaptedInstance().getReference("users")
+               .child(MainUserSingleton.getInstance().getId()).child("appointments");
+       Task<DataSnapshot> taskGetAppointmentsOfMainUser = databaseReferenceMainUserListOfAppointements.get();
        taskGetAppointmentsOfMainUser.continueWith(task -> {
                     DataSnapshot dataSnapshot = task.getResult();
+                    //when no appointments exist, i.e a value search in the database doesn't exist exist value is false
                     if (dataSnapshot.exists()) {
+                        //here we are sure the hashmap exist, we handle the case where main user has some appointments
                         HashMap<String, Object> retrieved = (HashMap<String, Object>) dataSnapshot.getValue();
-                        if (retrieved== null){
-                            return false;
-                        }
-                        createNotificationToUnderstand(context, "mallFormed");
                         for (String appointmentId : retrieved.keySet()) {
+                            //has to use this as with current user interface if the appointment is deleted it will never execute my function for handling the deletion i.e they do .exist() with the value
+                            //and since it is deleted it return false and it doesn't execute so it doesn't let me handle that case
                             DatabaseFactory.getAdaptedInstance().getReference("appointments")
                                     .child(appointmentId).child("start").addValueEventListener(AppointmentReminderNotificationTimeChangeListener);
                         }
-                        return true;
                     } else {
-                        return false;
+                        //handle case when the main user has no appointment
                     }
+                    // we retun null as we don't care about the return value
+                    return null;
                 }
         );
-       taskGetAppointmentsOfMainUser.addOnFailureListener(command -> createNotificationToUnderstand(context,"get appointements failed "));
-       taskGetAppointmentsOfMainUser.addOnCanceledListener(() -> createNotificationToUnderstand(context,"get appointements canceled"));
-       //TODO check the case where there is no appointement or a error occured during the retrieval
+       //if couldn't retrieve data, i.e a failure try again
+       taskGetAppointmentsOfMainUser.addOnFailureListener(exception -> AppointmentReminderNotificationPublisher.appointmentReminderNotificationSetListener(context));
+       taskGetAppointmentsOfMainUser.addOnCanceledListener(() -> AppointmentReminderNotificationPublisher.appointmentReminderNotificationSetListener(context));
+       //TODO add listener to the list of appointment of the user
+       databaseReferenceMainUserListOfAppointements.addChildEventListener(AppointmentReminderNotificationMainUserAppointmentsListener);
    }
 
    public static void createNotificationToUnderstand(Context context, String string){
@@ -149,11 +136,7 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
-                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " "
-                        + PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                        context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes)
-                        , context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))
-                        + context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left))
+                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text))
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
@@ -166,9 +149,10 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
     }
 
-    //TODO remove that
-    private static Context helpContext;
-
+    /*
+     *  A listener for the appointment time, if the time change it will do the appropriate action to set the appointment reminder notification
+     *  at the right time.
+     */
     private static ValueEventListener AppointmentReminderNotificationTimeChangeListener= new ValueEventListener(){
 
         /**
@@ -179,8 +163,25 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
          */
         @Override
         public void onDataChange(@NonNull DataSnapshot snapshot) {
-            createNotificationToUnderstand(helpContext,snapshot.toString());
-            //TODO really implement this funciton
+            //TODO remove next line
+            createNotificationToUnderstand(mContext, "call timeListenerDataChange");
+            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+            String appointmentId =snapshot.getRef().getParent().getKey();
+            //called when the data is deleted
+            if (snapshot.exists()){
+                long appointment_reminder_notification_time_ms = ((long)snapshot.getValue()) - TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
+                        mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                        mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
+
+                //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
+                //will trigger directly the alarm if the time passed as argument is greater than the current time
+                alarmManager.setExact(AlarmManager.RTC_WAKEUP,appointment_reminder_notification_time_ms, getReminderNotificationPendingIntent(mContext, appointmentId));
+            }else{
+                //handle the case when the appointment is deleted, the user might still have the appointment in his appointment list but it will
+                //not be corrected here it is not the job of the notification
+                alarmManager.cancel(getReminderNotificationPendingIntent(mContext, appointmentId));
+                snapshot.getRef().removeEventListener(this);
+            }
         }
 
         /**
@@ -194,8 +195,74 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
          */
         @Override
         public void onCancelled(@NonNull DatabaseError error) {
-            createNotificationToUnderstand(helpContext,error.toString());
-            //TODO remove this just to understand
+            //Not handled, I do not know how to handle it. I think it is better to do nothing like in other implementations of listener of Firebase realtime database
+        }
+    };
+
+    private static ChildEventListener AppointmentReminderNotificationMainUserAppointmentsListener = new ChildEventListener() {
+
+        /**
+         * This method is triggered when a new child is added to the location to which this listener was
+         * added.
+         *
+         * @param snapshot          An immutable snapshot of the data at the new child location
+         * @param previousChildName The key name of sibling location ordered before the new child. This
+         */
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            DatabaseFactory.getAdaptedInstance().getReference("appointments")
+                    .child(snapshot.getKey()).child("start").addValueEventListener(AppointmentReminderNotificationTimeChangeListener);
+        }
+
+        /**
+         * This method is triggered when the data at a child location has changed.
+         *
+         * @param snapshot          An immutable snapshot of the data at the new data at the child location
+         * @param previousChildName The key name of sibling location ordered before the child. This will
+         */
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            //don't care
+        }
+
+        /**
+         * This method is triggered when a child is removed from the location to which this listener was
+         * added.
+         *
+         * @param snapshot An immutable snapshot of the data at the child that was removed.
+         */
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            //TODO test with notification the value of snapshot.getKey()
+            DatabaseFactory.getAdaptedInstance().getReference("appointments")
+                    .child(snapshot.getKey()).child("start").removeEventListener(AppointmentReminderNotificationTimeChangeListener);
+        }
+
+        /**
+         * This method is triggered when a child location's priority changes. See {@link
+         * DatabaseReference#setPriority(Object)} and <a
+         * href="https://firebase.google.com/docs/database/android/retrieve-data#data_order"
+         * target="_blank">Ordered Data</a> for more information on priorities and ordering data.
+         *
+         * @param snapshot          An immutable snapshot of the data at the location that moved.
+         * @param previousChildName The key name of the sibling location ordered before the child
+         */
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            //don't care
+        }
+
+        /**
+         * This method will be triggered in the event that this listener either failed at the server, or
+         * is removed as a result of the security and Firebase rules. For more information on securing
+         * your data, see: <a href="https://firebase.google.com/docs/database/security/quickstart"
+         * target="_blank"> Security Quickstart</a>
+         *
+         * @param error A description of the error that occurred
+         */
+        @Override
+        public void onCancelled(@NonNull DatabaseError error) {
+            //Not handled, I do not know how to handle it. I think it is better to do nothing like in other implementations of listener of Firebase realtime database
         }
     };
 

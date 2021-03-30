@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.notification.AppointmentReminderNotificationPublisher;
 
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
@@ -29,11 +30,7 @@ public class AppointmentReminderNotificationPublisherTest {
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
     public Context context = ApplicationProvider.getApplicationContext();
-    public final String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " "
-            + PreferenceManager.getDefaultSharedPreferences(context).getInt(
-            context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-            context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))
-            + context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left);
+    public final String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text);
 
     @Before
     @After
@@ -59,4 +56,5 @@ public class AppointmentReminderNotificationPublisherTest {
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(notification_text)));
     }
+
 }
