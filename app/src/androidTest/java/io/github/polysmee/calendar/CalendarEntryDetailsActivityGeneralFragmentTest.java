@@ -133,7 +133,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         intent.putExtras(bundle);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
 
-           sleep(3,SECONDS);
+           sleep(10,SECONDS);
            Espresso.onView(withText("Details")).perform(ViewActions.click());
             sleep(3,SECONDS);
            ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
