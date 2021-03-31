@@ -6,39 +6,39 @@
     android:layout_height="match_parent"
     tools:context=".appointments.AppointmentActivity">
     <EditText
-        android:id="@+id/appointmentSettingsSearchAdd"
+        android:id="@+id/appointmentSettingsSearchBan"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/appointmentSettingsBtnAdd"
+        app:layout_constraintEnd_toStartOf="@id/appointmentSettingsBtnBan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0" />
 
     <ImageView
-        android:id="@+id/appointmentSettingsBtnAdd"
+        android:id="@+id/appointmentSettingsBtnBan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         app:layout_constraintVertical_bias="0"
         android:src="@drawable/baseline_done"
-        android:text="@string/appointment_settings_btn_invite"
+        android:text="@string/appointment_settings_btn_ban"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/appointmentSettingsSearchAdd"
+        app:layout_constraintStart_toEndOf="@id/appointmentSettingsSearchBan"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"/>
 
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/appointmentSettingsSearchAdd"
+        app:layout_constraintTop_toBottomOf="@id/appointmentSettingsSearchBan"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
-            android:id="@+id/appointmentCreationAddsList"
+            android:id="@+id/appointmentCreationBansList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" />

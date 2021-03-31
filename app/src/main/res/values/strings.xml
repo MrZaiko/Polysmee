@@ -25,8 +25,8 @@
 
     <string name="appointment_creation_appointment_title">Title</string>
     <string name="appointment_creation_appointment_course">Course</string>
-    <string name="appointment_creation_pick_start_time">Pick start time</string>
-    <string name="appointment_creation_pick_end_time">Pick end time</string>
+    <string name="appointment_creation_pick_start_time">Click to set</string>
+    <string name="appointment_creation_pick_end_time">Click to set</string>
     <string name="appointment_creation_done_create_appointment">Done - Create Appointment</string>
     <string name="appointment_creation_reset_btn_txt">Reset</string>
     <string name="appointment_creation_maximum_duration_of_an_appointment_is_4h">Maximum duration of an appointment is 4h</string>
