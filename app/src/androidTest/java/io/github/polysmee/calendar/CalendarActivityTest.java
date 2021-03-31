@@ -50,75 +50,7 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityTest {
-
-
-/*
-    private static final Intent intent;
-    static {
-        intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Fake");
-        intent.putExtras(bundle);
-    }
-    @Rule
-    public ActivityScenarioRule<CalendarActivity> testRule = new ActivityScenarioRule<>(intent);
-    @Before
-    public void initUser(){
-        FakeDatabase.idGenerator = new AtomicLong(0);
-    }
-    @Before
-    public void setTodayDateInDailyCalendar(){
-        Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
-    }
-    @Test
-    public void choosingAnotherDateChangesDisplayedDate(){
-        int year = 2021;
-        int month = 1;
-        int day = 13;
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.todayDateCalendarActivity);
-            setDateOnPicker(year,month,day);
-            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
-            Date date = new Date(epochTimeToday);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
-        }
-    }
-    @Test
-    public void writtenDateIsCorrectTest(){
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
-        }
-    }
-    @Test
-    public void scrollViewContentIsCoherentAfterAddingAppointments(){
-        Random rand = new Random();
-        int number_of_appointments = rand.nextInt(9) + 1;
-        CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
-        for(int i = 0; i<number_of_appointments; ++i){
-            infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight() + i*60,50,""+i,null,i);
-        }
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
-            for(int i = 0; i < number_of_appointments; ++i)
-                demoButton.perform(ViewActions.click()); //add the appointments to layout
-            if(number_of_appointments > 6){
-                for(int i = 0; i<6;++i){
-                    assertDisplayed(formatAppointmentDescription(infos[i]));
-                }
-                ViewInteraction scrollLayout = Espresso.onView(ViewMatchers.withId(R.id.calendarActivityAppointmentScroll)).perform(ViewActions.swipeUp());
-                for (int i = 6; i < number_of_appointments; ++i){
-                    assertDisplayed(formatAppointmentDescription(infos[i]));
-                }
-            }
-        }
-    }*/
-
-
+    
     private static final String username1 = "Youssef le dindon";
 
     private static final String appointmentTitle = "coucouchou";
