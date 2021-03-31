@@ -142,6 +142,8 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
        courseDetails.perform(ViewActions.clearText());
        courseDetails.perform(ViewActions.typeText(newCourse));
        closeSoftKeyboard();
+       ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
+       modifyButton.perform(ViewActions.click());
        sleep(3,SECONDS);
 
        try{
