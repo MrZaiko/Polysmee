@@ -128,11 +128,11 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-        bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId+1);
+        bundle.putSerializable(CalendarActivity.APPOINTMENT_DETAIL_CALENDAR_ID_FROM,appointmentId+1);
 
         Intent intent = new Intent(getApplicationContext(),CalendarEntryDetailsActivity.class);
         intent.putExtras(bundle);
-       try(ActivityScenario<CalendarEntryDetailsActivity> ignored = ActivityScenario.launch(intent)) {
+        try(ActivityScenario<CalendarEntryDetailsActivity> ignored = ActivityScenario.launch(intent)) {
 
            sleep(3,SECONDS);
            ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
