@@ -127,32 +127,35 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
         Bundle bundle = new Bundle();
 
-       bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-       bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId+1);
+        bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
+        bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId+1);
 
-       FragmentScenario.launchInContainer(CalendarEntryDetailsGeneralFragment.class,bundle);
-       sleep(3,SECONDS);
+        Intent intent = new Intent(getApplicationContext(),CalendarEntryDetailsActivity.class);
+        intent.putExtras(bundle);
+        sleep(3,SECONDS);
+       try(ActivityScenario<CalendarEntryDetailsActivity> ignored = ActivityScenario.launch(intent)) {
 
-       ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
-       titleDetails.perform(ViewActions.clearText());
-       titleDetails.perform(ViewActions.typeText(newTitle));
-       closeSoftKeyboard();
 
-       ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
-       courseDetails.perform(ViewActions.clearText());
-       courseDetails.perform(ViewActions.typeText(newCourse));
-       closeSoftKeyboard();
-       ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
-       modifyButton.perform(ViewActions.click());
-       sleep(3,SECONDS);
+           ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
+           titleDetails.perform(ViewActions.clearText());
+           titleDetails.perform(ViewActions.typeText(newTitle));
+           closeSoftKeyboard();
 
-       try{
-       getCourseTest(appointmentId+1,newCourse);
-       getTitleTest(appointmentId+1,newTitle);
-       }catch (InterruptedException ex){
+           ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
+           courseDetails.perform(ViewActions.clearText());
+           courseDetails.perform(ViewActions.typeText(newCourse));
+           closeSoftKeyboard();
+           ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
+           modifyButton.perform(ViewActions.click());
+           sleep(3, SECONDS);
 
+           try {
+               getCourseTest(appointmentId + 1, newCourse);
+               getTitleTest(appointmentId + 1, newTitle);
+           } catch (InterruptedException ex) {
+
+           }
        }
-
        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).setValue(null);
 
     }
