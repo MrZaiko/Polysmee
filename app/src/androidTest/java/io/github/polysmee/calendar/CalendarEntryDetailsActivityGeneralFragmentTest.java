@@ -91,7 +91,6 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(info.getStartTime());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId).setValue(true);
 
         Bundle bundle = new Bundle();
 
@@ -102,6 +101,8 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         sleep(3,SECONDS);
         assertDisplayed(info.getTitle());
         assertDisplayed(info.getCourse());
+
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
 
     }
 
