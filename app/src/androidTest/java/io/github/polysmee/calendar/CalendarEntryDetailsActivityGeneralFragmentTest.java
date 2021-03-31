@@ -98,7 +98,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
         bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId);
 
-        FragmentScenario.launchInContainer(CalendarEntryDetailAddBanParticipantsFragment.class,bundle);
+        FragmentScenario.launchInContainer(CalendarEntryDetailsGeneralFragment.class,bundle);
         sleep(3,SECONDS);
         assertDisplayed(info.getTitle());
         assertDisplayed(info.getCourse());
