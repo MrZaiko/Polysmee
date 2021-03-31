@@ -41,7 +41,7 @@ public class AptCreationSettingsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_apt_creation_settings, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_appointment_creation_add_user, container, false);
 
         attributeSetters(rootView);
         btnInvite.setOnClickListener(btnInviteListener);
@@ -101,7 +101,7 @@ public class AptCreationSettingsFragment extends Fragment {
     };
 
     private void attributeSetters(View rootView) {
-        switchPrivate = rootView.findViewById(R.id.appointmentSettingsSwitchPrivate);
+        switchPrivate = rootView.findViewById(R.id
         searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchInvite);
         btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnInvite);

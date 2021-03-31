@@ -5,7 +5,10 @@ import android.app.TimePickerDialog;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,10 +17,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+
 import java.util.Calendar;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.appointments.AptCreationPagerAdapter;
 
 public class MainAppointmentCreationFragment extends Fragment {
 
@@ -28,6 +35,9 @@ public class MainAppointmentCreationFragment extends Fragment {
     private Button btnDone, btnReset;
     private Calendar calendarStartTime, calendarEndTime;
     private TextView txtError, txtStartTime, txtEndTime;
+
+
+    private boolean isBanShown = false, isUserShown = false;
 
     DataPasser dataPasser;
 
@@ -88,6 +98,15 @@ public class MainAppointmentCreationFragment extends Fragment {
         rootView.findViewById(R.id.appointmentCreationEndTimeLayout).setOnClickListener(v -> {
             showDateTimePicker(txtEndTime, false);
         });
+
+        ViewPager2 pager = rootView.findViewById(R.id.appointmentCreationAddPager);
+        FragmentStateAdapter pagerAdapter = new AptCreationPagerAdapter(getActivity());
+
+        pager.setAdapter(pagerAdapter);
+
+        TabLayout tabs = rootView.findViewById(R.id.appointmentCreationAddTabLayout);
+        new TabLayoutMediator(tabs, pager,
+                (tab, position) -> tab.setText(AptCreationPagerAdapter.FRAGMENT_NAME[position])).attach();
 
         btnDone.setOnClickListener(doneClickListener);
 

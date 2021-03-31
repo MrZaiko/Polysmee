@@ -6,42 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".appointments.AppointmentActivity">
 
-    <androidx.viewpager2.widget.ViewPager2
+    <fragment
         android:id="@+id/aptCreationActivityPager"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="16dp"
+        android:name="io.github.polysmee.appointments.fragments.MainAppointmentCreationFragment"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/aptCreationActivityTabs">
-
-    </androidx.viewpager2.widget.ViewPager2>
-
-    <com.google.android.material.tabs.TabLayout
-        android:id="@+id/aptCreationActivityTabs"
-        android:layout_width="419dp"
-        android:layout_height="57dp"
-        app:layout_constraintBottom_toTopOf="@+id/aptCreationActivityPager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/aptCreationActivityMainTab"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="MAIN" />
-
-        <com.google.android.material.tabs.TabItem
-            android:id="@+id/aptCreationActivitySettingsTab"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="SETTINGS" />
-
-    </com.google.android.material.tabs.TabLayout>
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

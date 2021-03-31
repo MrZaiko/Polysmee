@@ -47,15 +47,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_creation);
 
-        ViewPager2 pager = findViewById(R.id.aptCreationActivityPager);
-        FragmentStateAdapter pagerAdapter = new AptCreationPagerAdapter(this);
-
-        pager.setAdapter(pagerAdapter);
-
-        TabLayout tabs = findViewById(R.id.aptCreationActivityTabs);
-        new TabLayoutMediator(tabs, pager,
-                (tab, position) -> tab.setText(AptCreationPagerAdapter.FRAGMENT_NAME[position])).attach();
-
         calendarStart = Calendar.getInstance();
         calendarEnd = Calendar.getInstance();
         title = "";

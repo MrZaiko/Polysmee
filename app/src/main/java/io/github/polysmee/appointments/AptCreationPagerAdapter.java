@@ -28,7 +28,7 @@ public class AptCreationPagerAdapter extends FragmentStateAdapter {
 
         switch (position) {
             case 0:
-                fragment = new MainAppointmentCreationFragment();
+                fragment = new AptCreationSettingsFragment();
                 return fragment;
             case 1:
                 fragment = new AptCreationSettingsFragment();
