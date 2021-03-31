@@ -19,8 +19,10 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -51,7 +53,8 @@ public class CalendarActivity extends AppCompatActivity{
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
     private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
-    private Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
+    private Set<String> appointmentSet = new HashSet<>();
+    private Map<String,CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -148,7 +151,7 @@ public class CalendarActivity extends AppCompatActivity{
             String course = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_COURSE);
             String id = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_ID_TO);
             System.out.println(title); System.out.println(course);
-            CalendarAppointmentInfo info = getElementInList(id);
+            CalendarAppointmentInfo info = appointmentInfoMap.get(id);
             info.setCourse(course); info.setTitle(title); addListenerToUserAppointments();
         }
     }
@@ -260,6 +263,7 @@ public class CalendarActivity extends AppCompatActivity{
 
     protected void addListenerToUserAppointments(){
         user.getAppointmentsAndThen((setOfIds)->{
+            appointmentSet = new HashSet<>(setOfIds);
             scrollLayout.removeAllViewsInLayout();
             for(String id : setOfIds){
                 Appointment appointment;
@@ -278,7 +282,15 @@ public class CalendarActivity extends AppCompatActivity{
                             appointmentInfo.setTitle((title));
                             appointment.getCourseAndThen((course) ->{
                                 appointmentInfo.setCourse(course);
-                                if(checkIfAlreadyInList(id)){
+                                scrollLayout.removeAllViewsInLayout();
+                                if(!appointmentSet.contains(appointmentInfo.getId())){
+                                    appointmentInfoMap.remove(appointmentInfo.getId());
+                                }
+                                else{
+                                appointmentInfoMap.put(appointment.getId(),appointmentInfo);
+                                changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                }
+                                /*if(checkIfAlreadyInList(id)){
                                     scrollLayout.removeAllViewsInLayout();
                                     appointmentSet.remove(getElementInList(id));
                                     appointmentInfos.remove(getElementInList(id));
@@ -289,8 +301,7 @@ public class CalendarActivity extends AppCompatActivity{
                                     scrollLayout.removeAllViewsInLayout();
                                     appointmentInfos.add(appointmentInfo);
                                     appointmentSet.add(appointmentInfo);
-                                }
-                                changeCurrentCalendarLayout(appointmentSet);
+                                }*/
 
                             });
                         });
