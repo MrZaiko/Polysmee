@@ -132,10 +132,9 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
         Intent intent = new Intent(getApplicationContext(),CalendarEntryDetailsActivity.class);
         intent.putExtras(bundle);
-        sleep(3,SECONDS);
        try(ActivityScenario<CalendarEntryDetailsActivity> ignored = ActivityScenario.launch(intent)) {
 
-
+           sleep(3,SECONDS);
            ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
            titleDetails.perform(ViewActions.clearText());
            titleDetails.perform(ViewActions.typeText(newTitle));
