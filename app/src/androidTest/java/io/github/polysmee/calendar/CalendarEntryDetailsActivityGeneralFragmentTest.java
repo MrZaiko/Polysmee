@@ -124,17 +124,18 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("start").setValue(info.getStartTime());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+       DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 1).setValue(true);
 
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-        bundle.putSerializable(CalendarActivity.APPOINTMENT_DETAIL_CALENDAR_ID_FROM,appointmentId+1);
-
-        Intent intent = new Intent(getApplicationContext(),CalendarEntryDetailsActivity.class);
+        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
         intent.putExtras(bundle);
-        try(ActivityScenario<CalendarEntryDetailsActivity> ignored = ActivityScenario.launch(intent)) {
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
 
            sleep(3,SECONDS);
+           Espresso.onView(withText("Details")).perform(ViewActions.click());
+            sleep(3,SECONDS);
            ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
            titleDetails.perform(ViewActions.clearText());
            titleDetails.perform(ViewActions.typeText(newTitle));
