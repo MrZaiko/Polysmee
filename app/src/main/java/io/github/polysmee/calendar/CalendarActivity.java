@@ -49,7 +49,6 @@ public class CalendarActivity extends AppCompatActivity{
     private String userType ;
     private int demo_indexer = 0;
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
-    private final List<CalendarAppointmentInfo> appointmentInfos = new ArrayList<>();
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
     private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
@@ -290,19 +289,6 @@ public class CalendarActivity extends AppCompatActivity{
                                 appointmentInfoMap.put(appointment.getId(),appointmentInfo);
                                 changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                 }
-                                /*if(checkIfAlreadyInList(id)){
-                                    scrollLayout.removeAllViewsInLayout();
-                                    appointmentSet.remove(getElementInList(id));
-                                    appointmentInfos.remove(getElementInList(id));
-                                    appointmentSet.add(appointmentInfo);
-                                    appointmentInfos.add(appointmentInfo);
-                                }
-                                else{
-                                    scrollLayout.removeAllViewsInLayout();
-                                    appointmentInfos.add(appointmentInfo);
-                                    appointmentSet.add(appointmentInfo);
-                                }*/
-
                             });
                         });
                     });
@@ -313,36 +299,4 @@ public class CalendarActivity extends AppCompatActivity{
         });
     }
 
-    /**
-     * Function to be used in pair with "getElementInList" method to manage the
-     * calendar appointment infos. This function checks if the appointment description
-     * with the corresponding id was already added to the list of all description.
-     * It is used to update the set of descriptions when needed
-     * @param id the appointment's id whose description we want to check the existence of in the list
-     * @return true if and only if the appointment's description was already added to the list
-     * */
-    protected boolean checkIfAlreadyInList(String id){
-        for(CalendarAppointmentInfo infos: appointmentInfos){
-            if(infos.getId().equals(id)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Function to be used in pair with "checkIfAlreadyInList". This function will return
-     * the appointment's description stored in the list of all descriptions, so we can update
-     * it.
-     * @param id the appointment's id whose description we want to get
-     * @return the appointment's description, or null if it wasn't added
-     */
-    protected CalendarAppointmentInfo getElementInList(String id){
-        for(CalendarAppointmentInfo infos: appointmentInfos){
-            if(infos.getId().equals(id)){
-                return infos;
-            }
-        }
-        return null;
-    }
 }
