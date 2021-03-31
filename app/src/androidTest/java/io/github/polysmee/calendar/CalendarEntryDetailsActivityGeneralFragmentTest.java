@@ -151,6 +151,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
        }
 
+       DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).setValue(null);
 
     }
 
