@@ -24,11 +24,16 @@ import org.junit.runner.RunWith;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.detailsFragments.CalendarEntryDetailAddBanParticipantsFragment;
 import io.github.polysmee.calendar.detailsFragments.CalendarEntryDetailsGeneralFragment;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.decoys.FakeDatabase;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -41,6 +46,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarEntryDetailsActivityGeneralFragmentTest {
@@ -106,46 +112,95 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
     }
 
-   /* @Test
+   @Test
     public void appointmentModificationIsSeenOnCalendar(){
         String newTitle = "NewTitleTest";
         String newCourse = "NewCourseTest";
-        CalendarAppointmentInfo info = new CalendarAppointmentInfo(newCourse, newTitle,
-                DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+        CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
+               DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
 
-            ViewInteraction demoButton = Espresso.onView(withId(R.id.calendarActivityCreateAppointmentButton));
-            demoButton.perform(ViewActions.click());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("title").setValue(info.getTitle());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("course").setValue(info.getCourse());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("start").setValue(info.getStartTime());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("owner").setValue(MainUserSingleton.getInstance().getId());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
 
-            ViewInteraction calendarEntryDetailButton = Espresso.onView(withText("Details"));
-            calendarEntryDetailButton.perform(ViewActions.click());
+        Bundle bundle = new Bundle();
 
-            ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
-            titleDetails.perform(ViewActions.clearText());
-            titleDetails.perform(ViewActions.typeText(newTitle));
-            closeSoftKeyboard();
+       bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
+       bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID,appointmentId+1);
 
-            ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
-            courseDetails.perform(ViewActions.clearText());
-            courseDetails.perform(ViewActions.typeText(newCourse));
-            closeSoftKeyboard();
+       FragmentScenario.launchInContainer(CalendarEntryDetailsGeneralFragment.class,bundle);
+       sleep(3,SECONDS);
 
-            ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
-            modifyButton.perform(ViewActions.click());
+       ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
+       titleDetails.perform(ViewActions.clearText());
+       titleDetails.perform(ViewActions.typeText(newTitle));
+       closeSoftKeyboard();
 
-            assertDisplayed(formatAppointmentDescription(info));
+       ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
+       courseDetails.perform(ViewActions.clearText());
+       courseDetails.perform(ViewActions.typeText(newCourse));
+       closeSoftKeyboard();
+       sleep(3,SECONDS);
+
+       try{
+       getCourseTest(appointmentId+1,newCourse);
+       getTitleTest(appointmentId+1,newTitle);
+       }catch (InterruptedException ex){
+
+       }
+
+
+    }
+
+    private void getTitleTest(String id, String newTitle) throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        lock.lock();
+        try {
+            new DatabaseAppointment(id).getTitleAndThen(
+                    (name) -> {
+                        lock.lock();
+                        gotName.set(name);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
+            );
+            while(!bool.get())
+                cv.await();
+
+        } finally {
+            lock.unlock();
+            assertEquals(newTitle, gotName.get());
         }
-    }*/
+    }
 
-    private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Reunion name : ").append(appointment.getTitle());
-        stringBuilder.append("\n");
-        stringBuilder.append("Course name  : ").append(appointment.getCourse());
-        stringBuilder.append("\n");
-        Date date = new Date(appointment.getStartTime() * 1000);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        stringBuilder.append("Start time : ").append(formatter.format(date));
-        return stringBuilder.toString();
+    private void getCourseTest(String id, String newCourse) throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        lock.lock();
+        try {
+            new DatabaseAppointment(id).getCourseAndThen(
+                    (name) -> {
+                        lock.lock();
+                        gotName.set(name);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
+            );
+            while(!bool.get())
+                cv.await();
+
+        } finally {
+            lock.unlock();
+            assertEquals(newCourse, gotName.get());
+        }
     }
 }
