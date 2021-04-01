@@ -134,7 +134,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
             DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
             DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 1).setValue(true);
 
-            
+
            sleep(10,SECONDS);
            Espresso.onView(withText("Details")).perform(ViewActions.click());
             sleep(3,SECONDS);

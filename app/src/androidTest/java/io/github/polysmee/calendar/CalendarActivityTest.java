@@ -153,6 +153,7 @@ public class CalendarActivityTest {
             long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
             date = new Date(epochTimeToday);
             assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).setValue(null);
         }
     }
 
@@ -196,6 +197,10 @@ public class CalendarActivityTest {
                 for (int i = 6; i < number_of_appointments; ++i){
                     assertDisplayed(formatAppointmentDescription(infos[i]));
                 }
+            }
+
+            for(int i = 0; i< number_of_appointments; ++i){
+                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i ).setValue(null);
             }
 
         }
