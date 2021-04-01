@@ -127,17 +127,32 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
             titleDetails.perform(ViewActions.clearText());
             titleDetails.perform(ViewActions.typeText(newTitle));
             closeSoftKeyboard();
+            info.setTitle(newTitle);
 
             ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
             courseDetails.perform(ViewActions.clearText());
             courseDetails.perform(ViewActions.typeText(newCourse));
             closeSoftKeyboard();
+            info.setCourse(newCourse);
+
             ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
             modifyButton.perform(ViewActions.click());
             sleep(3, SECONDS);
+            assertDisplayed(formatAppointmentDescription(info));
         }
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).setValue(null);
 
     }
 
+    private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("Reunion name : ").append(appointment.getTitle());
+        stringBuilder.append("\n");
+        stringBuilder.append("Course name  : ").append(appointment.getCourse());
+        stringBuilder.append("\n");
+        Date date = new Date(appointment.getStartTime() * 1000);
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+        stringBuilder.append("Start time : ").append(formatter.format(date));
+        return stringBuilder.toString();
+    }
 }
