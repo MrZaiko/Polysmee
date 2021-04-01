@@ -156,9 +156,7 @@ public class CalendarActivityTest {
 
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
-
-        Random rand = new Random();
-        int number_of_appointments = rand.nextInt(6) + 1;
+        int number_of_appointments = 4;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
@@ -173,15 +171,11 @@ public class CalendarActivityTest {
                 MainUserSingleton.getInstance().createNewUserAppointment(infos[i].getStartTime(),infos[i].getDuration(),infos[i].getCourse(),infos[i].getTitle());
                 sleep(3,SECONDS);
             }
-            if(number_of_appointments > 6){
-                for(int i = 0; i<6;++i){
-                    assertDisplayed(formatAppointmentDescription(infos[i]));
-                }
-                ViewInteraction scrollLayout = Espresso.onView(ViewMatchers.withId(R.id.calendarActivityAppointmentScroll)).perform(ViewActions.swipeUp());
-                for (int i = 6; i < number_of_appointments; ++i){
-                    assertDisplayed(formatAppointmentDescription(infos[i]));
-                }
+            for(int i = 0; i<number_of_appointments;++i){
+                assertDisplayed(formatAppointmentDescription(infos[i]));
             }
+
+
 
         }
     }*/
