@@ -121,7 +121,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),info.getDuration(),info.getCourse(),info.getTitle());
 
             sleep(10,SECONDS);
-            Espresso.onView(withId(CalendarActivity.constraintLayoutIdForTests+1)).perform(ViewActions.click());
+            Espresso.onView(withText("Details")).perform(ViewActions.click());
             sleep(3,SECONDS);
             ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
             titleDetails.perform(ViewActions.clearText());
@@ -135,13 +135,6 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
             ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
             modifyButton.perform(ViewActions.click());
             sleep(3, SECONDS);
-
-            try {
-                getCourseTest(appointmentId + 1, newCourse);
-                getTitleTest(appointmentId + 1, newTitle);
-            } catch (InterruptedException ex) {
-
-            }
         }
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).setValue(null);
 
