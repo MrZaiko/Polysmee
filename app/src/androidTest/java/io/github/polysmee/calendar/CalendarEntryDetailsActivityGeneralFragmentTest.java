@@ -51,18 +51,6 @@ import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
-    /*private static final Intent intent;
-    static {
-        intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Fake");
-        intent.putExtras(bundle);
-    }
-    @Before
-    public void initUser(){
-        FakeDatabase.idGenerator = new AtomicLong(0);
-    }*/
-
     private static final String username1 = "Youssef le a";
     private static final String appointmentId = "-lsdqrhzutatisjhmf";
 
@@ -108,7 +96,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
     }
 
-    /*@Test
+    @Test
     public void appointmentModificationIsSeenOnCalendar(){
         String newTitle = "NewTitleTest";
         String newCourse = "NewCourseTest";
