@@ -51,7 +51,7 @@ Next time, I'll finish to update the UI and the ui tests.
 
 Thanks to the hardwork of everyone, we are improving a lot our app. 
 
-I feel that in general the team is trying to improve the already written code so that in the future we can advance with a good code. We have also improve this week the overall user experience of the current functionalities, we also greatly improved the UI. In the big picture we are mostly trying to make the user experience better without adding new functionnality. At the same we are doing work that do not result in a new functionnality in this week, but it will in the future.
+I feel that in general the team is trying to improve the already written code so that in the future we can advance with a good code. We have also improve this week the overall user experience of the current functionalities, we also greatly improved the UI. In the big picture we are mostly trying to make the user experience better without adding new functionnality. At the same we are doing a lot of work that do not result in new functionnalities this week, but it will in the future.
 
 
 Next time, I hope we will finally add the remaining blocks to add all the functionnalities we had in mind and work during this spring.
