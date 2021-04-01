@@ -1,24 +1,26 @@
 package io.github.polysmee.appointments;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
+import android.content.res.Configuration;
+import android.graphics.Rect;
 import android.os.Bundle;
-import android.view.LayoutInflater;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TabHost;
 import android.widget.TextView;
 
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
@@ -26,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.DataPasser;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
@@ -33,16 +36,12 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
 
+import static android.content.ContentValues.TAG;
+
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
-    public static final String CALENDAR_START = "CALENDAR_START";
-    public static final String CALENDAR_END = "CALENDAR_END";
-    public static final String TITLE = "TITLE";
-    public static final String COURSE = "COURSE";
     public static final String INVITES = "INVITES";
     public static final String BANS = "BANS";
-    public static final String PRIVATE = "PRIVATE";
-    public static final String DONE = "DONE";
 
     private Calendar calendarStart;
     private Calendar calendarEnd;
@@ -51,7 +50,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private ArrayList<String> invites;
     private ArrayList<String> bans;
     private boolean isPrivate;
-    private boolean done;
+    boolean isKeyboardShowing = false;
 
     private User user;
 
@@ -59,12 +58,11 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private EditText editTitle, editCourse;
     private Button btnDone, btnReset;
     private Calendar calendarStartTime, calendarEndTime;
-    private TextView txtError, txtStartTime, txtEndTime;
+    private TextView txtError, txtStartTime, txtEndTime, txtAdd, txtBan;
     private SwitchCompat privateSelector;
-    private ImageView showAddBan;
-    private boolean isAddBanShown;
-
-    DataPasser dataPasser;
+    private ImageView showAdd, showBan;
+    private View addFragment, banFragment, bottomBar;
+    private boolean isAddShown, isBanShown;
 
     //A calendar is a wait to get time using year/month... and allows to transform it to epoch time
     private Calendar date;
@@ -74,6 +72,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_appointment_creation);
+
+        setupKeyboardDetection();
 
         //store all objects on the activity (buttons, textViews...) in variables
         attributeSetters();
@@ -88,51 +88,77 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             showDateTimePicker(txtEndTime, false);
         });
 
-
         privateSelector.setOnCheckedChangeListener((l,newValue) -> isPrivate = newValue);
 
-        //ADD - BAN Section
-        ViewPager2 pager = findViewById(R.id.appointmentCreationAddPager);
-        FragmentStateAdapter pagerAdapter = new AptCreationPagerAdapter(this);
-        pager.setAdapter(pagerAdapter);
-        pager.setVisibility(View.GONE);
-
-        TabLayout tabs = findViewById(R.id.appointmentCreationAddTabLayout);
-        new TabLayoutMediator(tabs, pager,
-                (tab, position) -> tab.setText(AptCreationPagerAdapter.FRAGMENT_NAME[position])).attach();
-        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                if (!isAddBanShown)
-                    showAddBan.performClick();
-            }
-
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                if (!isAddBanShown)
-                    showAddBan.performClick();
-            }
-        });
-
-        showAddBan.setOnClickListener(s -> {
-            if (isAddBanShown) {
-                pager.setVisibility(View.GONE);
-                showAddBan.setImageResource(R.drawable.baseline_arrow_right);
-            } else {
-                pager.setVisibility(View.VISIBLE);
-                showAddBan.setImageResource(R.drawable.baseline_arrow_drop_down);
-            }
-            isAddBanShown = !isAddBanShown;
-        });
+        addBanSetup();
 
         btnDone.setOnClickListener(doneClickListener);
-
         btnReset.setOnClickListener(resetClickListener);
+    }
+
+    private void setupKeyboardDetection() {
+        final ViewGroup contentView = (ViewGroup) ((ViewGroup) this
+                .findViewById(android.R.id.content)).getChildAt(0);
+
+        // ContentView is the root view of the layout of this activity/fragment
+        contentView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+
+                    Rect r = new Rect();
+                    contentView.getWindowVisibleDisplayFrame(r);
+                    int screenHeight = contentView.getRootView().getHeight();
+
+                    // r.bottom is the position above soft keypad or device button.
+                    // if keypad is shown, the r.bottom is smaller than that before.
+                    int keypadHeight = screenHeight - r.bottom;
+
+                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                        // keyboard is opened
+                        if (!isKeyboardShowing) {
+                            isKeyboardShowing = true;
+                            bottomBar.setVisibility(View.INVISIBLE);
+                        }
+                    }
+                    else {
+                        // keyboard is closed
+                        if (isKeyboardShowing) {
+                            isKeyboardShowing = false;
+                            bottomBar.setVisibility(View.VISIBLE);
+                        }
+                    }
+                });
+    }
+
+
+    private void addBanSetup() {
+        addFragment.setVisibility(View.GONE);
+        showAdd.setOnClickListener(l -> {
+            if (isAddShown) {
+                addFragment.setVisibility(View.GONE);
+                showAdd.setImageResource(R.drawable.baseline_arrow_right);
+            } else {
+                addFragment.setVisibility(View.VISIBLE);
+                showAdd.setImageResource(R.drawable.baseline_arrow_drop_down);
+            }
+            isAddShown = !isAddShown;
+        });
+        txtAdd.setOnClickListener(l -> {
+                showAdd.performClick();
+        });
+
+        banFragment.setVisibility(View.GONE);
+        showBan.setOnClickListener(s -> {
+            if (isBanShown) {
+                banFragment.setVisibility(View.GONE);
+                showBan.setImageResource(R.drawable.baseline_arrow_right);
+            } else {
+                banFragment.setVisibility(View.VISIBLE);
+                showBan.setImageResource(R.drawable.baseline_arrow_drop_down);
+            }
+            isBanShown = !isBanShown;
+        });
+        txtBan.setOnClickListener(l -> {
+                showBan.performClick();
+        });
     }
 
     //Function which first displays a DatePicker then a TimePicker and stores all the information in Calendar date
@@ -215,6 +241,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             txtEndTime.setText(getString(R.string.appointment_creation_pick_end_time));
             calendarStartTime = Calendar.getInstance();
             txtStartTime.setText(getString(R.string.appointment_creation_pick_start_time));
+            addFragment.findViewById(R.id.appointmentCreationAddUserFragmentReset).performClick();
+            banFragment.findViewById(R.id.appointmentCreationBanUserFragmentReset).performClick();
+
         }
     };
 
@@ -225,15 +254,19 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         course = "";
         invites = new ArrayList<>();
         bans = new ArrayList<>();
-        isAddBanShown = false;
+        isAddShown = false;
+        isBanShown = false;
         isPrivate = false;
-        done = false;
 
         //We need to know who is trying to create an appointment as they are the owner
         user = MainUserSingleton.getInstance();
 
         privateSelector = findViewById(R.id.appointmentCreationPrivateSelector);
-        showAddBan = findViewById(R.id.appointmentCreationShowAddBan);
+        bottomBar = findViewById(R.id.appointmentCreationBottomBar);
+        showAdd = findViewById(R.id.appointmentCreationShowAdd);
+        addFragment = findViewById(R.id.appointmentCreationAddUserFragment);
+        showBan = findViewById(R.id.appointmentCreationShowBan);
+        banFragment = findViewById(R.id.appointmentCreationBanUserFragment);
         editTitle = findViewById(R.id.appointmentCreationEditTxtAppointmentTitleSet);
         editCourse = findViewById(R.id.appointmentCreationEditTxtAppointmentCourseSet);
         btnDone = findViewById(R.id.appointmentCreationbtnDone);
@@ -241,18 +274,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtError = findViewById(R.id.appointmentCreationtxtError);
         txtStartTime = findViewById(R.id.appointmentCreationStartTime);
         txtEndTime = findViewById(R.id.appointmentCreationEndTime);
+        txtAdd = findViewById(R.id.appointmentCreationAddTextView);
+        txtBan = findViewById(R.id.appointmentCreationBanTextView);
         calendarStartTime = Calendar.getInstance();
         calendarEndTime = Calendar.getInstance();
-    }
-
-    @Override
-    public void dataPass(boolean data, String id) {
-        if(id.equals(PRIVATE)) {
-            isPrivate = data;
-        }
-        if(id.equals(DONE)) {
-            done = data;
-        }
     }
 
     @Override
@@ -262,26 +287,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
         if(id.equals(BANS)) {
             bans = new ArrayList<>(data);
-        }
-    }
-
-    @Override
-    public void dataPass(String data, String id) {
-        if(id.equals(TITLE)) {
-            title = data;
-        }
-        if(id.equals(COURSE)) {
-            course = data;
-        }
-    }
-
-    @Override
-    public void dataPass(Calendar data, String id) {
-        if(id.equals(CALENDAR_START)) {
-            calendarStart = data;
-        }
-        if(id.equals(CALENDAR_END)) {
-            calendarEnd = data;
         }
     }
 

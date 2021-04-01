@@ -24,6 +24,7 @@ import java.util.List;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.interfaces.Appointment;
 
 public class AppointmentCreationBanUserFragment extends Fragment {
     private EditText searchBan;
@@ -47,10 +48,17 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_appointment_creation_ban_user, container, false);
 
         attributeSetters(rootView);
+        rootView.findViewById(R.id.appointmentCreationBanUserFragmentReset).setOnClickListener(this::reset);
         btnBan.setOnClickListener(btnBanListener);
         searchBan.setHint("Type names here");
 
         return rootView;
+    }
+
+    private void reset(View view) {
+        bans.clear();
+        dataPasser.dataPass(bans, AppointmentActivity.BANS);
+        bansList.removeAllViews();
     }
 
 

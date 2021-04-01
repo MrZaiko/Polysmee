@@ -42,10 +42,17 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_appointment_creation_add_user, container, false);
 
         attributeSetters(rootView);
+        rootView.findViewById(R.id.appointmentCreationAddUserFragmentReset).setOnClickListener(this::reset);
         btnInvite.setOnClickListener(btnInviteListener);
         searchInvite.setHint("Type names here");
 
         return rootView;
+    }
+
+    private void reset(View view) {
+        invites.clear();
+        dataPasser.dataPass(invites, AppointmentActivity.INVITES);
+        invitesList.removeAllViews();
     }
 
     View.OnClickListener btnInviteListener = v -> {
