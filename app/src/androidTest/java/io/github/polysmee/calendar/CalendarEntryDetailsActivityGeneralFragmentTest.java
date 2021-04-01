@@ -64,11 +64,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
     }*/
 
     private static final String username1 = "Youssef le a";
-
-    private static final String appointmentTitle = "coucouchou";
     private static final String appointmentId = "-lsdqrhzutatisjhmf";
-    private static final String appointmentCourse = "SDP";
-    private static final long appointmentStart = 265655445;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -122,13 +118,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
 
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("title").setValue(info.getTitle());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("course").setValue(info.getCourse());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("start").setValue(info.getStartTime());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("owner").setValue(MainUserSingleton.getInstance().getId());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 1).setValue(true);
-
+            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),info.getDuration(),info.getCourse(),info.getTitle());
 
             sleep(10,SECONDS);
             Espresso.onView(withId(CalendarActivity.constraintLayoutIdForTests+1)).perform(ViewActions.click());

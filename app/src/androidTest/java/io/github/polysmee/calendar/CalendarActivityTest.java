@@ -52,11 +52,8 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 public class CalendarActivityTest {
 
     private static final String username1 = "Youssef le dindon";
-
-    private static final String appointmentTitle = "coucouchou";
     private static final String appointmentId = "-lsdqrhrrdtisjhmf";
-    private static final String appointmentCourse = "SDP";
-    private static final long appointmentStart = 265655445;
+
     @BeforeClass
     public static void setUp() throws Exception {
 
@@ -134,12 +131,8 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse", "FakeTitle",
                     epochTimeOfThatDay,3600*2,appointmentId+11,null,0);
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("title").setValue(info.getTitle());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("course").setValue(info.getCourse());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("start").setValue(info.getStartTime());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("owner").setValue(MainUserSingleton.getInstance().getId());
-            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+11).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 11).setValue(true);
+
+            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),info.getDuration(),info.getCourse(),info.getTitle());
 
             sleep(3,SECONDS);
             Date date = new Date(epochTimeOfThatDay*1000);
@@ -177,12 +170,7 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             for(int i = 0; i< number_of_appointments; ++i){
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i ).child("title").setValue(infos[i].getTitle());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("course").setValue(infos[i].getCourse());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("start").setValue(infos[i].getStartTime());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("owner").setValue(MainUserSingleton.getInstance().getId());
-                DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-                DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + i).setValue(true);
+                MainUserSingleton.getInstance().createNewUserAppointment(infos[i].getStartTime(),infos[i].getDuration(),infos[i].getCourse(),infos[i].getTitle());
                 sleep(3,SECONDS);
             }
             if(number_of_appointments > 6){
