@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
@@ -23,19 +24,10 @@ public class FakeDatabaseAppointment implements Appointment {
         this.id = id;
         this.appointmentInfo = FakeDatabase.appId2App.get(id);
     }
-    @Override
-    public long getStartTime() {
-        return 0;
-    }
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
-        l.onDone(appointmentInfo.start);
-    }
 
-    @Override
-    public long getDuration() {
-        return 0;
     }
 
     @Override
@@ -49,28 +41,13 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public String getCourse() {
-        return null;
-    }
-
-    @Override
     public void getCourseAndThen(StringValueListener s) {
         s.onDone(appointmentInfo.course);
     }
 
     @Override
-    public String getTitle() {
-        return null;
-    }
-
-    @Override
     public void getTitleAndThen(StringValueListener s) {
         s.onDone(appointmentInfo.name);
-    }
-
-    @Override
-    public Set<User> getParticipants() {
-        return null;
     }
 
     @Override
@@ -80,11 +57,6 @@ public class FakeDatabaseAppointment implements Appointment {
         hashed.add(appointmentInfo.owner.getId());
         s.onDone(hashed);
 
-    }
-
-    @Override
-    public User getOwner() {
-        return null;
     }
 
     @Override
@@ -121,6 +93,32 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public boolean removeParticipant(User participant) {
+        return false;
+    }
+
+
+    @Override
+    public void getBansAndThen(StringSetValueListener s) {
+
+    }
+
+    @Override
+    public void getPrivateAndThen(BooleanValueListener bool) {
+
+    }
+
+    @Override
+    public void setPrivate(boolean isPrivate) {
+
+    }
+
+    @Override
+    public boolean addBan(User banned) {
+        return false;
+    }
+
+    @Override
+    public boolean removeBan(User unbanned) {
         return false;
     }
 

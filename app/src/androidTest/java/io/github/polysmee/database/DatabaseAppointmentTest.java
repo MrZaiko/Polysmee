@@ -48,7 +48,7 @@ public class DatabaseAppointmentTest {
 
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
-        apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro");
+        apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro", false);
         Thread.sleep(1000);
     }
 
@@ -180,36 +180,6 @@ public class DatabaseAppointmentTest {
     @Test
     public void getId() {
         assertEquals(new DatabaseAppointment(apid).getId(), apid);
-    }
-
-    @Test
-    public void getStartTime() {
-        assertEquals(0, new DatabaseAppointment(apid).getStartTime());
-    }
-
-    @Test
-    public void getDuration() {
-        assertEquals(0, new DatabaseAppointment(apid).getDuration());
-    }
-
-    @Test
-    public void getCourse() {
-        assertNull(new DatabaseAppointment(apid).getCourse());
-    }
-
-    @Test
-    public void getTitle() {
-        assertNull(new DatabaseAppointment(apid).getTitle());
-    }
-
-    @Test
-    public void getParticipants() {
-        assertNull(new DatabaseAppointment(apid).getParticipants());
-    }
-
-    @Test
-    public void getOwner() {
-        assertNull(new DatabaseAppointment(apid).getOwner());
     }
 
 

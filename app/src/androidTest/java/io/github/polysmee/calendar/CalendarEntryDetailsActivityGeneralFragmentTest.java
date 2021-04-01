@@ -108,7 +108,7 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
     }
 
-    @Test
+    /*@Test
     public void appointmentModificationIsSeenOnCalendar(){
         String newTitle = "NewTitleTest";
         String newCourse = "NewCourseTest";

@@ -184,7 +184,7 @@ public class CalendarActivityTest {
             }
 
         }
-    }
+    }*/
 
     private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
         StringBuilder stringBuilder = new StringBuilder();
