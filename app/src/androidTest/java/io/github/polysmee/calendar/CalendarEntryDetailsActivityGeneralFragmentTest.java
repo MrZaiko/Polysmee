@@ -111,4 +111,101 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).setValue(null);
 
     }
+
+    @Test
+    public void appointmentModificationIsSeenOnCalendar(){
+        String newTitle = "NewTitleTest";
+        String newCourse = "NewCourseTest";
+        CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse0", "FakeTitle0",
+                DailyCalendar.getDayEpochTimeAtMidnight() ,50,"0",null,0);
+
+        Intent intent = new Intent(getApplicationContext(),CalendarActivity.class);
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
+
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("title").setValue(info.getTitle());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("course").setValue(info.getCourse());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("start").setValue(info.getStartTime());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("owner").setValue(MainUserSingleton.getInstance().getId());
+            DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + 1).setValue(true);
+
+
+            sleep(10,SECONDS);
+            Espresso.onView(withId(CalendarActivity.constraintLayoutIdForTests+1)).perform(ViewActions.click());
+            sleep(3,SECONDS);
+            ViewInteraction titleDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityTitleSet));
+            titleDetails.perform(ViewActions.clearText());
+            titleDetails.perform(ViewActions.typeText(newTitle));
+            closeSoftKeyboard();
+
+            ViewInteraction courseDetails = Espresso.onView(withId(R.id.calendarEntryDetailActivityCourseSet));
+            courseDetails.perform(ViewActions.clearText());
+            courseDetails.perform(ViewActions.typeText(newCourse));
+            closeSoftKeyboard();
+            ViewInteraction modifyButton = Espresso.onView(withId(R.id.calendarEntryDetailActivityDoneModifyButton));
+            modifyButton.perform(ViewActions.click());
+            sleep(3, SECONDS);
+
+            try {
+                getCourseTest(appointmentId + 1, newCourse);
+                getTitleTest(appointmentId + 1, newTitle);
+            } catch (InterruptedException ex) {
+
+            }
+        }
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).setValue(null);
+
+    }
+
+    private void getTitleTest(String id, String newTitle) throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        lock.lock();
+        try {
+            new DatabaseAppointment(id).getTitleAndThen(
+                    (name) -> {
+                        lock.lock();
+                        gotName.set(name);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
+            );
+            while(!bool.get())
+                cv.await();
+
+        } finally {
+            lock.unlock();
+            assertEquals(newTitle, gotName.get());
+        }
+    }
+
+    private void getCourseTest(String id, String newCourse) throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        lock.lock();
+        try {
+            new DatabaseAppointment(id).getCourseAndThen(
+                    (name) -> {
+                        lock.lock();
+                        gotName.set(name);
+                        bool.set(Boolean.TRUE);
+                        cv.signal();
+                        lock.unlock();
+                    }
+            );
+            while(!bool.get())
+                cv.await();
+
+        } finally {
+            lock.unlock();
+            assertEquals(newCourse, gotName.get());
+        }
+
+    }
+
 }

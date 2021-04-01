@@ -42,12 +42,10 @@ public class CalendarActivity extends AppCompatActivity{
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
 
-    private static final int constraintLayoutIdForTests = 284546;
+    public static final int constraintLayoutIdForTests = 284546;
 
     private User user;
     public final static String UserTypeCode = "TYPE_OF_USER";
-    private String userType ;
-    private int demo_indexer = 0;
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
     private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
@@ -122,7 +120,11 @@ public class CalendarActivity extends AppCompatActivity{
             startActivity(intent);
     }
 
-    public void launchSettings(View view) {
+    /**
+     * Launches the acitivty that lets the user choose the time to be reminded
+     * before an appointment
+     */
+    public void launchSettings() {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
@@ -142,7 +144,6 @@ public class CalendarActivity extends AppCompatActivity{
     protected void goToAppointmentDetails(String id){
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
         intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
-        intent.putExtra(UserTypeCode,userType);
         startActivityForResult(intent, CALENDAR_ENTRY_DETAIL_CODE);
     }
 
