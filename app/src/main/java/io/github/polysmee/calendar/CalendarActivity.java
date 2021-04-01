@@ -42,7 +42,7 @@ public class CalendarActivity extends AppCompatActivity{
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
 
-    private static final int constraintLayoutIdForTests = 284546;
+    public static final int constraintLayoutIdForTests = 284546;
 
     private User user;
     public final static String UserTypeCode = "TYPE_OF_USER";
