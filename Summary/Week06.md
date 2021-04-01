@@ -40,12 +40,18 @@ the interface. Since I have already worked more than 11 hours. My time estimate 
 Next time I will continue to implement the reminder notification with the interface. From now on I will only use our given interface
 to make my work because this is the only work that will remain in the main version and therefore it is the only important work.
 
+## Sami
+I started to update the ui. The room and the appointment creation ui are now way better.
+
+My time estimate was clearly not accurate because I did not take into account the time needed to rewrite the android tests. This is why nothing from the ui update is on the main branch this week.
+
+Next time, I'll finish to update the UI and the ui tests.
+
 ## Overal team
 
 Thanks to the hardwork of everyone, we are improving a lot our app. 
 
-I feel that in general the team is trying to improve the already written code so that in the future we can advance with a good code. We have also improve this week the overall user experience of the current functionalities, we also greatly improved the UI. In the big picture we are mostly trying to make the user experience better without adding new functionnality. At the same we are doing work that do not result in a new functionnality in this week, but it 
-will in the future.
+I feel that in general the team is trying to improve the already written code so that in the future we can advance with a good code. We have also improve this week the overall user experience of the current functionalities, we also greatly improved the UI. In the big picture we are mostly trying to make the user experience better without adding new functionnality. At the same we are doing work that do not result in a new functionnality in this week, but it will in the future.
 
 
 Next time, I hope we will finally add the remaining blocks to add all the functionnalities we had in mind and work during this spring.
