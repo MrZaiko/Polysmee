@@ -28,21 +28,6 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public String getName() {
-        return "YOU USED GETNAME";
-    }
-
-    @Override
-    public String getSurname() {
-        return "YOU USED GETSURNAME";
-    }
-
-    @Override
-    public Set<Appointment> getAppointments() {
-        return new HashSet<>();
-    }
-
-    @Override
     public void addAppointment(Appointment appointment) {
         DatabaseFactory.getAdaptedInstance()
                 .getReference("users")
@@ -69,7 +54,13 @@ public final class DatabaseUser implements User {
 
     @Override
     public String createNewUserAppointment(long start, long duration, String course, String title) {
+        return createNewUserAppointment(start, duration, course, title, false);
+    }
+
+    @Override
+    public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
         DatabaseReference ref = DatabaseFactory.getAdaptedInstance().getReference("appointments").push();
+
         Map<String, Object> newAppo = new HashMap<>();
         newAppo.put("owner", self_id);
         newAppo.put("id", ref.getKey());
@@ -77,10 +68,13 @@ public final class DatabaseUser implements User {
         newAppo.put("start", start);
         newAppo.put("duration", duration);
         newAppo.put("course", course);
-        newAppo.put("title", title);
+        newAppo.put("title", name);
         ref.setValue(newAppo);
-        addAppointment(new DatabaseAppointment(ref.getKey()));
-        new DatabaseAppointment(ref.getKey()).addParticipant(new DatabaseUser(self_id));
+
+        Appointment appointment = new DatabaseAppointment(ref.getKey());
+        addAppointment(appointment);
+        appointment.addParticipant(new DatabaseUser(self_id));
+        appointment.setPrivate(isPrivate);
         return ref.getKey();
     }
 

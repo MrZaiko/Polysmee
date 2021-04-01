@@ -1,5 +1,6 @@
 package io.github.polysmee.calendarTests;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -23,7 +24,11 @@ import static org.junit.Assert.assertThrows;
 public class DailyCalendarTest {
 
 
-
+    @Before
+    public void setTodayDateInDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+    }
 
     @Test
     public void todayEpochTimeAtMidnightTest(){
@@ -33,7 +38,7 @@ public class DailyCalendarTest {
         calendar.set(Calendar.SECOND,0);
         calendar.set(Calendar.MILLISECOND,0);
         long trueTime = calendar.getTimeInMillis()/1000;
-        assertEquals(DailyCalendar.todayEpochTimeAtMidnight(),trueTime);
+        assertEquals(DailyCalendar.getDayEpochTimeAtMidnight(),trueTime);
     }
 
     @Test
@@ -48,11 +53,11 @@ public class DailyCalendarTest {
         Set<CalendarAppointmentInfo> setOfAppointments = new HashSet<>();
         for(int i = 0; i < random.nextInt(5); ++i){
            setOfAppointments.add(new CalendarAppointmentInfo("TestCourse" + i,"TestTitle",
-                   DailyCalendar.todayEpochTimeAtMidnight() + random.nextInt(60),60,
+                   DailyCalendar.getDayEpochTimeAtMidnight() + random.nextInt(60),60,
                    "TestId" + i, null,i ));
         }
         setOfAppointments.add(new CalendarAppointmentInfo("TestCourseTomorrow" ,"TestTitleTomorrow",
-                DailyCalendar.todayEpochTimeAtMidnight() + 3600*24,60,
+                DailyCalendar.getDayEpochTimeAtMidnight() + 3600*24,60,
                 "TestIdTomorrow", null,setOfAppointments.size() ));
         List<CalendarAppointmentInfo> sortedAppointmentsInfo = new ArrayList<>(setOfAppointments);
         Collections.sort(sortedAppointmentsInfo, new Comparator<CalendarAppointmentInfo>() {

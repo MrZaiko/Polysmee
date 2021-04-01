@@ -34,25 +34,12 @@ public class FakeDatabaseUser implements User {
         return id;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
         valueListener.onDone(name);
     }
 
-    @Override
-    public String getSurname() {
-        throw new IllegalStateException("surname doesnt work");
-    }
-
-    @Override
-    public Set<Appointment> getAppointments() {
-        return Collections.unmodifiableSet(appointments);
-    }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
@@ -78,6 +65,11 @@ public class FakeDatabaseUser implements User {
         addAppointment(new FakeDatabaseAppointment("" + id));
         FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
         return "" + id;
+    }
+
+    @Override
+    public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
+        return null;
     }
 
     @Override

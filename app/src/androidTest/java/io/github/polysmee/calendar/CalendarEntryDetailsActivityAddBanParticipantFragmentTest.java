@@ -87,7 +87,6 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
     public void addingUserThroughSearchAddsTheUser(){
         Bundle bundle = new Bundle();
 
-        bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
         bundle.putSerializable(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID,appointmentId);
 
         FragmentScenario.launchInContainer(CalendarEntryDetailAddBanParticipantsFragment.class,bundle);
