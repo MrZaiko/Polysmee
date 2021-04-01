@@ -85,12 +85,7 @@ public class CalendarEntryDetailsActivityAddBanParticipantFragmentTest {
 
     @Test
     public void addingUserThroughSearchAddsTheUser(){
-        Bundle bundle = new Bundle();
-
-        bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-        bundle.putSerializable(CalendarEntryDetailAddBanParticipantsFragment.APPOINTMENT_DETAIL_ADD_PARTICIPANT_ID,appointmentId);
-
-        FragmentScenario.launchInContainer(CalendarEntryDetailAddBanParticipantsFragment.class,bundle);
+        FragmentScenario.launchInContainer(CalendarEntryDetailAddBanParticipantsFragment.class);
         sleep(5, SECONDS);
         Espresso.onView(withId(R.id.calendarEntryDetailActivityInviteSearch)).perform(typeSearchViewText(username2));
         Espresso.onView(withId(R.id.calendarEntryDetailActivityInviteButton)).perform(ViewActions.click());

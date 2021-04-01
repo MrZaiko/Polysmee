@@ -160,10 +160,6 @@ public class CalendarActivityTest {
     public void scrollViewContentIsCoherentAfterAddingAppointments(){
 
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
-
 
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
@@ -187,6 +183,7 @@ public class CalendarActivityTest {
                 DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("owner").setValue(MainUserSingleton.getInstance().getId());
                 DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+i).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
                 DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId + i).setValue(true);
+                sleep(3,SECONDS);
             }
             if(number_of_appointments > 6){
                 for(int i = 0; i<6;++i){
