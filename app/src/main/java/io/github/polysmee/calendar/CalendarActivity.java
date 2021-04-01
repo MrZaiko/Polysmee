@@ -42,7 +42,7 @@ public class CalendarActivity extends AppCompatActivity{
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
 
-    public static final int constraintLayoutIdForTests = 284546;
+    private static final int constraintLayoutIdForTests = 284546;
 
     private User user;
     public final static String UserTypeCode = "TYPE_OF_USER";
@@ -120,11 +120,8 @@ public class CalendarActivity extends AppCompatActivity{
             startActivity(intent);
     }
 
-    /**
-     * Launches the acitivty that lets the user choose the time to be reminded
-     * before an appointment
-     */
-    public void launchSettings() {
+
+    public void launchSettings(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
         startActivity(intent);
     }
