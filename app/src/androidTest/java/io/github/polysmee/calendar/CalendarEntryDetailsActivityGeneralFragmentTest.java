@@ -101,7 +101,6 @@ public class CalendarEntryDetailsActivityGeneralFragmentTest {
 
         Bundle bundle = new Bundle();
 
-        bundle.putSerializable(CalendarActivity.UserTypeCode, "Real");
         bundle.putSerializable(CalendarEntryDetailsGeneralFragment.APPOINTMENT_DETAIL_GENERAL_ID, appointmentId);
 
         FragmentScenario.launchInContainer(CalendarEntryDetailsGeneralFragment.class, bundle);

@@ -73,7 +73,10 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
 
     @Test
     public void participantsNamesInCalendarEntryDetailsAreDisplayed(){
-        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+
+        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
         sleep(5, SECONDS);
         assertDisplayed(username1);
         assertDisplayed(username2);
@@ -81,7 +84,11 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
     }
     @Test
     public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
-        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class);
+        Bundle bundle = new Bundle();
+
+        bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+
+        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
         sleep(3,SECONDS);
         Espresso.onView(withText("Kick")).perform(ViewActions.click());
         sleep(5,SECONDS);
