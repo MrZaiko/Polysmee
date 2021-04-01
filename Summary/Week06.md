@@ -44,7 +44,7 @@ to make my work because this is the only work that will remain in the main versi
 
 Thanks to the hardwork of everyone, we are improving a lot our app. 
 
-I feel that in general the team is trying to improve the already written code so that in the future we can advance with a good code. We have also improve this week the overall user experience of the current functionalities , in the big picture mostly trying to make the user experience better without adding new functionnality. At the same we are doing work that do not result in a new functionnality in this week, but it 
+I feel that in general the team is trying to improve the already written code so that in the future we can advance with a good code. We have also improve this week the overall user experience of the current functionalities, we also greatly improved the UI. In the big picture we are mostly trying to make the user experience better without adding new functionnality. At the same we are doing work that do not result in a new functionnality in this week, but it 
 will in the future.
 
 
