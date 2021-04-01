@@ -158,7 +158,7 @@ public class CalendarActivityTest {
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
 
         Random rand = new Random();
-        int number_of_appointments = rand.nextInt(9) + 1;
+        int number_of_appointments = rand.nextInt(6) + 1;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
