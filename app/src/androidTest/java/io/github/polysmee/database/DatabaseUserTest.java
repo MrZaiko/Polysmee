@@ -53,21 +53,6 @@ public class DatabaseUserTest {
     }
 
     @Test
-    public void getName() {
-        assertEquals(MainUserSingleton.getInstance().getName(), "YOU USED GETNAME");
-    }
-
-    @Test
-    public void getSurname() {
-        assertEquals(MainUserSingleton.getInstance().getSurname(), "YOU USED GETSURNAME");
-    }
-
-    @Test
-    public void getAppointments() {
-        assertEquals(MainUserSingleton.getInstance().getAppointments(), new HashSet<>());
-    }
-
-    @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
         MainUserSingleton.getInstance().addAppointment(new DatabaseAppointment("AZERTY"));
         FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
@@ -108,7 +93,7 @@ public class DatabaseUserTest {
 
     @Test
     public void createNewUserAppointment() {
-        String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév");
+        String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév", false);
         String ac = DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
@@ -121,7 +106,7 @@ public class DatabaseUserTest {
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicBoolean oneElem = new AtomicBoolean(false);
 
-        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
+        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE", false);
 
         lock.lock();
         try {

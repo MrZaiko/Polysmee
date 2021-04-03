@@ -3,6 +3,7 @@ package io.github.polysmee.interfaces;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
@@ -12,70 +13,19 @@ import io.github.polysmee.database.databaselisteners.StringValueListener;
  */
 public interface Appointment {
 
-    /**
-     * Retrieves the starting time of the appointment in EPOCH representation (milliseconds)
-     *
-     * @return the appointment's start time
-     */
-    @Deprecated
-    long getStartTime();
+    void getStartTimeAndThen(LongValueListener l);
 
-    default void getStartTimeAndThen(LongValueListener l) {}
+    void getDurationAndThen(LongValueListener l);
 
-    /**
-     * Retrieves the appointment's duration in milliseconds to stay consistent with the EPOCH
-     * representation
-     *
-     * @return the appointment's duration
-     */
-    @Deprecated
-    long getDuration();
+    String getId();
 
-    default void getDurationAndThen(LongValueListener l) {}
+    void getCourseAndThen(StringValueListener s);
 
+    void getTitleAndThen(StringValueListener s);
 
-    default String getId(){return null;}
+    void getParticipantsIdAndThen(StringSetValueListener s);
 
-    /**
-     * Retrieves the appointment's course
-     *
-     * @return the appointment's course
-     */
-    @Deprecated
-    String getCourse();
-
-    default void getCourseAndThen(StringValueListener s) {}
-
-    /**
-     * Retrieves the appointment's title
-     *
-     * @return the appointment's title
-     */
-    @Deprecated
-    String getTitle();
-
-    default void getTitleAndThen(StringValueListener s) {}
-
-    /**
-     * Retrieves all users taking part in this appointment
-     *
-     * @return the appointment's participants in an unmodifiable set
-     */
-    @Deprecated
-    Set<User> getParticipants();
-
-    default void getParticipantsIdAndThen(StringSetValueListener s) {}
-
-
-    /**
-     * Retrieves the appointment's owner
-     *
-     * @return the appointment's owner
-     */
-    @Deprecated
-    User getOwner();
-
-    default void getOwnerIdAndThen(StringValueListener s) {}
+    void getOwnerIdAndThen(StringValueListener s);
 
     /**
      * Sets the appointment's start time
@@ -124,24 +74,11 @@ public interface Appointment {
      */
     boolean removeParticipant(User participant);
 
-    /**
-     * Retrieves all users banned from this appointment
-     *
-     * @return the appointment's banned users in an unmodifiable set
-     */
-    default Set<User> getBans() {
-        return new HashSet<>();
-    }
+    void getBansAndThen(StringSetValueListener s);
+    
+    void getPrivateAndThen(BooleanValueListener bool);
 
-
-    /**
-     * Says whether or not this is a private appointment
-     *
-     * @return true if the appointment is private
-     */
-    default boolean isPrivate() {
-        return false;
-    }
+    void setPrivate(boolean isPrivate);
 
     /**
      * Adds the given user to the set of banned users
@@ -150,9 +87,7 @@ public interface Appointment {
      * @param banned the user to be banned
      * @return true if the user was successfully banned
      */
-    default boolean addBan(User banned) {
-        return false;
-    }
+    boolean addBan(User banned);
 
     /**
      * Removes the given user from the set of banned users
@@ -160,7 +95,5 @@ public interface Appointment {
      * @param unbanned the user to be unbanned
      * @return true if the user was successfully unbanned
      */
-    default boolean removeBan(User unbanned) {
-        return false;
-    }
+    boolean removeBan(User unbanned);
 }

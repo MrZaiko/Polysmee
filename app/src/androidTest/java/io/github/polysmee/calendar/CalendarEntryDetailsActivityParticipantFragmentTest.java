@@ -71,31 +71,28 @@ public class CalendarEntryDetailsActivityParticipantFragmentTest {
         //Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }*/
 
-  @Test
-  public void participantsNamesInCalendarEntryDetailsAreDisplayed(){
-      Bundle bundle = new Bundle();
+    @Test
+    public void participantsNamesInCalendarEntryDetailsAreDisplayed(){
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
 
-      bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-      bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
+        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
+        sleep(5, SECONDS);
+        assertDisplayed(username1);
+        assertDisplayed(username2);
 
-      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
-      sleep(5, SECONDS);
-      assertDisplayed(username1);
-      assertDisplayed(username2);
+    }
+    @Test
+    public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
+        Bundle bundle = new Bundle();
 
-  }
-  @Test
-  public void zkickingAUserInParticipantScreenInEntryDetailsWorks(){
-      Bundle bundle = new Bundle();
+        bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
 
-      bundle.putSerializable(CalendarActivity.UserTypeCode,"Real");
-      bundle.putSerializable(CalendarEntryDetailsParticipantsFragments.APPOINTMENT_DETAIL_PARTICIPANT_ID,appointmentId);
-
-      FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
-      sleep(3,SECONDS);
-      Espresso.onView(withText("Kick")).perform(ViewActions.click());
-      sleep(5,SECONDS);
-      assertDisplayed(username1);
-      Espresso.onView(withText(username2)).check(doesNotExist());
-  }
+        FragmentScenario.launchInContainer(CalendarEntryDetailsParticipantsFragments.class, bundle);
+        sleep(3,SECONDS);
+        Espresso.onView(withText("Kick")).perform(ViewActions.click());
+        sleep(5,SECONDS);
+        assertDisplayed(username1);
+        Espresso.onView(withText(username2)).check(doesNotExist());
+    }
 }

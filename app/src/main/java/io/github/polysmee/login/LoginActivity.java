@@ -1,4 +1,4 @@
- package io.github.polysmee.login;
+package io.github.polysmee.login;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Button login_b = findViewById(R.id.login_button);
         login_b.setOnClickListener(
-            v -> createSignInIntent()
+                v -> createSignInIntent()
         );
     }
 
@@ -56,16 +56,16 @@ public class LoginActivity extends AppCompatActivity {
         // [START auth_fui_create_intent]
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Collections.singletonList(
-            new AuthUI.IdpConfig.EmailBuilder().build());
+                new AuthUI.IdpConfig.EmailBuilder().build());
 
         // Create and launch sign-in intent
         startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setIsSmartLockEnabled(false)
-                .setAvailableProviders(providers)
-                .build(),
-            RC_SIGN_IN);
+                AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
+                        .setAvailableProviders(providers)
+                        .build(),
+                RC_SIGN_IN);
         // [END auth_fui_create_intent]
     }
 
@@ -88,14 +88,14 @@ public class LoginActivity extends AppCompatActivity {
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
 
             Intent intent = new Intent(this, CalendarActivity.class);
-            intent.putExtra(CalendarActivity.UserTypeCode,"Real");
+
             startActivity(intent);
             finish();
 
         } else if(response == null) {
-                Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
         } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
         }
 
     }

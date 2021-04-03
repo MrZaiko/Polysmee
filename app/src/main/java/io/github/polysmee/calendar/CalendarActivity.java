@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar;
 
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.app.DatePickerDialog;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,9 +17,12 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -37,37 +42,68 @@ public class CalendarActivity extends AppCompatActivity{
     private LinearLayout scrollLayout ;
     private LayoutInflater inflater ;
 
-    private static final int constraintLayoutIdForTests = 284546;
+    public static final int constraintLayoutIdForTests = 284546;
 
     private User user;
     public final static String UserTypeCode = "TYPE_OF_USER";
-    private String userType ;
-    private int demo_indexer = 0;
     public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
-    private final List<CalendarAppointmentInfo> appointmentInfos = new ArrayList<>();
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
     private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
-    private Set<CalendarAppointmentInfo> appointmentSet = new HashSet<>();
+    private Set<String> appointmentSet = new HashSet<>();
+    private Map<String,CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        userType = (String) getIntent().getSerializableExtra(UserTypeCode);
         setContentView(R.layout.activity_calendar2);
-        if(userType.equals("Real")){
-            user = MainUserSingleton.getInstance();
-        }
-        else{
-            user = FakeDatabaseUser.getInstance();
-        }
+        user = MainUserSingleton.getInstance();
         scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
-        setTodayDateText();
+        setTodayDateInDailyCalendar();
+        setDayText();
+
 
         Button createAppointmentButton    = findViewById(R.id.calendarActivityCreateAppointmentButton);
         createAppointmentButton.setOnClickListener((v) -> createAppointment());
+
+        Button chosenDateButton = findViewById(R.id.todayDateCalendarActivity);
+        chosenDateButton.setOnClickListener((v) -> {
+            chooseDate();
+        });
+
+
         addListenerToUserAppointments();
+
+    }
+
+    /**
+     * Sets the date to the day when the user launches the app at startup
+     */
+    protected void setTodayDateInDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+    }
+
+    /**
+     * Behavior of the appointment date button; will pop a date picker dialog to let the user
+     * choose the date they want, and will add a listener to the user's appointment to show the appointments
+     * they have that given day.
+     */
+    protected void chooseDate(){
+        long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+        Date chosenDay = new Date(epochTimeChosenDay);
+
+        Calendar calendarChosenDay = Calendar.getInstance();
+        calendarChosenDay.setTime(chosenDay);
+
+        new DatePickerDialog(CalendarActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
+            DailyCalendar.setDayEpochTimeAtMidnight(year,monthOfYear,dayOfMonth);
+            setDayText();
+            scrollLayout.removeAllViewsInLayout();
+            addListenerToUserAppointments();
+        }, calendarChosenDay.get(Calendar.YEAR), calendarChosenDay.get(Calendar.MONTH), calendarChosenDay.get(Calendar.DATE)).show();
+
     }
 
     @Override
@@ -77,19 +113,13 @@ public class CalendarActivity extends AppCompatActivity{
     }
 
     /*
-     * Function that will be used only in the demos to show how the calendar works.
+     * Behavior of the create appointment button, depending if the user is real or fake
      */
     private void createAppointment(){
-        if (user.getClass() == FakeDatabaseUser.class) {
-            user.createNewUserAppointment(DailyCalendar.todayEpochTimeAtMidnight() + demo_indexer *60, 50 ,
-                    "FakeCourse" + demo_indexer,"FakeTitle" + demo_indexer);
-            demo_indexer += 1;
-            addListenerToUserAppointments();
-        } else {
             Intent intent = new Intent(this, AppointmentActivity.class);
             startActivity(intent);
-        }
     }
+
 
     public void launchSettings(View view) {
         Intent intent = new Intent(this, SettingsActivity.class);
@@ -100,15 +130,6 @@ public class CalendarActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        //FOR THE TESTS ONLY
-        if(user.getClass() == FakeDatabaseUser.class){
-            String title = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_TITLE);
-            String course = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_MODIFY_COURSE);
-            String id = data.getStringExtra(CalendarEntryDetailsActivity.APPOINTMENT_DETAIL_CALENDAR_ID_TO);
-            System.out.println(title); System.out.println(course);
-            CalendarAppointmentInfo info = getElementInList(id);
-            info.setCourse(course); info.setTitle(title); addListenerToUserAppointments();
-        }
     }
 
     /**
@@ -120,7 +141,6 @@ public class CalendarActivity extends AppCompatActivity{
     protected void goToAppointmentDetails(String id){
         Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
         intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
-        intent.putExtra(UserTypeCode,userType);
         startActivityForResult(intent, CALENDAR_ENTRY_DETAIL_CODE);
     }
 
@@ -131,10 +151,12 @@ public class CalendarActivity extends AppCompatActivity{
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos){
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos);
-        int i = 0;
-        for(CalendarAppointmentInfo appointment : todayAppointments){
-            addAppointmentToCalendarLayout(appointment,i);
-            i+=3;
+        if(!todayAppointments.isEmpty()){
+            int i = 0;
+            for(CalendarAppointmentInfo appointment : todayAppointments){
+                addAppointmentToCalendarLayout(appointment,i);
+                i+=3;
+            }
         }
     }
 
@@ -196,9 +218,10 @@ public class CalendarActivity extends AppCompatActivity{
     /**
      * Sets the text view on top of the calendar to the current day's date
      */
-    protected void setTodayDateText(){
-        TextView dateText = (TextView)findViewById(R.id.todayDateCalendarActivity);
-        long epochTimeToday = DailyCalendar.todayEpochTimeAtMidnight() * 1000;
+    protected void setDayText(){
+        Button dateText = findViewById(R.id.todayDateCalendarActivity);
+        dateText.setText(""); //clear it first
+        long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
         Date today = new Date(epochTimeToday);
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         dateText.setText(String.format("Appointments on the %s : ", formatter.format(today)));
@@ -212,6 +235,7 @@ public class CalendarActivity extends AppCompatActivity{
 
     protected void addListenerToUserAppointments(){
         user.getAppointmentsAndThen((setOfIds)->{
+            appointmentSet = new HashSet<>(setOfIds);
             scrollLayout.removeAllViewsInLayout();
             for(String id : setOfIds){
                 Appointment appointment;
@@ -230,20 +254,14 @@ public class CalendarActivity extends AppCompatActivity{
                             appointmentInfo.setTitle((title));
                             appointment.getCourseAndThen((course) ->{
                                 appointmentInfo.setCourse(course);
-                                if(checkIfAlreadyInList(id)){
-                                    scrollLayout.removeAllViewsInLayout();
-                                    appointmentSet.remove(getElementInList(id));
-                                    appointmentInfos.remove(getElementInList(id));
-                                    appointmentSet.add(appointmentInfo);
-                                    appointmentInfos.add(appointmentInfo);
+                                scrollLayout.removeAllViewsInLayout();
+                                if(!appointmentSet.contains(appointmentInfo.getId())){
+                                    appointmentInfoMap.remove(appointmentInfo.getId());
                                 }
                                 else{
-                                    scrollLayout.removeAllViewsInLayout();
-                                    appointmentInfos.add(appointmentInfo);
-                                    appointmentSet.add(appointmentInfo);
+                                appointmentInfoMap.put(appointment.getId(),appointmentInfo);
+                                changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                 }
-                                changeCurrentCalendarLayout(appointmentSet);
-
                             });
                         });
                     });
@@ -254,36 +272,4 @@ public class CalendarActivity extends AppCompatActivity{
         });
     }
 
-    /**
-     * Function to be used in pair with "getElementInList" method to manage the
-     * calendar appointment infos. This function checks if the appointment description
-     * with the corresponding id was already added to the list of all description.
-     * It is used to update the set of descriptions when needed
-     * @param id the appointment's id whose description we want to check the existence of in the list
-     * @return true if and only if the appointment's description was already added to the list
-     * */
-    protected boolean checkIfAlreadyInList(String id){
-        for(CalendarAppointmentInfo infos: appointmentInfos){
-            if(infos.getId().equals(id)){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Function to be used in pair with "checkIfAlreadyInList". This function will return
-     * the appointment's description stored in the list of all descriptions, so we can update
-     * it.
-     * @param id the appointment's id whose description we want to get
-     * @return the appointment's description, or null if it wasn't added
-     */
-    protected CalendarAppointmentInfo getElementInList(String id){
-        for(CalendarAppointmentInfo infos: appointmentInfos){
-            if(infos.getId().equals(id)){
-                return infos;
-            }
-        }
-        return null;
-    }
 }

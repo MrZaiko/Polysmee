@@ -27,14 +27,18 @@
             />
     </ScrollView>
 
-    <TextView
+    <Button
         android:id="@+id/todayDateCalendarActivity"
-        android:layout_width="wrap_content"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="52dp"
-        android:layout_marginTop="64dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginEnd="32dp"
+        android:backgroundTint="@android:color/white"
         android:text="@string/calendarActivityTodaysDate"
+        android:textColor="@android:color/black"
         android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAtBeginning" />
 
