@@ -57,15 +57,15 @@ public class DailyCalendar {
             throw new IllegalArgumentException();
         long todayMidnightTime = getDayEpochTimeAtMidnight();
         long nextDayMidnightTime = todayMidnightTime + 24 * 3600; //get the epoch time in seconds of next day at midnight
-        List<CalendarAppointmentInfo> todaysAppointments = new ArrayList<>();
+        List<CalendarAppointmentInfo> todayAppointments = new ArrayList<>();
         for(CalendarAppointmentInfo appointment : userAppointments){
             if(appointment.getStartTime() >= todayMidnightTime && appointment.getStartTime() < nextDayMidnightTime){
-                todaysAppointments.add(appointment);
+                todayAppointments.add(appointment);
             }
         }
-        Collections.sort(todaysAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(),t1.getStartTime()));
+        Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(),t1.getStartTime()));
 
-        return Collections.unmodifiableList(todaysAppointments);
+        return Collections.unmodifiableList(todayAppointments);
     }
 
 

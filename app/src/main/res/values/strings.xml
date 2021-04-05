@@ -6,7 +6,7 @@
     <string name="roomActivityParticipantsTab">Participants</string>
     <string name="roomInfoNotOwnerToastMessage">"Only the owner can change settings"</string>
 
-    <string name="calendarActivityTodaysDate">Date</string>
+    <string name="calendarActivityTodayDate">Date</string>
     <string name="calendarActivityRefreshButton">Refresh</string>
     <string name="calendarActivityCreateAppointmentButton">Create</string>
     <string name="calendarEntryDescription">Description</string>

@@ -1,27 +1,29 @@
 package io.github.polysmee.calendar;
 
-import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.app.DatePickerDialog;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,26 +57,21 @@ public class CalendarActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_calendar2);
+        setContentView(R.layout.activity_calendar);
         user = MainUserSingleton.getInstance();
-        scrollLayout = (LinearLayout)findViewById(R.id.calendarActivityScrollLayout);
+        scrollLayout = findViewById(R.id.calendarActivityScrollLayout);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         setTodayDateInDailyCalendar();
         setDayText();
 
+        findViewById(R.id.calendarActivityCreateAppointmentButton).setOnClickListener((v) -> createAppointment());
 
-        Button createAppointmentButton    = findViewById(R.id.calendarActivityCreateAppointmentButton);
-        createAppointmentButton.setOnClickListener((v) -> createAppointment());
-
-        Button chosenDateButton = findViewById(R.id.todayDateCalendarActivity);
-        chosenDateButton.setOnClickListener((v) -> {
+        findViewById(R.id.todayDateCalendarActivity).setOnClickListener((v) -> {
             chooseDate();
         });
 
-
         addListenerToUserAppointments();
-
     }
 
     /**
@@ -120,13 +117,6 @@ public class CalendarActivity extends AppCompatActivity{
             startActivity(intent);
     }
 
-
-    public void launchSettings(View view) {
-        Intent intent = new Intent(this, SettingsActivity.class);
-        startActivity(intent);
-    }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -139,9 +129,10 @@ public class CalendarActivity extends AppCompatActivity{
      * @param id the appointment of interest' id
      */
     protected void goToAppointmentDetails(String id){
-        Intent intent = new Intent(this,CalendarEntryDetailsActivity.class);
-        intent.putExtra(APPOINTMENT_DETAIL_CALENDAR_ID_FROM,id);
-        startActivityForResult(intent, CALENDAR_ENTRY_DETAIL_CODE);
+        Intent intent = new Intent(this, AppointmentActivity.class);
+        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, id);
+        startActivity(intent);
     }
 
 
@@ -166,16 +157,31 @@ public class CalendarActivity extends AppCompatActivity{
      * @param appointment the appointment's whose description is created
      * @return the textual representation of the appointment in the calendar
      */
-    protected String createAppointmentDescription(CalendarAppointmentInfo appointment){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Reunion name : ").append(appointment.getTitle());
-        stringBuilder.append("\n");
-        stringBuilder.append("Course name  : ").append(appointment.getCourse());
-        stringBuilder.append("\n");
-        Date date = new Date(appointment.getStartTime() * 1000);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        stringBuilder.append("Start time : ").append(formatter.format(date));
-        return stringBuilder.toString();
+    protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
+
+
+        ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
+
+        Date startDate = new Date(appointment.getStartTime() * 1000);
+        Date endDate = new Date((appointment.getStartTime()+appointment.getDuration())*1000);
+        Date current = new Date(System.currentTimeMillis());
+
+        if (current.before(startDate))
+            calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId()));
+        else
+            calendarEntry.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
+
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+        String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
+        ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentDate)).setText(appointmentDate);
+
+        ImageView status = calendarEntry.findViewById(R.id.calendarEntryStatus);
+        if (current.before(startDate))
+            status.setImageResource(R.drawable.calendar_entry_incoming_dot);
+        else if (current.after(endDate))
+            status.setImageResource(R.drawable.calendar_entry_done_dot);
+        else
+            status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
     }
 
 
@@ -196,35 +202,61 @@ public class CalendarActivity extends AppCompatActivity{
      * @param i integer parameter used to create unique ids (at least in the calendar's current layout) for the calendar entry
      */
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment, int i){
-        ConstraintLayout appointmentLayout = (ConstraintLayout) inflater.inflate(R.layout.activity_calendar_entry,null);
-        Button appointmentDescription = appointmentLayout.findViewById(R.id.descriptionOfAppointmentCalendarEntry);
-        appointmentDescription.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
-        Button detailsButton = appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
-        appointmentDescription.setText(createAppointmentDescription(appointment));
-        appointmentLayout.setId(constraintLayoutIdForTests + i);
-        appointmentDescription.setId(constraintLayoutIdForTests + i + 1);
-        detailsButton.setId(constraintLayoutIdForTests + i + 2);
+        ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry,null);
+        ConstraintLayout appointmentEntryDetailsLayout = appointmentEntryLayout.findViewById(R.id.calendarEntryDetailsLayout);
+        //Button detailsButton = appointmentLayout.findViewById(R.id.detailsButtonCalendarEntry);
+        createAppointmentEntry(appointment, appointmentEntryLayout);
+        appointmentEntryLayout.setId(constraintLayoutIdForTests + i);
+        appointmentEntryDetailsLayout.setId(constraintLayoutIdForTests + i + 1);
+        //detailsButton.setId(constraintLayoutIdForTests + i + 2);
 
-        detailsButton.setOnClickListener(new View.OnClickListener() {
+        /*detailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 goToAppointmentDetails(appointment.getId());
             }
-        });
+        });*/
 
-        this.scrollLayout.addView(appointmentLayout);
+        scrollLayout.addView(appointmentEntryLayout);
+        //blankSpace
+        scrollLayout.addView(new TextView(this));
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.calendar_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.calendarMenuSettings:
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     /**
      * Sets the text view on top of the calendar to the current day's date
      */
     protected void setDayText(){
-        Button dateText = findViewById(R.id.todayDateCalendarActivity);
-        dateText.setText(""); //clear it first
+        ConstraintLayout dateLayout = findViewById(R.id.todayDateCalendarActivity);
+        TextView day = dateLayout.findViewById(R.id.activityCalendarDay);
+        TextView month = dateLayout.findViewById(R.id.activityCalendarMonth);
         long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
         Date today = new Date(epochTimeToday);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-        dateText.setText(String.format("Appointments on the %s : ", formatter.format(today)));
+
+        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.US);
+        day.setText(dayFormat.format(today));
+
+        SimpleDateFormat monthFormat = new SimpleDateFormat("EEEE", Locale.US);
+        month.setText(monthFormat.format(today));
     }
 
     /**

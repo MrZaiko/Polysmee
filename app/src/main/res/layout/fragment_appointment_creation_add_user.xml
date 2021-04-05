@@ -5,36 +5,45 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".appointments.AppointmentActivity">
-    <EditText
-        android:id="@+id/appointmentSettingsSearchAdd"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
+        android:id="@+id/appointmentSettingsSearchAddLayout"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/appointmentSettingsBtnAdd"
+        app:layout_constraintBottom_toTopOf="@id/appointmentCreationAddsList"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0" />
+        app:layout_constraintEnd_toEndOf="parent">
+        <EditText
+            android:id="@+id/appointmentSettingsSearchAdd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/appointmentSettingsBtnAdd"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0" />
 
-    <ImageView
-        android:id="@+id/appointmentSettingsBtnAdd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        app:layout_constraintVertical_bias="0"
-        android:src="@drawable/baseline_done"
-        android:text="@string/appointment_settings_btn_invite"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/appointmentSettingsSearchAdd"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        <ImageView
+            android:id="@+id/appointmentSettingsBtnAdd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintVertical_bias="0"
+            android:src="@drawable/baseline_done"
+            android:text="@string/appointment_settings_btn_invite"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/appointmentSettingsSearchAdd"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <LinearLayout
         android:id="@+id/appointmentCreationAddsList"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/appointmentSettingsSearchAdd"
+        app:layout_constraintTop_toBottomOf="@id/appointmentSettingsSearchAddLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"

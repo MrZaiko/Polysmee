@@ -16,6 +16,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.login.MainUserSingleton;
@@ -87,8 +88,9 @@ public class RoomActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.roomMenuInfo:
-                Intent intent = new Intent(this, RoomActivityInfo.class);
-                intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointment.getId());
+                Intent intent = new Intent(this, AppointmentActivity.class);
+                intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+                intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
                 startActivity(intent);
                 return true;
             default:

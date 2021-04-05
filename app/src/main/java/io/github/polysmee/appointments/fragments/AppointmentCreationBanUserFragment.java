@@ -24,9 +24,14 @@ import java.util.List;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.database.DatabaseAppointment;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
+import io.github.polysmee.interfaces.User;
 
 public class AppointmentCreationBanUserFragment extends Fragment {
+    View rootView;
+
     private EditText searchBan;
     private ImageView btnBan;
     private LinearLayout bansList;
@@ -34,6 +39,9 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private boolean isPrivate;
 
     DataPasser dataPasser;
+
+    private int mode;
+    private Appointment appointment;
 
     @Override
     public void onAttach(Context context) {
@@ -45,13 +53,8 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View rootView = inflater.inflate(R.layout.fragment_appointment_creation_ban_user, container, false);
-
+        rootView = inflater.inflate(R.layout.fragment_appointment_creation_ban_user, container, false);
         attributeSetters(rootView);
-        rootView.findViewById(R.id.appointmentCreationBanUserFragmentReset).setOnClickListener(this::reset);
-        btnBan.setOnClickListener(btnBanListener);
-        searchBan.setHint("Type names here");
-
         return rootView;
     }
 
@@ -59,6 +62,22 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         bans.clear();
         dataPasser.dataPass(bans, AppointmentActivity.BANS);
         bansList.removeAllViews();
+    }
+
+    public void launchSetup(int mode, String appointmentID) {
+        this.mode = mode;
+
+        if (mode == AppointmentActivity.DETAIL_MODE) {
+            appointment = new DatabaseAppointment(appointmentID);
+        }
+
+        rootView.findViewById(R.id.appointmentCreationBanUserFragmentReset).setOnClickListener(this::reset);
+        btnBan.setOnClickListener(btnBanListener);
+        searchBan.setHint("Type names here");
+
+        if (mode == AppointmentActivity.DETAIL_MODE) {
+            rootView.findViewById(R.id.appointmentSettingsSearchBanLayout).setVisibility(View.GONE);
+        }
     }
 
 
@@ -76,7 +95,13 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private void addBan(String name) {
         ConstraintLayout newBanLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_appointment_creation, null);
         ((TextView) newBanLayout.findViewById(R.id.appointmentCreationElementText)).setText(name);
-        newBanLayout.findViewById(R.id.appointmentCreationElementRemove).setOnClickListener(l -> {
+
+        View removeButton = newBanLayout.findViewById(R.id.appointmentCreationElementRemove);
+
+        if (mode == AppointmentActivity.DETAIL_MODE)
+            removeButton.setVisibility(View.GONE);
+
+        removeButton.setOnClickListener(l -> {
             bans.remove(name);
             dataPasser.dataPass(bans, AppointmentActivity.BANS);
             bansList.removeView(newBanLayout);

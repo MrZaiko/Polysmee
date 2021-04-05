@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.firebaseui:firebase-ui-auth:6.4.0'
+    implementation "androidx.cardview:cardview:1.0.0"
 
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.preference:preference:1.1.1'
