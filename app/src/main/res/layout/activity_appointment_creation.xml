@@ -11,7 +11,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appointmentCreationBottomBar">
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -206,6 +207,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
+                    android:layout_marginStart="20dp"
                     android:name="io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -253,6 +255,7 @@
                     android:id="@+id/appointmentCreationBanUserFragment"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
                     android:orientation="horizontal"
                     android:name="io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment"
                     app:layout_constraintBottom_toBottomOf="parent"
@@ -264,29 +267,43 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <TextView
-                android:id="@+id/appointmentCreationtxtError"
+                android:id="@+id/appointmentCreationTimeError"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textSize="18sp"
+                android:text="@string/appointmentCreationTimeError"
                 app:autoSizeTextType="uniform"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.498"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/appointmentCreationAddBanError"
+                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationBanUserLayout" />
+
+            <TextView
+                android:id="@+id/appointmentCreationAddBanError"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textSize="18sp"
+                android:text="@string/appointmentCreationAddBanError"
+                app:autoSizeTextType="uniform"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintBottom_toTopOf="@+id/appointmentCreationTxtWarning"
-                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationBanUserLayout" />
+                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationTimeError" />
 
             <TextView
                 android:id="@+id/appointmentCreationTxtWarning"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="60dp"
                 android:text="@string/appointment_creation_maximum_duration_of_an_appointment_is_4h"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationtxtError"
+                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationAddBanError"
                 app:layout_constraintVertical_bias="0.0" />
 
 
@@ -296,6 +313,8 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/appointmentCreationBottomBar"
+        app:layout_constraintTop_toBottomOf="@id/appointmentCreation90Guideline"
+        app:layout_constraintVertical_bias="1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -305,11 +324,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
             android:text="@string/appointment_creation_done_create_appointment"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toEndOf="@+id/appointementCreationBtnReset"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
@@ -317,12 +336,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:layout_marginStart="8dp"
             android:text="@string/appointment_creation_reset_btn_txt"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/appointmentCreationbtnDone"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/appointmentCreation90Guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9"
+        app:layout_constraintGuide_begin="20dp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

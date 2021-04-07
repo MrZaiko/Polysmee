@@ -20,7 +20,9 @@ import android.widget.SearchView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
@@ -28,6 +30,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.MainUserSingleton;
 
 public class AppointmentCreationBanUserFragment extends Fragment {
     View rootView;
@@ -35,8 +38,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private EditText searchBan;
     private ImageView btnBan;
     private LinearLayout bansList;
-    private ArrayList<String> bans;
-    private boolean isPrivate;
+    private Set<String> bans, removedBans;
 
     DataPasser dataPasser;
 
@@ -58,7 +60,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         return rootView;
     }
 
-    private void reset(View view) {
+    public void reset() {
         bans.clear();
         dataPasser.dataPass(bans, AppointmentActivity.BANS);
         bansList.removeAllViews();
@@ -71,12 +73,25 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             appointment = new DatabaseAppointment(appointmentID);
         }
 
-        rootView.findViewById(R.id.appointmentCreationBanUserFragmentReset).setOnClickListener(this::reset);
         btnBan.setOnClickListener(btnBanListener);
         searchBan.setHint("Type names here");
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
-            rootView.findViewById(R.id.appointmentSettingsSearchBanLayout).setVisibility(View.GONE);
+            View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchBanLayout);
+            searchLayout.setVisibility(View.GONE);
+
+            appointment.getBansAndThen(p -> {
+                for (String id : p) {
+                    User user = new DatabaseUser(id);
+                    user.getNameAndThen(this::addBan);
+                }
+            });
+
+            appointment.getOwnerIdAndThen(owner -> {
+                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                    searchLayout.setVisibility(View.VISIBLE);
+            });
+
         }
     }
 
@@ -88,6 +103,12 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             bans.add(s);
             dataPasser.dataPass(bans, AppointmentActivity.BANS);
             searchBan.setText("");
+
+            if (mode == AppointmentActivity.DETAIL_MODE) {
+                removedBans.remove(s);
+                dataPasser.dataPass(removedBans, AppointmentActivity.REMOVED_BANS);
+            }
+
             addBan(s);
         }
     };
@@ -98,14 +119,27 @@ public class AppointmentCreationBanUserFragment extends Fragment {
 
         View removeButton = newBanLayout.findViewById(R.id.appointmentCreationElementRemove);
 
-        if (mode == AppointmentActivity.DETAIL_MODE)
+        if (mode == AppointmentActivity.DETAIL_MODE) {
             removeButton.setVisibility(View.GONE);
+
+            appointment.getOwnerIdAndThen(owner -> {
+                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                    removeButton.setVisibility(View.VISIBLE);
+            });
+        }
 
         removeButton.setOnClickListener(l -> {
             bans.remove(name);
             dataPasser.dataPass(bans, AppointmentActivity.BANS);
+
+            if (mode == AppointmentActivity.DETAIL_MODE) {
+                removedBans.add(name);
+                dataPasser.dataPass(removedBans, AppointmentActivity.REMOVED_BANS);
+            }
+
             bansList.removeView(newBanLayout);
         });
+
         bansList.addView(newBanLayout);
     }
 
@@ -114,7 +148,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
         btnBan = rootView.findViewById(R.id.appointmentSettingsBtnBan);
         bansList = rootView.findViewById(R.id.appointmentCreationBansList);
-        bans = new ArrayList<>();
-        isPrivate = false;
+        bans = new HashSet<>();
+        removedBans = new HashSet<>();
     }
 }

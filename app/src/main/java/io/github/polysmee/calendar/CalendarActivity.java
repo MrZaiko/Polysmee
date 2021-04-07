@@ -48,12 +48,10 @@ public class CalendarActivity extends AppCompatActivity{
 
     private User user;
     public final static String UserTypeCode = "TYPE_OF_USER";
-    public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
-    private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
     private Set<String> appointmentSet = new HashSet<>();
-    private Map<String,CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
+    private final Map<String,CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -113,13 +111,8 @@ public class CalendarActivity extends AppCompatActivity{
      * Behavior of the create appointment button, depending if the user is real or fake
      */
     private void createAppointment(){
-            Intent intent = new Intent(this, AppointmentActivity.class);
-            startActivity(intent);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+        Intent intent = new Intent(this, AppointmentActivity.class);
+        startActivity(intent);
     }
 
     /**
@@ -158,8 +151,6 @@ public class CalendarActivity extends AppCompatActivity{
      * @return the textual representation of the appointment in the calendar
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
-
-
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
         Date startDate = new Date(appointment.getStartTime() * 1000);

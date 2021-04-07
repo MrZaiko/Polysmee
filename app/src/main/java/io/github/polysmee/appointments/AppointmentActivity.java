@@ -7,6 +7,7 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.graphics.Rect;
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -14,9 +15,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
@@ -39,29 +43,30 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     public static final int DETAIL_MODE = 1;
 
     public static final String INVITES = "INVITES";
+    public static final String REMOVED_INVITES = "REMOVED INVITES";
     public static final String BANS = "BANS";
+    public static final String REMOVED_BANS = "REMOVED BANS";
 
-    private Calendar calendarStart, calendarEnd;
+    private Calendar calendarStartTime, calendarEndTime;
+    private boolean startTimeUpdated, endTimeUpdated;
     private String title;
     private String course;
-    private ArrayList<String> invites;
-    private ArrayList<String> bans;
+    private Set<String> invites, bans, removedInvites, removedBans;
     private boolean isPrivate, isOwner;
     boolean isKeyboardShowing = false;
 
     private User user;
 
-    public static final String ERROR_TXT = "Error : Start and end time must result in a correct time slot";
     private EditText editTitle, editCourse;
     private Button btnDone, btnReset;
-    private Calendar calendarStartTime, calendarEndTime;
-    private TextView txtError, txtStartTime, txtEndTime, txtAdd, txtBan;
+    private TextView txtTimeError, txtAddBanError, txtStartTime, txtEndTime, txtAdd, txtBan;
     private SwitchCompat privateSelector;
     private ImageView showAdd, showBan;
     private View addFragment, banFragment, bottomBar, startTimeLayout, endTimeLayout;
     private boolean isAddShown, isBanShown;
 
     //A calendar is a wait to get time using year/month... and allows to transform it to epoch time
+    private final String dateFormat = "dd/MM/yyyy - HH:mm";
     private Calendar date;
 
     private int mode;
@@ -100,7 +105,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         //==========================================================================================
 
 
-        txtError.setVisibility(View.INVISIBLE);
+        txtTimeError.setVisibility(View.GONE);
+        txtAddBanError.setVisibility(View.GONE);
 
         startTimeEndTimeSelectorsSetup();
         privateSelector.setOnCheckedChangeListener((l,newValue) -> isPrivate = newValue);
@@ -114,7 +120,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
     }
 
-    public void setupClickable(boolean isClickable) {
+    private void setupClickable(boolean isClickable) {
         editTitle.setEnabled(isClickable);
         editCourse.setEnabled(isClickable);
 
@@ -127,12 +133,12 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private void listenersSetup() {
         appointment.getStartTimeAndThen(start -> {
             Date startDate = new Date(start*1000);
-            date.setTime(startDate);
-            updateCalendar(txtStartTime, true);
+            calendarStartTime.setTime(startDate);
+            txtStartTime.setText(DateFormat.format(dateFormat, startDate));
             appointment.getDurationAndThen(duration -> {
                 Date endDate = new Date((start+duration)*1000);
-                date.setTime(endDate);
-                updateCalendar(txtEndTime, false);
+                calendarEndTime.setTime(endDate);
+                txtEndTime.setText(DateFormat.format(dateFormat, endDate));
             });
         });
 
@@ -158,8 +164,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
     private void bottomBarSetup(boolean isOwner) {
         if (mode == DETAIL_MODE) {
-            btnDone.setText("Apply changes");
-            btnReset.setVisibility(View.INVISIBLE);
+            btnDone.setText(R.string.AppointmentActivityDetailModeApplyChanges);
+            btnReset.setVisibility(View.GONE);
             btnReset.setClickable(false);
             if (isOwner)
                 bottomBar.setVisibility(View.VISIBLE);
@@ -168,14 +174,27 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
 
         btnDone.setOnClickListener(v -> {
+            boolean error = false;
+
             //if startTime is bigger than endTime we have a negative duration which doesn't work
             //It isn't possible to create an appointment scheduled before the current time
             Calendar c = Calendar.getInstance();
             c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+
+            Set<String> invitesInterBans = new HashSet<>(invites);
+            invitesInterBans.retainAll(bans);
+
             if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= c.getTimeInMillis()){
-                txtError.setVisibility(View.VISIBLE);
-                txtError.setText(ERROR_TXT);
-            } else {
+                txtTimeError.setVisibility(View.VISIBLE);
+                error = true;
+            }
+
+            if (!invitesInterBans.isEmpty()) {
+                txtAddBanError.setVisibility(View.VISIBLE);
+                error = true;
+            }
+
+            if (!error) {
                 title = editTitle.getText().toString();
                 course = editCourse.getText().toString();
                 sendData();
@@ -187,13 +206,19 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             //reset every input text field and both start and end times
             editTitle.setText("");
             editCourse.setText("");
-            txtError.setText("");
+            txtTimeError.setText("");
             calendarEndTime = Calendar.getInstance();
             txtEndTime.setText(getString(R.string.appointment_creation_pick_end_time));
             calendarStartTime = Calendar.getInstance();
             txtStartTime.setText(getString(R.string.appointment_creation_pick_start_time));
-            addFragment.findViewById(R.id.appointmentCreationAddUserFragmentReset).performClick();
-            banFragment.findViewById(R.id.appointmentCreationBanUserFragmentReset).performClick();
+
+            AppointmentCreationAddUserFragment addFragment =
+                    (AppointmentCreationAddUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationAddUserFragment);
+            addFragment.reset();
+
+            AppointmentCreationBanUserFragment banFragment =
+                    (AppointmentCreationBanUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationBanUserFragment);
+            banFragment.reset();
         });
     }
 
@@ -203,30 +228,29 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         // ContentView is the root view of the layout of this activity/fragment
         contentView.getViewTreeObserver().addOnGlobalLayoutListener(() -> {
+            Rect r = new Rect();
+            contentView.getWindowVisibleDisplayFrame(r);
+            int screenHeight = contentView.getRootView().getHeight();
 
-                    Rect r = new Rect();
-                    contentView.getWindowVisibleDisplayFrame(r);
-                    int screenHeight = contentView.getRootView().getHeight();
+            // r.bottom is the position above soft keypad or device button.
+            // if keypad is shown, the r.bottom is smaller than that before.
+            int keypadHeight = screenHeight - r.bottom;
 
-                    // r.bottom is the position above soft keypad or device button.
-                    // if keypad is shown, the r.bottom is smaller than that before.
-                    int keypadHeight = screenHeight - r.bottom;
-
-                    if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
-                        // keyboard is opened
-                        if (!isKeyboardShowing) {
-                            isKeyboardShowing = true;
-                            updateBottomBar();
-                        }
-                    }
-                    else {
-                        // keyboard is closed
-                        if (isKeyboardShowing) {
-                            isKeyboardShowing = false;
-                            updateBottomBar();
-                        }
-                    }
-                });
+            if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                // keyboard is opened
+                if (!isKeyboardShowing) {
+                    isKeyboardShowing = true;
+                    updateBottomBar();
+                }
+            }
+            else {
+                // keyboard is closed
+                if (isKeyboardShowing) {
+                    isKeyboardShowing = false;
+                    updateBottomBar();
+                }
+            }
+        });
     }
 
     private void updateBottomBar() {
@@ -251,8 +275,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtAdd.setOnClickListener(l -> {
                 showAdd.performClick();
         });
+
         if (mode == DETAIL_MODE)
-            txtAdd.setText("Participants");
+            txtAdd.setText(R.string.AppointmentActivityDetailModeParticipants);
 
         banFragment.setVisibility(View.GONE);
         showBan.setOnClickListener(s -> {
@@ -269,7 +294,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 showBan.performClick();
         });
         if (mode == DETAIL_MODE)
-            txtBan.setText("Banned participants");
+            txtBan.setText(R.string.AppointmentActivityDetailModeBannedParticipants);
     }
 
     //Function which first displays a DatePicker then a TimePicker and stores all the information in Calendar date
@@ -291,61 +316,102 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private void updateCalendar(TextView textView, boolean isStart) {
         //Update start or end time with user input
         if (isStart) {
+            startTimeUpdated = true;
             calendarStartTime = (Calendar) date.clone();
         } else {
+            endTimeUpdated = true;
             calendarEndTime = (Calendar) date.clone();
         }
 
         //If there was an error setting a new start or end time can fix it so remove the error message as the user knows they need to fix it
-        txtError.setVisibility(View.INVISIBLE);
+        txtTimeError.setVisibility(View.GONE);
         //Display the time on screen so that the user can know their input has been taken
-        String strTime = date.get(Calendar.DAY_OF_MONTH) + "/" + String.format("%02d", date.get(Calendar.MONTH) + 1) + "/" + date.get(Calendar.YEAR) + "   -   " + String.format("%02d", date.get(Calendar.HOUR_OF_DAY)) + ":" + String.format("%02d", date.get(Calendar.MINUTE));
-        textView.setText(strTime);
+        textView.setText(DateFormat.format(dateFormat, date.getTime()));
     }
 
 
     private void sendData() {
-        if (mode == ADD_MODE) {
-            String aptID = user.createNewUserAppointment(calendarStart.getTimeInMillis(), calendarEnd.getTimeInMillis() - calendarStart.getTimeInMillis(), course, title, isPrivate);
-            appointment = new DatabaseAppointment(aptID);
+        //Avoid conversion problem
+        long startTime = calendarStartTime.getTimeInMillis();
+        long duration = calendarEndTime.getTimeInMillis() - calendarStartTime.getTimeInMillis();
 
-            //TODO mb fix ?
-            User.getAllUsersIdsAndThenOnce((setOfUserIds) -> {
-                for(String userId : setOfUserIds){
-                    User user = new DatabaseUser(userId);
-                    for(String inviteName : invites) {
-                        user.getNameAndThen((name) -> {
-                            if (name.equals(inviteName)) {
-                                user.addAppointment(appointment);
-                                appointment.addParticipant(user);
-                            }
-                        });
-                    }
-                }
-            });
+        if (mode == ADD_MODE) {
+            String aptID = user.createNewUserAppointment(startTime, duration, course, title, isPrivate);
+            appointment = new DatabaseAppointment(aptID);
         } else {
-            //TODO mb a new function to change everything at once
-            //TODO fix time s -> ms
+            //TODO mb a new function to edit everything at once
             if (!editTitle.getText().toString().equals(""))
                 appointment.setTitle(editTitle.getText().toString());
+
             if (!editCourse.getText().toString().equals(""))
                 appointment.setCourse(editCourse.getText().toString());
-            appointment.setStartTime(calendarStart.getTimeInMillis()/1000);
-            long diff = calendarEndTime.getTimeInMillis()-calendarStartTime.getTimeInMillis();
-            appointment.setDuration(diff/1000);
+
+            //TODO fix time s -> ms
+            if (startTimeUpdated)
+                appointment.setStartTime(startTime/1000);
+
+            if (startTimeUpdated || endTimeUpdated)
+                appointment.setDuration(duration/1000);
+
             appointment.setPrivate(isPrivate);
         }
 
+        User.getAllUsersIdsAndThenOnce(this::updateParticipantsAndBans);
+    }
+
+    //not efficient at all
+    private void updateParticipantsAndBans(@NotNull Set<String> allIds) {
+        for(String userId : allIds){
+            User user = new DatabaseUser(userId);
+            user.getNameAndThen((name) -> {
+                if (mode == DETAIL_MODE) {
+                    for (String removedParticipant : removedInvites) {
+                        if (name.equals(removedParticipant)) {
+                            user.removeAppointment(appointment);
+                            appointment.removeParticipant(user);
+                        }
+                    }
+
+                    for (String removedBan : removedBans) {
+                        if (name.equals(removedBan)) {
+                            appointment.removeBan(user);
+                        }
+                    }
+                }
+
+                for (String banName : bans) {
+                    if (name.equals(banName)) {
+                        appointment.addBan(user);
+                    }
+                }
+
+                appointment.getBansAndThen( bannedUsers -> {
+                    for(String inviteName : invites) {
+                        if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
+                            user.addAppointment(appointment);
+                            appointment.addParticipant(user);
+                        }
+                    }
+                });
+            });
+        }
     }
 
     private void attributeSetters() {
-        calendarStart = Calendar.getInstance();
-        calendarEnd = Calendar.getInstance();
+        calendarStartTime = Calendar.getInstance();
+        calendarEndTime = Calendar.getInstance();
         date = Calendar.getInstance();
+        startTimeUpdated = false;
+        endTimeUpdated = false;
+
         title = "";
         course = "";
-        invites = new ArrayList<>();
-        bans = new ArrayList<>();
+
+        invites = new HashSet<>();
+        bans = new HashSet<>();
+        removedInvites = new HashSet<>();
+        removedBans = new HashSet<>();
+
         isAddShown = false;
         isBanShown = false;
         isPrivate = false;
@@ -366,22 +432,32 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         editCourse = findViewById(R.id.appointmentCreationEditTxtAppointmentCourseSet);
         btnDone = findViewById(R.id.appointmentCreationbtnDone);
         btnReset = findViewById(R.id.appointementCreationBtnReset);
-        txtError = findViewById(R.id.appointmentCreationtxtError);
+        txtTimeError = findViewById(R.id.appointmentCreationTimeError);
+        txtAddBanError = findViewById(R.id.appointmentCreationAddBanError);
         txtStartTime = findViewById(R.id.appointmentCreationStartTime);
         txtEndTime = findViewById(R.id.appointmentCreationEndTime);
         txtAdd = findViewById(R.id.appointmentCreationAddTextView);
         txtBan = findViewById(R.id.appointmentCreationBanTextView);
-        calendarStartTime = Calendar.getInstance();
-        calendarEndTime = Calendar.getInstance();
+
     }
 
     @Override
-    public void dataPass(ArrayList<String> data, String id) {
-        if(id.equals(INVITES)) {
-            invites = new ArrayList<>(data);
-        }
-        if(id.equals(BANS)) {
-            bans = new ArrayList<>(data);
+    public void dataPass(Set<String> data, String id) {
+        //Any changes to the sets may correct the error
+        txtAddBanError.setVisibility(View.GONE);
+        switch (id) {
+            case INVITES:
+                invites = new HashSet<>(data);
+                break;
+            case REMOVED_INVITES:
+                removedInvites = new HashSet<>(data);
+                break;
+            case REMOVED_BANS:
+                removedBans = new HashSet<>(data);
+                break;
+            case BANS:
+                bans = new HashSet<>(data);
+                break;
         }
     }
 

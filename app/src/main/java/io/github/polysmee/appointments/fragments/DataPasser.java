@@ -1,8 +1,7 @@
 package io.github.polysmee.appointments.fragments;
 
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Set;
 
 public interface DataPasser {
-    void dataPass(ArrayList<String> data, String id);
+    void dataPass(Set<String> data, String id);
 }

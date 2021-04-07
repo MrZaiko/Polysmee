@@ -18,6 +18,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 import io.github.polysmee.R;
@@ -26,6 +28,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.MainUserSingleton;
 
 public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
@@ -33,7 +36,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     private EditText searchInvite;
     private ImageView btnInvite;
     private LinearLayout invitesList;
-    private ArrayList<String> invites;
+    private Set<String> invites, removedInvites;
 
     DataPasser dataPasser;
 
@@ -68,12 +71,12 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             appointment = new DatabaseAppointment(appointmentID);
         }
 
-        rootView.findViewById(R.id.appointmentCreationAddUserFragmentReset).setOnClickListener(this::reset);
         btnInvite.setOnClickListener(btnInviteListener);
         searchInvite.setHint("Type names here");
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
-            rootView.findViewById(R.id.appointmentSettingsSearchAddLayout).setVisibility(View.GONE);
+            View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchAddLayout);
+            searchLayout.setVisibility(View.GONE);
 
             appointment.getParticipantsIdAndThen(p -> {
                 for (String id : p) {
@@ -81,10 +84,15 @@ public class AppointmentCreationAddUserFragment extends Fragment {
                     user.getNameAndThen(this::addInvite);
                 }
             });
+
+            appointment.getOwnerIdAndThen(owner -> {
+                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                    searchLayout.setVisibility(View.VISIBLE);
+            });
         }
     }
 
-    private void reset(View view) {
+    public void reset() {
         invites.clear();
         dataPasser.dataPass(invites, AppointmentActivity.INVITES);
         invitesList.removeAllViews();
@@ -98,6 +106,11 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             dataPasser.dataPass(invites, AppointmentActivity.INVITES);
             searchInvite.setText("");
 
+            if (mode == AppointmentActivity.DETAIL_MODE) {
+                removedInvites.remove(s);
+                dataPasser.dataPass(removedInvites, AppointmentActivity.REMOVED_INVITES);
+            }
+
             addInvite(s);
         }
     };
@@ -108,12 +121,24 @@ public class AppointmentCreationAddUserFragment extends Fragment {
 
         View removeButton = newBanLayout.findViewById(R.id.appointmentCreationElementRemove);
 
-        if (mode == AppointmentActivity.DETAIL_MODE)
+        if (mode == AppointmentActivity.DETAIL_MODE) {
             removeButton.setVisibility(View.GONE);
+
+            appointment.getOwnerIdAndThen(owner -> {
+                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                    removeButton.setVisibility(View.VISIBLE);
+            });
+        }
 
         removeButton.setOnClickListener(l -> {
             invites.remove(userName);
             dataPasser.dataPass(invites, AppointmentActivity.INVITES);
+
+            if (mode == AppointmentActivity.DETAIL_MODE) {
+                removedInvites.add(userName);
+                dataPasser.dataPass(removedInvites, AppointmentActivity.REMOVED_INVITES);
+            }
+
             invitesList.removeView(newBanLayout);
         });
 
@@ -124,6 +149,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
         btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnAdd);
         invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
-        invites = new ArrayList<>();
+        invites = new HashSet<>();
+        removedInvites = new HashSet<>();
     }
 }

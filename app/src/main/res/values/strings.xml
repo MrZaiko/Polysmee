@@ -65,6 +65,11 @@
     <string name="roomActivityRemovedDialogText">You are not a member of this appointment!</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="AppointmentActivityDetailModeApplyChanges">Apply changes</string>
+    <string name="AppointmentActivityDetailModeParticipants">Participants</string>
+    <string name="AppointmentActivityDetailModeBannedParticipants">Banned participants</string>
+    <string name="appointmentCreationTimeError">Start and end time must result in a correct time slot</string>
+    <string name="appointmentCreationAddBanError">A user cannot be both added and banned</string>
 
 </resources>
 
