@@ -15,8 +15,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
