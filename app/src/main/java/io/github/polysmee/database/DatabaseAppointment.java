@@ -99,7 +99,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public boolean setDuration(long duration) {
-        if (duration < 0 || duration > 3600 * 4)
+        if (duration < 0 || duration > 3600000 * 4)
             return false;
 
         DatabaseFactory

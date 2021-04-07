@@ -55,8 +55,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private boolean isPrivate, isOwner;
     boolean isKeyboardShowing = false;
 
-    private User user;
-
     private EditText editTitle, editCourse;
     private Button btnDone, btnReset;
     private TextView txtTimeError, txtAddBanError, txtStartTime, txtEndTime, txtAdd, txtBan;
@@ -129,14 +127,13 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         privateSelector.setClickable(isClickable);
     }
 
-    //TODO Fix time s -> ms
     private void listenersSetup() {
         appointment.getStartTimeAndThen(start -> {
-            Date startDate = new Date(start*1000);
+            Date startDate = new Date(start);
             calendarStartTime.setTime(startDate);
             txtStartTime.setText(DateFormat.format(dateFormat, startDate));
             appointment.getDurationAndThen(duration -> {
-                Date endDate = new Date((start+duration)*1000);
+                Date endDate = new Date(start+duration);
                 calendarEndTime.setTime(endDate);
                 txtEndTime.setText(DateFormat.format(dateFormat, endDate));
             });
@@ -336,7 +333,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         long duration = calendarEndTime.getTimeInMillis() - calendarStartTime.getTimeInMillis();
 
         if (mode == ADD_MODE) {
-            String aptID = user.createNewUserAppointment(startTime, duration, course, title, isPrivate);
+            String aptID = MainUserSingleton.getInstance().createNewUserAppointment(startTime, duration, course, title, isPrivate);
             appointment = new DatabaseAppointment(aptID);
         } else {
             //TODO mb a new function to edit everything at once
@@ -346,12 +343,11 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             if (!editCourse.getText().toString().equals(""))
                 appointment.setCourse(editCourse.getText().toString());
 
-            //TODO fix time s -> ms
             if (startTimeUpdated)
-                appointment.setStartTime(startTime/1000);
+                appointment.setStartTime(startTime);
 
             if (startTimeUpdated || endTimeUpdated)
-                appointment.setDuration(duration/1000);
+                appointment.setDuration(duration);
 
             appointment.setPrivate(isPrivate);
         }
@@ -416,9 +412,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         isBanShown = false;
         isPrivate = false;
         isOwner = false;
-
-        //We need to know who is trying to create an appointment as they are the owner
-        user = MainUserSingleton.getInstance();
 
         startTimeLayout = findViewById(R.id.appointmentCreationStartTimeLayout);
         endTimeLayout = findViewById(R.id.appointmentCreationEndTimeLayout);

@@ -77,13 +77,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 participantsLayout.setBackgroundColor(Color.LTGRAY);
                 participantsLayout.setBackgroundResource(R.drawable.participant_element_background);
 
-                ImageView removeButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementRemoveButton);
-                removeButton.setVisibility(user.getId().equals(MainUserSingleton.getInstance().getId()) ? View.VISIBLE : View.GONE);
-                removeButton.setOnClickListener(s -> {
-                    appointment.removeParticipant(user);
-                    user.removeAppointment(appointment);
-                });
-
                 ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
                 muteButton.setOnClickListener(l -> {
                     if (isMuted) {
@@ -93,11 +86,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
                         isMuted = true;
                         muteButton.setImageResource(R.drawable.baseline_mic_off);
                     }
-                });
-
-                appointment.getOwnerIdAndThen(ow -> {
-                    if (MainUserSingleton.getInstance().getId().equals(ow))
-                        removeButton.setVisibility(View.VISIBLE);
                 });
 
                 layout.addView(participantsLayout);

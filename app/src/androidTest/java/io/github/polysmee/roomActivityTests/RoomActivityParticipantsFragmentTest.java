@@ -82,27 +82,4 @@ public class RoomActivityParticipantsFragmentTest {
         assertDisplayed(username2);
     }
 
-    @Test
-    public void removeButtonShouldRemoveTheParticipant() {
-        Bundle bundle = new Bundle();
-        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-        sleep(1, SECONDS);
-        clickOn(username2);
-        clickOn("Remove");
-        sleep(2, SECONDS);
-
-        boolean thrown = false;
-
-        try {
-            onView(withText(username2)).check(matches(isDisplayed()));
-        } catch (NoMatchingViewException e) {
-            thrown = true;
-        }
-
-        assertTrue(thrown);
-
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-    }
-
 }
