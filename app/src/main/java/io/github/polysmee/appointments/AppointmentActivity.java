@@ -356,7 +356,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     }
 
     //not efficient at all
-    private void updateParticipantsAndBans(@NotNull Set<String> allIds) {
+    private void updateParticipantsAndBans(Set<String> allIds) {
         for(String userId : allIds){
             User user = new DatabaseUser(userId);
             user.getNameAndThen((name) -> {
