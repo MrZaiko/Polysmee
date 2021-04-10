@@ -1,9 +1,7 @@
 package io.github.polysmee.room.fragments;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.ActionMode;
 import android.view.Gravity;
@@ -14,7 +12,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -36,7 +33,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.zip.Inflater;
 
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.User;
@@ -132,7 +128,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         if (isSent) {
             messageLayout.findViewById(R.id.roomActivityMessageElementSenderText).setVisibility(View.GONE);
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setText(formatter.format(currentDate));
-            messageLayout.setBackgroundResource(R.drawable.sent_message_background);
+            messageLayout.setBackgroundResource(R.drawable.background_sent_message);
             messageLayout.setOnLongClickListener(v -> {
                 if (actionMode != null)
                     return false;
@@ -141,7 +137,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             });
         }
         else {
-            messageLayout.setBackgroundResource(R.drawable.received_message_background);
+            messageLayout.setBackgroundResource(R.drawable.background_received_message);
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived)).setText(formatter.format(currentDate));
             sender.getNameAndThen(((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementSenderText))::setText);
         }
@@ -156,7 +152,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
                 mode.setTitle("Choose an option");
-                messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.selected_message_background);
+                messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_selected_message);
                 return true;
             }
 
@@ -184,7 +180,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 actionMode = null;
-                messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.sent_message_background);
+                messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_sent_message);
             }
         };
     }
