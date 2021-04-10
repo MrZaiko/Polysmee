@@ -119,7 +119,7 @@ public class RoomActivityTest {
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
             swipeViewPagerForward();
             sleep(2, TimeUnit.SECONDS);
-            assertDisplayed(username1);
+            assertDisplayed("You");
             assertDisplayed(username2);
         }
     }

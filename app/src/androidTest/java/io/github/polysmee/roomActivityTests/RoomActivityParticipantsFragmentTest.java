@@ -69,7 +69,6 @@ public class RoomActivityParticipantsFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
     @Test
@@ -78,8 +77,11 @@ public class RoomActivityParticipantsFragmentTest {
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
         sleep(1, SECONDS);
-        assertDisplayed(username1);
-        assertDisplayed(username2);
+        assertDisplayed("You");
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+        clickOn(R.id.roomActivityParticipantElementMuteButton);
+        clickOn(R.id.roomActivityParticipantElementMuteButton);
+        clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
 }
