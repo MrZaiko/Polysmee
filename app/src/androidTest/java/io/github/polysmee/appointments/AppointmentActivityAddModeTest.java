@@ -5,6 +5,11 @@ import android.os.Bundle;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.ViewAction;
+import androidx.test.espresso.action.GeneralLocation;
+import androidx.test.espresso.action.GeneralSwipeAction;
+import androidx.test.espresso.action.Press;
+import androidx.test.espresso.action.Swipe;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -29,6 +34,9 @@ import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.swipeUp;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
 import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
@@ -68,6 +76,11 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
     }
 
+    private static ViewAction swipeFromTopToBottom() {
+        return new GeneralSwipeAction(Swipe.FAST, GeneralLocation.TOP_CENTER,
+                GeneralLocation.BOTTOM_CENTER, Press.FINGER);
+    }
+
     @Test
     public void allTestsAtOnce() throws InterruptedException {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
@@ -86,32 +99,35 @@ public class AppointmentActivityAddModeTest {
             Thread.sleep(1000);
 
             assertNotDisplayed(R.id.appointmentCreationAddUserFragment);
-            scrollTo(R.id.appointmentCreationShowAdd);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationShowAdd);
+            scrollTo(R.id.appointmentCreationTxtWarning);
+
             assertDisplayed(R.id.appointmentCreationAddUserFragment);
-            scrollTo(R.id.appointmentCreationShowAdd);
             clickOn(R.id.appointmentCreationShowAdd);
             assertNotDisplayed(R.id.appointmentCreationAddUserFragment);
 
-            scrollTo(R.id.appointmentCreationAddTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationAddTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.id.appointmentCreationAddUserFragment);
-            scrollTo(R.id.appointmentCreationAddTextView);
             clickOn(R.id.appointmentCreationAddTextView);
             assertNotDisplayed(R.id.appointmentCreationAddUserFragment);
 
             Thread.sleep(1000);
 
             assertNotDisplayed(R.id.appointmentCreationBanUserFragment);
-            scrollTo(R.id.appointmentCreationShowBan);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationShowBan);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.id.appointmentCreationBanUserFragment);
             scrollTo(R.id.appointmentCreationShowBan);
             clickOn(R.id.appointmentCreationShowBan);
             assertNotDisplayed(R.id.appointmentCreationBanUserFragment);
 
-            scrollTo(R.id.appointmentCreationBanTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationBanTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.id.appointmentCreationBanUserFragment);
             scrollTo(R.id.appointmentCreationBanTextView);
             clickOn(R.id.appointmentCreationBanTextView);
@@ -130,6 +146,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
 
@@ -146,17 +163,19 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(18, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
 
             Thread.sleep(1000);
 
-            scrollTo(R.id.appointmentCreationShowAdd);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationShowAdd);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
             closeSoftKeyboard();
-            scrollTo(R.id.appointmentSettingsBtnAdd);
             clickOn(R.id.appointmentSettingsBtnAdd);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.id.appointmentSettingsSearchAdd, "");
             assertDisplayed(username2);
             clickOn(R.string.appointment_creation_reset_btn_txt);
@@ -190,6 +209,7 @@ public class AppointmentActivityAddModeTest {
             clickOn(R.id.appointmentSettingsBtnAdd);
 
             clickOn(R.id.appointmentCreationbtnDone);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationAddBanError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
 
@@ -227,25 +247,23 @@ public class AppointmentActivityAddModeTest {
         setTimeOnPicker(18, 2);
 
         //PRIVATE = true
-        scrollTo(R.id.appointmentCreationPrivateSelector);
+        scrollTo(R.id.appointmentCreationShowBan);
         clickOn(R.id.appointmentCreationPrivateSelector);
 
         //ADD user 2
-        scrollTo(R.id.appointmentCreationShowAdd);
+        scrollTo(R.id.appointmentCreationTxtWarning);
         clickOn(R.id.appointmentCreationShowAdd);
-        scrollTo(R.id.appointmentSettingsSearchAdd);
+        scrollTo(R.id.appointmentCreationTxtWarning);
         writeTo(R.id.appointmentSettingsSearchAdd, username2);
         closeSoftKeyboard();
-        scrollTo(R.id.appointmentSettingsBtnAdd);
         clickOn(R.id.appointmentSettingsBtnAdd);
 
         //BAN user 3
-        scrollTo(R.id.appointmentCreationShowBan);
+        scrollTo(R.id.appointmentCreationTxtWarning);
         clickOn(R.id.appointmentCreationShowBan);
-        scrollTo(R.id.appointmentSettingsSearchBan);
+        scrollTo(R.id.appointmentCreationTxtWarning);
         writeTo(R.id.appointmentSettingsSearchBan, username3);
         closeSoftKeyboard();
-        scrollTo(R.id.appointmentSettingsBtnBan);
         clickOn(R.id.appointmentSettingsBtnBan);
 
         clickOn(R.id.appointmentCreationbtnDone);
