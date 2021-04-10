@@ -40,6 +40,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
@@ -95,10 +96,10 @@ public class AppointmentActivityDetailModeOwnerTest {
     }
 
     @Test
-    public void everyFieldAreClickable() {
+    public void everyFieldAreCorrectlyDisplayedAndClickable() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
 
         try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             sleep(2, SECONDS);
@@ -107,51 +108,22 @@ public class AppointmentActivityDetailModeOwnerTest {
             assertClickable(R.id.appointmentCreationEndTimeLayout);
             assertEnabled(R.id.appointmentCreationEditTxtAppointmentCourseSet);
             assertClickable(R.id.appointmentCreationPrivateSelector);
-        }
-    }
 
-    @Test
-    public void allFieldAreCorrectlyDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(2, SECONDS);
             assertHint(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
             assertHint(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
             assertDisplayed(DateFormat.format(dateFormat, startTime.getTime()).toString());
             assertDisplayed(DateFormat.format(dateFormat, endTime.getTime()).toString());
             assertChecked(R.id.appointmentCreationPrivateSelector);
-            clickOn(R.id.appointmentCreationAddTextView);
-            assertDisplayed(username1);
-            assertDisplayed(username2);
-            clickOn(R.id.appointmentCreationBanTextView);
-            assertDisplayed(username3);
-        }
-    }
-
-    @Test
-    public void addAndBanAddBarAreDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationAddTextView);
             clickOn(R.id.appointmentCreationAddTextView);
             assertDisplayed(R.id.appointmentSettingsSearchAddLayout);
+            assertDisplayed(username1);
+            assertDisplayed(username2);
+            scrollTo(R.id.appointmentCreationBanTextView);
             clickOn(R.id.appointmentCreationBanTextView);
             assertDisplayed(R.id.appointmentSettingsSearchBanLayout);
-        }
-    }
+            assertDisplayed(username3);
 
-    @Test
-    public void bottomBarIsDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             assertDisplayed(R.id.appointmentCreationBottomBar);
         }
     }
@@ -164,25 +136,32 @@ public class AppointmentActivityDetailModeOwnerTest {
 
         ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
 
+        sleep(2, SECONDS);
+
         //COURSE
+        scrollTo(R.id.appointmentCreationEditTxtAppointmentCourseSet);
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, newCourse);
         closeSoftKeyboard();
 
         //TITLE
+        scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, newTitle);
         closeSoftKeyboard();
 
         //START TIME
+        scrollTo(R.id.appointmentCreationStartTimeLayout);
         clickOn(R.id.appointmentCreationStartTimeLayout);
         setDateOnPicker(2022, 3, 23);
         setTimeOnPicker(17, 2);
 
         //END TIME
+        scrollTo(R.id.appointmentCreationEndTimeLayout);
         clickOn(R.id.appointmentCreationEndTimeLayout);
         setDateOnPicker(2022, 3, 23);
         setTimeOnPicker(19, 2);
 
         //PRIVATE = false
+        scrollTo(R.id.appointmentCreationPrivateSelector);
         clickOn(R.id.appointmentCreationPrivateSelector);
 
         clickOn(R.id.appointmentCreationbtnDone);

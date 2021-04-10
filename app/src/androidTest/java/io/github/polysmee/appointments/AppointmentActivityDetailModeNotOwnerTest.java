@@ -30,6 +30,9 @@ import static com.schibsted.spain.barista.assertion.BaristaHintAssertions.assert
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @RunWith(JUnit4.class)
 public class AppointmentActivityDetailModeNotOwnerTest {
@@ -76,64 +79,36 @@ public class AppointmentActivityDetailModeNotOwnerTest {
     }
 
     @Test
-    public void everyFieldAreNotClickable() {
+    public void everyFieldAreCorrectlyDisplayedAndNotClickable() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
         intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
 
         try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(2, SECONDS);
             assertDisabled(R.id.appointmentCreationEditTxtAppointmentTitleSet);
             assertNotClickable(R.id.appointmentCreationStartTimeLayout);
             assertNotClickable(R.id.appointmentCreationEndTimeLayout);
             assertDisabled(R.id.appointmentCreationEditTxtAppointmentCourseSet);
             assertNotClickable(R.id.appointmentCreationPrivateSelector);
-        }
-    }
 
-    @Test
-    public void allFieldAreCorrectlyDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             assertHint(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
             assertHint(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
             assertDisplayed(DateFormat.format(dateFormat, startTime.getTime()).toString());
             assertDisplayed(DateFormat.format(dateFormat, endTime.getTime()).toString());
             assertChecked(R.id.appointmentCreationPrivateSelector);
-            clickOn(R.id.appointmentCreationAddTextView);
-            assertDisplayed(username1);
-            assertDisplayed(username2);
-            clickOn(R.id.appointmentCreationBanTextView);
-            assertDisplayed(username3);
-        }
-    }
-
-    @Test
-    public void addAndBanAddBarAreNotDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationAddTextView);
             clickOn(R.id.appointmentCreationAddTextView);
             assertNotDisplayed(R.id.appointmentSettingsSearchAddLayout);
+            assertDisplayed(username1);
+            assertDisplayed(username2);
+            scrollTo(R.id.appointmentCreationBanTextView);
             clickOn(R.id.appointmentCreationBanTextView);
             assertNotDisplayed(R.id.appointmentSettingsSearchBanLayout);
-        }
-    }
+            assertDisplayed(username3);
 
-    @Test
-    public void bottomBarIsNotDisplayed() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             assertNotDisplayed(R.id.appointmentCreationBottomBar);
         }
     }
-
 
 }

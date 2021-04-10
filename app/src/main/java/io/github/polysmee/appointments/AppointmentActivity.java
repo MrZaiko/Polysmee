@@ -179,7 +179,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             Set<String> invitesInterBans = new HashSet<>(invites);
             invitesInterBans.retainAll(bans);
 
-            if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= c.getTimeInMillis()){
+            if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= System.currentTimeMillis()){
                 txtTimeError.setVisibility(View.VISIBLE);
                 error = true;
             }
@@ -201,16 +201,25 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             //reset every input text field and both start and end times
             editTitle.setText("");
             editCourse.setText("");
-            txtTimeError.setText("");
+            txtAddBanError.setVisibility(View.GONE);
+            txtTimeError.setVisibility(View.GONE);
             calendarEndTime = Calendar.getInstance();
             txtEndTime.setText(getString(R.string.appointment_creation_pick_end_time));
             calendarStartTime = Calendar.getInstance();
             txtStartTime.setText(getString(R.string.appointment_creation_pick_start_time));
 
+            if (isAddShown) {
+                showAdd.performClick();
+                isAddShown = false;
+            }
             AppointmentCreationAddUserFragment addFragment =
                     (AppointmentCreationAddUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationAddUserFragment);
             addFragment.reset();
 
+            if (isBanShown) {
+                showBan.performClick();
+                isBanShown = false;
+            }
             AppointmentCreationBanUserFragment banFragment =
                     (AppointmentCreationBanUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationBanUserFragment);
             banFragment.reset();

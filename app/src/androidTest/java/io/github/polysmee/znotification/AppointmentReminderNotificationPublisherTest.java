@@ -35,8 +35,8 @@ public class AppointmentReminderNotificationPublisherTest {
             context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))
             + context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left);
 
-    //@Before
-    //@After
+    @Before
+    @After
     public void resetStateNotification() {
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
         uiDevice.openNotification();
@@ -55,7 +55,7 @@ public class AppointmentReminderNotificationPublisherTest {
         Intent intent = new Intent(context, AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(context, intent);
         String expectedAppName = context.getString(R.string.app_name);
-        //uiDevice.openNotification();
+        uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(notification_text)));
     }

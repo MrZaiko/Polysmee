@@ -37,6 +37,9 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -66,156 +69,131 @@ public class AppointmentActivityAddModeTest {
     }
 
     @Test
-    public void everyFieldAreClickable() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
-            assertEnabled(R.id.appointmentCreationEditTxtAppointmentTitleSet);
-            assertClickable(R.id.appointmentCreationStartTimeLayout);
-            assertClickable(R.id.appointmentCreationEndTimeLayout);
-            assertEnabled(R.id.appointmentCreationEditTxtAppointmentCourseSet);
-            assertClickable(R.id.appointmentCreationPrivateSelector);
-        }
-    }
-
-    @Test
-    public void errorAreNotDisplayedAtLaunch() {
+    public void allTestsAtOnce() throws InterruptedException {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
 
         try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             assertNotDisplayed(R.id.appointmentCreationTimeError);
             assertNotDisplayed(R.id.appointmentCreationAddBanError);
-        }
-    }
 
-    @Test
-    public void addFragmentIsCorrectlyDisplayedWhenClickingOnShowLayout() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            assertEnabled(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+            assertClickable(R.id.appointmentCreationStartTimeLayout);
+            assertClickable(R.id.appointmentCreationEndTimeLayout);
+            assertEnabled(R.id.appointmentCreationEditTxtAppointmentCourseSet);
+            assertClickable(R.id.appointmentCreationPrivateSelector);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            Thread.sleep(1000);
+
             assertNotDisplayed(R.id.appointmentCreationAddUserFragment);
+            scrollTo(R.id.appointmentCreationShowAdd);
             clickOn(R.id.appointmentCreationShowAdd);
             assertDisplayed(R.id.appointmentCreationAddUserFragment);
+            scrollTo(R.id.appointmentCreationShowAdd);
             clickOn(R.id.appointmentCreationShowAdd);
             assertNotDisplayed(R.id.appointmentCreationAddUserFragment);
 
+            scrollTo(R.id.appointmentCreationAddTextView);
             clickOn(R.id.appointmentCreationAddTextView);
             assertDisplayed(R.id.appointmentCreationAddUserFragment);
+            scrollTo(R.id.appointmentCreationAddTextView);
             clickOn(R.id.appointmentCreationAddTextView);
             assertNotDisplayed(R.id.appointmentCreationAddUserFragment);
-        }
-    }
 
-    @Test
-    public void banFragmentIsCorrectlyDisplayedWhenClickingOnShowLayout() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            Thread.sleep(1000);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             assertNotDisplayed(R.id.appointmentCreationBanUserFragment);
+            scrollTo(R.id.appointmentCreationShowBan);
             clickOn(R.id.appointmentCreationShowBan);
             assertDisplayed(R.id.appointmentCreationBanUserFragment);
+            scrollTo(R.id.appointmentCreationShowBan);
             clickOn(R.id.appointmentCreationShowBan);
             assertNotDisplayed(R.id.appointmentCreationBanUserFragment);
 
+            scrollTo(R.id.appointmentCreationBanTextView);
             clickOn(R.id.appointmentCreationBanTextView);
             assertDisplayed(R.id.appointmentCreationBanUserFragment);
+            scrollTo(R.id.appointmentCreationBanTextView);
             clickOn(R.id.appointmentCreationBanTextView);
             assertNotDisplayed(R.id.appointmentCreationBanUserFragment);
-        }
-    }
 
-    @Test
-    public void endTimeBeforeStartTimeShouldDisplayTheErrorTextView() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            Thread.sleep(1000);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationStartTimeLayout);
             clickOn(R.id.appointmentCreationStartTimeLayout);
             setDateOnPicker(2022, 3, 23);
             setTimeOnPicker(17, 2);
 
+            scrollTo(R.id.appointmentCreationEndTimeLayout);
             clickOn(R.id.appointmentCreationEndTimeLayout);
             setDateOnPicker(2022, 3, 23);
             setTimeOnPicker(16, 2);
 
-
             clickOn(R.id.appointmentCreationbtnDone);
             assertDisplayed(R.string.appointmentCreationTimeError);
-        }
-    }
+            clickOn(R.string.appointment_creation_reset_btn_txt);
 
-    @Test
-    public void startTimeBeforeCurrentTimeShouldDisplayTheErrorTextView() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            Thread.sleep(1000);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationStartTimeLayout);
             clickOn(R.id.appointmentCreationStartTimeLayout);
             setDateOnPicker(1990, 3, 23);
             setTimeOnPicker(17, 2);
 
+            scrollTo(R.id.appointmentCreationEndTimeLayout);
             clickOn(R.id.appointmentCreationEndTimeLayout);
             setDateOnPicker(1990, 3, 23);
             setTimeOnPicker(18, 2);
 
-
             clickOn(R.id.appointmentCreationbtnDone);
             assertDisplayed(R.string.appointmentCreationTimeError);
-        }
-    }
+            clickOn(R.string.appointment_creation_reset_btn_txt);
 
-    @Test
-    public void addFragmentWorksCorrectly() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            Thread.sleep(1000);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationShowAdd);
             clickOn(R.id.appointmentCreationShowAdd);
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
             closeSoftKeyboard();
+            scrollTo(R.id.appointmentSettingsBtnAdd);
             clickOn(R.id.appointmentSettingsBtnAdd);
             assertDisplayed(R.id.appointmentSettingsSearchAdd, "");
             assertDisplayed(username2);
-        }
-    }
+            clickOn(R.string.appointment_creation_reset_btn_txt);
 
-    @Test
-    public void banFragmentWorksCorrectly() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            Thread.sleep(1000);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationShowBan);
             clickOn(R.id.appointmentCreationShowBan);
             writeTo(R.id.appointmentSettingsSearchBan, username2);
             closeSoftKeyboard();
+            scrollTo(R.id.appointmentSettingsBtnBan);
             clickOn(R.id.appointmentSettingsBtnBan);
             assertDisplayed(R.id.appointmentSettingsSearchBan, "");
             assertDisplayed(username2);
-        }
-    }
+            clickOn(R.string.appointment_creation_reset_btn_txt);
 
-    @Test
-    public void addingAUserToBanAndParticipantsShouldDisplayAnError() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
+            Thread.sleep(1000);
 
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            scrollTo(R.id.appointmentCreationShowBan);
             clickOn(R.id.appointmentCreationShowBan);
             writeTo(R.id.appointmentSettingsSearchBan, username2);
             closeSoftKeyboard();
+            scrollTo(R.id.appointmentSettingsBtnBan);
             clickOn(R.id.appointmentSettingsBtnBan);
 
+            scrollTo(R.id.appointmentCreationShowAdd);
             clickOn(R.id.appointmentCreationShowAdd);
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
             closeSoftKeyboard();
+            scrollTo(R.id.appointmentSettingsBtnAdd);
             clickOn(R.id.appointmentSettingsBtnAdd);
 
             clickOn(R.id.appointmentCreationbtnDone);
             assertDisplayed(R.string.appointmentCreationAddBanError);
+            clickOn(R.string.appointment_creation_reset_btn_txt);
+
+            Thread.sleep(1000);
         }
     }
 
@@ -227,46 +205,57 @@ public class AppointmentActivityAddModeTest {
         ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
 
         //COURSE
+        scrollTo(R.id.appointmentCreationEditTxtAppointmentCourseSet);
         writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
         closeSoftKeyboard();
 
         //TITLE
+        scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
         writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
         closeSoftKeyboard();
 
         //START TIME
+        scrollTo(R.id.appointmentCreationStartTimeLayout);
         clickOn(R.id.appointmentCreationStartTimeLayout);
         setDateOnPicker(2022, 3, 23);
         setTimeOnPicker(17, 2);
 
         //END TIME
+        scrollTo(R.id.appointmentCreationEndTimeLayout);
         clickOn(R.id.appointmentCreationEndTimeLayout);
         setDateOnPicker(2022, 3, 23);
         setTimeOnPicker(18, 2);
 
         //PRIVATE = true
+        scrollTo(R.id.appointmentCreationPrivateSelector);
         clickOn(R.id.appointmentCreationPrivateSelector);
 
         //ADD user 2
+        scrollTo(R.id.appointmentCreationShowAdd);
         clickOn(R.id.appointmentCreationShowAdd);
+        scrollTo(R.id.appointmentSettingsSearchAdd);
         writeTo(R.id.appointmentSettingsSearchAdd, username2);
         closeSoftKeyboard();
+        scrollTo(R.id.appointmentSettingsBtnAdd);
         clickOn(R.id.appointmentSettingsBtnAdd);
 
         //BAN user 3
+        scrollTo(R.id.appointmentCreationShowBan);
         clickOn(R.id.appointmentCreationShowBan);
+        scrollTo(R.id.appointmentSettingsSearchBan);
         writeTo(R.id.appointmentSettingsSearchBan, username3);
         closeSoftKeyboard();
+        scrollTo(R.id.appointmentSettingsBtnBan);
         clickOn(R.id.appointmentSettingsBtnBan);
 
         clickOn(R.id.appointmentCreationbtnDone);
 
-        Thread.sleep(2000);
-        scenario.close();
 
         HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").get()).getValue();
         assertNotNull(aptId);
         assertEquals(1, aptId.keySet().size());
+
+        Thread.sleep(2000);
 
         for (Object id : aptId.keySet()) {
             HashMap apt = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child((String) id).get()).getValue();
@@ -282,5 +271,6 @@ public class AppointmentActivityAddModeTest {
             assertEquals(expectedDate.getTimeInMillis(), ((long) apt.get("start")), 1000);
         }
 
+        scenario.close();
     }
 }
