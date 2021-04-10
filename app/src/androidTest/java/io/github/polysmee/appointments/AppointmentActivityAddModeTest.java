@@ -250,12 +250,12 @@ public class AppointmentActivityAddModeTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
 
+        Thread.sleep(2000);
 
         HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").get()).getValue();
         assertNotNull(aptId);
         assertEquals(1, aptId.keySet().size());
 
-        Thread.sleep(2000);
 
         for (Object id : aptId.keySet()) {
             HashMap apt = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child((String) id).get()).getValue();
@@ -272,5 +272,6 @@ public class AppointmentActivityAddModeTest {
         }
 
         scenario.close();
+
     }
 }
