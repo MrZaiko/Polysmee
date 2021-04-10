@@ -2,16 +2,12 @@ package io.github.polysmee.agora;
 
 import android.Manifest;
 import android.content.Context;
-
 import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
 public class VoiceCall {
 
@@ -64,16 +60,16 @@ public class VoiceCall {
 
         }
 
-        String userId =  MainUserSingleton.getInstance().getId() + " Tes";
+        String userId =  MainUserSingleton.getInstance().getId();
         String token = generateToken(userId);
-        mRtcEngine.joinChannelWithUserAccount(token,"appointmentId",userId);
+        mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
     }
 
 
     private String generateToken(String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
-        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,"appointmentId",userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
     private void initializeHandler() {

@@ -129,6 +129,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             //params.horizontalBias =  0f;
             layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
+            joinChannel();
 
         }
 
@@ -139,7 +140,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void joinChannel() {
 
         if(voiceCall == null) {
+
             String appointmentId = requireArguments().getString(MESSAGES_KEY);
+            System.out.println("MESSAGE KEY = " + MESSAGES_KEY);
+            System.out.println("IDDDDDDD: " + appointmentId);
 
             voiceCall = new VoiceCall(appointmentId, getContext(), requestPermissionLauncher);
         }
