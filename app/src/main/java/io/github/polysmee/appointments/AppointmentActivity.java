@@ -30,45 +30,61 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
 
-/*
- * Mode :   0 ==> Add (Default)
- *          1 ==> Detail
+/**
+ * Activity to interact with appointment
  *
+ * MODES :
+ *      ADD_MODE    ==>  create an appointment for the current user
+ *      DETAIL_MODE ==>  display information about an appointment (ID given in Intent). If the
+ *                       current user is the owner, they can update the appointment from this
+ *                       activity.
+ *
+ * INTENTS :
+ *      LAUNCH_MODE (NEEDED) :  0 ==> Add
+ *                              1 ==> Detail
+ *             Note => USE STATIC ATTRIBUTES FOR THE MODE SELECTION
+ *
+ *      APPOINTMENT_ID (NEEDED in DETAIL_MODE) : the appointment to be displayed
  */
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
+    // Intents related attributes
+    public static String LAUNCH_MODE = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_LAUNCH_MODE";
+    public static String APPOINTMENT_ID = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_APPOINTMENT_ID";
+
     public static final int ADD_MODE = 0;
     public static final int DETAIL_MODE = 1;
+    private int mode;
+    private Appointment appointment;
 
+    // IDs for communication with fragments
     public static final String INVITES = "INVITES";
     public static final String REMOVED_INVITES = "REMOVED INVITES";
     public static final String BANS = "BANS";
     public static final String REMOVED_BANS = "REMOVED BANS";
 
-    private Calendar calendarStartTime, calendarEndTime;
+    //DATE related attributes
+    private final String dateFormat = "dd/MM/yyyy - HH:mm";
+    private Calendar date, calendarStartTime, calendarEndTime;
     private boolean startTimeUpdated, endTimeUpdated;
-    private String title;
-    private String course;
-    private Set<String> invites, bans, removedInvites, removedBans;
-    private boolean isPrivate, isOwner;
-    boolean isKeyboardShowing = false;
 
+    //Fragments related attributes
+    private Set<String> invites, bans, removedInvites, removedBans;
+    private boolean isAddShown, isBanShown;
+
+    // Misc
+    private boolean isOwner;
+    boolean isKeyboardShowing;
+
+    // Layout related attributes
     private EditText editTitle, editCourse;
     private Button btnDone, btnReset;
     private TextView txtTimeError, txtAddBanError, txtStartTime, txtEndTime, txtAdd, txtBan;
     private SwitchCompat privateSelector;
     private ImageView showAdd, showBan;
     private View addFragment, banFragment, bottomBar, startTimeLayout, endTimeLayout;
-    private boolean isAddShown, isBanShown;
 
-    //A calendar is a wait to get time using year/month... and allows to transform it to epoch time
-    private final String dateFormat = "dd/MM/yyyy - HH:mm";
-    private Calendar date;
 
-    private int mode;
-    private Appointment appointment;
-    public static String LAUNCH_MODE = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_LAUNCH_MODE";
-    public static String APPOINTMENT_ID = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_APPOINTMENT_ID";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +93,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         //========================================INIT==============================================
 
-        //store all objects on the activity (buttons, textViews...) in variables
         attributeSetters();
 
         mode = getIntent().getIntExtra(LAUNCH_MODE, ADD_MODE);
@@ -88,6 +103,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             appointment = new DatabaseAppointment(appointmentId);
         }
 
+        //Fragment setup
         AppointmentCreationAddUserFragment addFragment =
                 (AppointmentCreationAddUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationAddUserFragment);
         addFragment.launchSetup(mode, appointmentId);
@@ -105,7 +121,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtAddBanError.setVisibility(View.GONE);
 
         startTimeEndTimeSelectorsSetup();
-        privateSelector.setOnCheckedChangeListener((l,newValue) -> isPrivate = newValue);
 
         addBanSetup();
         bottomBarSetup(false);
@@ -116,6 +131,50 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
     }
 
+    /**
+     * store all objects on the activity (buttons, textViews...) in variables
+     */
+    private void attributeSetters() {
+        calendarStartTime = Calendar.getInstance();
+        calendarEndTime = Calendar.getInstance();
+        date = Calendar.getInstance();
+        startTimeUpdated = false;
+        endTimeUpdated = false;
+
+        invites = new HashSet<>();
+        bans = new HashSet<>();
+        removedInvites = new HashSet<>();
+        removedBans = new HashSet<>();
+
+        isAddShown = false;
+        isBanShown = false;
+        isOwner = false;
+        isKeyboardShowing = false;
+
+        startTimeLayout = findViewById(R.id.appointmentCreationStartTimeLayout);
+        endTimeLayout = findViewById(R.id.appointmentCreationEndTimeLayout);
+        privateSelector = findViewById(R.id.appointmentCreationPrivateSelector);
+        bottomBar = findViewById(R.id.appointmentCreationBottomBar);
+        showAdd = findViewById(R.id.appointmentCreationShowAdd);
+        addFragment = findViewById(R.id.appointmentCreationAddUserFragment);
+        showBan = findViewById(R.id.appointmentCreationShowBan);
+        banFragment = findViewById(R.id.appointmentCreationBanUserFragment);
+        editTitle = findViewById(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+        editCourse = findViewById(R.id.appointmentCreationEditTxtAppointmentCourseSet);
+        btnDone = findViewById(R.id.appointmentCreationbtnDone);
+        btnReset = findViewById(R.id.appointementCreationBtnReset);
+        txtTimeError = findViewById(R.id.appointmentCreationTimeError);
+        txtAddBanError = findViewById(R.id.appointmentCreationAddBanError);
+        txtStartTime = findViewById(R.id.appointmentCreationStartTime);
+        txtEndTime = findViewById(R.id.appointmentCreationEndTime);
+        txtAdd = findViewById(R.id.appointmentCreationAddTextView);
+        txtBan = findViewById(R.id.appointmentCreationBanTextView);
+    }
+
+    /**
+     * Make the whole activity clickable or not according to isClickable
+     * @param isClickable true if the UI must be clickable
+     */
     private void setupClickable(boolean isClickable) {
         editTitle.setEnabled(isClickable);
         editCourse.setEnabled(isClickable);
@@ -125,6 +184,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         privateSelector.setClickable(isClickable);
     }
 
+    /**
+     * Used in DETAIL_MODE to display the values of the appointment
+     */
     private void listenersSetup() {
         appointment.getStartTimeAndThen(start -> {
             Date startDate = new Date(start);
@@ -152,11 +214,22 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         appointment.getPrivateAndThen(val -> privateSelector.setChecked(val));
     }
 
+    /**
+     * Connect the startTime and endTime layouts to the date and time picker
+     */
     private void startTimeEndTimeSelectorsSetup() {
         startTimeLayout.setOnClickListener(v -> showDateTimePicker(txtStartTime, true));
         endTimeLayout.setOnClickListener(v -> showDateTimePicker(txtEndTime, false));
     }
 
+    /**
+     * ADD_MODE => BAR:VISIBLE - RESET:VISIBLE - DONE:VISIBLE
+     * DETAIL_MODE =>
+     *      isOwner => BAR:VISIBLE - RESET:GONE - DONE:VISIBLE
+     *      !isOwner => BAR:GONE - RESET:GONE - DONE:GONE
+     *
+     * @param isOwner used in detail mode to show the bottom bar
+     */
     private void bottomBarSetup(boolean isOwner) {
         if (mode == DETAIL_MODE) {
             btnDone.setText(R.string.AppointmentActivityDetailModeApplyChanges);
@@ -168,64 +241,121 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 bottomBar.setVisibility(View.GONE);
         }
 
-        btnDone.setOnClickListener(v -> {
-            boolean error = false;
+        btnDone.setOnClickListener(this::doneButtonBehavior);
 
-            //if startTime is bigger than endTime we have a negative duration which doesn't work
-            //It isn't possible to create an appointment scheduled before the current time
-            Calendar c = Calendar.getInstance();
-            c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
-
-            Set<String> invitesInterBans = new HashSet<>(invites);
-            invitesInterBans.retainAll(bans);
-
-            if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= System.currentTimeMillis()){
-                txtTimeError.setVisibility(View.VISIBLE);
-                error = true;
-            }
-
-            if (!invitesInterBans.isEmpty()) {
-                txtAddBanError.setVisibility(View.VISIBLE);
-                error = true;
-            }
-
-            if (!error) {
-                title = editTitle.getText().toString();
-                course = editCourse.getText().toString();
-                sendData();
-                finish();
-            }
-        });
-
-        btnReset.setOnClickListener(v -> {
-            //reset every input text field and both start and end times
-            editTitle.setText("");
-            editCourse.setText("");
-            txtAddBanError.setVisibility(View.GONE);
-            txtTimeError.setVisibility(View.GONE);
-            calendarEndTime = Calendar.getInstance();
-            txtEndTime.setText(getString(R.string.appointment_creation_pick_end_time));
-            calendarStartTime = Calendar.getInstance();
-            txtStartTime.setText(getString(R.string.appointment_creation_pick_start_time));
-
-            if (isAddShown) {
-                showAdd.performClick();
-                isAddShown = false;
-            }
-            AppointmentCreationAddUserFragment addFragment =
-                    (AppointmentCreationAddUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationAddUserFragment);
-            addFragment.reset();
-
-            if (isBanShown) {
-                showBan.performClick();
-                isBanShown = false;
-            }
-            AppointmentCreationBanUserFragment banFragment =
-                    (AppointmentCreationBanUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationBanUserFragment);
-            banFragment.reset();
-        });
+        btnReset.setOnClickListener(this::resetButtonBehavior);
     }
 
+    /**
+     *  Call sendData() and finish the activity if no error.
+     *  Error =>
+     *      TIME ERROR      => start time before current time of end time before start time
+     *      ADD BAN ERROR   => a user is in the participant list and in the ban list
+     */
+    private void doneButtonBehavior(View view) {
+        boolean error = false;
+
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.MONTH, c.get(Calendar.MONTH) - 1);
+
+        Set<String> invitesInterBans = new HashSet<>(invites);
+        invitesInterBans.retainAll(bans);
+
+        //if startTime is bigger than endTime we have a negative duration which doesn't work
+        //It isn't possible to create an appointment scheduled before the current time
+        if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= System.currentTimeMillis()){
+            txtTimeError.setVisibility(View.VISIBLE);
+            error = true;
+        }
+
+        // A user cannot be banned and added at the same time
+        if (!invitesInterBans.isEmpty()) {
+            txtAddBanError.setVisibility(View.VISIBLE);
+            error = true;
+        }
+
+        if (!error) {
+            sendData();
+            finish();
+        }
+    }
+
+    /**
+     *  Reset all fields to their default value
+     */
+    private void resetButtonBehavior(View view) {
+        //reset every input text field and both start and end times
+        editTitle.setText("");
+        editCourse.setText("");
+        txtAddBanError.setVisibility(View.GONE);
+        txtTimeError.setVisibility(View.GONE);
+        calendarEndTime = Calendar.getInstance();
+        txtEndTime.setText(getString(R.string.appointment_creation_pick_end_time));
+        calendarStartTime = Calendar.getInstance();
+        txtStartTime.setText(getString(R.string.appointment_creation_pick_start_time));
+
+        if (isAddShown) {
+            showAdd.performClick();
+            isAddShown = false;
+        }
+        AppointmentCreationAddUserFragment addFragment =
+                (AppointmentCreationAddUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationAddUserFragment);
+        addFragment.reset();
+
+        if (isBanShown) {
+            showBan.performClick();
+            isBanShown = false;
+        }
+        AppointmentCreationBanUserFragment banFragment =
+                (AppointmentCreationBanUserFragment) getSupportFragmentManager().findFragmentById(R.id.appointmentCreationBanUserFragment);
+        banFragment.reset();
+    }
+
+    /**
+     * Setup the add and ban layout to show or hide the corresponding fragment.
+     * Change the show[Add/Ban] drawable accordingly.
+     */
+    private void addBanSetup() {
+        addFragment.setVisibility(View.GONE);
+        showAdd.setOnClickListener(l -> {
+            if (isAddShown) {
+                addFragment.setVisibility(View.GONE);
+                showAdd.setImageResource(R.drawable.baseline_arrow_right);
+            } else {
+                addFragment.setVisibility(View.VISIBLE);
+                showAdd.setImageResource(R.drawable.baseline_arrow_drop_down);
+            }
+            isAddShown = !isAddShown;
+        });
+        txtAdd.setOnClickListener(l -> {
+            showAdd.performClick();
+        });
+        if (mode == DETAIL_MODE)
+            txtAdd.setText(R.string.AppointmentActivityDetailModeParticipants);
+
+        banFragment.setVisibility(View.GONE);
+        showBan.setOnClickListener(s -> {
+            if (isBanShown) {
+                banFragment.setVisibility(View.GONE);
+                showBan.setImageResource(R.drawable.baseline_arrow_right);
+            } else {
+                banFragment.setVisibility(View.VISIBLE);
+                showBan.setImageResource(R.drawable.baseline_arrow_drop_down);
+            }
+            isBanShown = !isBanShown;
+        });
+        txtBan.setOnClickListener(l -> {
+            showBan.performClick();
+        });
+        if (mode == DETAIL_MODE)
+            txtBan.setText(R.string.AppointmentActivityDetailModeBannedParticipants);
+    }
+
+    /**
+     *  Detect if the keyboard is shown or not and set the attribute isKeyboardShowing
+     *  accordingly.
+     *  Call the method updateBottomBar() when the keyboard is opened or closed.
+     */
     private void setupKeyboardDetection() {
         final ViewGroup contentView = (ViewGroup) ((ViewGroup) this
                 .findViewById(android.R.id.content)).getChildAt(0);
@@ -257,6 +387,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         });
     }
 
+    /**
+     *  Display the bottomBar if the keyboard is not shown to the user
+     */
     private void updateBottomBar() {
         if (!isKeyboardShowing && (mode != DETAIL_MODE || isOwner))
             bottomBar.setVisibility(View.VISIBLE);
@@ -264,44 +397,12 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             bottomBar.setVisibility(View.GONE);
     }
 
-    private void addBanSetup() {
-        addFragment.setVisibility(View.GONE);
-        showAdd.setOnClickListener(l -> {
-            if (isAddShown) {
-                addFragment.setVisibility(View.GONE);
-                showAdd.setImageResource(R.drawable.baseline_arrow_right);
-            } else {
-                addFragment.setVisibility(View.VISIBLE);
-                showAdd.setImageResource(R.drawable.baseline_arrow_drop_down);
-            }
-            isAddShown = !isAddShown;
-        });
-        txtAdd.setOnClickListener(l -> {
-                showAdd.performClick();
-        });
-
-        if (mode == DETAIL_MODE)
-            txtAdd.setText(R.string.AppointmentActivityDetailModeParticipants);
-
-        banFragment.setVisibility(View.GONE);
-        showBan.setOnClickListener(s -> {
-            if (isBanShown) {
-                banFragment.setVisibility(View.GONE);
-                showBan.setImageResource(R.drawable.baseline_arrow_right);
-            } else {
-                banFragment.setVisibility(View.VISIBLE);
-                showBan.setImageResource(R.drawable.baseline_arrow_drop_down);
-            }
-            isBanShown = !isBanShown;
-        });
-        txtBan.setOnClickListener(l -> {
-                showBan.performClick();
-        });
-        if (mode == DETAIL_MODE)
-            txtBan.setText(R.string.AppointmentActivityDetailModeBannedParticipants);
-    }
-
-    //Function which first displays a DatePicker then a TimePicker and stores all the information in Calendar date
+    /**
+     * Display a date and time picker. Store the value selected in date attribute and set the text
+     * of textView accordingly
+     * @param textView View showing the selected date
+     * @param isStart True if the view corresponds to the startDate
+     */
     private void showDateTimePicker(TextView textView, boolean isStart) {
         final Calendar currentDate = Calendar.getInstance();
         date = Calendar.getInstance();
@@ -317,6 +418,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }, currentDate.get(Calendar.YEAR), currentDate.get(Calendar.MONTH), currentDate.get(Calendar.DATE)).show();
     }
 
+    /**
+     *  Used in showDateTimePicker to update the textView and the date attribute ( calendarStartTime or calendarEndTime)
+     */
     private void updateCalendar(TextView textView, boolean isStart) {
         //Update start or end time with user input
         if (isStart) {
@@ -333,22 +437,27 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         textView.setText(DateFormat.format(dateFormat, date.getTime()));
     }
 
-
+    /**
+     * Create (ADD_MODE) or update (DETAIL_MODE) the appointment
+     */
     private void sendData() {
         //Avoid conversion problem
         long startTime = calendarStartTime.getTimeInMillis();
         long duration = calendarEndTime.getTimeInMillis() - calendarStartTime.getTimeInMillis();
+        String title = editTitle.getText().toString();
+        String course = editCourse.getText().toString();
+        boolean isPrivate = privateSelector.isChecked();
 
         if (mode == ADD_MODE) {
             String aptID = MainUserSingleton.getInstance().createNewUserAppointment(startTime, duration, course, title, isPrivate);
             appointment = new DatabaseAppointment(aptID);
         } else {
             //TODO mb a new function to edit everything at once
-            if (!editTitle.getText().toString().equals(""))
-                appointment.setTitle(editTitle.getText().toString());
+            if (!title.equals(""))
+                appointment.setTitle(title);
 
-            if (!editCourse.getText().toString().equals(""))
-                appointment.setCourse(editCourse.getText().toString());
+            if (!course.equals(""))
+                appointment.setCourse(course);
 
             if (startTimeUpdated)
                 appointment.setStartTime(startTime);
@@ -359,11 +468,19 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             appointment.setPrivate(isPrivate);
         }
 
-        User.getAllUsersIdsAndThenOnce(this::updateParticipantsAndBans);
+        User.getAllUsersIdsAndThenOnce(this::updateAppointmentParticipantsAndBans);
     }
 
-    //not efficient at all
-    private void updateParticipantsAndBans(Set<String> allIds) {
+    /**
+     * Add all banned user to the ban list of the appointment.
+     * Add the new appointment to all users that are not banned. If a banned user is in the invite list,
+     * this user is skipped.
+     *
+     * DETAIL_MODE => also remove participants or banned if needed
+     *
+     * @param allIds set of all Users
+     */
+    private void updateAppointmentParticipantsAndBans(Set<String> allIds) {
         for(String userId : allIds){
             User user = new DatabaseUser(userId);
             user.getNameAndThen((name) -> {
@@ -400,47 +517,11 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
     }
 
-    private void attributeSetters() {
-        calendarStartTime = Calendar.getInstance();
-        calendarEndTime = Calendar.getInstance();
-        date = Calendar.getInstance();
-        startTimeUpdated = false;
-        endTimeUpdated = false;
-
-        title = "";
-        course = "";
-
-        invites = new HashSet<>();
-        bans = new HashSet<>();
-        removedInvites = new HashSet<>();
-        removedBans = new HashSet<>();
-
-        isAddShown = false;
-        isBanShown = false;
-        isPrivate = false;
-        isOwner = false;
-
-        startTimeLayout = findViewById(R.id.appointmentCreationStartTimeLayout);
-        endTimeLayout = findViewById(R.id.appointmentCreationEndTimeLayout);
-        privateSelector = findViewById(R.id.appointmentCreationPrivateSelector);
-        bottomBar = findViewById(R.id.appointmentCreationBottomBar);
-        showAdd = findViewById(R.id.appointmentCreationShowAdd);
-        addFragment = findViewById(R.id.appointmentCreationAddUserFragment);
-        showBan = findViewById(R.id.appointmentCreationShowBan);
-        banFragment = findViewById(R.id.appointmentCreationBanUserFragment);
-        editTitle = findViewById(R.id.appointmentCreationEditTxtAppointmentTitleSet);
-        editCourse = findViewById(R.id.appointmentCreationEditTxtAppointmentCourseSet);
-        btnDone = findViewById(R.id.appointmentCreationbtnDone);
-        btnReset = findViewById(R.id.appointementCreationBtnReset);
-        txtTimeError = findViewById(R.id.appointmentCreationTimeError);
-        txtAddBanError = findViewById(R.id.appointmentCreationAddBanError);
-        txtStartTime = findViewById(R.id.appointmentCreationStartTime);
-        txtEndTime = findViewById(R.id.appointmentCreationEndTime);
-        txtAdd = findViewById(R.id.appointmentCreationAddTextView);
-        txtBan = findViewById(R.id.appointmentCreationBanTextView);
-
-    }
-
+    /**
+     * Used by the fragments to send data to this activity
+     * @param data sent data
+     * @param id id of this data
+     */
     @Override
     public void dataPass(Set<String> data, String id) {
         //Any changes to the sets may correct the error

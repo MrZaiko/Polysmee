@@ -30,14 +30,21 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
 
+/**
+ * Fragment used by AppointmentActivity to display, add and remove participants to an appointment
+ *
+ * ADD_MODE     ==> ADD participant
+ * DETAIL_MODE  ==> display participants and if the current user is the owner allows them to remove
+ *                  them and add more
+ */
 public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
 
     private EditText searchInvite;
     private ImageView btnInvite;
     private LinearLayout invitesList;
-    private Set<String> invites, removedInvites;
 
+    private Set<String> invites, removedInvites;
     DataPasser dataPasser;
 
     private int mode;
@@ -64,6 +71,23 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         return rootView;
     }
 
+    /**
+     * store all objects on the activity (buttons, textViews...) in variables
+     */
+    private void attributeSetters(View rootView) {
+        searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
+        btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnAdd);
+        invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
+        invites = new HashSet<>();
+        removedInvites = new HashSet<>();
+    }
+
+    /**
+     * Setup the fragment for a particular mode
+     *
+     * @param mode DETAIL_MODE or ADD_MODE (see AppointmentActivity)
+     * @param appointmentID used in DETAIL_MODE, the appointment to display participant from
+     */
     public void launchSetup(int mode, String appointmentID) {
         this.mode = mode;
 
@@ -71,7 +95,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             appointment = new DatabaseAppointment(appointmentID);
         }
 
-        btnInvite.setOnClickListener(btnInviteListener);
+        btnInvite.setOnClickListener(this::inviteButtonBehavior);
         searchInvite.setHint("Type names here");
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
@@ -92,13 +116,21 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         }
     }
 
+    /**
+     * Reset all views to their default values
+     */
     public void reset() {
         invites.clear();
         dataPasser.dataPass(invites, AppointmentActivity.INVITES);
         invitesList.removeAllViews();
     }
 
-    View.OnClickListener btnInviteListener = v -> {
+    /**
+     * ADD_MODE     =>  Add the user with the specified name to the participants list
+     * DETAIL_MODE  =>  Add the user with the specified name to the participants list and remove
+     *                  it from the removed participant list
+     */
+    private void inviteButtonBehavior(View view) {
         //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchInvite.getText().toString();
         if(!invites.contains(s) && !s.isEmpty()) {
@@ -115,6 +147,16 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         }
     };
 
+    /**
+     * Used by inviteButtonBehavior() to display the user added with a remove button
+     *      ADD_MODE    =>  REMOVE_BUTTON removes the user form the participants list
+     *                      REMOVE_BUTTON:VISIBLE
+     *      DETAIL_MODE =>  REMOVE_BUTTON removes the user form the participants list and adds it
+     *                      to the removedParticipants list
+     *              isOwner  => REMOVE_BUTTON:VISIBLE
+     *              !isOwner => REMOVE_BUTTON:GONE
+     * @param userName name of the added user
+     */
     private void addInvite(String userName) {
         ConstraintLayout newBanLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.element_appointment_creation, null);
         ((TextView) newBanLayout.findViewById(R.id.appointmentCreationElementText)).setText(userName);
@@ -145,11 +187,4 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.addView(newBanLayout);
     }
 
-    private void attributeSetters(View rootView) {
-        searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
-        btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnAdd);
-        invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
-        invites = new HashSet<>();
-        removedInvites = new HashSet<>();
-    }
 }
