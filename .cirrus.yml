@@ -16,7 +16,7 @@ check_android_task:
     FIREBASE_CONFIG: ENCRYPTED[a0d16f4fe9b01f4321fff5d923eac48a6a4f5aead5b618175964c65ee9f0e869254a61b0c0675cde35750d37c109df0a]
     FIREBASE_DB_RULES : ENCRYPTED[6e05671a2de103c196cbd4037eb207a75d066d5cd031b4fc01998f348fe4917b31cc983e5efdc61816354917bd243fee]
   create_device_script:
-    echo "no" | avdmanager --verbose create avd --force --name "test" --device "pixel" --package "system-images;android-28;default;x86" --tag "google_apis" --abi "x86"
+    echo "no" | avdmanager --verbose create avd --force --name "test" --device "pixel" --package "system-images;android-28;default;x86" --abi "x86"
   start_emulator_background_script:
     $ANDROID_SDK_ROOT/emulator/emulator -avd test -no-window -gpu swiftshader_indirect -no-snapshot -no-audio -no-boot-anim -camera-back none
   firebase_json_file:
