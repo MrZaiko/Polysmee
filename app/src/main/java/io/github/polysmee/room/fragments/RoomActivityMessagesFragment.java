@@ -18,6 +18,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -34,6 +36,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import io.github.polysmee.agora.VoiceCall;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.messages.Message;
@@ -67,6 +70,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase(appointmentId);
 
+
         return rootView;
 
     }
@@ -99,6 +103,8 @@ public class RoomActivityMessagesFragment extends Fragment {
     private void deleteMessage(String messageKey) {
         databaseReference.child(messageKey).removeValue();
     }
+
+
 
     private void closeKeyboard() {
         try {
@@ -270,6 +276,8 @@ public class RoomActivityMessagesFragment extends Fragment {
             public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
+
+
 
 
 }

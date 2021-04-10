@@ -9,17 +9,22 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.VoiceCall;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
+
+import static io.github.polysmee.room.fragments.RoomActivityMessagesFragment.MESSAGES_KEY;
 
 /**
  * Fragment that display all participants given in argument
@@ -34,6 +39,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private boolean isMuted = false;
     private boolean isInCall = false;
 
+    private VoiceCall voiceCall;
+    private ActivityResultLauncher<String> requestPermissionLauncher;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -43,6 +51,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         this.appointment = new DatabaseAppointment(appointmentId);
         this.inflater = getLayoutInflater();
         generateParticipantsView();
+        initializePermissionRequester();
 
         return rootView;
     }
@@ -120,9 +129,33 @@ public class RoomActivityParticipantsFragment extends Fragment {
             //params.horizontalBias =  0f;
             layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
+
         }
 
         callButton.setLayoutParams(params);
 
+    }
+
+    private void joinChannel() {
+
+        if(voiceCall == null) {
+            String appointmentId = requireArguments().getString(MESSAGES_KEY);
+
+            voiceCall = new VoiceCall(appointmentId, getContext(), requestPermissionLauncher);
+        }
+
+        voiceCall.joinChannel();
+
+    }
+
+    private void initializePermissionRequester() {
+        requestPermissionLauncher =
+                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    if (isGranted) {
+                        System.out.println("granted");
+                    } else {
+                        System.out.println("not granted");
+                    }
+                });
     }
 }
