@@ -197,10 +197,10 @@ public class DatabaseAppointmentTest {
         ReentrantLock lock = new ReentrantLock();
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
-        AtomicBoolean moreThanOne = new AtomicBoolean(false);
+        AtomicBoolean listenerRan = new AtomicBoolean(false);
         StringSetValueListener sv = (ids) -> {
             lock.lock();
-            moreThanOne.set(ids.size() >= 1);
+            listenerRan.set(Boolean.TRUE);
             bool.set(Boolean.TRUE);
             cv.signal();
             lock.unlock();
@@ -211,7 +211,7 @@ public class DatabaseAppointmentTest {
             while(!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeParticipantsListener(sv);
-            assertTrue(moreThanOne.get());
+            assertTrue(listenerRan.get());
         } finally {
             lock.unlock();
         }
@@ -260,7 +260,7 @@ public class DatabaseAppointmentTest {
         AtomicBoolean isPrivate = new AtomicBoolean(false);
         BooleanValueListener sv = (ids) -> {
             lock.lock();
-            isPrivate.set(ids);
+            isPrivate.set(!ids);
             bool.set(Boolean.TRUE);
             cv.signal();
             lock.unlock();
