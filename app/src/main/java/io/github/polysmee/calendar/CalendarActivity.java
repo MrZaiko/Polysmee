@@ -86,7 +86,7 @@ public class CalendarActivity extends AppCompatActivity{
      * they have that given day.
      */
     protected void chooseDate(){
-        long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+        long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight();
         Date chosenDay = new Date(epochTimeChosenDay);
 
         Calendar calendarChosenDay = Calendar.getInstance();
@@ -153,8 +153,8 @@ public class CalendarActivity extends AppCompatActivity{
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
-        Date startDate = new Date(appointment.getStartTime() * 1000);
-        Date endDate = new Date((appointment.getStartTime()+appointment.getDuration())*1000);
+        Date startDate = new Date(appointment.getStartTime() );
+        Date endDate = new Date((appointment.getStartTime()+appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());
 
         if (current.before(startDate))
@@ -240,7 +240,7 @@ public class CalendarActivity extends AppCompatActivity{
         ConstraintLayout dateLayout = findViewById(R.id.todayDateCalendarActivity);
         TextView day = dateLayout.findViewById(R.id.activityCalendarDay);
         TextView month = dateLayout.findViewById(R.id.activityCalendarMonth);
-        long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+        long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight();
         Date today = new Date(epochTimeToday);
 
         SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.US);

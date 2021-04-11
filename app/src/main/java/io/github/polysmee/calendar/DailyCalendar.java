@@ -20,7 +20,7 @@ public class DailyCalendar {
 
 
     /**
-     * Gets the chosen's date time at midnight in seconds, and sets the
+     * Gets the chosen's date time at midnight in milliseconds, and sets the
      * midnightEpochTime attribute to that; this function is used when the user
      * changes the day he wants to see his appointments
      * @param year the chosen's date year
@@ -34,11 +34,11 @@ public class DailyCalendar {
         date.set(Calendar.MINUTE,0);
         date.set(Calendar.SECOND,0);
         date.set(Calendar.MILLISECOND,0);
-        midnightEpochTime = date.getTimeInMillis()/1000;
+        midnightEpochTime = date.getTimeInMillis();
     }
     /**
-     * Gets the date's time at midnight in seconds epoch as chosen by the user
-     * @return the time at midnight in seconds
+     * Gets the date's time at midnight in milliseconds epoch as chosen by the user
+     * @return the time at midnight in milliseconds
      */
     public static long getDayEpochTimeAtMidnight(){
         return midnightEpochTime; //get the day of interest's time at midnight in seconds epoch
@@ -56,7 +56,7 @@ public class DailyCalendar {
         if(userAppointments == null)
             throw new IllegalArgumentException();
         long todayMidnightTime = getDayEpochTimeAtMidnight();
-        long nextDayMidnightTime = todayMidnightTime + 24 * 3600; //get the epoch time in seconds of next day at midnight
+        long nextDayMidnightTime = todayMidnightTime + 24 * 3600 * 1000; //get the epoch time in seconds of next day at midnight
         List<CalendarAppointmentInfo> todayAppointments = new ArrayList<>();
         for(CalendarAppointmentInfo appointment : userAppointments){
             if(appointment.getStartTime() >= todayMidnightTime && appointment.getStartTime() < nextDayMidnightTime){
