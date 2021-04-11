@@ -18,7 +18,11 @@ public interface User{
 
     void getNameAndThen(StringValueListener valueListener);
 
+    void removeNameListener(StringValueListener valueListener);
+
     void getAppointmentsAndThen(StringSetValueListener valueListener);
+
+    void removeAppointmentsListener(StringSetValueListener valueListener);
 
     /**
      * Adds the given appointment to the set of appointments

@@ -34,17 +34,53 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeAppointment(Appointment appointment) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .setValue(null);
     }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void removeNameListener(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .removeEventListener(valueListener);
     }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void removeAppointmentsListener(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .removeEventListener(valueListener);
     }
 
     @Override

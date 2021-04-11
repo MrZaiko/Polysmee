@@ -12,17 +12,29 @@ public interface Appointment {
 
     void getStartTimeAndThen(LongValueListener l);
 
+    void removeStartListener(LongValueListener l);
+
     void getDurationAndThen(LongValueListener l);
+
+    void removeDurationListener(LongValueListener l);
 
     String getId();
 
     void getCourseAndThen(StringValueListener s);
 
+    void removeCourseListener(StringValueListener l);
+
     void getTitleAndThen(StringValueListener s);
+
+    void removeTitleListener(StringValueListener l);
 
     void getParticipantsIdAndThen(StringSetValueListener s);
 
+    void removeParticipantsListener(StringSetValueListener s);
+
     void getOwnerIdAndThen(StringValueListener s);
+
+    void removeOwnerListener(StringValueListener s);
 
     /**
      * Sets the appointment's start time
@@ -72,8 +84,12 @@ public interface Appointment {
     boolean removeParticipant(User participant);
 
     void getBansAndThen(StringSetValueListener s);
-    
+
+    void removeBansListener(StringSetValueListener s);
+
     void getPrivateAndThen(BooleanValueListener bool);
+
+    void removePrivateListener(BooleanValueListener bool);
 
     void setPrivate(boolean isPrivate);
 

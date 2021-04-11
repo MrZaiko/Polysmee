@@ -24,6 +24,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeStartListener(LongValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("start")
+                .removeEventListener(l);
+    }
+
+    @Override
     public void getDurationAndThen(LongValueListener l) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -31,6 +41,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("duration")
                 .addValueEventListener(l);
+    }
+
+    @Override
+    public void removeDurationListener(LongValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("duration")
+                .removeEventListener(l);
     }
 
     @Override
@@ -44,12 +64,33 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeCourseListener(StringValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("course")
+                .removeEventListener(l);
+    }
+
+    @Override
     public void getTitleAndThen(StringValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
-                .child(id).child("title")
+                .child(id)
+                .child("title")
                 .addValueEventListener(s);
+    }
+
+    @Override
+    public void removeTitleListener(StringValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("title")
+                .removeEventListener(l);
     }
 
     @Override
@@ -63,6 +104,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeParticipantsListener(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("participants")
+                .removeEventListener(s);
+    }
+
+    @Override
     public void getOwnerIdAndThen(StringValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -70,6 +121,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("owner")
                 .addValueEventListener(s);
+    }
+
+    @Override
+    public void removeOwnerListener(StringValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("owner")
+                .removeEventListener(s);
     }
 
     @Override
@@ -160,6 +221,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeBansListener(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .removeEventListener(s);
+    }
+
+    @Override
     public void getPrivateAndThen(BooleanValueListener b) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -167,6 +238,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("private")
                 .addValueEventListener(b);
+    }
+
+    @Override
+    public void removePrivateListener(BooleanValueListener bool) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("private")
+                .removeEventListener(bool);
     }
 
     @Override

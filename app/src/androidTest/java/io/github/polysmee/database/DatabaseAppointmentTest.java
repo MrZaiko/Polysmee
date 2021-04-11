@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
@@ -58,19 +59,19 @@ public class DatabaseAppointmentTest {
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicLong start = new AtomicLong(-1);
+        LongValueListener ll = (star) -> {
+            lock.lock();
+            start.getAndSet(star);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
         lock.lock();
         try {
-            new DatabaseAppointment(apid).getStartTimeAndThen(
-                    (star) -> {
-                        lock.lock();
-                        start.getAndSet(star);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            new DatabaseAppointment(apid).getStartTimeAndThen(ll);
             while(!bool.get())
                 cv.await();
+            new DatabaseAppointment(apid).removeStartListener(ll);
             assertEquals(start.get(), 0);
         } finally {
             lock.unlock();
