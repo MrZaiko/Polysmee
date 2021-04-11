@@ -35,7 +35,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.User;
 import io.github.polysmee.messages.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;

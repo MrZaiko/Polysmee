@@ -1,7 +1,4 @@
-package io.github.polysmee.interfaces;
-
-import java.util.HashSet;
-import java.util.Set;
+package io.github.polysmee.database;
 
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;

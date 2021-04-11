@@ -1,7 +1,5 @@
 package io.github.polysmee.database.decoys;
 
-import androidx.annotation.Nullable;
-
 import java.util.HashSet;
 
 import java.util.Objects;
@@ -12,8 +10,8 @@ import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 
 public class FakeDatabaseAppointment implements Appointment {
 

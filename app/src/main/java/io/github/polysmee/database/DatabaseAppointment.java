@@ -1,15 +1,9 @@
 package io.github.polysmee.database;
 
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.Set;
-
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 
 public class DatabaseAppointment implements Appointment {
 
