@@ -60,7 +60,7 @@ public class VoiceCall {
 
         }
 
-        String userId =  MainUserSingleton.getInstance().getId();
+        String userId =  MainUserSingleton.getInstance().getId() + " test";
         String token = generateToken(userId);
         mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
     }

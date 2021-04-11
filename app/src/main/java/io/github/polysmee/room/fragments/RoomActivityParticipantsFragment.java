@@ -24,7 +24,6 @@ import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
 
-import static io.github.polysmee.room.fragments.RoomActivityMessagesFragment.MESSAGES_KEY;
 
 /**
  * Fragment that display all participants given in argument
@@ -141,9 +140,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         if(voiceCall == null) {
 
-            String appointmentId = requireArguments().getString(MESSAGES_KEY);
-            System.out.println("MESSAGE KEY = " + MESSAGES_KEY);
-            System.out.println("IDDDDDDD: " + appointmentId);
+            String appointmentId = requireArguments().getString(PARTICIPANTS_KEY);
 
             voiceCall = new VoiceCall(appointmentId, getContext(), requestPermissionLauncher);
         }
