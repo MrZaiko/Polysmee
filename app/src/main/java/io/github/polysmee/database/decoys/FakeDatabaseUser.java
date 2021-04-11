@@ -39,6 +39,11 @@ public class FakeDatabaseUser implements User {
         valueListener.onDone(name);
     }
 
+    @Override
+    public void removeNameListener(StringValueListener valueListener) {
+
+    }
+
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
@@ -46,6 +51,11 @@ public class FakeDatabaseUser implements User {
         for(Appointment elem : appointments)
             res.add(elem.getId());
         valueListener.onDone(res);
+    }
+
+    @Override
+    public void removeAppointmentsListener(StringSetValueListener valueListener) {
+
     }
 
     @Override

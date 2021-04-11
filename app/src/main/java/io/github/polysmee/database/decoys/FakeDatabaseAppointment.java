@@ -29,8 +29,18 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeStartListener(LongValueListener l) {
+
+    }
+
+    @Override
     public void getDurationAndThen(LongValueListener l) {
         l.onDone(appointmentInfo.duration);
+    }
+
+    @Override
+    public void removeDurationListener(LongValueListener l) {
+
     }
 
     @Override
@@ -44,8 +54,18 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeCourseListener(StringValueListener l) {
+
+    }
+
+    @Override
     public void getTitleAndThen(StringValueListener s) {
         s.onDone(appointmentInfo.name);
+    }
+
+    @Override
+    public void removeTitleListener(StringValueListener l) {
+
     }
 
     @Override
@@ -58,8 +78,18 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeParticipantsListener(StringSetValueListener s) {
+
+    }
+
+    @Override
     public void getOwnerIdAndThen(StringValueListener s) {
         s.onDone(appointmentInfo.owner.getId());
+    }
+
+    @Override
+    public void removeOwnerListener(StringValueListener s) {
+
     }
 
     @Override
@@ -101,7 +131,17 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeBansListener(StringSetValueListener s) {
+
+    }
+
+    @Override
     public void getPrivateAndThen(BooleanValueListener bool) {
+
+    }
+
+    @Override
+    public void removePrivateListener(BooleanValueListener bool) {
 
     }
 
