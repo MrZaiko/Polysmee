@@ -29,6 +29,7 @@ import io.github.polysmee.database.decoys.FakeDatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationMaster;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.settings.SettingsActivity;
 
@@ -67,13 +68,14 @@ public class CalendarActivity extends AppCompatActivity{
 
         Button createAppointmentButton    = findViewById(R.id.calendarActivityCreateAppointmentButton);
         createAppointmentButton.setOnClickListener((v) -> createAppointment());
-        addListenerToUserAppointments();
+        AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
+        //addListenerToUserAppointments();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        addListenerToUserAppointments();
+        //addListenerToUserAppointments();
     }
 
     /*

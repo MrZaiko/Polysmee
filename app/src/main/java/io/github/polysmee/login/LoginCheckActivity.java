@@ -24,7 +24,8 @@ public class LoginCheckActivity extends AppCompatActivity {
         if(user == null) {
             startActivity(new Intent(this, LoginActivity.class));
         } else {
-            AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
+            //TODO
+           // AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
             Intent intent = new Intent(this, CalendarActivity.class);
             startActivity(intent);
         }

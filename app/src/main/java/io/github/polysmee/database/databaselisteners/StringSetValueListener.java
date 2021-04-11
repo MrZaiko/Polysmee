@@ -15,6 +15,8 @@ import java.util.Set;
 
 import io.github.polysmee.interfaces.Appointment;
 
+import static io.github.polysmee.notification.AppointmentReminderNotificationMaster.createNotificationToUnderstand;
+
 public interface StringSetValueListener extends ValueEventListener {
 
     void onDone(Set<String> o);
@@ -22,10 +24,14 @@ public interface StringSetValueListener extends ValueEventListener {
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
         HashMap<String, Object> retrieved = (HashMap<String, Object>) snapshot.getValue();
-        if(retrieved != null)
+        if(retrieved != null){
+            createNotificationToUnderstand("removing starting",14);
             onDone(retrieved.keySet());
-        else
+        }
+        else {
+            createNotificationToUnderstand("remove not good",15);
             onDone(new HashSet<>());
+        }
     }
 
     @Override

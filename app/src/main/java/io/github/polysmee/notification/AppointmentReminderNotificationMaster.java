@@ -28,6 +28,8 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
+import static java.lang.Thread.sleep;
+
 public final class AppointmentReminderNotificationMaster {
     private static Context mContext;
     private static String keyCurrentNotListenedBoolean = "keyCurrentNotListenedBoolean";
@@ -42,52 +44,62 @@ public final class AppointmentReminderNotificationMaster {
     }
 
 
-    private static void createNotificationToUnderstand(String string) {
+    public static void createNotificationToUnderstand(String string, int notificationNumber) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, mContext.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(string);
-        NotificationManagerCompat.from(mContext).notify(0, builder.build());
+        NotificationManagerCompat.from(mContext).notify(notificationNumber, builder.build());
     }
 
 
     //launch at the start so that the reminder set are consistent with the database. i.e remove the reminder that are set but that the user are no longer part of
     private static void onDone(Set<String> o) {
+        createNotificationToUnderstand("start",3);
         SharedPreferences localAppointmentsState = mContext.getSharedPreferences(AppointmentReminderNotificationMaster.class.getName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor localAppointmentsStateEditor = localAppointmentsState.edit();
         //remove all the appointments reminder that are setup in the system but that doesn't exist for the main user anymore
         Set<String> localAppointments = localAppointmentsState.getAll().keySet();
         ArrayList<String> toRemove = new ArrayList<>();
+        createNotificationToUnderstand("removing starting",4);
         for (String appointmentId : localAppointments) {
             if (!o.contains(appointmentId)) {
                 toRemove.add(appointmentId);
             }
         }
+        createNotificationToUnderstand("half of removing",5);
         for (String appointmentId : toRemove) {
             AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(getReminderNotificationPendingIntent(mContext, appointmentId));
             localAppointmentsStateEditor.remove(appointmentId);
         }
         localAppointmentsStateEditor.apply();
+        createNotificationToUnderstand("removing done",6);
         //add listener to all the appointments who don't have a appointemnt yet
         boolean currentNotListenedBoolean = localAppointmentsState.getBoolean(keyCurrentNotListenedBoolean, false);
         o.removeAll(localAppointmentsState.getAll().keySet());
+        createNotificationToUnderstand("start to add listener",7);
         for (String appointmentId : o) {
             if (localAppointmentsState.getBoolean(appointmentId, currentNotListenedBoolean) == currentNotListenedBoolean) {
                 new DatabaseAppointment(appointmentId).getStartTimeAndThen(startTime -> {
+                    createNotificationToUnderstand("listener start appointmentId "+appointmentId,9);
                     AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                     long appointment_reminder_notification_time_ms = startTime - TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
                             mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
                             mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
+                    createNotificationToUnderstand("time calulated",10);
                     //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
                     //will trigger directly the alarm if the time passed as argument is greater than the current time
                     if (appointment_reminder_notification_time_ms < System.currentTimeMillis()) {
+
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, appointment_reminder_notification_time_ms, getReminderNotificationPendingIntent(mContext, appointmentId));
+                        createNotificationToUnderstand("alarmSet  ",11);
                     }
                 });
                 localAppointmentsStateEditor.putBoolean(appointmentId, !currentNotListenedBoolean);
             }
         }
         localAppointmentsStateEditor.apply();
+        createNotificationToUnderstand("finish",8);
     }
 
     /*
@@ -101,6 +113,15 @@ public final class AppointmentReminderNotificationMaster {
         SharedPreferences localAppointmentsState = mContext.getSharedPreferences(AppointmentReminderNotificationMaster.class.getName(), Context.MODE_PRIVATE);
         boolean newCurrentNotListenedBoolean = !(localAppointmentsState.getBoolean(keyCurrentNotListenedBoolean, false));
         localAppointmentsState.edit().putBoolean(keyCurrentNotListenedBoolean, newCurrentNotListenedBoolean).apply();
+        createNotificationToUnderstand("current boolean : "+newCurrentNotListenedBoolean,0);
+        try {
+            sleep(2000, 0);
+        } catch (InterruptedException e) {
+            createNotificationToUnderstand(e.toString(),1);
+        } finally {
+
+        };
+        createNotificationToUnderstand("calling",2);
         MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationMaster::onDone);
     }
 }
