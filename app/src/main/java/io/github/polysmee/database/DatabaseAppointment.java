@@ -21,25 +21,6 @@ public class DatabaseAppointment implements Appointment {
         this.id = id;
     }
 
-    public static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
-
-        DatabaseFactory
-                .getAdaptedInstance()
-                .getReference("appointments")
-                .get().addOnSuccessListener(dataSnapshot -> {
-                    if(dataSnapshot.getValue() != null) {
-                        Set<String> appos = new HashSet<>();
-                        HashMap<String, Object> hash = (HashMap<String, Object>) dataSnapshot.getValue();
-                        for (Map.Entry<String, Object> entry : hash.entrySet()) {
-                            if(!((Boolean) ((HashMap<String, Object>) entry.getValue()).get("private"))){
-                                appos.add(entry.getKey());
-                            }
-                        }
-                        ssv.onDone(appos);
-                    }
-
-                });
-    }
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
@@ -311,4 +292,26 @@ public class DatabaseAppointment implements Appointment {
                 .setValue(null);
         return true;
     }
+
+    @SuppressWarnings("ConstantConditions")
+    public static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
+
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .get().addOnSuccessListener(dataSnapshot -> {
+            if(dataSnapshot.getValue() != null) {
+                Set<String> appos = new HashSet<>();
+                HashMap<String, Object> hash = (HashMap<String, Object>) dataSnapshot.getValue();
+                for (Map.Entry<String, Object> entry : hash.entrySet()) {
+                    if(!((Boolean) ((HashMap<String, Object>) entry.getValue()).get("private"))){
+                        appos.add(entry.getKey());
+                    }
+                }
+                ssv.onDone(appos);
+            }
+
+        });
+    }
+
 }

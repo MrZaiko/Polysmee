@@ -100,12 +100,12 @@ public final class DatabaseUser implements User {
         newAppo.put("duration", duration);
         newAppo.put("course", course);
         newAppo.put("title", name);
+        newAppo.put("private", isPrivate);
         ref.setValue(newAppo);
 
         Appointment appointment = new DatabaseAppointment(ref.getKey());
-        addAppointment(appointment);
+        this.addAppointment(appointment);
         appointment.addParticipant(new DatabaseUser(self_id));
-        appointment.setPrivate(isPrivate);
         return ref.getKey();
     }
 
