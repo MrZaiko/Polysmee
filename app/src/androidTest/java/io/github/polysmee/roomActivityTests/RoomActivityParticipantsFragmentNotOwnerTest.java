@@ -71,19 +71,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
         sleep(1, SECONDS);
-        assertDisplayed(username1);
+        assertDisplayed("You");
         assertDisplayed(username2);
     }
-
-    @Test
-    public void onlyTheOwnerCanRemoveParticipants() {
-        Bundle bundle = new Bundle();
-        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-        sleep(1, SECONDS);
-        clickOn(username2);
-
-        onView(withId(R.id.roomActivityParticipantDialogRemoveButton)).check(matches(not(isDisplayed())));
-    }
-
 }

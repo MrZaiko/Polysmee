@@ -22,7 +22,6 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;

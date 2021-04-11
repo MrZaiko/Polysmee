@@ -6,6 +6,7 @@ import android.os.Bundle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.Espresso;
+import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.matcher.ViewMatchers;
@@ -16,7 +17,10 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -47,30 +51,36 @@ import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityTest {
 
     private static final String username1 = "Youssef le dindon";
+    private static final String appointmentTitle = "J'adore le surf";
+    private static final String appointmentCourse = "Surf";
     private static final String appointmentId = "-lsdqrhrrdtisjhmf";
+
+    private static Calendar startTime;
+    private static int appointmentYear = 2022;
+    private static int appointmentMonth = 3;
+    private static int appointmentDay = 7;
+
+    private static final SimpleDateFormat dayFormatter = new SimpleDateFormat("d");
+    private static final SimpleDateFormat letterDayFormatter = new SimpleDateFormat("EEEE");
 
     @BeforeClass
     public static void setUp() throws Exception {
+        startTime = Calendar.getInstance();
+        startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("polysmee271098@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-
-        /*DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);*/
-
-
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId).setValue(true);
     }
 
     @Before
@@ -82,70 +92,49 @@ public class CalendarActivityTest {
     @Test
     public void writtenDateIsCorrectTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
+            assertDisplayed(dayFormatter.format(date));
+            assertDisplayed(letterDayFormatter.format(date));
         }
     }
 
     @Test
     public void choosingAnotherDateChangesDisplayedDate(){
-        int year = 2021;
-        int month = 1;
-        int day = 13;
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
-
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             clickOn(R.id.todayDateCalendarActivity);
-            setDateOnPicker(year,month,day);
-            sleep(3,SECONDS);
+            setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
             long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
             Date date = new Date(epochTimeToday);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
-            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
+            assertDisplayed(dayFormatter.format(date));
+            assertDisplayed(letterDayFormatter.format(date));
         }
     }
 
     @Test
     public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(CalendarActivity.UserTypeCode, "Real");
-        intent.putExtras(bundle);
-
-        int year = 2021;
-        int month = 1;
-        int day = 13;
-
-        DailyCalendar.setDayEpochTimeAtMidnight(year,month,day);
-        long epochTimeOfThatDay = DailyCalendar.getDayEpochTimeAtMidnight();
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            CalendarAppointmentInfo info = new CalendarAppointmentInfo("FakeCourse", "FakeTitle",
-                    epochTimeOfThatDay,3600*2,appointmentId+11,null,0);
-
-            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),info.getDuration(),info.getCourse(),info.getTitle());
-
+            MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis()/1000,
+                    3600, appointmentCourse, appointmentTitle, false);
             sleep(3,SECONDS);
-            Date date = new Date(epochTimeOfThatDay*1000);
-            SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 
-            Espresso.onView(withText("Appointments on the " + formatter.format(date) +" : ")).check(doesNotExist());
+            boolean thrown = false;
+            try {
+                onView(withText(appointmentTitle)).check(matches(isDisplayed()));
+            } catch (NoMatchingViewException e) {
+                thrown = true;
+            }
+            assertTrue(thrown);
 
             clickOn(R.id.todayDateCalendarActivity);
-            setDateOnPicker(year,month,day);
-            sleep(3,SECONDS);
-            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
-            date = new Date(epochTimeToday);
-            assertDisplayed("Appointments on the " + formatter.format(date) +" : ");
+            setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
+            sleep(2,SECONDS);
+            assertDisplayed(appointmentTitle);
         }
     }
 
@@ -161,34 +150,26 @@ public class CalendarActivityTest {
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*2,3600*2,appointmentId+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*6,3600*6,appointmentId+i,null,i);
 
         }
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             for(int i = 0; i< number_of_appointments; ++i){
-                MainUserSingleton.getInstance().createNewUserAppointment(infos[i].getStartTime(),infos[i].getDuration(),infos[i].getCourse(),infos[i].getTitle());
+                MainUserSingleton.getInstance().createNewUserAppointment(infos[i].getStartTime(),
+                        infos[i].getDuration(), infos[i].getCourse(), infos[i].getTitle(), i%2==0);
                 sleep(3,SECONDS);
             }
+
             for(int i = 0; i<number_of_appointments;++i){
-                assertDisplayed(formatAppointmentDescription(infos[i]));
+                assertDisplayed(infos[i].getTitle());
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                Date startDate = new Date(infos[i].getStartTime()*1000);
+                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration())*1000);
+                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
             }
-
-
-
         }
     }
 
-    private String formatAppointmentDescription(CalendarAppointmentInfo appointment){
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append("Reunion name : ").append(appointment.getTitle());
-        stringBuilder.append("\n");
-        stringBuilder.append("Course name  : ").append(appointment.getCourse());
-        stringBuilder.append("\n");
-        Date date = new Date(appointment.getStartTime() * 1000);
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy HH:mm");
-        stringBuilder.append("Start time : ").append(formatter.format(date));
-        return stringBuilder.toString();
-    }
 }

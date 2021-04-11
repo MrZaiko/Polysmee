@@ -1,31 +1,22 @@
 package io.github.polysmee.room;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.login.MainUserSingleton;
@@ -97,8 +88,9 @@ public class RoomActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.roomMenuInfo:
-                Intent intent = new Intent(this, RoomActivityInfo.class);
-                intent.putExtra(RoomActivityInfo.APPOINTMENT_KEY, appointment.getId());
+                Intent intent = new Intent(this, AppointmentActivity.class);
+                intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+                intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
                 startActivity(intent);
                 return true;
             default:

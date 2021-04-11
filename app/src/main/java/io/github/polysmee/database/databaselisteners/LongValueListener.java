@@ -18,7 +18,5 @@ public interface LongValueListener extends ValueEventListener {
     }
 
     @Override
-    default void onCancelled(@NonNull DatabaseError error) {
-
-    }
+    default void onCancelled(@NonNull DatabaseError error) {}
 }

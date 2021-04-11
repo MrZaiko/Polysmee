@@ -26,7 +26,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static org.junit.Assert.*;
 

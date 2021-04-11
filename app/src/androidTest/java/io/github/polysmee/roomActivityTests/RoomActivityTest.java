@@ -33,12 +33,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.interfaces.User;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
-import io.github.polysmee.room.RoomActivityInfo;
 
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isChecked;
@@ -102,10 +102,10 @@ public class RoomActivityTest {
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            openActionBarOverflowOrOptionsMenu(ApplicationProvider.getApplicationContext());
             Intents.init();
-            onView(withText("Info")).perform(click());
-            intended(hasExtra(RoomActivityInfo.APPOINTMENT_KEY, appointmentId));
+            clickMenu(R.id.roomMenuInfo);
+            intended(hasExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE));
+            intended(hasExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId));
             Intents.release();
         }
     }
@@ -119,7 +119,7 @@ public class RoomActivityTest {
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
             swipeViewPagerForward();
             sleep(2, TimeUnit.SECONDS);
-            assertDisplayed(username1);
+            assertDisplayed("You");
             assertDisplayed(username2);
         }
     }

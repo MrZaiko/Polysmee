@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/roomEditMessageMenuDelete"
+        android:icon="@drawable/baseline_delete"
+        android:title="Delete"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/roomEditMessageMenuEdit"
+        android:icon="@drawable/baseline_mode_edit"
+        android:title="Edit"
+        app:showAsAction="ifRoom"/>
+</menu>
