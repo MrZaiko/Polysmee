@@ -27,7 +27,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
@@ -84,19 +87,19 @@ public class DatabaseAppointmentTest {
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicLong duration = new AtomicLong(-1);
+        LongValueListener ll = (dura) -> {
+            lock.lock();
+            duration.getAndSet(dura);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
         lock.lock();
         try {
-            new DatabaseAppointment(apid).getDurationAndThen(
-                    (dura) -> {
-                        lock.lock();
-                        duration.getAndSet(dura);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            new DatabaseAppointment(apid).getDurationAndThen(ll);
             while(!bool.get())
                 cv.await();
+            new DatabaseAppointment(apid).removeDurationListener(ll);
             assertEquals(duration.get(), 3600);
         } finally {
             lock.unlock();
@@ -109,19 +112,19 @@ public class DatabaseAppointmentTest {
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        StringValueListener sv = (name) -> {
+            lock.lock();
+            gotName.set(name);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
         lock.lock();
         try {
-            new DatabaseAppointment(apid).getCourseAndThen(
-                    (name) -> {
-                        lock.lock();
-                        gotName.set(name);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            new DatabaseAppointment(apid).getCourseAndThen(sv);
             while(!bool.get())
                 cv.await();
+            new DatabaseAppointment(apid).removeCourseListener(sv);
             assertEquals("AU", gotName.get());
         } finally {
             lock.unlock();
@@ -134,19 +137,19 @@ public class DatabaseAppointmentTest {
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        StringValueListener sv = (name) -> {
+            lock.lock();
+            gotName.set(name);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
         lock.lock();
         try {
-            new DatabaseAppointment(apid).getTitleAndThen(
-                    (name) -> {
-                        lock.lock();
-                        gotName.set(name);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            new DatabaseAppointment(apid).getTitleAndThen(sv);
             while(!bool.get())
                 cv.await();
+            new DatabaseAppointment(apid).removeTitleListener(sv);
             assertEquals("chihiro", gotName.get());
         } finally {
             lock.unlock();
@@ -159,19 +162,19 @@ public class DatabaseAppointmentTest {
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        StringValueListener sv = (name) -> {
+            lock.lock();
+            gotName.set(name);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
         lock.lock();
         try {
-            new DatabaseAppointment(apid).getOwnerIdAndThen(
-                    (name) -> {
-                        lock.lock();
-                        gotName.set(name);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            new DatabaseAppointment(apid).getOwnerIdAndThen(sv);
             while(!bool.get())
                 cv.await();
+            new DatabaseAppointment(apid).removeOwnerListener(sv);
             assertEquals(MainUserSingleton.getInstance().getId(), gotName.get());
         } finally {
             lock.unlock();
@@ -184,4 +187,95 @@ public class DatabaseAppointmentTest {
     }
 
 
+    @Test
+    public void getAllPublicAppointmentsOnce() {
+        DatabaseAppointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() > 1));
+    }
+
+    @Test
+    public void getParticipantsIdAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean moreThanOne = new AtomicBoolean(false);
+        StringSetValueListener sv = (ids) -> {
+            lock.lock();
+            moreThanOne.set(ids.size() >= 1);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            new DatabaseAppointment(apid).getParticipantsIdAndThen(sv);
+            while(!bool.get())
+                cv.await();
+            new DatabaseAppointment(apid).removeParticipantsListener(sv);
+            assertTrue(moreThanOne.get());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Test
+    public void addParticipant() {
+        Appointment ap = new DatabaseAppointment(apid);
+        User ck = new DatabaseUser("ck");
+        ap.addParticipant(ck);
+        ap.removeParticipant(ck);
+        ap.addBan(ck);
+        ap.removeBan(ck);
+    }
+
+    @Test
+    public void getBansAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean moreThanOne = new AtomicBoolean(false);
+        StringSetValueListener sv = (ids) -> {
+            lock.lock();
+            moreThanOne.set(Boolean.TRUE);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            new DatabaseAppointment(apid).getBansAndThen(sv);
+            while(!bool.get())
+                cv.await();
+            new DatabaseAppointment(apid).removeBansListener(sv);
+            assertTrue(moreThanOne.get());
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Test
+    public void getPrivateAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean isPrivate = new AtomicBoolean(false);
+        BooleanValueListener sv = (ids) -> {
+            lock.lock();
+            isPrivate.set(ids);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            new DatabaseAppointment(apid).setPrivate(false);
+            new DatabaseAppointment(apid).getPrivateAndThen(sv);
+            while(!bool.get())
+                cv.await();
+            new DatabaseAppointment(apid).removePrivateListener(sv);
+            assertTrue(isPrivate.get());
+
+        } finally {
+            lock.unlock();
+        }
+    }
 }

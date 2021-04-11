@@ -1,5 +1,13 @@
 package io.github.polysmee.database;
 
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
@@ -11,6 +19,26 @@ public class DatabaseAppointment implements Appointment {
 
     public DatabaseAppointment(String id) {
         this.id = id;
+    }
+
+    public static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
+
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .get().addOnSuccessListener(dataSnapshot -> {
+                    if(dataSnapshot.getValue() != null) {
+                        Set<String> appos = new HashSet<>();
+                        HashMap<String, Object> hash = (HashMap<String, Object>) dataSnapshot.getValue();
+                        for (Map.Entry<String, Object> entry : hash.entrySet()) {
+                            if(!((Boolean) ((HashMap<String, Object>) entry.getValue()).get("private"))){
+                                appos.add(entry.getKey());
+                            }
+                        }
+                        ssv.onDone(appos);
+                    }
+
+                });
     }
 
     @Override
