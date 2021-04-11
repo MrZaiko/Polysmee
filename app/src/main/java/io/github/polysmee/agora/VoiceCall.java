@@ -60,9 +60,19 @@ public class VoiceCall {
 
         }
 
-        String userId =  MainUserSingleton.getInstance().getId() + " test";
+        String userId =  MainUserSingleton.getInstance().getId();
         String token = generateToken(userId);
         mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
+    }
+
+    public void leaveChannel() {
+        if(mRtcEngine != null) {
+            mRtcEngine.leaveChannel();
+        }
+    }
+
+    public void mute(boolean mute) {
+        mRtcEngine.muteLocalAudioStream(mute);
     }
 
 

@@ -107,9 +107,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if (isMuted) {
             isMuted = false;
             ((ImageView) muteButton).setImageResource(R.drawable.baseline_mic);
+            voiceCall.mute(false);
         } else {
             isMuted = true;
             ((ImageView) muteButton).setImageResource(R.drawable.baseline_mic_off);
+            voiceCall.mute(true);
         }
     }
 
@@ -122,6 +124,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             //params.horizontalBias =  1f;
             layout.setBackgroundResource(R.drawable.background_participant_element);
             muteButton.setVisibility(View.GONE);
+            leaveChannel();
         } else {
             isInCall = true;
             ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
@@ -147,6 +150,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         voiceCall.joinChannel();
 
+    }
+
+    private void leaveChannel() {
+        voiceCall.leaveChannel();
     }
 
     private void initializePermissionRequester() {
