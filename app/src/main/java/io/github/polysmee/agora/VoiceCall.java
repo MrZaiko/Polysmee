@@ -5,13 +5,17 @@ import android.content.Context;
 import android.content.pm.PackageManager;
 
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.AuthenticationFactory;
 
 public class VoiceCall {
 
@@ -23,15 +27,39 @@ public class VoiceCall {
     private final String appointmentId;
     private final Context context;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private Set<String> usersConnected;
 
 
-    public VoiceCall(String appointmentId, Context context, ActivityResultLauncher<String> requestPermissionLauncher) {
+    public VoiceCall(@NonNull String appointmentId,@NonNull Context context, @NonNull ActivityResultLauncher<String> requestPermissionLauncher) {
         this.appointmentId = appointmentId;
         this.context = context;
         this.requestPermissionLauncher = requestPermissionLauncher;
+        usersConnected = new HashSet<String>();
     }
 
-    public void joinChannel() {
+    /**
+     *
+     * @param appointmentId
+     * @param context
+     * @param requestPermissionLauncher
+     * @param handler
+     * constructor with given handler for testing
+     */
+    public VoiceCall(@NonNull String appointmentId, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
+        this.appointmentId = appointmentId;
+        this.context = context;
+        this.requestPermissionLauncher = requestPermissionLauncher;
+        usersConnected = new HashSet<String>();
+        try {
+            mRtcEngine = RtcEngine.create(context, APP_ID, handler);
+            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public int joinChannel() {
 
         if (mRtcEngine == null) {
             initializeHandler();
@@ -60,14 +88,19 @@ public class VoiceCall {
 
         }
 
-        String userId =  MainUserSingleton.getInstance().getId();
+        String userId =  AuthenticationFactory.getAdaptedInstance().getUid();
         String token = generateToken(userId);
-        mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
+        int joined = mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
+        if(joined == 0) {
+            usersConnected.add(userId);
+        }
+        return joined;
     }
 
     public void leaveChannel() {
         if(mRtcEngine != null) {
             mRtcEngine.leaveChannel();
+            usersConnected.remove(AuthenticationFactory.getAdaptedInstance().getUid());
         }
     }
 
@@ -76,7 +109,7 @@ public class VoiceCall {
     }
 
 
-    private String generateToken(String userId) {
+    private String generateToken(@NonNull String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
         return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);

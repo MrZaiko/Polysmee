@@ -28,6 +28,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.interfaces.Appointment;
 import io.github.polysmee.interfaces.User;
+import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 
 
@@ -184,7 +185,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         requestPermissionLauncher =
                 this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
-                        ConstraintLayout participantsLayout = participantsViews.get(MainUserSingleton.getInstance().getId());
+                        ConstraintLayout participantsLayout = participantsViews.get(AuthenticationFactory.getAdaptedInstance().getUid());
                         ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                         callButton.callOnClick();
 
