@@ -9,11 +9,11 @@ public final class UploadServiceFactory {
 
     private static boolean isTest = false;
 
-    public static FirebaseStorage getAdaptedInstance(){
+    public static UploadService getAdaptedInstance(){
         if(isTest) {
-            throw new IllegalStateException("not implemented");
+            return new LocalUploadService();
         } else {
-            return FirebaseStorage.getInstance();
+            return new FirebaseUploadService();
         }
     }
 
