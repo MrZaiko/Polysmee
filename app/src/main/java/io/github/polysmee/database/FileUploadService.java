@@ -17,7 +17,7 @@ public final class FileUploadService {
         StorageReference ref = UploadServiceFactory.getAdaptedInstance().getReference().child(imageName);
         ref.putBytes(data)
                 .addOnSuccessListener(taskSnapshot -> onSuccess.onDone(imageName))
-                .addOnFailureListener(ignored      -> onFailure.onDone(imageName));
+                .addOnFailureListener(ignored      -> onFailure.onDone(ignored.getMessage()));
     }
 
     public static void downloadImage(String id, DownloadValueListener dvl, LoadValueListener fl) {
