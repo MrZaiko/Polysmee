@@ -9,6 +9,10 @@ public final class DatabaseFactory {
 
     private static boolean isTest = false;
 
+    /**
+     * @return a firebase database that may use a local emulator or not,
+     *  depending on state.
+     */
     public static FirebaseDatabase getAdaptedInstance(){
         if(isTest) {
             FirebaseDatabase fb = FirebaseDatabase.getInstance();

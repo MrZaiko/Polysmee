@@ -9,6 +9,10 @@ public final class UploadServiceFactory {
 
     private static boolean isTest = false;
 
+    /**
+     * @return an upload service that either runs locally or not,
+     * depending on state
+     */
     public static UploadService getAdaptedInstance(){
         if(isTest) {
             return new LocalUploadService();

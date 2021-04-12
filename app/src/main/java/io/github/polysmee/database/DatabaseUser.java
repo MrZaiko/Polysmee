@@ -84,11 +84,6 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public String createNewUserAppointment(long start, long duration, String course, String title) {
-        return createNewUserAppointment(start, duration, course, title, false);
-    }
-
-    @Override
     public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
         DatabaseReference ref = DatabaseFactory.getAdaptedInstance().getReference("appointments").push();
 

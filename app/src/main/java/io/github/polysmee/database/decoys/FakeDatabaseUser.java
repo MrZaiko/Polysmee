@@ -69,14 +69,6 @@ public class FakeDatabaseUser implements User {
     }
 
     @Override
-    public String createNewUserAppointment(long start, long duration, String course, String name) {
-        long id = FakeDatabase.idGenerator.incrementAndGet();
-        addAppointment(new FakeDatabaseAppointment("" + id));
-        FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
-        return "" + id;
-    }
-
-    @Override
     public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
         return null;
     }

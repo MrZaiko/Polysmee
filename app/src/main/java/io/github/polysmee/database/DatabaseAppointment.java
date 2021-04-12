@@ -1,8 +1,5 @@
 package io.github.polysmee.database;
 
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.database.DataSnapshot;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -148,9 +145,9 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean setStartTime(long startTime) {
+    public void setStartTime(long startTime) {
         if (startTime < 0)
-            return false;
+            return;
 
         DatabaseFactory
                 .getAdaptedInstance()
@@ -158,13 +155,12 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("start")
                 .setValue(startTime);
-        return true;
     }
 
     @Override
-    public boolean setDuration(long duration) {
+    public void setDuration(long duration) {
         if (duration < 0 || duration > 3600000 * 4)
-            return false;
+            return;
 
         DatabaseFactory
                 .getAdaptedInstance()
@@ -172,7 +168,6 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("duration")
                 .setValue(duration);
-        return true;
     }
 
     @Override
@@ -196,7 +191,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addParticipant(User newParticipant) {
+    public void addParticipant(User newParticipant) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -204,11 +199,10 @@ public class DatabaseAppointment implements Appointment {
                 .child("participants")
                 .child(newParticipant.getId())
                 .setValue(true);
-        return true;
     }
 
     @Override
-    public boolean removeParticipant(User participant) {
+    public void removeParticipant(User participant) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -216,7 +210,6 @@ public class DatabaseAppointment implements Appointment {
                 .child("participants")
                 .child(participant.getId())
                 .setValue(null);
-        return true;
     }
 
     @Override
@@ -270,7 +263,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addBan(User banned) {
+    public void addBan(User banned) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -278,11 +271,10 @@ public class DatabaseAppointment implements Appointment {
                 .child("banned")
                 .child(banned.getId())
                 .setValue(true);
-        return true;
     }
 
     @Override
-    public boolean removeBan(User unbanned) {
+    public void removeBan(User unbanned) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -290,28 +282,5 @@ public class DatabaseAppointment implements Appointment {
                 .child("banned")
                 .child(unbanned.getId())
                 .setValue(null);
-        return true;
     }
-
-    @SuppressWarnings("ConstantConditions")
-    public static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
-
-        DatabaseFactory
-                .getAdaptedInstance()
-                .getReference("appointments")
-                .get().addOnSuccessListener(dataSnapshot -> {
-            if(dataSnapshot.getValue() != null) {
-                Set<String> appos = new HashSet<>();
-                HashMap<String, Object> hash = (HashMap<String, Object>) dataSnapshot.getValue();
-                for (Map.Entry<String, Object> entry : hash.entrySet()) {
-                    if(!((Boolean) ((HashMap<String, Object>) entry.getValue()).get("private"))){
-                        appos.add(entry.getKey());
-                    }
-                }
-                ssv.onDone(appos);
-            }
-
-        });
-    }
-
 }

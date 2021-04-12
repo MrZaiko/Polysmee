@@ -93,15 +93,13 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean setStartTime(long startTime) {
+    public void setStartTime(long startTime) {
         appointmentInfo.start = startTime;
-        return true;
     }
 
     @Override
-    public boolean setDuration(long duration) {
+    public void setDuration(long duration) {
         appointmentInfo.duration = duration;
-        return true;
     }
 
     @Override
@@ -115,13 +113,11 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addParticipant(User newParticipant) {
-        return false;
+    public void addParticipant(User newParticipant) {
     }
 
     @Override
-    public boolean removeParticipant(User participant) {
-        return false;
+    public void removeParticipant(User participant) {
     }
 
 
@@ -151,13 +147,11 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addBan(User banned) {
-        return false;
+    public void addBan(User banned) {
     }
 
     @Override
-    public boolean removeBan(User unbanned) {
-        return false;
+    public void removeBan(User unbanned) {
     }
 
     @Override
