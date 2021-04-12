@@ -2,7 +2,11 @@ package io.github.polysmee.agora;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
+
 import androidx.activity.result.ActivityResultLauncher;
+import androidx.core.content.ContextCompat;
+
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
@@ -28,22 +32,28 @@ public class VoiceCall {
     }
 
     public void joinChannel() {
+
+        /*if(ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+            joinChannel();
+        }
+
+        if(ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
+            joinChannel();
+        }*/
+
         if (mRtcEngine == null) {
             initializeHandler();
-            if(true){//ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.ACCESS_BACKGROUND_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
-                //return;
+
+            try {
+                mRtcEngine = RtcEngine.create(context, APP_ID, handler);
+                mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                throw new RuntimeException(e.getMessage());
             }
 
-            if (true){//ContextCompat.checkSelfPermission(this.getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED) {
-                try {
-                    mRtcEngine = RtcEngine.create(context, APP_ID, handler);
-                    mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                    throw new RuntimeException(e.getMessage());
-                }
-            }
             System.out.println("nooooooooooooooooooooooooo");
 
 

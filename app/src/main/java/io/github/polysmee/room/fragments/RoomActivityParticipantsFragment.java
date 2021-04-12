@@ -1,5 +1,7 @@
 package io.github.polysmee.room.fragments;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,7 +16,11 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import io.github.polysmee.R;
 import io.github.polysmee.agora.VoiceCall;
@@ -40,6 +46,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private VoiceCall voiceCall;
     private ActivityResultLauncher<String> requestPermissionLauncher;
+    private Map<String, ConstraintLayout> participantsViews;
 
     @Nullable
     @Override
@@ -61,6 +68,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
      */
     private void generateParticipantsView() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
+        participantsViews = new HashMap<String, ConstraintLayout>();
 
         appointment.getParticipantsIdAndThen(p -> {
             layout.removeAllViewsInLayout();
@@ -68,6 +76,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             for (String id : p) {
                 User user = new DatabaseUser(id);
                 ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
+                participantsViews.put(id,participantsLayout);
                 participantsLayout.setBackgroundColor(Color.LTGRAY);
                 participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
 
@@ -118,6 +127,16 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void callButtonBehavior(View callButton, View muteButton, View layout) {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) callButton.getLayoutParams();
 
+        if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
+            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+            return;
+        }
+
+        if(!checkPermission(Manifest.permission.BLUETOOTH)) {
+            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
+            return;
+        }
+
         if (isInCall) {
             isInCall = false;
             ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
@@ -133,6 +152,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             muteButton.setVisibility(View.VISIBLE);
             joinChannel();
 
+
         }
 
         callButton.setLayoutParams(params);
@@ -140,6 +160,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     private void joinChannel() {
+
 
         if(voiceCall == null) {
 
@@ -153,17 +174,27 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     private void leaveChannel() {
-        voiceCall.leaveChannel();
+        if(voiceCall != null) {
+            voiceCall.leaveChannel();
+        }
+
     }
 
     private void initializePermissionRequester() {
         requestPermissionLauncher =
                 registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
-                        System.out.println("granted");
+                        ConstraintLayout participantsLayout = participantsViews.get(MainUserSingleton.getInstance().getId());
+                        ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
+                        callButton.callOnClick();
+
                     } else {
                         System.out.println("not granted");
                     }
                 });
+    }
+
+    private boolean checkPermission(String permission) {
+        return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 }

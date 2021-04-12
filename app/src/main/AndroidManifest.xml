@@ -33,6 +33,7 @@
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".room.RoomActivity" >
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
