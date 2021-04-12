@@ -189,7 +189,7 @@ public class DatabaseAppointmentTest {
 
     @Test
     public void getAllPublicAppointmentsOnce() {
-        DatabaseAppointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() > 1));
+        Appointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() > 1));
     }
 
     @Test
