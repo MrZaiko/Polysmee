@@ -43,25 +43,6 @@ public class ByteBuf {
         return this;
     }
 
-    public ByteBuf put(long v) {
-        buffer.putLong(v);
-        return this;
-    }
-
-    public ByteBuf put(String v) {
-        return put(v.getBytes());
-    }
-
-    public ByteBuf put(TreeMap<Short, String> extra) {
-        put((short)extra.size());
-
-        for (Map.Entry<Short, String> pair : extra.entrySet()) {
-            put(pair.getKey());
-            put(pair.getValue());
-        }
-
-        return this;
-    }
 
     public ByteBuf putIntMap(TreeMap<Short, Integer> extra) {
         put((short)extra.size());

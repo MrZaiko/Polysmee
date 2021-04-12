@@ -33,16 +33,6 @@ public class VoiceCall {
 
     public void joinChannel() {
 
-        /*if(ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
-            joinChannel();
-        }
-
-        if(ContextCompat.checkSelfPermission(context, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
-            joinChannel();
-        }*/
-
         if (mRtcEngine == null) {
             initializeHandler();
 

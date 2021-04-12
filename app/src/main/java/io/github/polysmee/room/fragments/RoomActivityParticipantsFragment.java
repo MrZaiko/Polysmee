@@ -182,7 +182,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private void initializePermissionRequester() {
         requestPermissionLauncher =
-                registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     if (isGranted) {
                         ConstraintLayout participantsLayout = participantsViews.get(MainUserSingleton.getInstance().getId());
                         ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
