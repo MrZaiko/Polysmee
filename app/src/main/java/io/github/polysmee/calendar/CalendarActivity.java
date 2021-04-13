@@ -13,7 +13,6 @@ import android.widget.LinearLayout;
 import android.app.DatePickerDialog;
 import android.widget.TextView;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -33,8 +32,8 @@ import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseUser;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.settings.SettingsActivity;
