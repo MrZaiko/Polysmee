@@ -1,15 +1,14 @@
 package io.github.polysmee.database;
 
-import com.google.firebase.database.FirebaseDatabase;
-
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 
 public class DatabaseAppointment implements Appointment {
 
@@ -19,6 +18,7 @@ public class DatabaseAppointment implements Appointment {
         this.id = id;
     }
 
+
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
         DatabaseFactory
@@ -27,6 +27,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("start")
                 .addValueEventListener(l);
+    }
+
+    @Override
+    public void removeStartListener(LongValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("start")
+                .removeEventListener(l);
     }
 
     @Override
@@ -40,6 +50,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeDurationListener(LongValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("duration")
+                .removeEventListener(l);
+    }
+
+    @Override
     public void getCourseAndThen(StringValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -50,12 +70,33 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeCourseListener(StringValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("course")
+                .removeEventListener(l);
+    }
+
+    @Override
     public void getTitleAndThen(StringValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
-                .child(id).child("title")
+                .child(id)
+                .child("title")
                 .addValueEventListener(s);
+    }
+
+    @Override
+    public void removeTitleListener(StringValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("title")
+                .removeEventListener(l);
     }
 
     @Override
@@ -69,6 +110,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeParticipantsListener(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("participants")
+                .removeEventListener(s);
+    }
+
+    @Override
     public void getOwnerIdAndThen(StringValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -79,14 +130,24 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeOwnerListener(StringValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("owner")
+                .removeEventListener(s);
+    }
+
+    @Override
     public String getId() {
         return id;
     }
 
     @Override
-    public boolean setStartTime(long startTime) {
+    public void setStartTime(long startTime) {
         if (startTime < 0)
-            return false;
+            return;
 
         DatabaseFactory
                 .getAdaptedInstance()
@@ -94,13 +155,12 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("start")
                 .setValue(startTime);
-        return true;
     }
 
     @Override
-    public boolean setDuration(long duration) {
+    public void setDuration(long duration) {
         if (duration < 0 || duration > 3600000 * 4)
-            return false;
+            return;
 
         DatabaseFactory
                 .getAdaptedInstance()
@@ -108,7 +168,6 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("duration")
                 .setValue(duration);
-        return true;
     }
 
     @Override
@@ -132,7 +191,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addParticipant(User newParticipant) {
+    public void addParticipant(User newParticipant) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -140,11 +199,10 @@ public class DatabaseAppointment implements Appointment {
                 .child("participants")
                 .child(newParticipant.getId())
                 .setValue(true);
-        return true;
     }
 
     @Override
-    public boolean removeParticipant(User participant) {
+    public void removeParticipant(User participant) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -152,7 +210,6 @@ public class DatabaseAppointment implements Appointment {
                 .child("participants")
                 .child(participant.getId())
                 .setValue(null);
-        return true;
     }
 
     @Override
@@ -166,6 +223,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void removeBansListener(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .removeEventListener(s);
+    }
+
+    @Override
     public void getPrivateAndThen(BooleanValueListener b) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -173,6 +240,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("private")
                 .addValueEventListener(b);
+    }
+
+    @Override
+    public void removePrivateListener(BooleanValueListener bool) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("private")
+                .removeEventListener(bool);
     }
 
     @Override
@@ -186,7 +263,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addBan(User banned) {
+    public void addBan(User banned) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -194,11 +271,10 @@ public class DatabaseAppointment implements Appointment {
                 .child("banned")
                 .child(banned.getId())
                 .setValue(true);
-        return true;
     }
 
     @Override
-    public boolean removeBan(User unbanned) {
+    public void removeBan(User unbanned) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -206,6 +282,5 @@ public class DatabaseAppointment implements Appointment {
                 .child("banned")
                 .child(unbanned.getId())
                 .setValue(null);
-        return true;
     }
 }

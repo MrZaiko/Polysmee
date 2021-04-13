@@ -23,11 +23,11 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
-import io.github.polysmee.appointments.fragments.DataPasser;
+import io.github.polysmee.interfaces.DataPasser;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
 
 /**

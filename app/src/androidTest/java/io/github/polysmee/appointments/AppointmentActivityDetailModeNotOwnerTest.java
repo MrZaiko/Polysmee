@@ -97,13 +97,15 @@ public class AppointmentActivityDetailModeNotOwnerTest {
             assertDisplayed(DateFormat.format(dateFormat, startTime.getTime()).toString());
             assertDisplayed(DateFormat.format(dateFormat, endTime.getTime()).toString());
             assertChecked(R.id.appointmentCreationPrivateSelector);
-            scrollTo(R.id.appointmentCreationAddTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationAddTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertNotDisplayed(R.id.appointmentSettingsSearchAddLayout);
             assertDisplayed(username1);
             assertDisplayed(username2);
-            scrollTo(R.id.appointmentCreationBanTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationBanTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertNotDisplayed(R.id.appointmentSettingsSearchBanLayout);
             assertDisplayed(username3);
 

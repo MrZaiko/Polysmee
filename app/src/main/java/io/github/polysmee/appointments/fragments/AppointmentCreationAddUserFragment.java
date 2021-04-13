@@ -5,11 +5,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,7 +15,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,8 +23,9 @@ import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
+import io.github.polysmee.interfaces.DataPasser;
 import io.github.polysmee.login.MainUserSingleton;
 
 /**

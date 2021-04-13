@@ -1,14 +1,13 @@
 package io.github.polysmee.database.decoys;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 
 public class FakeDatabaseUser implements User {
 
@@ -40,6 +39,11 @@ public class FakeDatabaseUser implements User {
         valueListener.onDone(name);
     }
 
+    @Override
+    public void removeNameListener(StringValueListener valueListener) {
+
+    }
+
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
@@ -50,6 +54,11 @@ public class FakeDatabaseUser implements User {
     }
 
     @Override
+    public void removeAppointmentsListener(StringSetValueListener valueListener) {
+
+    }
+
+    @Override
     public void addAppointment(Appointment newAppointment) {
         appointments.add(newAppointment);
     }
@@ -57,14 +66,6 @@ public class FakeDatabaseUser implements User {
     @Override
     public void removeAppointment(Appointment appointment) {
         appointments.remove(appointment);
-    }
-
-    @Override
-    public String createNewUserAppointment(long start, long duration, String course, String name) {
-        long id = FakeDatabase.idGenerator.incrementAndGet();
-        addAppointment(new FakeDatabaseAppointment("" + id));
-        FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
-        return "" + id;
     }
 
     @Override

@@ -114,13 +114,16 @@ public class AppointmentActivityDetailModeOwnerTest {
             assertDisplayed(DateFormat.format(dateFormat, startTime.getTime()).toString());
             assertDisplayed(DateFormat.format(dateFormat, endTime.getTime()).toString());
             assertChecked(R.id.appointmentCreationPrivateSelector);
-            scrollTo(R.id.appointmentCreationAddTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationAddTextView);
+            scrollTo(R.id.appointmentCreationShowBan);
+            sleep(5, SECONDS);
             assertDisplayed(R.id.appointmentSettingsSearchAddLayout);
             assertDisplayed(username1);
             assertDisplayed(username2);
-            scrollTo(R.id.appointmentCreationBanTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.id.appointmentCreationBanTextView);
+            scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.id.appointmentSettingsSearchBanLayout);
             assertDisplayed(username3);
 
@@ -161,7 +164,7 @@ public class AppointmentActivityDetailModeOwnerTest {
         setTimeOnPicker(19, 2);
 
         //PRIVATE = false
-        scrollTo(R.id.appointmentCreationPrivateSelector);
+        scrollTo(R.id.appointmentCreationShowAdd);
         clickOn(R.id.appointmentCreationPrivateSelector);
 
         clickOn(R.id.appointmentCreationbtnDone);

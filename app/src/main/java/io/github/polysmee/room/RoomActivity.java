@@ -18,7 +18,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.interfaces.Appointment;
+import io.github.polysmee.database.Appointment;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
 
