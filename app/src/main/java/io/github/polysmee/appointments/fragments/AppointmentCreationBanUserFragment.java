@@ -9,11 +9,14 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,10 +39,11 @@ import io.github.polysmee.login.MainUserSingleton;
 public class AppointmentCreationBanUserFragment extends Fragment {
     View rootView;
 
-    private EditText searchBan;
+    private AutoCompleteTextView searchBan;
     private ImageView btnBan;
     private LinearLayout bansList;
     private Set<String> bans, removedBans;
+    private ArrayList<String> users;
 
     DataPasser dataPasser;
 
@@ -65,11 +69,23 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      * store all objects on the activity (buttons, textViews...) in variables
      */
     private void attributeSetters(View rootView) {
+        users = new ArrayList<>();
+        User.getAllUsersIdsAndThenOnce(this::UsersNamesGetter);
         searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, users);
+        searchBan.setAdapter(adapter);
         btnBan = rootView.findViewById(R.id.appointmentSettingsBtnBan);
         bansList = rootView.findViewById(R.id.appointmentCreationBansList);
         bans = new HashSet<>();
         removedBans = new HashSet<>();
+    }
+
+    private void UsersNamesGetter(Set<String> allIds) {
+        for(String userId : allIds){
+            User user = new DatabaseUser(userId);
+            user.getNameAndThen((name) -> users.add(name));
+        }
     }
 
     /**

@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,11 +40,12 @@ import io.github.polysmee.login.MainUserSingleton;
 public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
 
-    private EditText searchInvite;
+    private AutoCompleteTextView searchInvite;
     private ImageView btnInvite;
     private LinearLayout invitesList;
 
     private Set<String> invites, removedInvites;
+    private ArrayList<String> users;
     DataPasser dataPasser;
 
     private int mode;
@@ -73,11 +76,23 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      * store all objects on the activity (buttons, textViews...) in variables
      */
     private void attributeSetters(View rootView) {
+        users = new ArrayList<>();
+        User.getAllUsersIdsAndThenOnce(this::UsersNamesGetter);
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, users);
+        searchInvite.setAdapter(adapter);
         btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnAdd);
         invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
         invites = new HashSet<>();
         removedInvites = new HashSet<>();
+    }
+
+    private void UsersNamesGetter(Set<String> allIds) {
+        for(String userId : allIds){
+            User user = new DatabaseUser(userId);
+            user.getNameAndThen((name) -> users.add(name));
+        }
     }
 
     /**
@@ -129,7 +144,6 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      *                  it from the removed participant list
      */
     private void inviteButtonBehavior(View view) {
-        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchInvite.getText().toString();
         if(!invites.contains(s) && !s.isEmpty()) {
             invites.add(s);

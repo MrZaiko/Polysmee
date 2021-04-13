@@ -30,6 +30,7 @@
     <string name="appointment_creation_done_create_appointment">Done - Create Appointment</string>
     <string name="appointment_creation_reset_btn_txt">Reset</string>
     <string name="appointment_creation_maximum_duration_of_an_appointment_is_4h">Maximum duration of an appointment is 4h</string>
+    <string name="appointment_creation_only_users_in_database">You can only invite or ban users in the database</string>
     <string name="appointment_creation_end_time_txt">Click to set</string>
     <string name="appointment_creation_start_time_txt">Click to set</string>
     <string name="appointment_settings_check_invites">See/Delete invites</string>
