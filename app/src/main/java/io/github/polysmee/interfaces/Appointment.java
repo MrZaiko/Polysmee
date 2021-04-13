@@ -3,6 +3,7 @@ package io.github.polysmee.interfaces;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
@@ -75,7 +76,7 @@ public interface Appointment {
     boolean removeParticipant(User participant);
 
     void getBansAndThen(StringSetValueListener s);
-    
+
     void getPrivateAndThen(BooleanValueListener bool);
 
     void setPrivate(boolean isPrivate);
@@ -96,4 +97,8 @@ public interface Appointment {
      * @return true if the user was successfully unbanned
      */
     boolean removeBan(User unbanned);
+
+    static void getAllAppointmentsIdsAndThenOnce(StringSetValueListener valueListener){
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").addListenerForSingleValueEvent(valueListener);
+    }
 }

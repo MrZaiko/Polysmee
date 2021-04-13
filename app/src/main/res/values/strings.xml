@@ -6,7 +6,7 @@
     <string name="roomActivityParticipantsTab">Participants</string>
     <string name="roomInfoNotOwnerToastMessage">"Only the owner can change settings"</string>
 
-    <string name="calendarActivityTodayDate">Date</string>
+    <string name="calendarActivityTodayDateMyAppointments">Date</string>
     <string name="calendarActivityRefreshButton">Refresh</string>
     <string name="calendarActivityCreateAppointmentButton">Create</string>
     <string name="calendarEntryDescription">Description</string>
@@ -70,6 +70,7 @@
     <string name="AppointmentActivityDetailModeBannedParticipants">Banned participants</string>
     <string name="appointmentCreationTimeError">Start and end time must result in a correct time slot</string>
     <string name="appointmentCreationAddBanError">A user cannot be both added and banned</string>
+    <string name="calendarActivityTodayDatePublicAppointments">Date</string>
 
 </resources>
 

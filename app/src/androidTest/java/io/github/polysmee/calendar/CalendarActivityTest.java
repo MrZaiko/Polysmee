@@ -86,13 +86,13 @@ public class CalendarActivityTest {
     @Before
     public void setTodayDateInDailyCalendar(){
         Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
     }
 
     @Test
     public void writtenDateIsCorrectTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight());
+        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             assertDisplayed(dayFormatter.format(date));
@@ -105,9 +105,9 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.todayDateCalendarActivity);
+            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
             setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
-            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight();
+            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(false);
             Date date = new Date(epochTimeToday);
             assertDisplayed(dayFormatter.format(date));
             assertDisplayed(letterDayFormatter.format(date));
@@ -131,7 +131,7 @@ public class CalendarActivityTest {
             }
             assertTrue(thrown);
 
-            clickOn(R.id.todayDateCalendarActivity);
+            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
             setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
             sleep(2,SECONDS);
             assertDisplayed(appointmentTitle);
@@ -144,13 +144,13 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar todayDate = Calendar.getInstance();
-        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()));
+        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight(false)));
         int number_of_appointments = 4;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*6*1000,3600*6*1000,appointmentId+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i,null,i);
 
         }
 
