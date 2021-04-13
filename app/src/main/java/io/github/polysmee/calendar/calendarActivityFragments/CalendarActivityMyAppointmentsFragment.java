@@ -32,8 +32,8 @@ import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseAppointment;
 import io.github.polysmee.database.decoys.FakeDatabaseUser;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 

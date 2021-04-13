@@ -6,14 +6,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
-
-import io.github.polysmee.interfaces.Appointment;
 
 public interface StringSetValueListener extends ValueEventListener {
 

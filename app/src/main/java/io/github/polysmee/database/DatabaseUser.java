@@ -1,18 +1,13 @@
 package io.github.polysmee.database;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 
 public final class DatabaseUser implements User {
 
@@ -39,22 +34,53 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeAppointment(Appointment appointment) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .setValue(null);
     }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void removeNameListener(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .removeEventListener(valueListener);
     }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .addValueEventListener(valueListener);
     }
 
     @Override
-    public String createNewUserAppointment(long start, long duration, String course, String title) {
-        return createNewUserAppointment(start, duration, course, title, false);
+    public void removeAppointmentsListener(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .removeEventListener(valueListener);
     }
 
     @Override
@@ -69,12 +95,12 @@ public final class DatabaseUser implements User {
         newAppo.put("duration", duration);
         newAppo.put("course", course);
         newAppo.put("title", name);
+        newAppo.put("private", isPrivate);
         ref.setValue(newAppo);
 
         Appointment appointment = new DatabaseAppointment(ref.getKey());
-        addAppointment(appointment);
+        this.addAppointment(appointment);
         appointment.addParticipant(new DatabaseUser(self_id));
-        appointment.setPrivate(isPrivate);
         return ref.getKey();
     }
 

@@ -2,7 +2,7 @@ package io.github.polysmee.calendar;
 
 import androidx.annotation.Nullable;
 
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.User;
 
 
 /**

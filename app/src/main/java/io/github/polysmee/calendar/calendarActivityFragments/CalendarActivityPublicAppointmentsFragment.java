@@ -30,8 +30,8 @@ import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 
@@ -68,7 +68,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
             chooseDate();
         });
 
-        getAllAppointmentsForTheDay();
+        getAllPublicAppointmentsForTheDay();
         return rootView;
     }
 
@@ -97,7 +97,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
             DailyCalendar.setDayEpochTimeAtMidnight(year,monthOfYear,dayOfMonth,true);
             setDayText();
             scrollLayout.removeAllViewsInLayout();
-            getAllAppointmentsForTheDay();
+            getAllPublicAppointmentsForTheDay();
             //  addListenerToUserAppointments();
         }, calendarChosenDay.get(Calendar.YEAR), calendarChosenDay.get(Calendar.MONTH), calendarChosenDay.get(Calendar.DATE)).show();
 
@@ -221,8 +221,9 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * Gets all public appointments once, display only the ones on the selected day; to be called
      * when the fragment is loaded for the first time or when clicking on the refresh button.
      */
-    protected void getAllAppointmentsForTheDay() {
-        Appointment.getAllAppointmentsIdsAndThenOnce((allAppointmentIds) ->{
+    protected void getAllPublicAppointmentsForTheDay() {
+        Appointment.getAllPublicAppointmentsOnce((allAppointmentIds) ->{
+
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
             Set<String> newAppointments = new HashSet<>(allAppointmentIds);
             scrollLayout.removeAllViewsInLayout();
