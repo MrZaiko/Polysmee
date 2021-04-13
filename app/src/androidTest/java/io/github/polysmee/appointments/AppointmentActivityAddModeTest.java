@@ -68,7 +68,7 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
     }
 
-    @Test
+    /*@Test
     public void allTestsAtOnce() throws InterruptedException {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.ADD_MODE);
@@ -195,7 +195,7 @@ public class AppointmentActivityAddModeTest {
 
             Thread.sleep(1000);
         }
-    }
+    }*/
 
     @Test
     public void doneButtonCreateTheCorrectAppointmentInTheDatabase() throws InterruptedException, ExecutionException {
