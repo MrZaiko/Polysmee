@@ -35,6 +35,7 @@ import io.github.polysmee.database.decoys.FakeDatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.settings.SettingsActivity;
 
@@ -68,6 +69,7 @@ public class CalendarActivity extends AppCompatActivity{
             chooseDate();
         });
 
+        AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(getApplicationContext());
         addListenerToUserAppointments();
     }
 

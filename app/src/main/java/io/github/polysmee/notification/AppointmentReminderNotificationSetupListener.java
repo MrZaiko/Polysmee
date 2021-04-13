@@ -1,127 +1,139 @@
 package io.github.polysmee.notification;
 
 import android.app.AlarmManager;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
+import android.provider.Settings;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.preference.PreferenceManager;
 
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.login.LoginCheckActivity;
 import io.github.polysmee.login.MainUserSingleton;
 
 import static java.lang.Thread.sleep;
 
-public final class AppointmentReminderNotificationMaster {
+public final class AppointmentReminderNotificationSetupListener {
     private static Context mContext;
-    private static String keyCurrentNotListenedBoolean = "keyCurrentNotListenedBoolean";
+    private final static String keyCurrentNotListenedBoolean = "keyCurrentNotListenedBoolean";
+
+
+    private static String getlocalSharedPreferenceName(){
+        return mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationMaster);
+    }
 
     /*
      * The return pendingIntent is uniquely identify by the android system by the appointmentId and the fact that
      * it is a broadcast for AppointmentReminderNotificationPublisher
      */
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private static PendingIntent getReminderNotificationPendingIntent(@NonNull Context context, @NonNull String appointmentID) {
         Intent notificationIntent = new Intent(context, AppointmentReminderNotificationPublisher.class).setIdentifier(appointmentID);
         return PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
     }
 
 
+
     public static void createNotificationToUnderstand(String string, int notificationNumber) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(mContext.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
+                    , mContext.getResources().getString(R.string.appointment_reminder_notification_chanel_name), NotificationManager.IMPORTANCE_HIGH);
+            channel.setDescription(mContext.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = mContext.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+        Intent fullScreenIntent = new Intent(mContext, LoginCheckActivity.class);
+        PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(mContext, 0,
+                fullScreenIntent, 0);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(mContext, mContext.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(string);
-        NotificationManagerCompat.from(mContext).notify(notificationNumber, builder.build());
+                .setContentTitle(string)
+                .setContentText(string)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setVisibility(NotificationCompat.VISIBILITY_PRIVATE)
+                .setCategory(NotificationCompat.CATEGORY_EVENT)
+                .setFullScreenIntent(fullScreenPendingIntent, true)
+                .setSound(Settings.System.DEFAULT_RINGTONE_URI)
+                .setContentIntent(fullScreenPendingIntent)
+                .setAutoCancel(true);
+
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(mContext);
+        notificationManager.notify(notificationNumber, builder.build());
     }
 
 
     //launch at the start so that the reminder set are consistent with the database. i.e remove the reminder that are set but that the user are no longer part of
+    @RequiresApi(api = Build.VERSION_CODES.Q)
     private static void onDone(Set<String> o) {
-        createNotificationToUnderstand("start",3);
-        SharedPreferences localAppointmentsState = mContext.getSharedPreferences(AppointmentReminderNotificationMaster.class.getName(), Context.MODE_PRIVATE);
+        SharedPreferences localAppointmentsState = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor localAppointmentsStateEditor = localAppointmentsState.edit();
         //remove all the appointments reminder that are setup in the system but that doesn't exist for the main user anymore
         Set<String> localAppointments = localAppointmentsState.getAll().keySet();
+
         ArrayList<String> toRemove = new ArrayList<>();
-        createNotificationToUnderstand("removing starting",4);
         for (String appointmentId : localAppointments) {
-            if (!o.contains(appointmentId)) {
+            if (!o.contains(appointmentId) && (appointmentId !=keyCurrentNotListenedBoolean)) {
                 toRemove.add(appointmentId);
             }
         }
-        createNotificationToUnderstand("half of removing",5);
+        boolean currentNotListenedAppointmentBoolean = localAppointmentsState.getBoolean(keyCurrentNotListenedBoolean, false);
         for (String appointmentId : toRemove) {
             AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(getReminderNotificationPendingIntent(mContext, appointmentId));
             localAppointmentsStateEditor.remove(appointmentId);
-        }
-        localAppointmentsStateEditor.apply();
-        createNotificationToUnderstand("removing done",6);
-        //add listener to all the appointments who don't have a appointemnt yet
-        boolean currentNotListenedBoolean = localAppointmentsState.getBoolean(keyCurrentNotListenedBoolean, false);
-        o.removeAll(localAppointmentsState.getAll().keySet());
-        createNotificationToUnderstand("start to add listener",7);
-        for (String appointmentId : o) {
-            if (localAppointmentsState.getBoolean(appointmentId, currentNotListenedBoolean) == currentNotListenedBoolean) {
-                new DatabaseAppointment(appointmentId).getStartTimeAndThen(startTime -> {
-                    createNotificationToUnderstand("listener start appointmentId "+appointmentId,9);
-                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
-                    long appointment_reminder_notification_time_ms = startTime - TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
-                            mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-                            mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
-                    createNotificationToUnderstand("time calulated",10);
-                    //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
-                    //will trigger directly the alarm if the time passed as argument is greater than the current time
-                    if (appointment_reminder_notification_time_ms < System.currentTimeMillis()) {
-
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, appointment_reminder_notification_time_ms, getReminderNotificationPendingIntent(mContext, appointmentId));
-                        createNotificationToUnderstand("alarmSet  ",11);
-                    }
-                });
-                localAppointmentsStateEditor.putBoolean(appointmentId, !currentNotListenedBoolean);
+            if(localAppointmentsState.getBoolean(appointmentId, currentNotListenedAppointmentBoolean)!=currentNotListenedAppointmentBoolean){
+                //TODO remove listener from the database
             }
         }
         localAppointmentsStateEditor.apply();
-        createNotificationToUnderstand("finish",8);
+        //add listener to all the appointments that do not have listener set up yet
+        for (String appointmentId : o) {
+            if (localAppointmentsState.getBoolean(appointmentId, currentNotListenedAppointmentBoolean) == currentNotListenedAppointmentBoolean) {
+                new DatabaseAppointment(appointmentId).getStartTimeAndThen(startTime -> {
+                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
+                    //TODO remove second to milis
+                    long appointment_reminder_notification_time_ms = TimeUnit.SECONDS.toMillis(startTime) - TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
+                            mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                            mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
+                    //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
+                    //will trigger directly the alarm if the time passed as argument is greater than the current time
+                    if ( TimeUnit.SECONDS.toMillis(startTime)>System.currentTimeMillis()) {
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, appointment_reminder_notification_time_ms, getReminderNotificationPendingIntent(mContext, appointmentId));
+                    }
+                });
+                localAppointmentsStateEditor.putBoolean(appointmentId, !currentNotListenedAppointmentBoolean);
+            }
+        }
+        localAppointmentsStateEditor.apply();
     }
 
     /*
      * This function should be called as soon as the MainUserSingleton exist so that the reminder of appointments can be coherent with the database Value
-     * //TODO create a getAppointmentsAndThenServer to get value from server or nothing
      * @param context The Context in which to perform the setup
      *
      */
     public static void appointmentReminderNotificationSetListeners(@NonNull Context context) {
         mContext = context;
-        SharedPreferences localAppointmentsState = mContext.getSharedPreferences(AppointmentReminderNotificationMaster.class.getName(), Context.MODE_PRIVATE);
-        boolean newCurrentNotListenedBoolean = !(localAppointmentsState.getBoolean(keyCurrentNotListenedBoolean, false));
+        SharedPreferences localAppointmentsState = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
+        boolean newCurrentNotListenedBoolean = !(localAppointmentsState.getBoolean(keyCurrentNotListenedBoolean, true));
         localAppointmentsState.edit().putBoolean(keyCurrentNotListenedBoolean, newCurrentNotListenedBoolean).apply();
-        createNotificationToUnderstand("current boolean : "+newCurrentNotListenedBoolean,0);
-        try {
-            sleep(2000, 0);
-        } catch (InterruptedException e) {
-            createNotificationToUnderstand(e.toString(),1);
-        } finally {
-
-        };
-        createNotificationToUnderstand("calling",2);
-        MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationMaster::onDone);
+        MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
     }
 }
