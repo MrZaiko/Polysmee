@@ -1,8 +1,10 @@
 package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -44,6 +46,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private LinearLayout bansList;
     private Set<String> bans, removedBans;
     private ArrayList<String> users;
+    AlertDialog.Builder builder;
 
     DataPasser dataPasser;
 
@@ -79,6 +82,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         bansList = rootView.findViewById(R.id.appointmentCreationBansList);
         bans = new HashSet<>();
         removedBans = new HashSet<>();
+        builder = new AlertDialog.Builder(getActivity());
     }
 
     private void UsersNamesGetter(Set<String> allIds) {
@@ -140,7 +144,17 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private void banButtonBehavior(View view) {
         //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchBan.getText().toString();
-        if(!bans.contains(s) && !s.isEmpty()) {
+        if(!users.contains(s)) {
+            builder.setMessage("User not found")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
+        }
+
+        else if(!bans.contains(s) && !s.isEmpty()) {
             bans.add(s);
             dataPasser.dataPass(bans, AppointmentActivity.BANS);
             searchBan.setText("");
@@ -152,7 +166,10 @@ public class AppointmentCreationBanUserFragment extends Fragment {
 
             addBan(s);
         }
-    };
+        else {
+            searchBan.setText("");
+        }
+    }
 
     /**
      * Used by inviteButtonBehavior() to display the banned user with a remove button

@@ -1,6 +1,7 @@
 package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,9 +11,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
@@ -46,6 +49,8 @@ public class AppointmentCreationAddUserFragment extends Fragment {
 
     private Set<String> invites, removedInvites;
     private ArrayList<String> users;
+    AlertDialog.Builder builder;
+
     DataPasser dataPasser;
 
     private int mode;
@@ -86,6 +91,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
         invites = new HashSet<>();
         removedInvites = new HashSet<>();
+        builder = new AlertDialog.Builder(getActivity());
     }
 
     private void UsersNamesGetter(Set<String> allIds) {
@@ -145,7 +151,17 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      */
     private void inviteButtonBehavior(View view) {
         String s = searchInvite.getText().toString();
-        if(!invites.contains(s) && !s.isEmpty()) {
+        if(!users.contains(s)) {
+            builder.setMessage("User not found")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
+        }
+
+        else if(!invites.contains(s) && !s.isEmpty()) {
             invites.add(s);
             dataPasser.dataPass(invites, AppointmentActivity.INVITES);
             searchInvite.setText("");
@@ -157,7 +173,10 @@ public class AppointmentCreationAddUserFragment extends Fragment {
 
             addInvite(s);
         }
-    };
+        else {
+            searchInvite.setText("");
+        }
+    }
 
     /**
      * Used by inviteButtonBehavior() to display the user added with a remove button
