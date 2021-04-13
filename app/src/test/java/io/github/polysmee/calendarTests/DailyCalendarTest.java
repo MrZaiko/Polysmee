@@ -27,7 +27,7 @@ public class DailyCalendarTest {
     @Before
     public void setTodayDateInDailyCalendar(){
         Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
     }
 
     @Test
@@ -37,14 +37,13 @@ public class DailyCalendarTest {
         calendar.set(Calendar.MINUTE,0);
         calendar.set(Calendar.SECOND,0);
         calendar.set(Calendar.MILLISECOND,0);
-        long trueTime = calendar.getTimeInMillis()/1000;
-        assertEquals(DailyCalendar.getDayEpochTimeAtMidnight(),trueTime);
+        long trueTime = calendar.getTimeInMillis();
+        assertEquals(DailyCalendar.getDayEpochTimeAtMidnight(false),trueTime);
     }
 
     @Test
     public void getAppointmentsForTheDayThrowsExceptionIfNullSetTest(){
-        assertThrows(IllegalArgumentException.class,()-> {
-            DailyCalendar.getAppointmentsForTheDay(null);});
+        assertThrows(IllegalArgumentException.class,()-> DailyCalendar.getAppointmentsForTheDay(null,false));
     }
 
     @Test
@@ -52,21 +51,16 @@ public class DailyCalendarTest {
         Random random = new Random();
         Set<CalendarAppointmentInfo> setOfAppointments = new HashSet<>();
         for(int i = 0; i < random.nextInt(5); ++i){
-           setOfAppointments.add(new CalendarAppointmentInfo("TestCourse" + i,"TestTitle",
-                   DailyCalendar.getDayEpochTimeAtMidnight() + random.nextInt(60),60,
-                   "TestId" + i, null,i ));
+            setOfAppointments.add(new CalendarAppointmentInfo("TestCourse" + i,"TestTitle",
+                    DailyCalendar.getDayEpochTimeAtMidnight(false) + random.nextInt(60),60,
+                    "TestId" + i, null,i ));
         }
         setOfAppointments.add(new CalendarAppointmentInfo("TestCourseTomorrow" ,"TestTitleTomorrow",
-                DailyCalendar.getDayEpochTimeAtMidnight() + 3600*24,60,
+                DailyCalendar.getDayEpochTimeAtMidnight(false) + 3600*24*1000,60,
                 "TestIdTomorrow", null,setOfAppointments.size() ));
         List<CalendarAppointmentInfo> sortedAppointmentsInfo = new ArrayList<>(setOfAppointments);
-        Collections.sort(sortedAppointmentsInfo, new Comparator<CalendarAppointmentInfo>() {
-            @Override
-            public int compare(CalendarAppointmentInfo appointment, CalendarAppointmentInfo t1) {
-                return Long.compare(appointment.getStartTime(),t1.getStartTime());
-            }
-        });
+        Collections.sort(sortedAppointmentsInfo, (appointment, t1) -> Long.compare(appointment.getStartTime(),t1.getStartTime()));
         sortedAppointmentsInfo.remove(sortedAppointmentsInfo.size() -1);
-        assertEquals(sortedAppointmentsInfo, DailyCalendar.getAppointmentsForTheDay(setOfAppointments));
+        assertEquals(sortedAppointmentsInfo, DailyCalendar.getAppointmentsForTheDay(setOfAppointments,false));
     }
 }

@@ -86,13 +86,13 @@ public class CalendarActivityTest {
     @Before
     public void setTodayDateInDailyCalendar(){
         Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
     }
 
     @Test
     public void writtenDateIsCorrectTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000);
+        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             assertDisplayed(dayFormatter.format(date));
@@ -105,9 +105,9 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.todayDateCalendarActivity);
+            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
             setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
-            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(false);
             Date date = new Date(epochTimeToday);
             assertDisplayed(dayFormatter.format(date));
             assertDisplayed(letterDayFormatter.format(date));
@@ -119,7 +119,7 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis()/1000,
+            MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis(),
                     3600, appointmentCourse, appointmentTitle, false);
             sleep(3,SECONDS);
 
@@ -131,7 +131,7 @@ public class CalendarActivityTest {
             }
             assertTrue(thrown);
 
-            clickOn(R.id.todayDateCalendarActivity);
+            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
             setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
             sleep(2,SECONDS);
             assertDisplayed(appointmentTitle);
@@ -144,13 +144,13 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar todayDate = Calendar.getInstance();
-        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
+        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight(false)));
         int number_of_appointments = 4;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*6,3600*6,appointmentId+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i,null,i);
 
         }
 
@@ -165,8 +165,8 @@ public class CalendarActivityTest {
             for(int i = 0; i<number_of_appointments;++i){
                 assertDisplayed(infos[i].getTitle());
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                Date startDate = new Date(infos[i].getStartTime()*1000);
-                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration())*1000);
+                Date startDate = new Date(infos[i].getStartTime());
+                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
                 assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
             }
         }

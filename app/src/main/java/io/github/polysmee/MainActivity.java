@@ -28,7 +28,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void goToCalendar(View view){
         Intent intent = new Intent(this,CalendarActivity.class);
-        intent.putExtra(CalendarActivity.UserTypeCode,"Real");
         startActivity(intent);
     }
 
