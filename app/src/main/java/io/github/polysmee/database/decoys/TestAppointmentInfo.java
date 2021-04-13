@@ -1,6 +1,6 @@
 package io.github.polysmee.database.decoys;
 
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.User;
 
 public class TestAppointmentInfo {
 

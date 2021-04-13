@@ -1,18 +1,17 @@
 package io.github.polysmee.database.decoys;
 
-import androidx.annotation.Nullable;
-
 import java.util.HashSet;
 
 import java.util.Objects;
 
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 
 public class FakeDatabaseAppointment implements Appointment {
 
@@ -23,19 +22,15 @@ public class FakeDatabaseAppointment implements Appointment {
         this.id = id;
         this.appointmentInfo = FakeDatabase.appId2App.get(id);
     }
-    @Override
-    public long getStartTime() {
-        return 0;
-    }
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
-        l.onDone(appointmentInfo.start);
+
     }
 
     @Override
-    public long getDuration() {
-        return 0;
+    public void removeStartListener(LongValueListener l) {
+
     }
 
     @Override
@@ -44,13 +39,13 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public String getId() {
-        return id;
+    public void removeDurationListener(LongValueListener l) {
+
     }
 
     @Override
-    public String getCourse() {
-        return null;
+    public String getId() {
+        return id;
     }
 
     @Override
@@ -59,8 +54,8 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public String getTitle() {
-        return null;
+    public void removeCourseListener(StringValueListener l) {
+
     }
 
     @Override
@@ -69,8 +64,8 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public Set<User> getParticipants() {
-        return null;
+    public void removeTitleListener(StringValueListener l) {
+
     }
 
     @Override
@@ -83,8 +78,8 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public User getOwner() {
-        return null;
+    public void removeParticipantsListener(StringSetValueListener s) {
+
     }
 
     @Override
@@ -93,15 +88,18 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean setStartTime(long startTime) {
-        appointmentInfo.start = startTime;
-        return true;
+    public void removeOwnerListener(StringValueListener s) {
+
     }
 
     @Override
-    public boolean setDuration(long duration) {
+    public void setStartTime(long startTime) {
+        appointmentInfo.start = startTime;
+    }
+
+    @Override
+    public void setDuration(long duration) {
         appointmentInfo.duration = duration;
-        return true;
     }
 
     @Override
@@ -115,13 +113,45 @@ public class FakeDatabaseAppointment implements Appointment {
     }
 
     @Override
-    public boolean addParticipant(User newParticipant) {
-        return false;
+    public void addParticipant(User newParticipant) {
     }
 
     @Override
-    public boolean removeParticipant(User participant) {
-        return false;
+    public void removeParticipant(User participant) {
+    }
+
+
+    @Override
+    public void getBansAndThen(StringSetValueListener s) {
+
+    }
+
+    @Override
+    public void removeBansListener(StringSetValueListener s) {
+
+    }
+
+    @Override
+    public void getPrivateAndThen(BooleanValueListener bool) {
+
+    }
+
+    @Override
+    public void removePrivateListener(BooleanValueListener bool) {
+
+    }
+
+    @Override
+    public void setPrivate(boolean isPrivate) {
+
+    }
+
+    @Override
+    public void addBan(User banned) {
+    }
+
+    @Override
+    public void removeBan(User unbanned) {
     }
 
     @Override

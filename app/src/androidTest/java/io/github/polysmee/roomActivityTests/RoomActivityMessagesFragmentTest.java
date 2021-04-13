@@ -41,6 +41,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.l
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogNegativeButton;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
+import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
@@ -98,6 +99,7 @@ public class RoomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         sleep(1, SECONDS);
         longClickOn(secondMessage);
+        clickMenu(R.id.roomEditMessageMenuEdit);
         writeTo(R.id.roomActivityEditDialogText, newMsg);
         closeSoftKeyboard();
         clickDialogPositiveButton();
@@ -112,7 +114,7 @@ public class RoomActivityMessagesFragmentTest {
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         sleep(1, SECONDS);
         longClickOn(secondMessage);
-        clickDialogNegativeButton();
+        clickMenu(R.id.roomEditMessageMenuDelete);
 
         boolean thrown = false;
         try {
@@ -154,12 +156,12 @@ public class RoomActivityMessagesFragmentTest {
     }
 
     @Test
-    public void longClickOnItsMessagesShouldOpenEditDialog() {
+    public void longClickOnItsMessagesShouldOpenEditMenu() {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         sleep(1, SECONDS);
         longClickOn(secondMessage);
-        assertDisplayed(R.id.roomActivityEditDialogText);
+        assertDisplayed("Choose an option");
     }
 }

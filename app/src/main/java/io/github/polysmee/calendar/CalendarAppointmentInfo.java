@@ -2,7 +2,7 @@ package io.github.polysmee.calendar;
 
 import androidx.annotation.Nullable;
 
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.User;
 
 
 /**
@@ -19,11 +19,11 @@ public class CalendarAppointmentInfo {
     private final User owner;
     private int index;
     public CalendarAppointmentInfo(String course, String title, long startTime, long duration, String id, User owner, int index){
-        this.course = new String(course);
-        this.title = new String(title);
+        this.course = course;
+        this.title = title;
         this.startTime = startTime;
         this.duration = duration;
-        this.id = new String(id);
+        this.id = id;
         this.owner = owner;
         this.index = index;
     }

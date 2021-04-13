@@ -1,18 +1,13 @@
 package io.github.polysmee.database;
 
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
 
 public final class DatabaseUser implements User {
 
@@ -28,21 +23,6 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public String getName() {
-        return "YOU USED GETNAME";
-    }
-
-    @Override
-    public String getSurname() {
-        return "YOU USED GETSURNAME";
-    }
-
-    @Override
-    public Set<Appointment> getAppointments() {
-        return new HashSet<>();
-    }
-
-    @Override
     public void addAppointment(Appointment appointment) {
         DatabaseFactory.getAdaptedInstance()
                 .getReference("users")
@@ -54,22 +34,59 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeAppointment(Appointment appointment) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").child(appointment.getId()).setValue(null);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .setValue(null);
     }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("name").addValueEventListener(valueListener);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void removeNameListener(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .removeEventListener(valueListener);
     }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(self_id).child("appointments").addValueEventListener(valueListener);
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .addValueEventListener(valueListener);
     }
 
     @Override
-    public String createNewUserAppointment(long start, long duration, String course, String title) {
+    public void removeAppointmentsListener(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .removeEventListener(valueListener);
+    }
+
+    @Override
+    public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
         DatabaseReference ref = DatabaseFactory.getAdaptedInstance().getReference("appointments").push();
+
         Map<String, Object> newAppo = new HashMap<>();
         newAppo.put("owner", self_id);
         newAppo.put("id", ref.getKey());
@@ -77,10 +94,13 @@ public final class DatabaseUser implements User {
         newAppo.put("start", start);
         newAppo.put("duration", duration);
         newAppo.put("course", course);
-        newAppo.put("title", title);
+        newAppo.put("title", name);
+        newAppo.put("private", isPrivate);
         ref.setValue(newAppo);
-        addAppointment(new DatabaseAppointment(ref.getKey()));
-        new DatabaseAppointment(ref.getKey()).addParticipant(new DatabaseUser(self_id));
+
+        Appointment appointment = new DatabaseAppointment(ref.getKey());
+        this.addAppointment(appointment);
+        appointment.addParticipant(new DatabaseUser(self_id));
         return ref.getKey();
     }
 

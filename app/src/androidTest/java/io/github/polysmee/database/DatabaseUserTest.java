@@ -24,9 +24,10 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.roomActivityTests.RoomActivityInfoNotOwnerTest;
 
 import static org.junit.Assert.*;
 
@@ -53,21 +54,6 @@ public class DatabaseUserTest {
     }
 
     @Test
-    public void getName() {
-        assertEquals(MainUserSingleton.getInstance().getName(), "YOU USED GETNAME");
-    }
-
-    @Test
-    public void getSurname() {
-        assertEquals(MainUserSingleton.getInstance().getSurname(), "YOU USED GETSURNAME");
-    }
-
-    @Test
-    public void getAppointments() {
-        assertEquals(MainUserSingleton.getInstance().getAppointments(), new HashSet<>());
-    }
-
-    @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
         MainUserSingleton.getInstance().addAppointment(new DatabaseAppointment("AZERTY"));
         FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
@@ -87,19 +73,19 @@ public class DatabaseUserTest {
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        StringValueListener sv = (name) -> {
+            lock.lock();
+            gotName.set(name);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
         lock.lock();
         try {
-            MainUserSingleton.getInstance().getNameAndThen(
-                    (name) -> {
-                        lock.lock();
-                        gotName.set(name);
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            MainUserSingleton.getInstance().getNameAndThen(sv);
             while(!bool.get())
                 cv.await();
+            MainUserSingleton.getInstance().removeNameListener(sv);
             assertEquals(gotName.get(), username);
         } finally {
             lock.unlock();
@@ -108,7 +94,7 @@ public class DatabaseUserTest {
 
     @Test
     public void createNewUserAppointment() {
-        String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév");
+        String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév", false);
         String ac = DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
@@ -121,22 +107,22 @@ public class DatabaseUserTest {
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicBoolean oneElem = new AtomicBoolean(false);
 
-        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE");
+        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE", false);
+        StringSetValueListener ssv = (set) -> {
+            lock.lock();
+            oneElem.set(set.size() > 0);
+            Log.d("METAAPP", "" + oneElem.get());
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
 
         lock.lock();
         try {
-            MainUserSingleton.getInstance().getAppointmentsAndThen(
-                    (set) -> {
-                        lock.lock();
-                        oneElem.set(set.size() > 0);
-                        Log.d("METAAPP", "" + oneElem.get());
-                        bool.set(Boolean.TRUE);
-                        cv.signal();
-                        lock.unlock();
-                    }
-            );
+            MainUserSingleton.getInstance().getAppointmentsAndThen(ssv);
             while(!bool.get())
                 cv.await();
+            MainUserSingleton.getInstance().removeAppointmentsListener(ssv);
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
@@ -153,4 +139,5 @@ public class DatabaseUserTest {
     public void testHashCode() {
         assertEquals(new DatabaseUser("hello").hashCode(), new DatabaseUser("hello").hashCode());
     }
+
 }

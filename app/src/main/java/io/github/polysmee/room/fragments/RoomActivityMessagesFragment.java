@@ -3,19 +3,24 @@ package io.github.polysmee.room.fragments;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import com.google.firebase.database.ChildEventListener;
@@ -23,9 +28,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
+import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.User;
 import io.github.polysmee.messages.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
@@ -38,8 +48,11 @@ public class RoomActivityMessagesFragment extends Fragment {
     public static String MESSAGES_KEY = "io.github.polysme.room.fragments.roomActivityMessagesFragment.MESSAGES_KEY";
 
     private ViewGroup rootView;
+    private LayoutInflater inflater;
     private DatabaseReference databaseReference;
-    private final Map<String, TextView> messagesDisplayed = new HashMap<>();
+    private final Map<String, View> messagesDisplayed = new HashMap<>();
+
+    private ActionMode actionMode;
 
     @Nullable
     @Override
@@ -48,10 +61,11 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         String appointmentId = requireArguments().getString(MESSAGES_KEY);
 
-        Button send = rootView.findViewById(R.id.roomActivitySendMessageButton);
+        ImageView send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
 
-        initializeAndDisplayDatabase();
+        this.inflater = getLayoutInflater();
+        initializeAndDisplayDatabase(appointmentId);
 
         return rootView;
 
@@ -95,28 +109,86 @@ public class RoomActivityMessagesFragment extends Fragment {
         } catch (Exception ignored) {}
     }
 
-    private TextView generateMessageTextView(String message, boolean isSent, String messageKey) {
-        TextView messageView = new TextView(rootView.getContext());
-        messageView.setText(message);
+    private View generateMessageTextView(String message, boolean isSent, String senderId, long date, String messageKey) {
+        User sender = new DatabaseUser(senderId);
+
+        Date currentDate = new Date(date);
+        String TIMESTAMP_PATTERN = "HH:mm";
+        SimpleDateFormat formatter = new SimpleDateFormat(TIMESTAMP_PATTERN, Locale.ENGLISH);
+
+        ConstraintLayout messageLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_message, null);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
         params.gravity = isSent ? Gravity.END : Gravity.START;
-        messageView.setLayoutParams(params);
+        messageLayout.setLayoutParams(params);
+
+        TextView messageView = (TextView) messageLayout.getViewById(R.id.roomActivityMessageElementMessageContent);
+        messageView.setText(message);
 
         if (isSent) {
-            messageView.setBackgroundResource(R.drawable.sent_message_background);
-            messageView.setOnLongClickListener(v -> {
-                generateEditMessageDialog(messageKey, messageView).show();
+            messageLayout.findViewById(R.id.roomActivityMessageElementSenderText).setVisibility(View.GONE);
+            ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setText(formatter.format(currentDate));
+            messageLayout.setBackgroundResource(R.drawable.background_sent_message);
+            messageLayout.setOnLongClickListener(v -> {
+                if (actionMode != null)
+                    return false;
+                actionMode = getActivity().startActionMode(generateCallback(messageKey));
                 return true;
             });
         }
-        else
-            messageView.setBackgroundResource(R.drawable.received_message_background);
+        else {
+            messageLayout.setBackgroundResource(R.drawable.background_received_message);
+            ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived)).setText(formatter.format(currentDate));
+            sender.getNameAndThen(((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementSenderText))::setText);
+        }
 
-        return messageView;
+        return messageLayout;
     }
 
-    private AlertDialog generateEditMessageDialog(String messageKey, TextView messageView) {
+    private ActionMode.Callback generateCallback(String messageKey) {
+        return new ActionMode.Callback() {
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                MenuInflater inflater = mode.getMenuInflater();
+                inflater.inflate(R.menu.room_edit_message_menu, menu);
+                mode.setTitle("Choose an option");
+                messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_selected_message);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.roomEditMessageMenuDelete:
+                        deleteMessage(messageKey);
+                        mode.finish();
+                        return true;
+                    case R.id.roomEditMessageMenuEdit:
+                        generateEditMessageDialog(messageKey).show();
+                        mode.finish();
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+                actionMode = null;
+                messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_sent_message);
+            }
+        };
+    }
+
+
+    private AlertDialog generateEditMessageDialog(String messageKey) {
+        TextView messageView = messagesDisplayed.get(messageKey).findViewById(R.id.roomActivityMessageElementMessageContent);
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Edit message");
 
@@ -128,10 +200,6 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         builder.setPositiveButton("Edit", (dialog, id) -> {
             editMessage(messageKey, editMessage.getText().toString());
-        });
-
-        builder.setNegativeButton("Delete", (dialog, id) -> {
-            deleteMessage(messageKey);
         });
 
         builder.setNeutralButton("Cancel", (dialog, id) -> {
@@ -148,10 +216,9 @@ public class RoomActivityMessagesFragment extends Fragment {
      * Initializes the path of the database, displays the messages from the database and adds an event listener on the value of the messages
      * in order to update them in case of changes
      */
-    private void initializeAndDisplayDatabase() {
+    private void initializeAndDisplayDatabase(String appointmentId) {
 
         //Initialize the database reference to the right path
-        String appointmentId = requireArguments().getString(MESSAGES_KEY);
         databaseReference = DatabaseFactory.getAdaptedInstance().getReference("appointments/" + appointmentId + "/messages");
 
 
@@ -162,11 +229,11 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                 String key = snapshot.getKey();
                 String currentID = MainUserSingleton.getInstance().getId();
-                TextView messageToAddTextView = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()), key);
-                messagesDisplayed.put(key, messageToAddTextView);
+                View messageToAddLayout = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()), message.getSender(), message.getMessageTime(), key);
+                messagesDisplayed.put(key, messageToAddLayout);
 
                 LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-                messages.addView(messageToAddTextView);
+                messages.addView(messageToAddLayout);
 
                 //Blank text view to add a space between messages
                 messages.addView(new TextView(rootView.getContext()));
@@ -181,14 +248,14 @@ public class RoomActivityMessagesFragment extends Fragment {
                 //update the corresponding textView
                 Message message = snapshot.getValue(Message.class);
                 String key = snapshot.getKey();
-                messagesDisplayed.get(key).setText(message.getContent());
+                ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(message.getContent());
             }
 
             @Override
             public void onChildRemoved(@NonNull DataSnapshot snapshot) {
                 String key = snapshot.getKey();
                 LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
-                TextView viewToRemove = messagesDisplayed.get(key);
+                TextView viewToRemove = messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent);
                 int indexOfMessage = messages.indexOfChild(viewToRemove);
                 //remove the white space under the message and the message itself from the LinearLayout
                 messages.removeViewAt(indexOfMessage + 1);
@@ -197,14 +264,10 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
 
             @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-            }
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
 
             @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+            public void onCancelled(@NonNull DatabaseError error) {}
         });
     }
 

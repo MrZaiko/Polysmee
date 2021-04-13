@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/calendarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".calendar.CalendarActivity">
+
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/todayDateCalendarActivity"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="16dp"
+        android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/calendarActivityGuidelineAt20pourcent"
+        app:layout_constraintTop_toTopOf="parent" >
+
+        <TextView
+            android:id="@+id/activityCalendarDay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:text="@string/calendarActivityTodayDate"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+        <TextView
+            android:id="@+id/activityCalendarMonth"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:text="@string/calendarActivityTodayDate"
+            app:layout_constraintTop_toBottomOf="@id/activityCalendarDay"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="#97C2D2D5"
+            app:layout_constraintTop_toBottomOf="@id/activityCalendarMonth"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ScrollView
+        android:id="@+id/calendarActivityAppointmentScroll"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/calendarActivityGuidelineAt20pourcent">
+
+        <LinearLayout
+            android:id="@+id/calendarActivityScrollLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/calendarActivityCreateAppointmentButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:src="@drawable/baseline_add"
+        android:contentDescription="Create a new appointment"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/calendarActivityGuidelineAt20pourcent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.13"
+        app:layout_constraintGuide_begin="20dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

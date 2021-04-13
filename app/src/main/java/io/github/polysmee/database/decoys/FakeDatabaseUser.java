@@ -1,14 +1,13 @@
 package io.github.polysmee.database.decoys;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.interfaces.Appointment;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.User;
 
 public class FakeDatabaseUser implements User {
 
@@ -34,10 +33,6 @@ public class FakeDatabaseUser implements User {
         return id;
     }
 
-    @Override
-    public String getName() {
-        return name;
-    }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
@@ -45,14 +40,10 @@ public class FakeDatabaseUser implements User {
     }
 
     @Override
-    public String getSurname() {
-        throw new IllegalStateException("surname doesnt work");
+    public void removeNameListener(StringValueListener valueListener) {
+
     }
 
-    @Override
-    public Set<Appointment> getAppointments() {
-        return Collections.unmodifiableSet(appointments);
-    }
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
@@ -60,6 +51,11 @@ public class FakeDatabaseUser implements User {
         for(Appointment elem : appointments)
             res.add(elem.getId());
         valueListener.onDone(res);
+    }
+
+    @Override
+    public void removeAppointmentsListener(StringSetValueListener valueListener) {
+
     }
 
     @Override
@@ -73,11 +69,8 @@ public class FakeDatabaseUser implements User {
     }
 
     @Override
-    public String createNewUserAppointment(long start, long duration, String course, String name) {
-        long id = FakeDatabase.idGenerator.incrementAndGet();
-        addAppointment(new FakeDatabaseAppointment("" + id));
-        FakeDatabase.appId2App.put("" + id, new TestAppointmentInfo(name, course, start, duration, this));
-        return "" + id;
+    public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
+        return null;
     }
 
     @Override

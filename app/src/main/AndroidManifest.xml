@@ -6,29 +6,23 @@
 
     <application
         android:allowBackup="true"
+        android:largeHeap="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee"
         android:usesCleartextTraffic="true">
-
+        <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"
-            android:label="@string/title_activity_settings"
-            />
-        <activity android:name=".calendar.CalendarEntryDetailsActivity" />
+            android:label="@string/title_activity_settings" />
         <activity android:name=".calendar.CalendarActivity" />
-        <activity android:name=".appointments.AppointmentSettingsActivity" />
-        <activity android:name=".appointments.AppointmentActivity" />
 
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".room.RoomActivity" />
-        <activity android:name=".room.RoomActivityInfo" />
-
-        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginCheckActivity">
             <intent-filter>
