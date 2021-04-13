@@ -34,15 +34,14 @@
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".room.RoomActivity" >
 
+        </activity>
+
+        <activity android:name=".login.LoginCheckActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <activity android:name=".login.LoginCheckActivity">
-
         </activity>
         <activity android:name=".MainActivity" />
     </application>
