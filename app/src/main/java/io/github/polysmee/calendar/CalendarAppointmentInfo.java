@@ -92,13 +92,5 @@ public class CalendarAppointmentInfo {
         return title;
     }
 
-    @Override
-    public boolean equals(@Nullable Object obj) {
-        if(this == obj) return true;
-        if(obj == null || obj.getClass() != this.getClass()) return false;
-        CalendarAppointmentInfo objToCompare = (CalendarAppointmentInfo)obj;
-        return  this.course.equals(objToCompare.course)
-                && this.title.equals(objToCompare.title) && this.startTime == objToCompare.startTime
-                && this.duration == objToCompare.duration &&  this.id.equals(objToCompare.id);
-    }
+
 }

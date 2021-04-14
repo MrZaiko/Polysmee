@@ -29,42 +29,4 @@ public class CalendarAppointmentInfoTest {
 
     }
 
-    @Test
-    public void equalsReturnsTrueWithTwoAppointmentsWithSameAttributes(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0");
-        CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0");
-        assertEquals(calendarAppointmentInfo, calendarAppointmentInfo2);
-    }
-
-    @Test
-    public void equalsReturnsFalseWithTwoAppointmentsOfDifferentAttributes(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0");
-        CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("Course","Title",
-                0,100,"0");
-        assertNotEquals(calendarAppointmentInfo, calendarAppointmentInfo2);
-    }
-    @Test
-    public void equalsReturnsTrueForTheSameObject(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0");
-        assertEquals(calendarAppointmentInfo, calendarAppointmentInfo);
-    }
-
-    @Test
-    public void equalsReturnsFalseForDifferentClass(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0");
-        assertNotEquals(calendarAppointmentInfo, "");
-    }
-
-    @Test
-    public void equalsReturnsFalseForNull(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0");
-        assertEquals(false,calendarAppointmentInfo.equals(null));
-    }
-
 }

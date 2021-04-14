@@ -50,7 +50,9 @@ import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 
@@ -69,6 +71,8 @@ public class CalendarActivityTest {
 
     private static final SimpleDateFormat dayFormatter = new SimpleDateFormat("d");
     private static final SimpleDateFormat letterDayFormatter = new SimpleDateFormat("EEEE");
+
+
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -91,19 +95,45 @@ public class CalendarActivityTest {
     }
 
     @Test
+    public void modifyingTitleIsSeenOnTheCalendar(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+
+        Calendar calendar = Calendar.getInstance();
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            String title = "NewTitle";
+            long startTime = calendar.getTimeInMillis() + 3600*1000;
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMeBruh", "ClickMeBoi" ,
+                    startTime ,3600*6*1000,appointmentId+5);
+            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
+                    info.getDuration(), info.getCourse(), info.getTitle(), false);
+            sleep(3,SECONDS);
+            clickOn(info.getTitle());
+            sleep(1,SECONDS);
+            scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+            writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+            closeSoftKeyboard();
+            clickOn(R.id.appointmentCreationbtnDone);
+            sleep(2,SECONDS);
+            assertDisplayed(title);
+        }
+    }
+
+    @Test
     public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMe", "ClickMe" ,
                     calendar.getTimeInMillis() + 3600*1000 ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
-            sleep(5,SECONDS);
+            sleep(3,SECONDS);
             clickOn(info.getTitle());
             assertDisplayed(withHint(info.getTitle()));
             assertDisplayed(withHint(info.getCourse()));
+
         }
     }
 
@@ -167,13 +197,13 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void scrollViewContentIsCoherentAfterAddingAppointments(){
+    public void scrollViewContentsIsCoherentAfterAddingAppointments(){
 
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight(false)));
-        int number_of_appointments = 4;
+        int number_of_appointments = 3;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
@@ -196,6 +226,18 @@ public class CalendarActivityTest {
                 Date startDate = new Date(infos[i].getStartTime());
                 Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
                 assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+            }
+
+            swipeViewPagerForward();
+            sleep(3,SECONDS);
+            for(int i = 0; i<number_of_appointments;++i){
+                if(i%2 != 0){
+                assertDisplayed(infos[i].getTitle());
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                Date startDate = new Date(infos[i].getStartTime());
+                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
+                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+                }
             }
         }
     }
