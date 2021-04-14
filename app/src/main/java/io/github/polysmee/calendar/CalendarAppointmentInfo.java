@@ -16,16 +16,12 @@ public class CalendarAppointmentInfo {
     private long startTime;
     private long duration;
     private final String id;
-    private final User owner;
-    private int index;
-    public CalendarAppointmentInfo(String course, String title, long startTime, long duration, String id, User owner, int index){
+    public CalendarAppointmentInfo(String course, String title, long startTime, long duration, String id){
         this.course = course;
         this.title = title;
         this.startTime = startTime;
         this.duration = duration;
         this.id = id;
-        this.owner = owner;
-        this.index = index;
     }
 
     /**
@@ -95,30 +91,14 @@ public class CalendarAppointmentInfo {
     public String getTitle() {
         return title;
     }
-    /**
-     * Gets the appointment's stored index in the list of all descriptions added
-     * @return the appointment's index
-     */
-    public int getIndex() {
-        return index;
-    }
-
-    /**
-     * Gets the appointment's stored owner
-     * @return the appointment's owner
-     */
-    public User getOwner() {
-        return owner;
-    }
 
     @Override
     public boolean equals(@Nullable Object obj) {
         if(this == obj) return true;
         if(obj == null || obj.getClass() != this.getClass()) return false;
         CalendarAppointmentInfo objToCompare = (CalendarAppointmentInfo)obj;
-        return objToCompare.owner.getId().equals(this.owner.getId()) && this.course.equals(objToCompare.course)
+        return  this.course.equals(objToCompare.course)
                 && this.title.equals(objToCompare.title) && this.startTime == objToCompare.startTime
-                && this.duration == objToCompare.duration &&  this.id.equals(objToCompare.id)
-                && this.index == objToCompare.index;
+                && this.duration == objToCompare.duration &&  this.id.equals(objToCompare.id);
     }
 }

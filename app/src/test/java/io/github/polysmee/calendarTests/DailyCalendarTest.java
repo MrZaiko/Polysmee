@@ -53,11 +53,11 @@ public class DailyCalendarTest {
         for(int i = 0; i < random.nextInt(5); ++i){
             setOfAppointments.add(new CalendarAppointmentInfo("TestCourse" + i,"TestTitle",
                     DailyCalendar.getDayEpochTimeAtMidnight(false) + random.nextInt(60),60,
-                    "TestId" + i, null,i ));
+                    "TestId" + i ));
         }
         setOfAppointments.add(new CalendarAppointmentInfo("TestCourseTomorrow" ,"TestTitleTomorrow",
                 DailyCalendar.getDayEpochTimeAtMidnight(false) + 3600*24*1000,60,
-                "TestIdTomorrow", null,setOfAppointments.size() ));
+                "TestIdTomorrow"));
         List<CalendarAppointmentInfo> sortedAppointmentsInfo = new ArrayList<>(setOfAppointments);
         Collections.sort(sortedAppointmentsInfo, (appointment, t1) -> Long.compare(appointment.getStartTime(),t1.getStartTime()));
         sortedAppointmentsInfo.remove(sortedAppointmentsInfo.size() -1);

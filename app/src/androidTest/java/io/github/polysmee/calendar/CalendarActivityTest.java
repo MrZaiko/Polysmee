@@ -21,6 +21,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -90,6 +91,33 @@ public class CalendarActivityTest {
     }
 
     @Test
+    public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+
+        Calendar calendar = Calendar.getInstance();
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMe", "ClickMe" ,
+                    calendar.getTimeInMillis() + 3600*1000 ,3600*6*1000,appointmentId+5);
+            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
+                    info.getDuration(), info.getCourse(), info.getTitle(), false);
+            sleep(5,SECONDS);
+            clickOn(info.getTitle());
+            assertDisplayed(withHint(info.getTitle()));
+            assertDisplayed(withHint(info.getCourse()));
+        }
+    }
+
+    @Test
+    public void clickingSettingsButtonLaunchesSettingsActivity(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            sleep(2,SECONDS);
+            clickOn(R.id.calendarMenuSettings);
+            assertDisplayed("Appointments reminder settings");
+        }
+    }
+
+    @Test
     public void writtenDateIsCorrectTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
@@ -121,7 +149,7 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis(),
                     3600, appointmentCourse, appointmentTitle, false);
-            sleep(3,SECONDS);
+            sleep(5,SECONDS);
 
             boolean thrown = false;
             try {
@@ -150,7 +178,7 @@ public class CalendarActivityTest {
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i);
 
         }
 

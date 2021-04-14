@@ -60,8 +60,6 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         startTime = Calendar.getInstance();
         startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
 
-        Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),true);
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
@@ -74,6 +72,11 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     }
 
 
+    @Before
+    public void setupDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),true);
+    }
 
     @Test
     public void writtenDateIsCorrectPublicAppointments(){
@@ -88,11 +91,10 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
     @Test
     public void anotherUsersAppointmentIsVisible(){
-
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("vent","amogus",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId,new DatabaseUser(id2),0);
+        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("vent","amogus",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId);
         addAppointmentOtherUser(calendarAppointmentInfo);
         FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
-        sleep(3,TimeUnit.SECONDS);
+        sleep(5,TimeUnit.SECONDS);
         assertDisplayed(calendarAppointmentInfo.getTitle());
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
@@ -117,7 +119,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
     @Test
     public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("BonjourGoogle","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1,new DatabaseUser(id2),1);
+
+        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("BonjourGoogle","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
         addAppointmentOtherUser(calendarAppointmentInfo);
         FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
         sleep(3,TimeUnit.SECONDS);

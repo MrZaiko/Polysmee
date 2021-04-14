@@ -18,60 +18,53 @@ public class CalendarAppointmentInfoTest {
 
     @Test
     public void appointmentInfoGettersWorkCorrectly(){
-        User user = new FakeDatabaseUser("5","Youssef");
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
+                0,0,"0");
         assertEquals("Course",calendarAppointmentInfo.getCourse());
         assertEquals("Title",calendarAppointmentInfo.getTitle());
         assertEquals(0,calendarAppointmentInfo.getStartTime());
         assertEquals(0,calendarAppointmentInfo.getDuration());
         assertEquals("0",calendarAppointmentInfo.getId());
-        assertEquals(0,calendarAppointmentInfo.getIndex());
         //didn't put for user because equals is not defined for FakeDatabaseUser
 
     }
 
     @Test
     public void equalsReturnsTrueWithTwoAppointmentsWithSameAttributes(){
-        User user = new FakeDatabaseUser("5","Youssef");
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
+                0,0,"0");
         CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
+                0,0,"0");
         assertEquals(calendarAppointmentInfo, calendarAppointmentInfo2);
     }
 
     @Test
     public void equalsReturnsFalseWithTwoAppointmentsOfDifferentAttributes(){
-        User user = new FakeDatabaseUser("5","Youssef");
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
+                0,0,"0");
         CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("Course","Title",
-                0,100,"0",user,0);
+                0,100,"0");
         assertNotEquals(calendarAppointmentInfo, calendarAppointmentInfo2);
     }
     @Test
     public void equalsReturnsTrueForTheSameObject(){
-        User user = new FakeDatabaseUser("5","Youssef");
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
+                0,0,"0");
         assertEquals(calendarAppointmentInfo, calendarAppointmentInfo);
     }
 
     @Test
     public void equalsReturnsFalseForDifferentClass(){
-        User user = new FakeDatabaseUser("5","Youssef");
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
+                0,0,"0");
         assertNotEquals(calendarAppointmentInfo, "");
     }
 
     @Test
     public void equalsReturnsFalseForNull(){
-        User user = new FakeDatabaseUser("5","Youssef");
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course","Title",
-                0,0,"0",user,0);
-        assertNotEquals(null, calendarAppointmentInfo);
+                0,0,"0");
+        assertEquals(false,calendarAppointmentInfo.equals(null));
     }
 
 }
