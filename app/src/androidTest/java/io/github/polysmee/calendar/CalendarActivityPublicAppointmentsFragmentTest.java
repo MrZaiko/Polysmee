@@ -75,7 +75,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
 
 
-    @Test
+   /* @Test
     public void writtenDateIsCorrectPublicAppointments(){
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(true));
         FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
@@ -100,7 +100,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         Date endDate = new Date((calendarAppointmentInfo.getStartTime()+calendarAppointmentInfo.getDuration()));
         assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
         assertDisplayed("Join");
-    }
+    }*/
 
     @Test
     public void choosingAnotherDateInPublicAppointmentsDateChangesDisplayedDate(){

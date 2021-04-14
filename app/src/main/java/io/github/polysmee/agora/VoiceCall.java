@@ -1,14 +1,12 @@
 package io.github.polysmee.agora;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
-
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import io.agora.rtc.Constants;
@@ -27,14 +25,14 @@ public class VoiceCall {
     private final String appointmentId;
     private final Context context;
     private ActivityResultLauncher<String> requestPermissionLauncher;
-    private Set<String> usersConnected;
+    private Map<Integer, String> usersConnected;
 
 
     public VoiceCall(@NonNull String appointmentId,@NonNull Context context, @NonNull ActivityResultLauncher<String> requestPermissionLauncher) {
         this.appointmentId = appointmentId;
         this.context = context;
         this.requestPermissionLauncher = requestPermissionLauncher;
-        usersConnected = new HashSet<String>();
+        usersConnected = new HashMap<Integer, String>();
     }
 
     /**
@@ -49,7 +47,7 @@ public class VoiceCall {
         this.appointmentId = appointmentId;
         this.context = context;
         this.requestPermissionLauncher = requestPermissionLauncher;
-        usersConnected = new HashSet<String>();
+        usersConnected = new HashMap<Integer, String>();
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
@@ -92,7 +90,6 @@ public class VoiceCall {
         String token = generateToken(userId);
         int joined = mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
         if(joined == 0) {
-            usersConnected.add(userId);
         }
         return joined;
     }
