@@ -54,7 +54,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_participant, container, false);
 
-        String appointmentId = requireArguments().getString(PARTICIPANTS_KEY);
+        String appointmentId = getAppointmentId();
         this.appointment = new DatabaseAppointment(appointmentId);
         this.inflater = getLayoutInflater();
         generateParticipantsView();
@@ -167,7 +167,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
             String appointmentId = requireArguments().getString(PARTICIPANTS_KEY);
 
-            voiceCall = new VoiceCall(appointmentId, getContext(), requestPermissionLauncher);
+            voiceCall = new VoiceCall(this);
         }
 
         voiceCall.joinChannel();
@@ -178,6 +178,24 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(voiceCall != null) {
             voiceCall.leaveChannel();
         }
+
+    }
+
+    public void setUserOnline(boolean online, String id) {
+        System.out.println("youpi : " + id);
+        ConstraintLayout participantsLayout = participantsViews.get(id);
+        View muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
+        if(online) {
+            participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
+            muteButton.setVisibility(View.VISIBLE);
+        }
+        else {
+            participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
+            muteButton.setVisibility(View.GONE);
+        }
+    }
+
+    public void muteUser(boolean muted, String id) {
 
     }
 
@@ -198,4 +216,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private boolean checkPermission(String permission) {
         return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
+
+
+    public String getAppointmentId() {
+        return requireArguments().getString(PARTICIPANTS_KEY);
+    }
+
+    public ActivityResultLauncher<String> getRequestPermissionLauncher() {
+        return requestPermissionLauncher;
+    }
+
 }

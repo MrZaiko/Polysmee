@@ -5,15 +5,13 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
-
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
 import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 public class VoiceCall {
 
@@ -26,13 +24,15 @@ public class VoiceCall {
     private final Context context;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<Integer, String> usersConnected;
+    private RoomActivityParticipantsFragment room;
 
 
-    public VoiceCall(@NonNull String appointmentId,@NonNull Context context, @NonNull ActivityResultLauncher<String> requestPermissionLauncher) {
-        this.appointmentId = appointmentId;
-        this.context = context;
-        this.requestPermissionLauncher = requestPermissionLauncher;
+    public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {//@NonNull String appointmentId,@NonNull Context context, @NonNull ActivityResultLauncher<String> requestPermissionLauncher) {
+        this.appointmentId = room.getAppointmentId();
+        this.context = room.getContext();
+        this.requestPermissionLauncher = room.getRequestPermissionLauncher();
         usersConnected = new HashMap<Integer, String>();
+        this.room = room;
     }
 
     /**
@@ -132,12 +132,28 @@ public class VoiceCall {
 
             @Override
             public void onUserJoined(int uid, int elapsed) {
+                System.out.println("room null");
+                System.out.println(room == null);
+                if(usersConnected.containsKey(uid) && room != null) {
+                    System.out.println("lets go !!!");
+                    room.setUserOnline(true, usersConnected.get(uid));
+                }
                 System.out.println("user joined : " + uid);
             }
 
             @Override
             public void onUserInfoUpdated(int uid, UserInfo userInfo) {
-                System.out.println("user joined : " + userInfo.userAccount);
+                System.out.println("user connected : " + userInfo.userAccount);
+                usersConnected.put(uid, userInfo.userAccount);
+                onUserJoined(uid, 0);
+
+            }
+
+            @Override
+            public void onUserOffline(int uid, int elapsed) {
+                if(room != null && usersConnected.containsKey(uid)) {
+                    room.setUserOnline(false,usersConnected.get(uid));
+                }
             }
 
 
