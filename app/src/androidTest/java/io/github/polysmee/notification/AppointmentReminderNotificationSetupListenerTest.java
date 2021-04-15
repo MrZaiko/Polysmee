@@ -95,7 +95,7 @@ public class AppointmentReminderNotificationSetupListenerTest {
         getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
         try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, mockedAlarmManager);
-            verify(mockedAlarmManager).setExact(any(), any(), any());
+            verify(mockedAlarmManager).setExact(anyChar(), anyChar(), any());
         }
 
         //TODO addNewAppointment
