@@ -15,10 +15,10 @@ import static org.junit.Assert.*;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.github.polysmee.login.AuthenticationFactory;
 
-@RunWith(JUnit4.class)
+//@RunWith(JUnit4.class)
 public class TestVoiceCall {
 
-    /*@BeforeClass
+   /* @BeforeClass
     public static void setUp() {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
