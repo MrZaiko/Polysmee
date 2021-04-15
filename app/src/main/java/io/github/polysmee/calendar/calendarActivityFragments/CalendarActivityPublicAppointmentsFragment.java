@@ -124,7 +124,14 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
-        calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
+        Appointment appointment1 = new DatabaseAppointment(appointment.getId());
+        appointment1.getOwnerIdAndThen((ownerId) ->{
+            if(!ownerId.equals(user.getId())){
+                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
+                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
+            }
+
+        });
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime()+appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());
