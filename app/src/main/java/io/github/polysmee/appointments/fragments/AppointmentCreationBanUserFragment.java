@@ -142,7 +142,6 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      *                  it from the removed banned participant list
      */
     private void banButtonBehavior(View view) {
-        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchBan.getText().toString();
         if(!users.contains(s)) {
             builder.setMessage("User not found")
