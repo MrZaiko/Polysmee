@@ -1,9 +1,7 @@
 package io.github.polysmee.login;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.interfaces.User;
+import io.github.polysmee.database.User;
 
 public class MainUserSingleton {
 
