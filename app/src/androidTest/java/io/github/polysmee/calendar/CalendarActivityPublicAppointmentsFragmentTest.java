@@ -44,9 +44,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     private static int appointmentDay = 27;
 
 
-    private static final String username1 = "Youssef le terroriste";
     private static final String appointmentId = "ukcfjsqmcutn";
-
+    private static final String username1 = "Youssef le gentil";
     private static String id2 = "uzeyazfedst";
     private static final String username2 = "amogus";
 
@@ -142,4 +141,5 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(calendarAppointmentInfo.getCourse());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(calendarAppointmentInfo.getStartTime());
     }
+
 }
