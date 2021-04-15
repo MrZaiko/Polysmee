@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
@@ -22,6 +23,8 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.schibsted.spain.barista.rule.cleardata.ClearPreferencesRule;
 
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.mockito.Mockito.*;
 
 
@@ -124,11 +127,33 @@ public class AppointmentReminderNotificationSetupListenerTest {
 
     @Test
     public void reminderAppointmentRemoved(){
-
+        AlarmManager mockedAlarmManager = mock(AlarmManager.class);
+        Intent intent = new Intent(context, SettingsActivity.class);
+        long mainAppointemntStartTime =TimeUnit.MINUTES.toMillis(34347)+ System.currentTimeMillis();
+        getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
+        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, (AlarmManager) context.getSystemService(mockedAlarmManager));
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).removeValue();
+            sleep(2, SECONDS);
+            verify(mockedAlarmManager).cancel(getReminderNotificationPendingIntent(context, mainAppointmentId));
+        }
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).setValue(true);
     }
 
     @Test public void reminderAppointmentRemovedWhileAppNotOppen(){
-
+        Intent intent = new Intent(context, SettingsActivity.class);
+        long mainAppointemntStartTime =TimeUnit.MINUTES.toMillis(34347)+ System.currentTimeMillis();
+        getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
+        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, (AlarmManager) context.getSystemService(Context.ALARM_SERVICE));
+        }
+        AlarmManager mockedAlarmManager = mock(AlarmManager.class);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).removeValue();
+        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, (AlarmManager) context.getSystemService(Context.ALARM_SERVICE));
+            verify(mockedAlarmManager).cancel(getReminderNotificationPendingIntent(context, mainAppointmentId));
+        }
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).setValue(true);
     }
 
     @Test
