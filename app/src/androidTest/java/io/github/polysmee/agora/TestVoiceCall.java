@@ -13,13 +13,12 @@ import static org.junit.Assert.*;
 
 
 import io.agora.rtc.IRtcEngineEventHandler;
-import io.github.polysmee.agora.VoiceCall;
 import io.github.polysmee.login.AuthenticationFactory;
 
 @RunWith(JUnit4.class)
 public class TestVoiceCall {
 
-    @BeforeClass
+    /*@BeforeClass
     public static void setUp() {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -43,14 +42,7 @@ public class TestVoiceCall {
         VoiceCall voiceCall = new VoiceCall(channelName, ApplicationProvider.getApplicationContext(), null, handler);
         voiceCall.joinChannel();
         assertEquals(0, voiceCall.leaveChannel());
-    }
+    }*/
 
-    @Test
-    public void generateTokenWorks() {
-        IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
-        String channelName = "test";
-        VoiceCall voiceCall = new VoiceCall(channelName, ApplicationProvider.getApplicationContext(), null, handler);
-        String token = voiceCall.generateToken(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid());
-    }
 
 }
