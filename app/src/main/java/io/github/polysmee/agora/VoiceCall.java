@@ -18,6 +18,9 @@ import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
  */
 public class VoiceCall {
 
+    public static final int SUCCESS_CODE = 0;
+    public static final int ERROR_CODE = 1;
+
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
     private static final int EXPIRATION_TIME = 3600;
@@ -92,11 +95,14 @@ public class VoiceCall {
     /**
      * leaves the channel
      */
-    public void leaveChannel() {
+    public int leaveChannel() {
         if(mRtcEngine != null) {
-            mRtcEngine.leaveChannel();
             setAllUsersOffline();
+            return mRtcEngine.leaveChannel();
         }
+
+        //fail
+        return ERROR_CODE;
     }
 
     /**

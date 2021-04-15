@@ -141,19 +141,23 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
 
         if (isInCall) {
-            isInCall = false;
-            ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
-            //params.horizontalBias =  1f;
-            layout.setBackgroundResource(R.drawable.background_participant_element);
-            muteButton.setVisibility(View.GONE);
-            leaveChannel();
+            if(leaveChannel()) {
+                isInCall = false;
+                ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
+                //params.horizontalBias =  1f;
+                layout.setBackgroundResource(R.drawable.background_participant_element);
+                muteButton.setVisibility(View.GONE);
+            }
         } else {
-            isInCall = true;
-            ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
-            //params.horizontalBias =  0f;
-            layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
-            muteButton.setVisibility(View.VISIBLE);
-            joinChannel();
+
+            if(joinChannel()) {
+                isInCall = true;
+                ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
+                //params.horizontalBias =  0f;
+                layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
+                muteButton.setVisibility(View.VISIBLE);
+            }
+
 
 
         }
@@ -162,29 +166,32 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     }
 
-    /**
-     * Initializes the VoiceCall instance and joins the channel on the backend side
-     */
-    private void joinChannel() {
 
+    /**
+     *
+     * @return true if the channel is successfully joined ad false otherwise
+     */
+    private boolean joinChannel() {
 
         if(voiceCall == null) {
 
             voiceCall = new VoiceCall(this);
         }
 
-        voiceCall.joinChannel();
+        return voiceCall.joinChannel() == VoiceCall.SUCCESS_CODE;
 
     }
 
     /**
-     * Leaves the channel
+     *
+     * @return true if the channel is successfully left and false otherwise
      */
-    private void leaveChannel() {
+    private boolean leaveChannel() {
         if(voiceCall != null) {
-            voiceCall.leaveChannel();
+            return voiceCall.leaveChannel() == VoiceCall.SUCCESS_CODE;
         }
-
+        //fail
+        return false;
     }
 
     /**
