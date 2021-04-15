@@ -128,6 +128,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void callButtonBehavior(View callButton, View muteButton, View layout) {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) callButton.getLayoutParams();
 
+        //check permissions for bluetooth and microphone
+
         if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
             return;
@@ -160,6 +162,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     }
 
+    /**
+     * Initializes the VoiceCall instance and joins the channel on the backend side
+     */
     private void joinChannel() {
 
 
@@ -172,6 +177,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     }
 
+    /**
+     * Leaves the channel
+     */
     private void leaveChannel() {
         if(voiceCall != null) {
             voiceCall.leaveChannel();
@@ -179,8 +187,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     }
 
-    public void setUserOnline(boolean online, String id) {
-
+    /**
+     * Make the user whose id is given appear as online (offline) in the room frontend if online is set to true (false)
+     * @param online
+     * @param id
+     */
+    public void setUserOnline(boolean online, @NonNull String id) {
 
         ConstraintLayout participantsLayout = participantsViews.get(id);
         View muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
@@ -195,13 +207,22 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
 
+    /**
+     * mute (unmute) the user whose id is given if muted is set to true (false)
+     * @param muted
+     * @param id
+     */
     public void muteUser(boolean muted, String id) {
         //TODO
     }
 
+    /**
+     * Initializes the request permission requester
+     */
     private void initializePermissionRequester() {
         requestPermissionLauncher =
                 this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    //joins the channel if granted and do nothing otherwise
                     if (isGranted) {
                         ConstraintLayout participantsLayout = participantsViews.get(AuthenticationFactory.getAdaptedInstance().getUid());
                         ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
@@ -213,15 +234,28 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 });
     }
 
+    /**
+     * return true if the permission given is granted by the user and false otherwise
+     * @param permission
+     * @return
+     */
     private boolean checkPermission(String permission) {
         return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
 
+    /**
+     *
+     * @return the id of the appointment
+     */
     public String getAppointmentId() {
         return requireArguments().getString(PARTICIPANTS_KEY);
     }
 
+    /**
+     *
+     * @return the request permission requester
+     */
     public ActivityResultLauncher<String> getRequestPermissionLauncher() {
         return requestPermissionLauncher;
     }

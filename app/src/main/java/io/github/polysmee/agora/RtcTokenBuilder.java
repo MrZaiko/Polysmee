@@ -1,5 +1,8 @@
 package io.github.polysmee.agora;
 
+/**
+ * Class that builds channel tokens through an AccessToken instance
+ */
 public class RtcTokenBuilder {
     public enum Role {
         /**

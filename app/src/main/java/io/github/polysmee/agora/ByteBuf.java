@@ -6,7 +6,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by Li on 10/1/2016.
+ * ByteBuffer data structure
+ *
  */
 public class ByteBuf {
     ByteBuffer buffer = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
@@ -71,24 +72,6 @@ public class ByteBuf {
         return bytes;
     }
 
-    public String readString() {
-        byte[] bytes = readBytes();
-        return new String(bytes);
-    }
-
-    public TreeMap readMap() {
-        TreeMap<Short, String> map = new TreeMap<>();
-
-        short length = readShort();
-
-        for (short i = 0; i < length; ++i) {
-            short k = readShort();
-            String v = readString();
-            map.put(k, v);
-        }
-
-        return map;
-    }
 
     public TreeMap<Short, Integer> readIntMap() {
         TreeMap<Short, Integer> map = new TreeMap<>();

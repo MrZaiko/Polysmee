@@ -13,6 +13,9 @@ import io.agora.rtc.models.UserInfo;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
+/**
+ * Back-end of the voice call feature
+ */
 public class VoiceCall {
 
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
@@ -26,8 +29,11 @@ public class VoiceCall {
     private Map<Integer, String> usersConnected;
     private RoomActivityParticipantsFragment room;
 
-
-    public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {//@NonNull String appointmentId,@NonNull Context context, @NonNull ActivityResultLauncher<String> requestPermissionLauncher) {
+    /**
+     * Builds a VoiceCall instance for the corresponding room
+     * @param room
+     */
+    public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {
         this.appointmentId = room.getAppointmentId();
         this.context = room.getContext();
         this.requestPermissionLauncher = room.getRequestPermissionLauncher();
@@ -36,12 +42,12 @@ public class VoiceCall {
     }
 
     /**
+     * alternative constructor for making tests
      *
      * @param appointmentId
      * @param context
      * @param requestPermissionLauncher
      * @param handler
-     * constructor with given handler for testing
      */
     public VoiceCall(@NonNull String appointmentId, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
         this.appointmentId = appointmentId;
@@ -57,6 +63,10 @@ public class VoiceCall {
         }
     }
 
+    /**
+     * Joins the channel of the room
+     * @return 0 if the channel is successfully joined
+     */
     public int joinChannel() {
 
         if (mRtcEngine == null) {
@@ -71,27 +81,17 @@ public class VoiceCall {
             }
 
 
-
-            /*
-              Enables the onAudioVolumeIndication callback at a set time interval to report on which
-              users are speaking and the speakers' volume.
-              Once this method is enabled, the SDK returns the volume indication in the
-              onAudioVolumeIndication callback at the set time interval, regardless of whether any user
-              is speaking in t0323
-              he channel.
-            */
-            //mRtcEngine.enableAudioVolumeIndication(200, 3, false); // 200 ms
-
         }
 
         String userId =  AuthenticationFactory.getAdaptedInstance().getUid();
         String token = generateToken(userId);
-        int joined = mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
-        if(joined == 0) {
-        }
-        return joined;
+
+        return mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
     }
 
+    /**
+     * leaves the channel
+     */
     public void leaveChannel() {
         if(mRtcEngine != null) {
             mRtcEngine.leaveChannel();
@@ -99,17 +99,29 @@ public class VoiceCall {
         }
     }
 
+    /**
+     * mute (unmute) local user if mute arg is set to true (false)
+     * @param mute
+     */
     public void mute(boolean mute) {
         mRtcEngine.muteLocalAudioStream(mute);
     }
 
 
+    /**
+     *
+     * @param userId
+     * @return a token generated using the userId and the appointmentId of the room as channel name
+     */
     private String generateToken(@NonNull String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
         return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
+    /**
+     * initializes the IRtcEngineEventHandler
+     */
     private void initializeHandler() {
 
         handler = new IRtcEngineEventHandler() {
@@ -169,6 +181,9 @@ public class VoiceCall {
         };
     }
 
+    /**
+     * set the users of the room offline in the frontend
+     */
     private void setAllUsersOffline() {
         if(room != null) {
             for(String userId : usersConnected.values()) {

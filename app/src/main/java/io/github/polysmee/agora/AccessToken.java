@@ -6,7 +6,9 @@ import java.util.TreeMap;
 
 import static io.github.polysmee.agora.Utils.crc32;
 
-
+/**
+ * Token builder class
+ */
 public class AccessToken {
     public enum Privileges {
         kJoinChannel(1),
@@ -16,19 +18,6 @@ public class AccessToken {
 
         // For RTM only
         kRtmLogin(1000);
-
-        // The following privileges have not
-        // been implemented yet.
-
-        //kPublishAudiocdn(5),
-        //kPublishVideoCdn(6),
-        //kRequestPublishAudioStream(7),
-        //kRequestPublishVideoStream(8),
-        //kRequestPublishDataStream(9),
-        //kInvitePublishAudioStream(10),
-        //kInvitePublishVideoStream(11),
-        //kInvitePublishDataStream(12),
-        //kAdministrateChannel(101),
 
         public short intValue;
 
@@ -48,7 +37,6 @@ public class AccessToken {
     public int crcChannelName;
     public int crcUid;
     public PrivilegeMessage message;
-    public int expireTimestamp;
 
     public AccessToken(String appId, String appCertificate, String channelName, String uid) {
         this.appId = appId;
@@ -103,27 +91,6 @@ public class AccessToken {
         return Utils.hmacSign(appCertificate, baos.toByteArray());
     }
 
-    public boolean fromString(String token) {
-        if (!getVersion().equals(token.substring(0, Utils.VERSION_LENGTH))) {
-            return false;
-        }
-
-        try {
-            appId = token.substring(Utils.VERSION_LENGTH, Utils.VERSION_LENGTH + Utils.APP_ID_LENGTH);
-            PackContent packContent = new PackContent();
-            Utils.unpack(Utils.base64Decode(token.substring(Utils.VERSION_LENGTH + Utils.APP_ID_LENGTH, token.length())), packContent);
-            signature = packContent.signature;
-            crcChannelName = packContent.crcChannelName;
-            crcUid = packContent.crcUid;
-            messageRawContent = packContent.rawMessage;
-            Utils.unpack(messageRawContent, message);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-
-        return true;
-    }
 
     public class PrivilegeMessage implements PackableEx {
         public int salt;
@@ -154,10 +121,6 @@ public class AccessToken {
         public int crcChannelName;
         public int crcUid;
         public byte[] rawMessage;
-
-        public PackContent() {
-            // Nothing done
-        }
 
         public PackContent(byte[] signature, int crcChannelName, int crcUid, byte[] rawMessage) {
             this.signature = signature;

@@ -11,8 +11,10 @@ import java.security.SecureRandom;
 import java.util.Date;
 import java.util.zip.CRC32;
 
+/**
+ * Util class for generating tokens
+ */
 public class Utils {
-    public static final long HMAC_SHA256_LENGTH = 32;
     public static final int VERSION_LENGTH = 3;
     public static final int APP_ID_LENGTH = 32;
 
