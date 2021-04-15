@@ -125,12 +125,12 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchBanLayout);
             searchLayout.setVisibility(View.GONE);
 
-            appointment.getBansAndThen(p -> {
+            /*appointment.getBansAndThen(p -> {
                 for (String id : p) {
                     User user = new DatabaseUser(id);
                     user.getNameAndThen(this::addBan);
                 }
-            });
+            });*/
 
             appointment.getOwnerIdAndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))

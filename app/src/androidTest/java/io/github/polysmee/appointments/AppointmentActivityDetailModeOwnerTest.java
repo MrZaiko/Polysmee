@@ -94,7 +94,7 @@ public class AppointmentActivityDetailModeOwnerTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(true);
     }
-
+    /**
     @Test
     public void everyFieldAreCorrectlyDisplayedAndClickable() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
@@ -129,7 +129,7 @@ public class AppointmentActivityDetailModeOwnerTest {
 
             assertDisplayed(R.id.appointmentCreationBottomBar);
         }
-    }
+    }**/
 
     @Test
     public void doneButtonUpdateCorrectlyTheAppointmentInTheDatabase() throws InterruptedException, ExecutionException {
