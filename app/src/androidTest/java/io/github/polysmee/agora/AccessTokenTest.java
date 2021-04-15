@@ -4,7 +4,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 public class AccessTokenTest {
-    private String appId = "970CA35de60c44645bbae8a215061b33";
+    /*private String appId = "970CA35de60c44645bbae8a215061b33";
     private String appCertificate = "5CFd2fd1755d40ecb72977518be15d3b";
     private String channelName = "7d72365eb983485397e3e3f9d460bdda";
     private String uid = "2882341273";
@@ -33,5 +33,5 @@ public class AccessTokenTest {
         key.message.messages.put((short)AccessToken.Privileges.kJoinChannel.intValue, expireTimestamp);
         String result = key.build();
         assertEquals(expected, result);
-    }
+    }*/
 }
