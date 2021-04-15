@@ -26,7 +26,7 @@ public class TestVoiceCall {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("TestVoiceCall@gmail.com", "Password"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("TestVoiceCall@gmail.com", "fakePassword"));
     }
 
 
