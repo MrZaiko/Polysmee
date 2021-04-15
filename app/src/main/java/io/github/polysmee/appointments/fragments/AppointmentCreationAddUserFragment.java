@@ -127,12 +127,12 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchAddLayout);
             searchLayout.setVisibility(View.GONE);
 
-            appointment.getParticipantsIdAndThen(p -> {
+            /*appointment.getParticipantsIdAndThen(p -> {
                 for (String id : p) {
                     User user = new DatabaseUser(id);
                     user.getNameAndThen(this::addInvite);
                 }
-            });
+            });*/
 
             appointment.getOwnerIdAndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))
