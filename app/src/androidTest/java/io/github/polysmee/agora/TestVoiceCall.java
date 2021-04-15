@@ -2,6 +2,7 @@ package io.github.polysmee.agora;
 
 import androidx.test.core.app.ApplicationProvider;
 
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
 import org.junit.BeforeClass;
@@ -9,20 +10,23 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.concurrent.ExecutionException;
+
 import static org.junit.Assert.*;
 
 
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.github.polysmee.login.AuthenticationFactory;
 
-//@RunWith(JUnit4.class)
+@RunWith(JUnit4.class)
 public class TestVoiceCall {
 
-   /* @BeforeClass
-    public static void setUp() {
+    @BeforeClass
+    public static void setUp() throws ExecutionException, InterruptedException {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("TestVoiceCall@gmail.com", "Password"));
     }
 
 
@@ -42,7 +46,7 @@ public class TestVoiceCall {
         VoiceCall voiceCall = new VoiceCall(channelName, ApplicationProvider.getApplicationContext(), null, handler);
         voiceCall.joinChannel();
         assertEquals(0, voiceCall.leaveChannel());
-    }*/
+    }
 
 
 }
