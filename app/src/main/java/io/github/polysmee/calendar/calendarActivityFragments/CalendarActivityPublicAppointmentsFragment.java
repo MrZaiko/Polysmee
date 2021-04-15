@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,7 +35,7 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
-
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.*;
 
 public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
@@ -60,10 +61,13 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_activity_public_appointments, container, false);
         scrollLayout = (LinearLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentsScrollLayout);
         this.inflater = inflater;
-        setTodayDateInDailyCalendar();
-        setDayText();
+        setTodayDateInDailyCalendar(true);
+        setDayText(rootView,true);
         user = MainUserSingleton.getInstance();
-
+        ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setOnRefreshListener(()->{
+            getAllPublicAppointmentsForTheDay();
+            ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setRefreshing(false);
+        });
         rootView.findViewById(R.id.todayDatePublicAppointmentsCalendarActivity).setOnClickListener((v) -> {
             chooseDate();
         });
@@ -72,14 +76,6 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         return rootView;
     }
 
-
-    /**
-     * Sets the date to the day when the user launches the app at startup
-     */
-    protected void setTodayDateInDailyCalendar(){
-        Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),true);
-    }
 
     /**
      * Behavior of the appointment date button; will pop a date picker dialog to let the user
@@ -95,30 +91,15 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         new DatePickerDialog(getContext(), (view, year, monthOfYear, dayOfMonth) -> {
             DailyCalendar.setDayEpochTimeAtMidnight(year,monthOfYear,dayOfMonth,true);
-            setDayText();
+            setDayText(rootView,true);
             scrollLayout.removeAllViewsInLayout();
             getAllPublicAppointmentsForTheDay();
-            //  addListenerToUserAppointments();
         }, calendarChosenDay.get(Calendar.YEAR), calendarChosenDay.get(Calendar.MONTH), calendarChosenDay.get(Calendar.DATE)).show();
 
     }
     @Override
     public void onResume() {
         super.onResume();
-        //   addListenerToUserAppointments();
-    }
-
-    /**
-     * Method that will launch the CalendarEntryDetailsActivity for the appointment
-     * with the given id. It will launch when clicking on the "Details" button next
-     * to the corresponding appointment.
-     * @param id the appointment of interest' id
-     */
-    protected void goToAppointmentDetails(String id){
-        Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, id);
-        startActivity(intent);
     }
 
     /**
@@ -143,11 +124,18 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
-        calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
+        Appointment appointment1 = new DatabaseAppointment(appointment.getId());
+        appointment1.getOwnerIdAndThen((ownerId) ->{
+            if(!ownerId.equals(user.getId())){
+                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
+                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
+            }
+
+        });
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime()+appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());
-        calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId()));
+        calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId(),this,rootView));
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
         String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
@@ -169,43 +157,14 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public,null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
-
+        TextView emptySpace = new TextView(rootView.getContext());
 
         scrollLayout.addView(appointmentEntryLayout);
+        scrollLayout.addView(emptySpace);
         appointmentIdsToView.put(appointment.getId(),appointmentEntryLayout);
-        scrollLayout.addView(new TextView(rootView.getContext()));
-
-
+        appointmentIdsToView.put(appointment.getId() + 1,emptySpace);
     }
 
-    /**
-     * Everytime the user clicks on an appointment's description in his daily, the corresponding
-     * room activity is launched.
-     * @param appointmentId the appointment's id which will see its room launched
-     * when clicking on its description.
-     */
-    protected void launchRoomActivityWhenClickingOnDescription(String appointmentId){
-        Intent roomActivityIntent = new Intent(rootView.getContext(), RoomActivity.class);
-        roomActivityIntent.putExtra(RoomActivity.APPOINTMENT_KEY,appointmentId);
-        startActivity(roomActivityIntent);
-    }
-
-    /**
-     * Sets the text view on top of the calendar to the current day's date
-     */
-    protected void setDayText(){
-        ConstraintLayout dateLayout = rootView.findViewById(R.id.todayDatePublicAppointmentsCalendarActivity);
-        TextView day = dateLayout.findViewById(R.id.activityCalendarDayPublicAppointments);
-        TextView month = dateLayout.findViewById(R.id.activityCalendarMonthPublicAppointments);
-        long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(true) ;
-        Date today = new Date(epochTimeToday);
-
-        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.US);
-        day.setText(dayFormat.format(today));
-
-        SimpleDateFormat monthFormat = new SimpleDateFormat("EEEE", Locale.US);
-        month.setText(monthFormat.format(today));
-    }
 
     /**
      * Method called when the user clicks on the "join" button next an appointment description in the public appointments.
@@ -222,10 +181,10 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * when the fragment is loaded for the first time or when clicking on the refresh button.
      */
     protected void getAllPublicAppointmentsForTheDay() {
-        Appointment.getAllPublicAppointmentsOnce((allAppointmentIds) ->{
+        Appointment.getAllPublicAppointmentsOnce((allPublicAppointmentsIds) ->{
 
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
-            Set<String> newAppointments = new HashSet<>(allAppointmentIds);
+            Set<String> newAppointments = new HashSet<>(allPublicAppointmentsIds);
             scrollLayout.removeAllViewsInLayout();
 
             deletedAppointments.removeAll(newAppointments); //keep the deleted appointments
@@ -234,6 +193,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
             for(String oldAppointmentId: deletedAppointments){ //delete all old appointments
                 appointmentSet.remove(oldAppointmentId);
                 appointmentInfoMap.remove(oldAppointmentId);
+
             }
             if(newAppointments.isEmpty()){
                 changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
@@ -246,7 +206,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
                     appointment.getPrivateAndThen((isPrivate) ->{
                         if(!isPrivate){
-                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id,user,0);
+                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id);
                             appointment.getStartTimeAndThen((start)->{
                                 appointmentInfo.setStartTime(start);
                                 appointment.getDurationAndThen((duration) -> {
@@ -271,10 +231,10 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                         }
                         else{
                             appointmentInfoMap.remove(id);
-                            //scrollLayout.removeAllViewsInLayout();
-                            if(appointmentIdsToView.containsKey(id))
+                            if(appointmentIdsToView.containsKey(id)){
                                 scrollLayout.removeView(appointmentIdsToView.get(id));
-                            //changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                scrollLayout.removeView(appointmentIdsToView.get(id+1));
+                            }
                         }
                     });
                 }
