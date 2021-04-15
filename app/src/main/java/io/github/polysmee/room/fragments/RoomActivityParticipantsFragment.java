@@ -165,8 +165,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         if(voiceCall == null) {
 
-            String appointmentId = requireArguments().getString(PARTICIPANTS_KEY);
-
             voiceCall = new VoiceCall(this);
         }
 
@@ -182,7 +180,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     public void setUserOnline(boolean online, String id) {
-        System.out.println("youpi : " + id);
+
+
         ConstraintLayout participantsLayout = participantsViews.get(id);
         View muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
         if(online) {
@@ -195,8 +194,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
     }
 
-    public void muteUser(boolean muted, String id) {
 
+    public void muteUser(boolean muted, String id) {
+        //TODO
     }
 
     private void initializePermissionRequester() {

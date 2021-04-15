@@ -70,8 +70,6 @@ public class VoiceCall {
                 throw new RuntimeException(e.getMessage());
             }
 
-            System.out.println("nooooooooooooooooooooooooo");
-
 
 
             /*
@@ -97,7 +95,7 @@ public class VoiceCall {
     public void leaveChannel() {
         if(mRtcEngine != null) {
             mRtcEngine.leaveChannel();
-            usersConnected.remove(AuthenticationFactory.getAdaptedInstance().getUid());
+            setAllUsersOffline();
         }
     }
 
@@ -122,7 +120,7 @@ public class VoiceCall {
 
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("sucessssssssssssssssssssssssssssssssss");
+                System.out.println("sucesss");
             }
 
             @Override
@@ -151,13 +149,33 @@ public class VoiceCall {
 
             @Override
             public void onUserOffline(int uid, int elapsed) {
+                System.out.println("user offline : " + usersConnected.get(uid));
                 if(room != null && usersConnected.containsKey(uid)) {
                     room.setUserOnline(false,usersConnected.get(uid));
                 }
             }
 
+            @Override
+            public void onRemoteAudioStateChanged(int uid, int state, int reason, int elapsed) {
+                String userId = usersConnected.get(uid);
+                switch (reason) {
+                    case Constants.REMOTE_VIDEO_STATE_REASON_LOCAL_MUTED : room.muteUser(true, userId);
+                        break;
+                    case Constants.REMOTE_AUDIO_REASON_LOCAL_UNMUTED : room.muteUser(false, userId);
+                }
+            }
+
 
         };
+    }
+
+    private void setAllUsersOffline() {
+        if(room != null) {
+            for(String userId : usersConnected.values()) {
+                room.setUserOnline(false, userId);
+            }
+        }
+
     }
 
 
