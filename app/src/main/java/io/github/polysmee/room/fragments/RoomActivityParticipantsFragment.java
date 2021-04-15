@@ -141,24 +141,21 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
 
         if (isInCall) {
-            if(leaveChannel()) {
                 isInCall = false;
                 ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
                 //params.horizontalBias =  1f;
                 layout.setBackgroundResource(R.drawable.background_participant_element);
                 muteButton.setVisibility(View.GONE);
-            }
+                leaveChannel();
+
         } else {
 
-            if(joinChannel()) {
                 isInCall = true;
                 ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
                 //params.horizontalBias =  0f;
                 layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
                 muteButton.setVisibility(View.VISIBLE);
-            }
-
-
+                joinChannel();
 
         }
 
@@ -171,14 +168,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
      *
      * @return true if the channel is successfully joined ad false otherwise
      */
-    private boolean joinChannel() {
+    private void joinChannel() {
 
         if(voiceCall == null) {
 
             voiceCall = new VoiceCall(this);
         }
 
-        return voiceCall.joinChannel() == VoiceCall.SUCCESS_CODE;
+        voiceCall.joinChannel();
 
     }
 
@@ -186,12 +183,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
      *
      * @return true if the channel is successfully left and false otherwise
      */
-    private boolean leaveChannel() {
+    private void leaveChannel() {
         if(voiceCall != null) {
-            return voiceCall.leaveChannel() == VoiceCall.SUCCESS_CODE;
+            voiceCall.leaveChannel();
         }
-        //fail
-        return false;
+
     }
 
     /**

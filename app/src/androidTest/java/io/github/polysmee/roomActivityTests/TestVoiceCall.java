@@ -45,4 +45,12 @@ public class TestVoiceCall {
         assertEquals(0, voiceCall.leaveChannel());
     }
 
+    @Test
+    public void generateTokenWorks() {
+        IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
+        String channelName = "test";
+        VoiceCall voiceCall = new VoiceCall(channelName, ApplicationProvider.getApplicationContext(), null, handler);
+        String token = voiceCall.generateToken(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid());
+    }
+
 }

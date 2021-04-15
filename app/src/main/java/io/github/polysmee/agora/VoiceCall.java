@@ -119,7 +119,7 @@ public class VoiceCall {
      * @param userId
      * @return a token generated using the userId and the appointmentId of the room as channel name
      */
-    private String generateToken(@NonNull String userId) {
+    public String generateToken(@NonNull String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
         return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
