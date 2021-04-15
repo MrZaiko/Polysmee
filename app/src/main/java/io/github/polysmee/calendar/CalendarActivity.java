@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -69,7 +70,9 @@ public class CalendarActivity extends AppCompatActivity{
             chooseDate();
         });
 
-        AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(getApplicationContext());
+        AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(
+                getApplicationContext(),
+                (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
         addListenerToUserAppointments();
     }
 

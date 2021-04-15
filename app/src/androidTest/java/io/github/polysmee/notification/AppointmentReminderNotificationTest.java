@@ -1,9 +1,8 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -20,17 +19,16 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.notification.AppointmentReminderNotificationPublisher;
 
-import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
-public class AppointmentReminderNotificationPublisherTest {
+public class AppointmentReminderNotificationTest {
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-    public Context context = ApplicationProvider.getApplicationContext();
-    public final String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text);
+    public static Context context = ApplicationProvider.getApplicationContext();
+    public final static String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text);
+    public final static String notification_title = context.getResources().getString(R.string.appointment_reminder_notification_notification_title);
 
     @Before
     @After
@@ -55,6 +53,10 @@ public class AppointmentReminderNotificationPublisherTest {
         uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(notification_text)));
+        assertNotNull(uiDevice.findObject(By.text(notification_title)));
     }
+
+    public static
+
 
 }

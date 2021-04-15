@@ -31,7 +31,7 @@ public final class AppointmentReminderNotificationSetupListener {
     //need to have those variable as we cannot pass Context and CurrentTime to the done function who need to be of a specified form since it will
     // be use as a lambda to have a StringSetValueListener
     private static Context mContext;
-    private static CurrentTime currentTime;
+    private static AlarmManager alarmManager;
 
     private static String getlocalSharedPreferenceName() {
         assert (mContext != null);
@@ -55,7 +55,7 @@ public final class AppointmentReminderNotificationSetupListener {
     @RequiresApi(api = Build.VERSION_CODES.Q)
     private static void onDone(Set<String> o) {
         //read the only public function first to understand more easily
-        assert (currentTime != null);
+        assert (alarmManager != null);
         assert (mContext != null);
         SharedPreferences localAppointmentsReminderSettedUp = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
         SharedPreferences.Editor localAppointmentsStateEditor = localAppointmentsReminderSettedUp.edit();
@@ -68,7 +68,6 @@ public final class AppointmentReminderNotificationSetupListener {
             }
         }
         for (String appointmentId : toRemove) {
-            AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
             alarmManager.cancel(getReminderNotificationPendingIntent(mContext, appointmentId));
             localAppointmentsStateEditor.remove(appointmentId);
             if (appointmentStartTimeListeners.containsKey(appointmentId)) {
@@ -81,14 +80,14 @@ public final class AppointmentReminderNotificationSetupListener {
         for (String appointmentId : o) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
                 DatabaseAppointment databaseAppointment = new DatabaseAppointment(appointmentId);
+                //TODO remove all alamrm Manager replace them with
                 LongValueListener startTimeValueListener = (long startTime) -> {
-                    AlarmManager alarmManager = (AlarmManager) mContext.getSystemService(Context.ALARM_SERVICE);
                     long appointment_reminder_notification_time_ms = startTime - TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
                             mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
                             mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
                     //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
                     //will trigger directly the alarm if the time passed as argument is greater than the current time
-                    if (startTime > currentTime.get()) {
+                    if (startTime > System.currentTimeMillis()) {
                         alarmManager.setExact(AlarmManager.RTC_WAKEUP, appointment_reminder_notification_time_ms, getReminderNotificationPendingIntent(mContext, appointmentId));
                         localAppointmentsStateEditor.putBoolean(appointmentId, true).apply();
                     }
@@ -106,14 +105,14 @@ public final class AppointmentReminderNotificationSetupListener {
      * @param context The Context in which to perform the setup
      *
      */
-    public static void appointmentReminderNotificationSetListeners(@NonNull Context context, @NonNull CurrentTime currentTime) {
+    public static void appointmentReminderNotificationSetListeners(@NonNull Context context, @NonNull AlarmManager alarmManager) {
         //to be sure that the listener will be setup only once, more robustness
         if (isListenerSetup) {
             return;
         }
         //set the variable that would be used in other function more specifically the done function
         mContext = context;
-        AppointmentReminderNotificationSetupListener.currentTime = currentTime;
+        AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
         MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
     }
 }
