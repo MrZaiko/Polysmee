@@ -10,13 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.By;
-import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject2;
-import androidx.test.uiautomator.Until;
+
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -51,7 +46,6 @@ public class AppointmentReminderNotificationSetupListenerTest {
     private static final String mainAppointmentTitle = "It's a title";
     private static String mainAppointmentId = "nbcwxuhcjgvwxcuftyqf";
     private static final String mainAppointmentCourse = "Totally not SWENG";
-    private static UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     private static Context context = ApplicationProvider.getApplicationContext();
 
     // Clear all app's SharedPreferences
@@ -75,12 +69,6 @@ public class AppointmentReminderNotificationSetupListenerTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).setValue(true);
     }
 
-    /**private static long reminderBeforeTimeMilis(){
-        int timeInMinutes = PreferenceManager.getDefaultSharedPreferences(context).getInt(
-                context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-                context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min));
-        return TimeUnit.MINUTES.toMillis(timeInMinutes);
-    }**/
 
     private static DatabaseReference getTestedMainAppointementReference(){
         return DatabaseFactory.getAdaptedInstance().getReference("appointments").child(mainAppointmentId);
@@ -132,7 +120,7 @@ public class AppointmentReminderNotificationSetupListenerTest {
         long mainAppointemntStartTime =TimeUnit.MINUTES.toMillis(34347)+ System.currentTimeMillis();
         getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
         try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
-            AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, (AlarmManager) context.getSystemService(mockedAlarmManager));
+            AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, mockedAlarmManager);
             DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).removeValue();
             sleep(2, SECONDS);
             verify(mockedAlarmManager).cancel(getReminderNotificationPendingIntent(context, mainAppointmentId));
