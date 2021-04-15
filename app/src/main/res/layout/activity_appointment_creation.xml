@@ -298,13 +298,26 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:layout_marginBottom="60dp"
                 android:text="@string/appointment_creation_maximum_duration_of_an_appointment_is_4h"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toTopOf="@+id/appointmentCreationTxtOnlyUsersInDatabase"
+                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationAddBanError"
+                app:layout_constraintVertical_bias="0" />
+
+            <TextView
+                android:id="@+id/appointmentCreationTxtOnlyUsersInDatabase"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="60dp"
+                android:text="@string/appointment_creation_only_users_in_database"
                 android:textSize="18sp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationAddBanError"
+                app:layout_constraintTop_toBottomOf="@+id/appointmentCreationTxtWarning"
                 app:layout_constraintVertical_bias="0" />
 
 

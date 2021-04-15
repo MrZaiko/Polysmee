@@ -76,10 +76,6 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
     }
 
-    private static ViewAction swipeFromTopToBottom() {
-        return new GeneralSwipeAction(Swipe.FAST, GeneralLocation.TOP_CENTER,
-                GeneralLocation.BOTTOM_CENTER, Press.FINGER);
-    }
 
     @Test
     public void allTestsAtOnce() throws InterruptedException {
@@ -196,6 +192,13 @@ public class AppointmentActivityAddModeTest {
 
             scrollTo(R.id.appointmentCreationShowBan);
             clickOn(R.id.appointmentCreationShowBan);
+            writeTo(R.id.appointmentSettingsSearchBan, "ewfiuhwefasfd");
+            closeSoftKeyboard();
+            scrollTo(R.id.appointmentSettingsBtnBan);
+            clickOn(R.id.appointmentSettingsBtnBan);
+            assertDisplayed("Error");
+            clickOn("OK");
+
             writeTo(R.id.appointmentSettingsSearchBan, username2);
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnBan);
@@ -203,6 +206,13 @@ public class AppointmentActivityAddModeTest {
 
             scrollTo(R.id.appointmentCreationShowAdd);
             clickOn(R.id.appointmentCreationShowAdd);
+            writeTo(R.id.appointmentSettingsSearchAdd, "awewefkhgasd");
+            closeSoftKeyboard();
+            scrollTo(R.id.appointmentSettingsBtnAdd);
+            clickOn(R.id.appointmentSettingsBtnAdd);
+            assertDisplayed("Error");
+            clickOn("OK");
+
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnAdd);

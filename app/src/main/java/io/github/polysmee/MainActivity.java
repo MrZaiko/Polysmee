@@ -23,13 +23,12 @@ public class MainActivity extends AppCompatActivity {
     public void goToRoomActivity(View view) {
         Intent intent = new Intent(this, RoomActivity.class);
         //String id = MainUserSingleton.getInstance().createNewUserAppointment(231321321, 3600, "AICC", "AHAHAHAHA");
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, "-MVvNR1OPXM82pXEKYtc");
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, "-MXxN7Keu6_hMrtHsTH8");
         startActivity(intent);
     }
 
     public void goToCalendar(View view){
         Intent intent = new Intent(this,CalendarActivity.class);
-        intent.putExtra(CalendarActivity.UserTypeCode,"Real");
         startActivity(intent);
     }
 

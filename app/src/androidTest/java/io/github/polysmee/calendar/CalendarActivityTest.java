@@ -21,6 +21,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
+import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -49,7 +50,9 @@ import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
 
@@ -69,6 +72,8 @@ public class CalendarActivityTest {
     private static final SimpleDateFormat dayFormatter = new SimpleDateFormat("d");
     private static final SimpleDateFormat letterDayFormatter = new SimpleDateFormat("EEEE");
 
+
+
     @BeforeClass
     public static void setUp() throws Exception {
         startTime = Calendar.getInstance();
@@ -86,13 +91,66 @@ public class CalendarActivityTest {
     @Before
     public void setTodayDateInDailyCalendar(){
         Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE));
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
+    }
+
+    @Test
+    public void modifyingTitleIsSeenOnTheCalendar(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+
+        Calendar calendar = Calendar.getInstance();
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            String title = "NewTitle";
+            long startTime = calendar.getTimeInMillis() + 3600*1000;
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMeBruh", "ClickMeBoi" ,
+                    startTime ,3600*6*1000,appointmentId+5);
+            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
+                    info.getDuration(), info.getCourse(), info.getTitle(), false);
+            sleep(3,SECONDS);
+            clickOn(info.getTitle());
+            sleep(1,SECONDS);
+            scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+            writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+            closeSoftKeyboard();
+            clickOn(R.id.appointmentCreationbtnDone);
+            sleep(2,SECONDS);
+            assertDisplayed(title);
+        }
+    }
+
+    @Test
+    public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+
+        Calendar calendar = Calendar.getInstance();
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMe", "ClickMe" ,
+                    calendar.getTimeInMillis() + 3600*1000 ,3600*6*1000,appointmentId+5);
+            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
+                    info.getDuration(), info.getCourse(), info.getTitle(), false);
+            sleep(3,SECONDS);
+            clickOn(info.getTitle());
+            assertDisplayed(withHint(info.getTitle()));
+            assertDisplayed(withHint(info.getCourse()));
+
+        }
+    }
+
+    @Test
+    public void clickingSettingsButtonLaunchesSettingsActivity(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            sleep(2,SECONDS);
+            clickOn(R.id.calendarMenuSettings);
+            assertDisplayed("Appointments reminder settings");
+        }
     }
 
     @Test
     public void writtenDateIsCorrectTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000);
+        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             assertDisplayed(dayFormatter.format(date));
@@ -105,9 +163,9 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.todayDateCalendarActivity);
+            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
             setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
-            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight() * 1000;
+            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(false);
             Date date = new Date(epochTimeToday);
             assertDisplayed(dayFormatter.format(date));
             assertDisplayed(letterDayFormatter.format(date));
@@ -119,9 +177,9 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis()/1000,
+            MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis(),
                     3600, appointmentCourse, appointmentTitle, false);
-            sleep(3,SECONDS);
+            sleep(5,SECONDS);
 
             boolean thrown = false;
             try {
@@ -131,7 +189,7 @@ public class CalendarActivityTest {
             }
             assertTrue(thrown);
 
-            clickOn(R.id.todayDateCalendarActivity);
+            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
             setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
             sleep(2,SECONDS);
             assertDisplayed(appointmentTitle);
@@ -139,18 +197,18 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void scrollViewContentIsCoherentAfterAddingAppointments(){
+    public void scrollViewContentsIsCoherentAfterAddingAppointments(){
 
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar todayDate = Calendar.getInstance();
-        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight()*1000));
-        int number_of_appointments = 4;
+        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight(false)));
+        int number_of_appointments = 3;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
             infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight() + i*3600*6,3600*6,appointmentId+i,null,i);
+                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i);
 
         }
 
@@ -165,9 +223,21 @@ public class CalendarActivityTest {
             for(int i = 0; i<number_of_appointments;++i){
                 assertDisplayed(infos[i].getTitle());
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                Date startDate = new Date(infos[i].getStartTime()*1000);
-                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration())*1000);
+                Date startDate = new Date(infos[i].getStartTime());
+                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
                 assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+            }
+
+            swipeViewPagerForward();
+            sleep(3,SECONDS);
+            for(int i = 0; i<number_of_appointments;++i){
+                if(i%2 != 0){
+                assertDisplayed(infos[i].getTitle());
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                Date startDate = new Date(infos[i].getStartTime());
+                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
+                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+                }
             }
         }
     }

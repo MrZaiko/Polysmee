@@ -1,19 +1,24 @@
 package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -36,10 +41,12 @@ import io.github.polysmee.login.MainUserSingleton;
 public class AppointmentCreationBanUserFragment extends Fragment {
     View rootView;
 
-    private EditText searchBan;
+    private AutoCompleteTextView searchBan;
     private ImageView btnBan;
     private LinearLayout bansList;
     private Set<String> bans, removedBans;
+    private ArrayList<String> users;
+    AlertDialog.Builder builder;
 
     DataPasser dataPasser;
 
@@ -65,11 +72,28 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      * store all objects on the activity (buttons, textViews...) in variables
      */
     private void attributeSetters(View rootView) {
+        users = new ArrayList<>();
+        User.getAllUsersIdsAndThenOnce(this::UsersNamesGetter);
         searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, users);
+        searchBan.setAdapter(adapter);
         btnBan = rootView.findViewById(R.id.appointmentSettingsBtnBan);
         bansList = rootView.findViewById(R.id.appointmentCreationBansList);
         bans = new HashSet<>();
         removedBans = new HashSet<>();
+        builder = new AlertDialog.Builder(getActivity());
+    }
+
+    private void UsersNamesGetter(Set<String> allIds) {
+        //This function is called at the creation of the fragment
+        //So here we get the names at the beginning of the fragment's life cycle and the listeners should updated them, but not remove the old name
+        //While this may cause small problems if a user changes their name during this time,
+        //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
+        for(String userId : allIds){
+            User user = new DatabaseUser(userId);
+            user.getNameAndThen((name) -> users.add(name));
+        }
     }
 
     /**
@@ -122,9 +146,18 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      *                  it from the removed banned participant list
      */
     private void banButtonBehavior(View view) {
-        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchBan.getText().toString();
-        if(!bans.contains(s) && !s.isEmpty()) {
+        if(!users.contains(s)) {
+            builder.setMessage("User not found")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
+        }
+
+        else if(!bans.contains(s)) {
             bans.add(s);
             dataPasser.dataPass(bans, AppointmentActivity.BANS);
             searchBan.setText("");
@@ -136,7 +169,10 @@ public class AppointmentCreationBanUserFragment extends Fragment {
 
             addBan(s);
         }
-    };
+        else {
+            searchBan.setText("");
+        }
+    }
 
     /**
      * Used by inviteButtonBehavior() to display the banned user with a remove button
