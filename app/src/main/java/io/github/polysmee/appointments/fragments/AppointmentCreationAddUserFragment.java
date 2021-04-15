@@ -95,8 +95,9 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     }
 
     private void UsersNamesGetter(Set<String> allIds) {
-        //Here we only get the names at the beginning of the fragment's life cycle
-        //While this may cause small problems if a use changes their name during this time,
+        //This function is called at the creation of the fragment
+        //So here we only get the names at the beginning of the fragment's life cycle and don't update them later
+        //While this may cause small problems if a user changes their name during this time,
         //the life cycle is expected to be pretty short so it should only very rarely occur,
         // and it would take a long time to check for this edge case so we don't cover it for now
         for(String userId : allIds){
