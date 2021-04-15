@@ -12,14 +12,15 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
+import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
-
+import androidx.test.uiautomator.UiObject2;
+import androidx.test.uiautomator.Until;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.DatabaseReference;
 import com.schibsted.spain.barista.rule.cleardata.ClearPreferencesRule;
-
 
 import static org.mockito.Mockito.*;
 
@@ -29,7 +30,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -50,8 +50,6 @@ public class AppointmentReminderNotificationSetupListenerTest {
     private static final String mainAppointmentCourse = "Totally not SWENG";
     private static UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     private static Context context = ApplicationProvider.getApplicationContext();
-    private static long mainAppointemntStartTime = TimeUnit.MINUTES.toMillis(324097);
-    //TODO can make random bigger than 10 min
 
     // Clear all app's SharedPreferences
     @Rule
@@ -70,7 +68,7 @@ public class AppointmentReminderNotificationSetupListenerTest {
         getTestedMainAppointementReference().child("course").setValue(mainAppointmentCourse);
         getTestedMainAppointementReference().child("owner").setValue(MainUserSingleton.getInstance().getId());
         getTestedMainAppointementReference().child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
-        getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
+
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(mainAppointmentId).setValue(true);
     }
 
@@ -92,7 +90,7 @@ public class AppointmentReminderNotificationSetupListenerTest {
         return PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
     }
 
-    private long appointmentReminderNotificationTimeMs(){
+    private long appointmentReminderNotificationTimeMs(long mainAppointemntStartTime){
       return  mainAppointemntStartTime - TimeUnit.MINUTES.toMillis(context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min));
     };
 
@@ -102,9 +100,11 @@ public class AppointmentReminderNotificationSetupListenerTest {
     public void reminderSetupInAdvanceOfTheReminderWindow() {
         AlarmManager mockedAlarmManager = mock(AlarmManager.class);
         Intent intent = new Intent(context, SettingsActivity.class);
+        long mainAppointemntStartTime =TimeUnit.MINUTES.toMillis(324097)+ System.currentTimeMillis();
+        getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
         try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, mockedAlarmManager);
-            verify(mockedAlarmManager).setExact(AlarmManager.RTC_WAKEUP, appointmentReminderNotificationTimeMs(), getReminderNotificationPendingIntent(context, mainAppointmentId));
+            verify(mockedAlarmManager).setExact(AlarmManager.RTC_WAKEUP, appointmentReminderNotificationTimeMs(mainAppointemntStartTime), getReminderNotificationPendingIntent(context, mainAppointmentId));
         }
 
         //TODO addNewAppointment
@@ -112,7 +112,14 @@ public class AppointmentReminderNotificationSetupListenerTest {
 
     @Test
     public void reminderSetupInTheReminderWindow(){
-
+        AlarmManager mockedAlarmManager = mock(AlarmManager.class);
+        Intent intent = new Intent(context, SettingsActivity.class);
+        long mainAppointemntStartTime =System.currentTimeMillis()+TimeUnit.MINUTES.toMillis(context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))/2;
+        getTestedMainAppointementReference().child("start").setValue(mainAppointemntStartTime);
+        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+            AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(context, mockedAlarmManager);
+            verify(mockedAlarmManager).setExact(AlarmManager.RTC_WAKEUP, appointmentReminderNotificationTimeMs(mainAppointemntStartTime), getReminderNotificationPendingIntent(context, mainAppointmentId));
+        }
     }
 
     @Test
