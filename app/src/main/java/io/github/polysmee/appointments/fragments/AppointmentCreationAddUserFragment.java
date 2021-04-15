@@ -1,20 +1,25 @@
 package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -38,11 +43,14 @@ import io.github.polysmee.login.MainUserSingleton;
 public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
 
-    private EditText searchInvite;
+    private AutoCompleteTextView searchInvite;
     private ImageView btnInvite;
     private LinearLayout invitesList;
 
     private Set<String> invites, removedInvites;
+    private ArrayList<String> users;
+    AlertDialog.Builder builder;
+
     DataPasser dataPasser;
 
     private int mode;
@@ -73,11 +81,30 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      * store all objects on the activity (buttons, textViews...) in variables
      */
     private void attributeSetters(View rootView) {
+        users = new ArrayList<>();
+        User.getAllUsersIdsAndThenOnce(this::UsersNamesGetter);
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, users);
+        searchInvite.setAdapter(adapter);
         btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnAdd);
         invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
         invites = new HashSet<>();
         removedInvites = new HashSet<>();
+        builder = new AlertDialog.Builder(getActivity());
+    }
+
+    private void UsersNamesGetter(Set<String> allIds) {
+        //This function is called at the creation of the fragment
+        //So here we get the names at the beginning of the fragment's life cycle and the listeners should updated them, but not remove the old name
+        //While this may cause small problems if a user changes their name during this time,
+        //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
+        for(String userId : allIds){
+            User user = new DatabaseUser(userId);
+            user.getNameAndThen((name) -> {
+                users.add(name);
+            });
+        }
     }
 
     /**
@@ -129,9 +156,18 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      *                  it from the removed participant list
      */
     private void inviteButtonBehavior(View view) {
-        //For now we only get the input from the SearchView without checking it as the objective wasn't to add the database component, this will be done later
         String s = searchInvite.getText().toString();
-        if(!invites.contains(s) && !s.isEmpty()) {
+        if(!users.contains(s)) {
+            builder.setMessage("User not found")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
+        }
+
+        else if(!invites.contains(s)) {
             invites.add(s);
             dataPasser.dataPass(invites, AppointmentActivity.INVITES);
             searchInvite.setText("");
@@ -143,7 +179,10 @@ public class AppointmentCreationAddUserFragment extends Fragment {
 
             addInvite(s);
         }
-    };
+        else {
+            searchInvite.setText("");
+        }
+    }
 
     /**
      * Used by inviteButtonBehavior() to display the user added with a remove button
