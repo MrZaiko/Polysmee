@@ -76,10 +76,6 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
     }
 
-    private static ViewAction swipeFromTopToBottom() {
-        return new GeneralSwipeAction(Swipe.FAST, GeneralLocation.TOP_CENTER,
-                GeneralLocation.BOTTOM_CENTER, Press.FINGER);
-    }
 
     @Test
     public void allTestsAtOnce() throws InterruptedException {

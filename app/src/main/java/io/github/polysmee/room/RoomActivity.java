@@ -36,7 +36,7 @@ public class RoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room);
 
-        String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);
+        String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);//"-MXxN7Keu6_hMrtHsTH8";
         this.appointment = new DatabaseAppointment(appointmentKey);
 
         appointment.getTitleAndThen(this::setTitle);
