@@ -1,4 +1,4 @@
-package io.github.polysmee.interfaces;
+package io.github.polysmee.database;
 
 import java.util.Set;
 
