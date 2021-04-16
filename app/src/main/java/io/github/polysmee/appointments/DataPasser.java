@@ -1,4 +1,4 @@
-package io.github.polysmee.database;
+package io.github.polysmee.appointments;
 
 import java.util.Set;
 
