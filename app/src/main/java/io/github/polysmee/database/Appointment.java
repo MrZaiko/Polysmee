@@ -7,6 +7,7 @@ import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -150,6 +151,7 @@ public interface Appointment {
      */
     void removePrivateListener(BooleanValueListener bool);
 
+
     /**
      * @param isPrivate do you really need an explanation ? ;)
      */
@@ -180,6 +182,17 @@ public interface Appointment {
      * @param outOfCall
      */
     void removeOfCall(User outOfCall);
+
+    /**
+     * @param listener the listener to be added to the changes of the inCall set of the appointment
+     *                 The childAdded method is executed for every child when added
+     */
+    void getInCallAndThen(StringChildListener listener);
+
+    /**
+     * @param listener the listener to be removed from listening the inCall set
+     */
+    void removeInCallListener(StringChildListener listener);
 
     /**
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as

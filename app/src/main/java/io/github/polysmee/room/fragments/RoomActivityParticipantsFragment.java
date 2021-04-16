@@ -48,7 +48,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private boolean isMuted = false;
     private boolean isInCall = false;
-
+    private DatabaseAppointment databaseAppointment;
     private VoiceCall voiceCall;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
@@ -59,10 +59,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_participant, container, false);
 
         String appointmentId = getAppointmentId();
+        databaseAppointment = new DatabaseAppointment(appointmentId);
         this.appointment = new DatabaseAppointment(appointmentId);
         this.inflater = getLayoutInflater();
         generateParticipantsView();
         initializePermissionRequester();
+        initializeAndDisplayDatabase();
 
         return rootView;
     }
@@ -267,23 +269,20 @@ public class RoomActivityParticipantsFragment extends Fragment {
         return requestPermissionLauncher;
     }
 
-    public void list() {
-        StringChildListener s = new StringChildListener() {
-          @Override
-          public void childAdded(String id) {
+    private void initializeAndDisplayDatabase() {
+        databaseAppointment.getInCallAndThen(new StringChildListener() {
+            @Override
+            public void childAdded(String id) {
+                setUserOnline(true, id);
+            }
 
-          }
+            @Override
+            public void childRemoved(String id) {
+                setUserOnline(false, id);
+            }
 
-          @Override
-          public void childRemoved(String id) {
-
-          }
-
-        };
-    }
-
-    private void setDatabase() {
-
+        }
+        );
     }
 
 }

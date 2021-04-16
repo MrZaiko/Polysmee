@@ -7,6 +7,7 @@ import java.util.Set;
 
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -252,6 +253,7 @@ public class DatabaseAppointment implements Appointment {
                 .removeEventListener(bool);
     }
 
+
     @Override
     public void setPrivate(boolean isPrivate) {
         DatabaseFactory
@@ -304,5 +306,25 @@ public class DatabaseAppointment implements Appointment {
                 .child("inCall")
                 .child(outOfCall.getId())
                 .setValue(null);
+    }
+
+    @Override
+    public void getInCallAndThen(StringChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .addChildEventListener(listener);
+    }
+
+    @Override
+    public void removeInCallListener(StringChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .removeEventListener(listener);
     }
 }

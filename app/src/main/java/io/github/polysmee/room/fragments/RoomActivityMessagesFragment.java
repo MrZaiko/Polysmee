@@ -37,6 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.messages.Message;
@@ -54,7 +55,7 @@ public class RoomActivityMessagesFragment extends Fragment {
     private LayoutInflater inflater;
     private DatabaseReference databaseReference;
     private final Map<String, View> messagesDisplayed = new HashMap<>();
-
+    private DatabaseAppointment databaseAppointment;
     private ActionMode actionMode;
 
     @Nullable
@@ -63,7 +64,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_messages, container, false);
 
         String appointmentId = requireArguments().getString(MESSAGES_KEY);
-
+        databaseAppointment = new DatabaseAppointment(appointmentId);
         ImageView send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
 
