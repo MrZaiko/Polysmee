@@ -23,6 +23,12 @@ public interface User{
     void getNameAndThen(StringValueListener valueListener);
 
     /**
+     * @param valueListener the listener to be added for changes to the user name.
+     *          It is scheduled only once.
+     */
+    void getName_Once_AndThen(StringValueListener valueListener);
+
+    /**
      * @param valueListener the listener to be removed from listening to the user name
      */
     void removeNameListener(StringValueListener valueListener);
@@ -32,6 +38,12 @@ public interface User{
      *          It is scheduled once when added, even if there is no change at that moment.
      */
     void getAppointmentsAndThen(StringSetValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be added for changes to the appointments the user is part of.
+     *          It is scheduled only once.
+     */
+    void getAppointments_Once_AndThen(StringSetValueListener valueListener);
 
     /**
      * @param valueListener the listener to be removed from listening to the appointment list
