@@ -231,6 +231,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         databaseReference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                System.out.println("oooooooooooooooooooooooooooooo");
                 Message message = snapshot.getValue(Message.class);
 
                 String key = snapshot.getKey();
@@ -252,6 +253,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                 //update the corresponding textView
+                System.out.println("aaaaaaaaaaaaaaaaaaaaaaaaaa");
                 Message message = snapshot.getValue(Message.class);
                 String key = snapshot.getKey();
                 ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(message.getContent());

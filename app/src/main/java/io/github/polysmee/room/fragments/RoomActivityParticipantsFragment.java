@@ -19,6 +19,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +29,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.VoiceCall;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.databaselisteners.StringChildListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
@@ -261,6 +265,25 @@ public class RoomActivityParticipantsFragment extends Fragment {
      */
     public ActivityResultLauncher<String> getRequestPermissionLauncher() {
         return requestPermissionLauncher;
+    }
+
+    public void list() {
+        StringChildListener s = new StringChildListener() {
+          @Override
+          public void childAdded(String id) {
+
+          }
+
+          @Override
+          public void childRemoved(String id) {
+
+          }
+
+        };
+    }
+
+    private void setDatabase() {
+
     }
 
 }

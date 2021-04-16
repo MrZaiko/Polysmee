@@ -2,8 +2,6 @@ package io.github.polysmee.database;
 
 import com.google.firebase.database.FirebaseDatabase;
 
-import static io.github.polysmee.BuildConfig.DEBUG;
-
 public final class DatabaseFactory {
     private DatabaseFactory(){}
 

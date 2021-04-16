@@ -283,4 +283,26 @@ public class DatabaseAppointment implements Appointment {
                 .child(unbanned.getId())
                 .setValue(null);
     }
+
+    @Override
+    public void addInCallUser(User inCall) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(inCall.getId())
+                .setValue(true);
+    }
+
+    @Override
+    public void removeOfCall(User outOfCall) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(outOfCall.getId())
+                .setValue(null);
+    }
 }

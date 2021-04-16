@@ -170,6 +170,18 @@ public interface Appointment {
     void removeBan(User unbanned);
 
     /**
+     * Adds the given user to the set of in call users
+     * @param inCall
+     */
+    void addInCallUser(User inCall);
+
+    /**
+     * Removes the given user from in call users
+     * @param outOfCall
+     */
+    void removeOfCall(User outOfCall);
+
+    /**
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as
      *            public
      */
