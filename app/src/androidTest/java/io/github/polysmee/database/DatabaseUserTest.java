@@ -89,6 +89,7 @@ public class DatabaseUserTest {
             assertEquals(gotName.get(), username);
         } finally {
             lock.unlock();
+            MainUserSingleton.getInstance().getName_Once_AndThen((e) -> {});
         }
     }
 
@@ -126,6 +127,7 @@ public class DatabaseUserTest {
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
+            MainUserSingleton.getInstance().getAppointments_Once_AndThen((e) -> {});
             Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
