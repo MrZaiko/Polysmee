@@ -1,7 +1,5 @@
 package io.github.polysmee.database;
 
-import io.github.polysmee.database.Appointment;
-import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
