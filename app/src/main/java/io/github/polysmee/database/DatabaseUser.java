@@ -54,6 +54,16 @@ public final class DatabaseUser implements User {
     }
 
     @Override
+    public void getName_Once_AndThen(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
     public void removeNameListener(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -71,6 +81,16 @@ public final class DatabaseUser implements User {
                 .child(self_id)
                 .child("appointments")
                 .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getAppointments_Once_AndThen(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .addListenerForSingleValueEvent(valueListener);
     }
 
     @Override

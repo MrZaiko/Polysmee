@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
-import io.github.polysmee.database.decoys.FakeDatabaseUser;
 import io.github.polysmee.database.User;
 
 import static org.junit.Assert.assertEquals;
