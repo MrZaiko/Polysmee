@@ -7,44 +7,39 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
-public interface StringChildListener extends ChildEventListener {
-
-    default void childAdded(String id) {}
-    default void childChanged(String id) {}
-    default void childRemoved(String id) {}
-    default void childMoved(String id) {}
+public interface BooleanChildListener extends ChildEventListener {
+    default void childAdded(String key, boolean value) {}
+    default void childChanged(String key, boolean value) {}
+    default void childRemoved(String key, boolean value) {}
+    default void childMoved(String key, boolean value) {}
 
 
     @Override
     default public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-        String data = (String) snapshot.getValue();
-        if(data != null) {
-            childAdded(data);
-        }
+        String key = snapshot.getKey();
+        boolean data = (boolean) snapshot.getValue();
+            childAdded(key, data);
     }
 
     @Override
     default public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-        String data = (String) snapshot.getValue();
-        if(data != null) {
-            childChanged(data);
-        }
+        String key = snapshot.getKey();
+        boolean data = (boolean) snapshot.getValue();
+            childChanged(key,data);
     }
 
     @Override
     default public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-        String data = (String) snapshot.getValue();
-        if(data != null) {
-            childRemoved(data);
-        }
+        String key = snapshot.getKey();
+        boolean data = (boolean) snapshot.getValue();
+            childRemoved(key, data);
     }
 
     @Override
     default public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-        String data = (String) snapshot.getValue();
-        if(data != null) {
-            childMoved(data);
-        }
+        String key = snapshot.getKey();
+        boolean data = (boolean) snapshot.getValue();
+            childMoved(key, data);
     }
 
     @Override

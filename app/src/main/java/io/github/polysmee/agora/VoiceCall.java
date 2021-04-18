@@ -10,7 +10,10 @@ import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
+import io.github.polysmee.database.DatabaseAppointment;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 /**
@@ -26,34 +29,37 @@ public class VoiceCall {
     private static final int EXPIRATION_TIME = 3600;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler handler;
-    private final String appointmentId;
     private final Context context;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<Integer, String> usersConnected;
-    private RoomActivityParticipantsFragment room;
+    private DatabaseAppointment appointment;
 
-    /**
-     * Builds a VoiceCall instance for the corresponding room
-     * @param room
-     */
-    public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {
+
+
+    //Builds a VoiceCall instance for the corresponding room
+    public VoiceCall(DatabaseAppointment appointment, Context context) {
+        this.context = context;
+        this.appointment = appointment;
+    }
+
+    /*public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {
         this.appointmentId = room.getAppointmentId();
         this.context = room.getContext();
         this.requestPermissionLauncher = room.getRequestPermissionLauncher();
         usersConnected = new HashMap<Integer, String>();
         this.room = room;
-    }
+    }*/
 
     /**
-     * alternative constructor for making tests
+     * alternative constructor for tests
      *
-     * @param appointmentId
+     * @param appointment
      * @param context
      * @param requestPermissionLauncher
      * @param handler
      */
-    public VoiceCall(@NonNull String appointmentId, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
-        this.appointmentId = appointmentId;
+    public VoiceCall(@NonNull DatabaseAppointment appointment, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
+        this.appointment = appointment;
         this.context = context;
         this.requestPermissionLauncher = requestPermissionLauncher;
         usersConnected = new HashMap<Integer, String>();
@@ -86,10 +92,15 @@ public class VoiceCall {
 
         }
 
-        String userId =  AuthenticationFactory.getAdaptedInstance().getUid();
+        String userId =  MainUserSingleton.getInstance().getId();
         String token = generateToken(userId);
 
-        return mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token,appointment.getId(),userId);
+        if(joinStatus == SUCCESS_CODE) {
+            appointment.addInCallUser(new DatabaseUser(userId));
+            return SUCCESS_CODE;
+        }
+        return ERROR_CODE;
     }
 
     /**
@@ -97,8 +108,11 @@ public class VoiceCall {
      */
     public int leaveChannel() {
         if(mRtcEngine != null) {
-            setAllUsersOffline();
-            return mRtcEngine.leaveChannel();
+            int leaveStatus = mRtcEngine.leaveChannel();
+            if(leaveStatus == SUCCESS_CODE) {
+                appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
+                return SUCCESS_CODE;
+            }
         }
 
         //fail
@@ -111,6 +125,7 @@ public class VoiceCall {
      */
     public void mute(boolean mute) {
         mRtcEngine.muteLocalAudioStream(mute);
+        appointment.muteUser(new DatabaseUser(MainUserSingleton.getInstance().getId()), mute);
     }
 
 
@@ -122,7 +137,7 @@ public class VoiceCall {
     public String generateToken(@NonNull String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
-        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
     /**
@@ -148,11 +163,8 @@ public class VoiceCall {
 
             @Override
             public void onUserJoined(int uid, int elapsed) {
-                System.out.println("room null");
-                System.out.println(room == null);
-                if(usersConnected.containsKey(uid) && room != null) {
-                    System.out.println("lets go !!!");
-                    room.setUserOnline(true, usersConnected.get(uid));
+                if(usersConnected.containsKey(uid)) {
+                    appointment.addInCallUser(new DatabaseUser(usersConnected.get(uid)));
                 }
                 System.out.println("user joined : " + uid);
             }
@@ -168,8 +180,8 @@ public class VoiceCall {
             @Override
             public void onUserOffline(int uid, int elapsed) {
                 System.out.println("user offline : " + usersConnected.get(uid));
-                if(room != null && usersConnected.containsKey(uid)) {
-                    room.setUserOnline(false,usersConnected.get(uid));
+                if(usersConnected.containsKey(uid)) {
+                    appointment.removeOfCall(new DatabaseUser(usersConnected.get(uid)));
                 }
             }
 
@@ -177,9 +189,13 @@ public class VoiceCall {
             public void onRemoteAudioStateChanged(int uid, int state, int reason, int elapsed) {
                 String userId = usersConnected.get(uid);
                 switch (reason) {
-                    case Constants.REMOTE_VIDEO_STATE_REASON_LOCAL_MUTED : room.muteUser(true, userId);
+                    case Constants.REMOTE_AUDIO_REASON_REMOTE_MUTED :
+                        System.out.println("yakakakakkakakakakakkaa");
+                        //room.muteUser(true, userId);
                         break;
-                    case Constants.REMOTE_AUDIO_REASON_LOCAL_UNMUTED : room.muteUser(false, userId);
+                    case Constants.REMOTE_AUDIO_REASON_LOCAL_UNMUTED :
+                        //room.muteUser(false, userId);
+                        System.out.println("yokokokokokokokokokokokoko");
                 }
             }
 
@@ -187,17 +203,6 @@ public class VoiceCall {
         };
     }
 
-    /**
-     * set the users of the room offline in the frontend
-     */
-    private void setAllUsersOffline() {
-        if(room != null) {
-            for(String userId : usersConnected.values()) {
-                room.setUserOnline(false, userId);
-            }
-        }
-
-    }
 
 
 }

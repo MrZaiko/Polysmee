@@ -1,13 +1,8 @@
 package io.github.polysmee.database;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -294,7 +289,18 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("inCall")
                 .child(inCall.getId())
-                .setValue(true);
+                .setValue(false);
+    }
+
+    @Override
+    public void muteUser(User user, boolean muted) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(user.getId())
+                .setValue(muted);
     }
 
     @Override
@@ -309,7 +315,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public void getInCallAndThen(StringChildListener listener) {
+    public void getInCallAndThen(BooleanChildListener listener) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -319,7 +325,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public void removeInCallListener(StringChildListener listener) {
+    public void removeInCallListener(BooleanChildListener listener) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")

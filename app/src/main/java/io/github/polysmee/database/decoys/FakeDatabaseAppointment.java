@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
@@ -152,6 +153,31 @@ public class FakeDatabaseAppointment implements Appointment {
 
     @Override
     public void removeBan(User unbanned) {
+    }
+
+    @Override
+    public void addInCallUser(User inCall) {
+
+    }
+
+    @Override
+    public void muteUser(User user, boolean muted) {
+
+    }
+
+    @Override
+    public void removeOfCall(User outOfCall) {
+
+    }
+
+    @Override
+    public void getInCallAndThen(BooleanChildListener listener) {
+
+    }
+
+    @Override
+    public void removeInCallListener(BooleanChildListener listener) {
+
     }
 
     @Override

@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -178,6 +178,13 @@ public interface Appointment {
     void addInCallUser(User inCall);
 
     /**
+     * Set the given User as muted (unmuted) if muted is true (false)
+     * @param user
+     * @param muted
+     */
+    void muteUser(User user, boolean muted);
+
+    /**
      * Removes the given user from in call users
      * @param outOfCall
      */
@@ -187,12 +194,12 @@ public interface Appointment {
      * @param listener the listener to be added to the changes of the inCall set of the appointment
      *                 The childAdded method is executed for every child when added
      */
-    void getInCallAndThen(StringChildListener listener);
+    void getInCallAndThen(BooleanChildListener listener);
 
     /**
      * @param listener the listener to be removed from listening the inCall set
      */
-    void removeInCallListener(StringChildListener listener);
+    void removeInCallListener(BooleanChildListener listener);
 
     /**
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as

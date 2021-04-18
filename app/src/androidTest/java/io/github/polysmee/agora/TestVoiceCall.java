@@ -16,6 +16,7 @@ import static org.junit.Assert.*;
 
 
 import io.agora.rtc.IRtcEngineEventHandler;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.login.AuthenticationFactory;
 
 @RunWith(JUnit4.class)
@@ -33,8 +34,9 @@ public class TestVoiceCall {
     @Test
     public void joinChannelWorks() {
         IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
-        String channelName = "test";
-        VoiceCall voiceCall = new VoiceCall(channelName, ApplicationProvider.getApplicationContext(), null, handler);
+        //String channelName = "test";
+        DatabaseAppointment appointment = new DatabaseAppointment("test");
+        VoiceCall voiceCall = new VoiceCall(appointment, ApplicationProvider.getApplicationContext(), null, handler);
         assertEquals(0, voiceCall.joinChannel());
         voiceCall.leaveChannel();
     }
@@ -42,8 +44,8 @@ public class TestVoiceCall {
     @Test
     public void leaveChannelWorks() {
         IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
-        String channelName = "test";
-        VoiceCall voiceCall = new VoiceCall(channelName, ApplicationProvider.getApplicationContext(), null, handler);
+        DatabaseAppointment appointment = new DatabaseAppointment("test");
+        VoiceCall voiceCall = new VoiceCall(appointment, ApplicationProvider.getApplicationContext(), null, handler);
         voiceCall.joinChannel();
         assertEquals(0, voiceCall.leaveChannel());
     }
