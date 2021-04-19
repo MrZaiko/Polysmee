@@ -2,8 +2,6 @@ package io.github.polysmee.login;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import static io.github.polysmee.BuildConfig.DEBUG;
-
 public final class AuthenticationFactory {
     private AuthenticationFactory(){}
 

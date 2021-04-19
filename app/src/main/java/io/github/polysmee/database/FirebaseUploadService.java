@@ -5,8 +5,6 @@ import androidx.annotation.NonNull;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.io.File;
-
 import io.github.polysmee.database.databaselisteners.DownloadValueListener;
 import io.github.polysmee.database.databaselisteners.LoadValueListener;
 

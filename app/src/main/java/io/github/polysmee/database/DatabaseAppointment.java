@@ -14,6 +14,10 @@ public class DatabaseAppointment implements Appointment {
         this.id = id;
     }
 
+    @Override
+    public String getId() {
+        return id;
+    }
 
     @Override
     public void getStartTimeAndThen(LongValueListener l) {
@@ -23,6 +27,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("start")
                 .addValueEventListener(l);
+    }
+
+    @Override
+    public void getStartTime_Once_AndThen(LongValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("start")
+                .addListenerForSingleValueEvent(l);
     }
 
     @Override
@@ -46,6 +60,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void getDuration_Once_AndThen(LongValueListener l) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("duration")
+                .addListenerForSingleValueEvent(l);
+    }
+
+    @Override
     public void removeDurationListener(LongValueListener l) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -63,6 +87,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("course")
                 .addValueEventListener(s);
+    }
+
+    @Override
+    public void getCourse_Once_AndThen(StringValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("course")
+                .addListenerForSingleValueEvent(s);
     }
 
     @Override
@@ -86,6 +120,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void getTitle_Once_AndThen(StringValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("title")
+                .addListenerForSingleValueEvent(s);
+    }
+
+    @Override
     public void removeTitleListener(StringValueListener l) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -103,6 +147,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("participants")
                 .addValueEventListener(s);
+    }
+
+    @Override
+    public void getParticipantsId_Once_AndThen(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("participants")
+                .addListenerForSingleValueEvent(s);
     }
 
     @Override
@@ -126,6 +180,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void getOwnerId_Once_AndThen(StringValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("owner")
+                .addListenerForSingleValueEvent(s);
+    }
+
+    @Override
     public void removeOwnerListener(StringValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -133,11 +197,6 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("owner")
                 .removeEventListener(s);
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override
@@ -219,6 +278,16 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void getBans_Once_AndThen(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .addListenerForSingleValueEvent(s);
+    }
+
+    @Override
     public void removeBansListener(StringSetValueListener s) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -236,6 +305,16 @@ public class DatabaseAppointment implements Appointment {
                 .child(id)
                 .child("private")
                 .addValueEventListener(b);
+    }
+
+    @Override
+    public void getPrivate_Once_AndThen(BooleanValueListener b) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("private")
+                .addListenerForSingleValueEvent(b);
     }
 
     @Override

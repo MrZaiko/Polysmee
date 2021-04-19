@@ -78,6 +78,7 @@ public class DatabaseAppointmentTest {
             assertEquals(start.get(), 0);
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getStartTime_Once_AndThen((l) -> {});
         }
     }
 
@@ -103,6 +104,8 @@ public class DatabaseAppointmentTest {
             assertEquals(duration.get(), 3600);
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getDuration_Once_AndThen((l) -> {});
+
         }
     }
 
@@ -128,6 +131,8 @@ public class DatabaseAppointmentTest {
             assertEquals("AU", gotName.get());
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getCourse_Once_AndThen((l) -> {});
+
         }
     }
 
@@ -153,6 +158,7 @@ public class DatabaseAppointmentTest {
             assertEquals("chihiro", gotName.get());
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getTitle_Once_AndThen((l) -> {});
         }
     }
 
@@ -178,6 +184,7 @@ public class DatabaseAppointmentTest {
             assertEquals(MainUserSingleton.getInstance().getId(), gotName.get());
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getOwnerId_Once_AndThen((l) -> {});
         }
     }
 
@@ -214,6 +221,7 @@ public class DatabaseAppointmentTest {
             assertTrue(listenerRan.get());
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getParticipantsId_Once_AndThen((l) -> {});
         }
     }
 
@@ -249,6 +257,7 @@ public class DatabaseAppointmentTest {
             assertTrue(moreThanOne.get());
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getBans_Once_AndThen((l) -> {});
         }
     }
 
@@ -276,6 +285,7 @@ public class DatabaseAppointmentTest {
 
         } finally {
             lock.unlock();
+            new DatabaseAppointment(apid).getPrivate_Once_AndThen((l) -> {});
         }
     }
 }

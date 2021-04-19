@@ -17,75 +17,27 @@ import io.github.polysmee.database.databaselisteners.StringValueListener;
 public interface Appointment {
 
     /**
+     * @return the id of this appointment, which defines equality
+     */
+    String getId();
+
+    //====================== START TIME ===================
+    /**
      * @param l the listener to be added for changes to the start time.
      *          It is scheduled once when added, even if there is no change at that moment.
      */
     void getStartTimeAndThen(LongValueListener l);
 
     /**
+     * @param l the listener to be added for changes to the start time.
+     *          It is scheduled only once.
+     */
+    void getStartTime_Once_AndThen(LongValueListener l);
+
+    /**
      * @param l the listener to be removed from listening to the start time
      */
     void removeStartListener(LongValueListener l);
-
-    /**
-     * @param l the listener to be added for changes to the duration time.
-     *          It is scheduled once when added, even if there is no change at that moment.
-     */
-    void getDurationAndThen(LongValueListener l);
-
-    /**
-     * @param l the listener to be removed from listening to the duration time
-     */
-    void removeDurationListener(LongValueListener l);
-
-    /**
-     * @return the id of this appointment, which defines equality
-     */
-    String getId();
-
-    /**
-     * @param s the listener to be added for changes to the course name.
-     *          It is scheduled once when added, even if there is no change at that moment.
-     */
-    void getCourseAndThen(StringValueListener s);
-
-    /**
-     * @param s the listener to be removed from listening to the course name
-     */
-    void removeCourseListener(StringValueListener s);
-
-    /**
-     * @param s the listener to be added for changes to the title of the appointment.
-     *          It is scheduled once when added, even if there is no change at that moment.
-     */
-    void getTitleAndThen(StringValueListener s);
-
-    /**
-     * @param l the listener to be removed from listening to the title of the appointment
-     */
-    void removeTitleListener(StringValueListener l);
-
-    /**
-     * @param s the listener to be added for changes to the participant list.
-     *          It is scheduled once when added, even if there is no change at that moment.
-     */
-    void getParticipantsIdAndThen(StringSetValueListener s);
-
-    /**
-     * @param s the listener to be removed from listening to the participant list
-     */
-    void removeParticipantsListener(StringSetValueListener s);
-
-    /**
-     * @param s the listener to be added for changes to the owner id.
-     *          It is scheduled once when added, even if there is no change at that moment.
-     */
-    void getOwnerIdAndThen(StringValueListener s);
-
-    /**
-     * @param s the listener to be removed from listening to the owner id
-     */
-    void removeOwnerListener(StringValueListener s);
 
     /**
      * Sets the appointment's start time
@@ -94,12 +46,50 @@ public interface Appointment {
      */
     void setStartTime(long startTime);
 
+
+    //===================== DURATION ============================
+    /**
+     * @param l the listener to be added for changes to the duration time.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getDurationAndThen(LongValueListener l);
+
+    /**
+     * @param l the listener to be added for changes to the duration time.
+     *          It is scheduled only once.
+     */
+    void getDuration_Once_AndThen(LongValueListener l);
+
+    /**
+     * @param l the listener to be removed from listening to the duration time
+     */
+    void removeDurationListener(LongValueListener l);
+
     /**
      * Sets the appointment's duration, which cannot be longer than 4 hours
      *
      * @param duration the new duration
      */
     void setDuration(long duration);
+
+    //======================== COURSE NAME ============================
+
+    /**
+     * @param s the listener to be added for changes to the course name.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getCourseAndThen(StringValueListener s);
+
+    /**
+     * @param s the listener to be added for changes to the course name.
+     *          It is scheduled only once.
+     */
+    void getCourse_Once_AndThen(StringValueListener s);
+
+    /**
+     * @param s the listener to be removed from listening to the course name
+     */
+    void removeCourseListener(StringValueListener s);
 
     /**
      * Sets the appointment's course
@@ -108,12 +98,49 @@ public interface Appointment {
      */
     void setCourse(String course);
 
+    //=========================== TITLE ==============================
+    /**
+     * @param s the listener to be added for changes to the title of the appointment.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getTitleAndThen(StringValueListener s);
+
+    /**
+     * @param s the listener to be added for changes to the title of the appointment.
+     *          It is scheduled only once.
+     */
+    void getTitle_Once_AndThen(StringValueListener s);
+
+    /**
+     * @param l the listener to be removed from listening to the title of the appointment
+     */
+    void removeTitleListener(StringValueListener l);
+
     /**
      * Sets the appointment's title
      *
      * @param title the new title
      */
     void setTitle(String title);
+
+
+    //============================= PARTICIPANTS ====================
+    /**
+     * @param s the listener to be added for changes to the participant list.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getParticipantsIdAndThen(StringSetValueListener s);
+
+    /**
+     * @param s the listener to be added for changes to the participant list.
+     *          It is scheduled only once.
+     */
+    void getParticipantsId_Once_AndThen(StringSetValueListener s);
+
+    /**
+     * @param s the listener to be removed from listening to the participant list
+     */
+    void removeParticipantsListener(StringSetValueListener s);
 
     /**
      * Adds the given user to the set of participant
@@ -129,6 +156,27 @@ public interface Appointment {
      */
     void removeParticipant(User participant);
 
+
+    //========================= OWNER ===========================
+    /**
+     * @param s the listener to be added for changes to the owner id.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getOwnerIdAndThen(StringValueListener s);
+
+    /**
+     * @param s the listener to be added for changes to the owner id.
+     *          It is scheduled only once.
+     */
+    void getOwnerId_Once_AndThen(StringValueListener s);
+
+    /**
+     * @param s the listener to be removed from listening to the owner id
+     */
+    void removeOwnerListener(StringValueListener s);
+
+    //===================== BANS ====================
+
     /**
      * @param s the listener to be added for changes to the banned list.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -136,26 +184,16 @@ public interface Appointment {
     void getBansAndThen(StringSetValueListener s);
 
     /**
+     * @param s the listener to be added for changes to the banned list.
+     *          It is scheduled only once.
+     */
+    void getBans_Once_AndThen(StringSetValueListener s);
+
+
+    /**
      * @param s the listener to be removed from listening to the banned list
      */
     void removeBansListener(StringSetValueListener s);
-
-    /**
-     * @param bool the listener to be added for changes to the 'private' boolean attribute.
-     *          It is scheduled once when added, even if there is no change at that moment.
-     */
-    void getPrivateAndThen(BooleanValueListener bool);
-
-    /**
-     * @param bool the listener to be removed from listening to the 'private' boolean attribute.
-     */
-    void removePrivateListener(BooleanValueListener bool);
-
-
-    /**
-     * @param isPrivate do you really need an explanation ? ;)
-     */
-    void setPrivate(boolean isPrivate);
 
     /**
      * Adds the given user to the set of banned users
@@ -170,6 +208,30 @@ public interface Appointment {
      * @param unbanned the user to be unbanned
      */
     void removeBan(User unbanned);
+
+    //======================== PRIVATE ======================
+
+    /**
+     * @param bool the listener to be added for changes to the 'private' boolean attribute.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getPrivateAndThen(BooleanValueListener bool);
+
+    /**
+     * @param bool the listener to be added for changes to the 'private' boolean attribute.
+     *          It is scheduled only once.
+     */
+    void getPrivate_Once_AndThen(BooleanValueListener bool);
+
+    /**
+     * @param bool the listener to be removed from listening to the 'private' boolean attribute.
+     */
+    void removePrivateListener(BooleanValueListener bool);
+
+    /**
+     * @param isPrivate do you really need an explanation ? ;)
+     */
+    void setPrivate(boolean isPrivate);
 
     /**
      * Adds the given user to the set of in call users
@@ -205,7 +267,7 @@ public interface Appointment {
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as
      *            public
      */
-    @SuppressWarnings({"unchecked", "ConstantConditions"})
+    @SuppressWarnings({"unchecked"})
     static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
 
         DatabaseFactory
