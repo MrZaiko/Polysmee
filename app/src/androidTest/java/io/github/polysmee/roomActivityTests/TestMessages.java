@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import static org.junit.Assert.*;
 
 
-import io.github.polysmee.messages.Message;
+import io.github.polysmee.database.messages.Message;
 
 @RunWith(JUnit4.class)
 public class TestMessages {
