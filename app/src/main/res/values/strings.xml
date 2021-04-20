@@ -72,6 +72,7 @@
     <string name="appointmentCreationTimeError">Start and end time must result in a correct time slot</string>
     <string name="appointmentCreationAddBanError">A user cannot be both added and banned</string>
     <string name="calendarActivityTodayDatePublicAppointments">Date</string>
+    <string name="invites_management_current_invitations">Current invitations</string>
 
 </resources>
 
