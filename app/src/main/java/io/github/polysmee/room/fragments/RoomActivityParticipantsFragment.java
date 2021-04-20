@@ -24,6 +24,7 @@ import java.util.Map;
 
 import io.github.polysmee.R;
 import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -45,9 +46,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private boolean isMuted = false;
     private boolean isInCall = false;
 
-    private VoiceCall voiceCall;
+    //private VoiceCall voiceCall;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
+
+    private Call call;
 
     @Nullable
     @Override
@@ -63,6 +66,13 @@ public class RoomActivityParticipantsFragment extends Fragment {
         return rootView;
     }
 
+    public RoomActivityParticipantsFragment(){
+        // Required empty public constructor
+    }
+
+    public RoomActivityParticipantsFragment(Call call){
+        this.call = call;
+    }
 
     /*
      * Generate a text view for each participant
@@ -101,8 +111,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
                 muteButton.setOnClickListener(this::muteButtonBehavior);
 
+                ImageView videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
+                videoButton.setOnClickListener(this::shareVideoBehavior);
+
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
-                callButton.setOnClickListener(v -> callButtonBehavior(callButton, muteButton, participantsLayout));
+                callButton.setOnClickListener(v -> callButtonBehavior(callButton, muteButton, videoButton, participantsLayout));
 
                 layout.addView(participantsLayout);
 
@@ -112,20 +125,30 @@ public class RoomActivityParticipantsFragment extends Fragment {
         });
     }
 
+    private void shareVideoBehavior(View cameraButton){
+        if(call.isVideoEnabled()){
+            //disable button
+            ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);
+        }else{
+            ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video);
+        }
+        call.shareLocalVideo();
+    }
+
     private void muteButtonBehavior(View muteButton) {
         System.out.println("MUTE");
         if (isMuted) {
             isMuted = false;
             ((ImageView) muteButton).setImageResource(R.drawable.baseline_mic);
-            voiceCall.mute(false);
+            call.mute(false);
         } else {
             isMuted = true;
             ((ImageView) muteButton).setImageResource(R.drawable.baseline_mic_off);
-            voiceCall.mute(true);
+            call.mute(true);
         }
     }
 
-    private void callButtonBehavior(View callButton, View muteButton, View layout) {
+    private void callButtonBehavior(View callButton, View muteButton, View videoButton, View layout) {
         ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) callButton.getLayoutParams();
 
         //check permissions for bluetooth and microphone
@@ -140,22 +163,28 @@ public class RoomActivityParticipantsFragment extends Fragment {
             return;
         }
 
+        if(!checkPermission(Manifest.permission.CAMERA)){
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+        }
+
         if (isInCall) {
-                isInCall = false;
-                ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
-                //params.horizontalBias =  1f;
-                layout.setBackgroundResource(R.drawable.background_participant_element);
-                muteButton.setVisibility(View.GONE);
-                leaveChannel();
+            isInCall = false;
+            ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
+            //params.horizontalBias =  1f;
+            layout.setBackgroundResource(R.drawable.background_participant_element);
+            muteButton.setVisibility(View.GONE);
+            videoButton.setVisibility(View.GONE);
+            leaveChannel();
 
         } else {
 
-                isInCall = true;
-                ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
-                //params.horizontalBias =  0f;
-                layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
-                muteButton.setVisibility(View.VISIBLE);
-                joinChannel();
+            isInCall = true;
+            ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
+            //params.horizontalBias =  0f;
+            layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
+            muteButton.setVisibility(View.VISIBLE);
+            videoButton.setVisibility(View.VISIBLE);
+            joinChannel();
 
         }
 
@@ -169,13 +198,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * @return true if the channel is successfully joined ad false otherwise
      */
     private void joinChannel() {
-
-        if(voiceCall == null) {
-
-            voiceCall = new VoiceCall(this);
-        }
-
-        voiceCall.joinChannel();
+        call.joinChannel();
 
     }
 
@@ -184,8 +207,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * @return true if the channel is successfully left and false otherwise
      */
     private void leaveChannel() {
-        if(voiceCall != null) {
-            voiceCall.leaveChannel();
+        if(call != null) {
+            call.leaveChannel();
         }
 
     }
