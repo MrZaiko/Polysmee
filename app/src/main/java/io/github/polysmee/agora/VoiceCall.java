@@ -29,7 +29,6 @@ public class VoiceCall {
     private static final int EXPIRATION_TIME = 3600;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler handler;
-    private final Context context;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<Integer, String> usersConnected;
     private DatabaseAppointment appointment;
@@ -38,7 +37,6 @@ public class VoiceCall {
 
     //Builds a VoiceCall instance for the corresponding room
     public VoiceCall(DatabaseAppointment appointment, Context context) {
-        this.context = context;
         this.appointment = appointment;
         initializeHandler();
         try {
@@ -52,14 +50,6 @@ public class VoiceCall {
 
     }
 
-    /*public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {
-        this.appointmentId = room.getAppointmentId();
-        this.context = room.getContext();
-        this.requestPermissionLauncher = room.getRequestPermissionLauncher();
-        usersConnected = new HashMap<Integer, String>();
-        this.room = room;
-    }*/
-
     /**
      * alternative constructor for tests
      *
@@ -70,7 +60,6 @@ public class VoiceCall {
      */
     public VoiceCall(@NonNull DatabaseAppointment appointment, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
         this.appointment = appointment;
-        this.context = context;
         this.requestPermissionLauncher = requestPermissionLauncher;
         usersConnected = new HashMap<Integer, String>();
         try {
@@ -134,11 +123,13 @@ public class VoiceCall {
         return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
+    /**
+     * Makes the user leave the channel and removes the handler
+     */
     public void destroy() {
         leaveChannel();
         mRtcEngine.removeHandler(handler);
-        //mRtcEngine = null;
-        //handler = null;
+
     }
 
 
@@ -148,65 +139,11 @@ public class VoiceCall {
     private void initializeHandler() {
 
         handler = new IRtcEngineEventHandler() {
-            @Override
-            public void onWarning(int warn) {
-                System.out.println(warn);
-            }
 
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
                 System.out.println("sucesss");
             }
-
-            @Override
-            public void onError(int err) {
-                System.out.println("error : " + err);
-            }
-
-            @Override
-            public void onUserJoined(int uid, int elapsed) {
-                if(usersConnected.containsKey(uid)) {
-                    appointment.addInCallUser(new DatabaseUser(usersConnected.get(uid)));
-                }
-                System.out.println("user joined : " + uid);
-            }
-
-            @Override
-            public void onUserInfoUpdated(int uid, UserInfo userInfo) {
-                System.out.println("user connected : " + userInfo.userAccount);
-                usersConnected.put(uid, userInfo.userAccount);
-                onUserJoined(uid, 0);
-
-            }
-
-            @Override
-            public void onUserOffline(int uid, int elapsed) {
-                System.out.println("user offline : " + usersConnected.get(uid));
-                if(usersConnected.containsKey(uid)) {
-                    appointment.removeOfCall(new DatabaseUser(usersConnected.get(uid)));
-                }
-            }
-
-            @Override
-            public void onRemoteAudioStateChanged(int uid, int state, int reason, int elapsed) {
-                String userId = usersConnected.get(uid);
-                switch (reason) {
-                    case Constants.REMOTE_AUDIO_REASON_REMOTE_MUTED :
-                        System.out.println("yakakakakkakakakakakkaa");
-                        //room.muteUser(true, userId);
-                        break;
-                    case Constants.REMOTE_AUDIO_REASON_LOCAL_UNMUTED :
-                        //room.muteUser(false, userId);
-                        System.out.println("yokokokokokokokokokokokoko");
-                }
-            }
-
-            @Override
-            public void onConnectionLost() {
-                appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
-            }
-
-
         };
     }
 

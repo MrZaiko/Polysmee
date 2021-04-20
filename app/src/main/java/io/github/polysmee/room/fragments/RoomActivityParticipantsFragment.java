@@ -100,13 +100,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
                 View participantsButtonLayout = participantsLayout.findViewById(R.id.roomActivityParticipantElementButtons);
 
-                /*if (id.equals(MainUserSingleton.getInstance().getId())) {
-                    participantName.setText("You");
-                    participantsButtonLayout.setVisibility(View.VISIBLE);
-                } else {
-                    user.getNameAndThen(participantName::setText);
-                    participantsButtonLayout.setVisibility(View.VISIBLE);
-                }*/
 
                 TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
                 appointment.getOwnerIdAndThen(owner -> {
@@ -115,28 +108,28 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 });
 
                 ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
-                //muteButton.setOnClickListener(this::muteButtonBehavior);
 
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
-                //callButton.setOnClickListener(v -> joinChannel());//callButtonBehavior(callButton, muteButton, participantsLayout));
                 participantsButtonLayout.setVisibility(View.VISIBLE);
                 callButton.setVisibility(View.GONE);
                 String userId = MainUserSingleton.getInstance().getId();
+
                 if (id.equals(userId)) {
+
                     participantName.setText("You");
                     callButton.setVisibility(View.VISIBLE);
 
                     callButton.setOnClickListener(v ->  {
                         if(isInCall) {
-                            System.out.println("not in call");
                             leaveChannel();
                         }
                         else {
-                            System.out.println("inincal : " + isInCall);
                             joinChannel();
                         }
                     });
+
                     muteButton.setOnClickListener(v -> muteUser());
+
                 } else {
                     user.getNameAndThen(participantName::setText);
                 }
@@ -150,23 +143,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     }
 
-    private void muteButtonBehavior(View muteButton) {
-        System.out.println("MUTE");
-        if (isMuted) {
-            isMuted = false;
-            ((ImageView) muteButton).setImageResource(R.drawable.baseline_mic);
-            voiceCall.mute(false);
-        } else {
-            isMuted = true;
-            ((ImageView) muteButton).setImageResource(R.drawable.baseline_mic_off);
-            voiceCall.mute(true);
-        }
-    }
 
-    private void callButtonBehavior(View callButton, View muteButton, View layout) {
-        ConstraintLayout.LayoutParams params = (ConstraintLayout.LayoutParams) callButton.getLayoutParams();
 
-        //check permissions for bluetooth and microphone
+
+    /**
+     *
+     * @return true if the channel is successfully joined ad false otherwise
+     */
+    private void joinChannel() {
 
         if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
@@ -177,36 +161,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
             requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
             return;
         }
-
-        if (isInCall) {
-                isInCall = false;
-                ((ImageView) callButton).setImageResource(R.drawable.baseline_call);
-                //params.horizontalBias =  1f;
-                layout.setBackgroundResource(R.drawable.background_participant_element);
-                muteButton.setVisibility(View.GONE);
-                leaveChannel();
-
-        } else {
-
-                isInCall = true;
-                ((ImageView) callButton).setImageResource(R.drawable.baseline_call_end);
-                //params.horizontalBias =  0f;
-                layout.setBackgroundResource(R.drawable.background_participant_in_call_element);
-                muteButton.setVisibility(View.VISIBLE);
-                joinChannel();
-
-        }
-
-        callButton.setLayoutParams(params);
-
-    }
-
-
-    /**
-     *
-     * @return true if the channel is successfully joined ad false otherwise
-     */
-    private void joinChannel() {
 
         if(voiceCall == null) {
 
@@ -224,13 +178,13 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void leaveChannel() {
         if(voiceCall != null) {
             voiceCall.leaveChannel();
-        } else {
-            //joinChannel();
-            //leaveChannel();
         }
 
     }
 
+    /**
+     * Mutes current user in the call if he is not muted and unmutes him otherwise
+     */
     private void muteUser() {
         if(voiceCall != null) {
             voiceCall.mute(!isMuted);
@@ -254,7 +208,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
                 System.out.println("child added");
-                //joinChannel();
             }
         }
         else {
@@ -264,7 +217,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 isInCall = false;
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call);
-                //leaveChannel();
             }
         }
     }
@@ -299,9 +251,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     //joins the channel if granted and do nothing otherwise
                     if (isGranted) {
-                        ConstraintLayout participantsLayout = participantsViews.get(AuthenticationFactory.getAdaptedInstance().getUid());
-                        ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
-                        callButton.callOnClick();
+                        joinChannel();
 
                     } else {
                         System.out.println("not granted");
@@ -327,14 +277,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
         return requireArguments().getString(PARTICIPANTS_KEY);
     }
 
-    /**
-     *
-     * @return the request permission requester
-     */
-    public ActivityResultLauncher<String> getRequestPermissionLauncher() {
-        return requestPermissionLauncher;
-    }
 
+    /**
+     * Initializes the inCall listener and adds it to the appointment
+     */
     private void initializeAndDisplayDatabase() {
         listener = new BooleanChildListener() {
             @Override
