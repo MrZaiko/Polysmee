@@ -301,7 +301,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             }
         };
 
-        databaseAppointment.getInCallAndThen(listener);
+        databaseAppointment.addInCallListener(listener);
     }
 
 }

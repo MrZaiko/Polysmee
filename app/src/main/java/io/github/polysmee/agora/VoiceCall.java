@@ -9,12 +9,9 @@ import java.util.Map;
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
-import io.agora.rtc.models.UserInfo;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 /**
  * Back-end of the voice call feature

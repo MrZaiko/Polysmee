@@ -3,8 +3,10 @@ package io.github.polysmee.database;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.messages.Message;
 
 public class DatabaseAppointment implements Appointment {
 
@@ -394,7 +396,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
-    public void getInCallAndThen(BooleanChildListener listener) {
+    public void addInCallListener(BooleanChildListener listener) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("appointments")
@@ -410,6 +412,61 @@ public class DatabaseAppointment implements Appointment {
                 .getReference("appointments")
                 .child(id)
                 .child("inCall")
+                .removeEventListener(listener);
+    }
+
+    @Override
+    public void addMessage(Message message) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .push()
+                .setValue(message);
+
+    }
+
+    @Override
+    public void removeMessage(String key) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .removeValue();
+    }
+
+    @Override
+    public void editMessage(String key, String newContent) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .child("content")
+                .setValue(newContent);
+    }
+
+    @Override
+    public void addMessageListener(MessageChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .addChildEventListener(listener);
+    }
+
+    @Override
+    public void removeMessageListener(MessageChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
                 .removeEventListener(listener);
     }
 }
