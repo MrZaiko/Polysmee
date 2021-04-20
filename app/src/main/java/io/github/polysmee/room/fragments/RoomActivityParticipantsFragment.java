@@ -1,12 +1,14 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +20,8 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -49,6 +53,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private VoiceCall voiceCall;
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
+    private BooleanChildListener listener;
 
     @Nullable
     @Override
@@ -62,8 +67,16 @@ public class RoomActivityParticipantsFragment extends Fragment {
         generateParticipantsView();
         initializePermissionRequester();
         initializeAndDisplayDatabase();
+        voiceCall = new VoiceCall(databaseAppointment,getContext());
 
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+        voiceCall.destroy();
+        databaseAppointment.removeInCallListener(listener);
+        super.onDestroy();
     }
 
 
@@ -112,11 +125,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 if (id.equals(userId)) {
                     participantName.setText("You");
                     callButton.setVisibility(View.VISIBLE);
+
                     callButton.setOnClickListener(v ->  {
                         if(isInCall) {
+                            System.out.println("not in call");
                             leaveChannel();
                         }
                         else {
+                            System.out.println("inincal : " + isInCall);
                             joinChannel();
                         }
                     });
@@ -131,6 +147,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 layout.addView(new TextView(rootView.getContext()));
             }
         });
+
     }
 
     private void muteButtonBehavior(View muteButton) {
@@ -207,6 +224,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void leaveChannel() {
         if(voiceCall != null) {
             voiceCall.leaveChannel();
+        } else {
+            //joinChannel();
+            //leaveChannel();
         }
 
     }
@@ -233,6 +253,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
+                System.out.println("child added");
                 //joinChannel();
             }
         }
@@ -315,9 +336,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     private void initializeAndDisplayDatabase() {
-        databaseAppointment.getInCallAndThen(new BooleanChildListener() {
+        listener = new BooleanChildListener() {
             @Override
             public void childAdded(String key, boolean value) {
+
                 setUserOnline(true, key);
                 setMutedUser(value, key);
             }
@@ -331,8 +353,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
             public void childChanged(String key, boolean value) {
                 setMutedUser(value, key);
             }
-        }
-        );
+        };
+
+        databaseAppointment.getInCallAndThen(listener);
     }
 
 }

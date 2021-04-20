@@ -40,6 +40,16 @@ public class VoiceCall {
     public VoiceCall(DatabaseAppointment appointment, Context context) {
         this.context = context;
         this.appointment = appointment;
+        initializeHandler();
+        try {
+            mRtcEngine = RtcEngine.create(context, APP_ID, handler);
+            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
+
+
     }
 
     /*public VoiceCall(@NonNull RoomActivityParticipantsFragment room) {
@@ -78,20 +88,6 @@ public class VoiceCall {
      */
     public int joinChannel() {
 
-        if (mRtcEngine == null) {
-            initializeHandler();
-
-            try {
-                mRtcEngine = RtcEngine.create(context, APP_ID, handler);
-                mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-
-
-        }
-
         String userId =  MainUserSingleton.getInstance().getId();
         String token = generateToken(userId);
 
@@ -107,12 +103,10 @@ public class VoiceCall {
      * leaves the channel
      */
     public int leaveChannel() {
-        if(mRtcEngine != null) {
             int leaveStatus = mRtcEngine.leaveChannel();
             if(leaveStatus == SUCCESS_CODE) {
                 appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
                 return SUCCESS_CODE;
-            }
         }
 
         //fail
@@ -139,6 +133,14 @@ public class VoiceCall {
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
         return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
+
+    public void destroy() {
+        leaveChannel();
+        mRtcEngine.removeHandler(handler);
+        //mRtcEngine = null;
+        //handler = null;
+    }
+
 
     /**
      * initializes the IRtcEngineEventHandler
@@ -197,6 +199,11 @@ public class VoiceCall {
                         //room.muteUser(false, userId);
                         System.out.println("yokokokokokokokokokokokoko");
                 }
+            }
+
+            @Override
+            public void onConnectionLost() {
+                appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
             }
 
 
