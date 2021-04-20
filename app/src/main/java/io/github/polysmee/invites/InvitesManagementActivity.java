@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -37,6 +38,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
 
     private LinearLayout scrollLayout;
     private LayoutInflater inflater;
+    private Button okButton;
 
     private User user;
 
@@ -51,6 +53,9 @@ public class InvitesManagementActivity extends AppCompatActivity {
         inflater = getLayoutInflater();
 
         scrollLayout = findViewById(R.id.InvitesManagementScrollLayout);
+        okButton =  findViewById(R.id.InvitesManagementButtonOk);
+        okButton.setOnClickListener(v -> finish());
+
         user = MainUserSingleton.getInstance();
 
         setListenerUserAppointments();
@@ -65,6 +70,11 @@ public class InvitesManagementActivity extends AppCompatActivity {
      */
     protected void makeInviteEntry(CalendarAppointmentInfo appointment, View InviteEntry) {
         ((TextView) InviteEntry.findViewById(R.id.InvitationEntryAppointmentTitle)).setText(appointment.getTitle());
+
+        Button acceptButton = InviteEntry.findViewById(R.id.InvitationEntryButtonAccept);
+        Button refuseButton = InviteEntry.findViewById(R.id.InvitationEntryButtonRefuse);
+        acceptButton.setOnClickListener(v -> acceptRefuseButtonBehavior(appointment, true));
+        refuseButton.setOnClickListener(v -> acceptRefuseButtonBehavior(appointment, false));
 
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime() + appointment.getDuration()));
@@ -83,6 +93,21 @@ public class InvitesManagementActivity extends AppCompatActivity {
             status.setImageResource(R.drawable.calendar_entry_done_dot);
         else
             status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
+    }
+
+    private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
+        DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
+        //for now the database doesn't support invites so the buttons don't do anything
+        if(accept) {
+            /*user.addAppointment(apt);
+            apt.addParticipant(user);
+            */
+        }
+        //user.removeInvite(apt);
+
+        //we remove the user's appointment for testing purposes, to check that deleting an invite does delete the view from the activity
+        user.removeAppointment(apt);
+        apt.removeParticipant(user);
     }
 
     public void goToAppointmentDetails(String id) {
@@ -120,6 +145,8 @@ public class InvitesManagementActivity extends AppCompatActivity {
         }
 
         userInvitesListener = currentUserInvitesListener();
+        //for now the database doesn't support invites so in order to make sure that everything apart from the connection to the database works
+        //we get the user's actual appointments for now
         user.getAppointmentsAndThen(userInvitesListener);
     }
 
