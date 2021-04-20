@@ -25,7 +25,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee"
         android:usesCleartextTraffic="true">
-        <activity android:name=".invites.InvitesManagementActivity"></activity>
+        <activity android:name=".invites.InvitesManagementActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"

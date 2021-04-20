@@ -45,20 +45,20 @@
                     app:layout_constraintTop_toTopOf="parent" />
             </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/InvitesManagementInvitationsListLayout"
+            <LinearLayout
+                android:id="@+id/InvitesManagementScrollLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/InvitesManagementInfoTxtLayout">
+                app:layout_constraintTop_toBottomOf="@id/InvitesManagementInfoTxtLayout"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
+
+
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/InvitesManagementBottomBar"
