@@ -1,8 +1,5 @@
 package io.github.polysmee.invites;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,12 +9,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -25,7 +23,6 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
-import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
@@ -38,7 +35,6 @@ public class InvitesManagementActivity extends AppCompatActivity {
 
     private LinearLayout scrollLayout;
     private LayoutInflater inflater;
-    private Button okButton;
 
     private User user;
 
@@ -53,7 +49,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
         inflater = getLayoutInflater();
 
         scrollLayout = findViewById(R.id.InvitesManagementScrollLayout);
-        okButton =  findViewById(R.id.InvitesManagementButtonOk);
+        Button okButton = findViewById(R.id.InvitesManagementButtonOk);
         okButton.setOnClickListener(v -> finish());
 
         user = MainUserSingleton.getInstance();
@@ -62,11 +58,10 @@ public class InvitesManagementActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates an appointment's textual description following a certain format
-     * to show in the calendar
+     * Sets up the invitation's view to display all the correct informations
      *
      * @param appointment the appointment's whose description is created
-     * @return the textual representation of the appointment in the calendar
+     * @param InviteEntry the invitation's view
      */
     protected void makeInviteEntry(CalendarAppointmentInfo appointment, View InviteEntry) {
         ((TextView) InviteEntry.findViewById(R.id.InvitationEntryAppointmentTitle)).setText(appointment.getTitle());
@@ -95,14 +90,19 @@ public class InvitesManagementActivity extends AppCompatActivity {
             status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
     }
 
+    /**
+     * Accepts or refuses the invitations depending on the button pressed
+     *
+     * @param appointment the appointment to be affected by the action
+     * @param accept true if the user pressed the accept button, false for the refuse button
+     */
     private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
         DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
         //for now the database doesn't support invites so the buttons don't do anything
-        if(accept) {
-            /*user.addAppointment(apt);
+        /*if(accept) {
+            user.addAppointment(apt);
             apt.addParticipant(user);
-            */
-        }
+        }*/
         //user.removeInvite(apt);
 
         //we remove the user's appointment for testing purposes, to check that deleting an invite does delete the view from the activity
@@ -134,9 +134,9 @@ public class InvitesManagementActivity extends AppCompatActivity {
     }
 
     /**
-     * Adds a listener to the user's appointments so that everytime one is added/removed, the layout
-     * is updated. It also takes care of determining what should happen to the calendar's layout
-     * if an appointment's parameters changes.
+     * Adds a listener to the user's invitations so that every time one is added/removed, the layout
+     * is updated. It also takes care of determining what should happen to the invitations list's layout
+     * if an invitation's parameters changes.
      */
 
     protected void setListenerUserAppointments() {
@@ -151,8 +151,10 @@ public class InvitesManagementActivity extends AppCompatActivity {
     }
 
     /**
-     * Changes the calendar's layout to show the user's daily appointments at the time
+     * Changes the invitations list's layout to show the user's invitations at the time
      * this method is called.
+     *
+     * @param invites the list of invitations
      */
     protected void changeCurrentInvitesLayout(Set<CalendarAppointmentInfo> invites) {
         if (!invites.isEmpty()) {
@@ -161,6 +163,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
             }
         }
     }
+
 
     protected StringSetValueListener currentUserInvitesListener() {
 
