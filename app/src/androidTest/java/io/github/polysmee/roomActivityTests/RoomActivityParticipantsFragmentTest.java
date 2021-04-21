@@ -91,7 +91,7 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
-    @Test
+    /*@Test
     public void joinChannelWorks() {
         List usersInCall = new ArrayList<String>();
         DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
@@ -168,6 +168,6 @@ public class RoomActivityParticipantsFragmentTest {
         assert(!usersUnmuted.isEmpty());
         assertEquals(MainUserSingleton.getInstance().getId(),usersUnmuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
-    }
+    }*/
 
 }
