@@ -3,6 +3,7 @@ package io.github.polysmee.agora;
 import android.content.Context;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.test.core.app.ApplicationProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,8 +27,6 @@ public class VoiceCall {
     private static final int EXPIRATION_TIME = 3600;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler handler;
-    private ActivityResultLauncher<String> requestPermissionLauncher;
-    private Map<Integer, String> usersConnected;
     private DatabaseAppointment appointment;
 
 
@@ -52,13 +51,10 @@ public class VoiceCall {
      *
      * @param appointment
      * @param context
-     * @param requestPermissionLauncher
      * @param handler
      */
-    public VoiceCall(@NonNull DatabaseAppointment appointment, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
+    public VoiceCall(@NonNull DatabaseAppointment appointment, @NonNull Context context, @NonNull IRtcEngineEventHandler handler) {
         this.appointment = appointment;
-        this.requestPermissionLauncher = requestPermissionLauncher;
-        usersConnected = new HashMap<Integer, String>();
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
