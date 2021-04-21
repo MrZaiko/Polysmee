@@ -55,6 +55,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     @Override
     public void onUserOffline(int uid, int reason){
         System.out.println("A remote user quit the call");
+        removeVideo(R.id.bg_video_container);
         ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).removeAllViewsInLayout();
     }
 
@@ -67,6 +68,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
         if(state == Constants.REMOTE_VIDEO_STATE_STOPPED){
             ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).removeAllViewsInLayout();
+            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).removeAllViews();
         }
         else if(state == Constants.REMOTE_VIDEO_STATE_STARTING || state == Constants.REMOTE_VIDEO_STATE_DECODING){
             SurfaceView remoteView = call.createRemoteUI(getContext(),uid);
@@ -83,9 +85,13 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
             }
             else if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_CAPTURING){
                 //fill the surfaceView
+                System.out.println("CAPTURING WHOOOOOOOOOOOOOO");
                 SurfaceView localView = call.createLocalUI(getContext());
                 ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).addView(localView);
             }
+        }
+        else{
+            System.out.println("ERROR ERROR ERROR");
         }
     }
 
@@ -93,4 +99,21 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         return requireArguments().getString(VIDEO_KEY);
     }
 
+
+    private void removeVideo(int containerID) {
+        FrameLayout videoContainer = rootView.findViewById(containerID);
+        videoContainer.removeAllViews();
+    }
+
+    private void setupLocalVideoView(){
+        SurfaceView localView = call.createLocalUI(getContext());
+        localView.setVisibility(View.GONE);
+        ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).addView(localView);
+    }
+
+    private void setupRemoteVideoView(int uid){
+        SurfaceView remoteView = call.createRemoteUI(getContext(),uid);
+
+        ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).addView(remoteView);
+    }
 }

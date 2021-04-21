@@ -126,6 +126,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     private void shareVideoBehavior(View cameraButton){
+        System.out.println("VIDEO");
         if(call.isVideoEnabled()){
             //disable button
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);

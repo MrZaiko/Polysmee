@@ -15,6 +15,7 @@ import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
 import io.agora.rtc.video.VideoCanvas;
+import io.agora.rtc.video.VideoEncoderConfiguration;
 import io.github.polysmee.agora.RtcTokenBuilder;
 import io.github.polysmee.agora.video.handlers.AGEventHandler;
 import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
@@ -103,6 +104,16 @@ public class Call {
                 mRtcEngine = RtcEngine.create(context, APP_ID, handler);
                 mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
 
+                IRtcEngineEventHandler eventHandler = new VideoEngineEventHandler(usersConnected,usersConnectedToVideo);
+                ((VideoEngineEventHandler)eventHandler).addEventHandler(this.videoRoom);
+                mRtcEngine.addHandler(eventHandler);
+
+                mRtcEngine.enableVideo();
+                mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(VideoEncoderConfiguration.VD_1280x720, VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
+                        VideoEncoderConfiguration.STANDARD_BITRATE,
+                        VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
+                mRtcEngine.enableLocalVideo(false);
+
             } catch (Exception e) {
                 System.out.println(e.getMessage());
                 throw new RuntimeException(e.getMessage());
@@ -157,7 +168,7 @@ public class Call {
         handler = new IRtcEngineEventHandler() {
             @Override
             public void onWarning(int warn) {
-                System.out.println(warn);
+                System.out.println("Warning: " + warn);
             }
 
             @Override
@@ -222,8 +233,6 @@ public class Call {
 
     }
 
-
-
     /**
      * Add functions for:
      * 1. Setting up the local video (part of it will be in the fragment); when a user enables his
@@ -282,8 +291,6 @@ public class Call {
     }
 
     public void setVideoFragment(Fragment fragment){
-        VideoEngineEventHandler eventHandler = new VideoEngineEventHandler(usersConnected,usersConnectedToVideo);
         this.videoRoom = (RoomActivityVideoFragment) fragment;
-        eventHandler.addEventHandler((AGEventHandler) this.videoRoom);
     }
 }

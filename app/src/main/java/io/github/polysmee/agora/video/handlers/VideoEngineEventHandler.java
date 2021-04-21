@@ -30,6 +30,15 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
     }
 
     @Override
+    public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
+        for(AGEventHandler handler: handlers){
+            if(handler instanceof DuringCallEventHandler){
+                ((DuringCallEventHandler) handler).onJoinChannelSuccess(channel,uid,elapsed);
+            }
+        }
+    }
+
+    @Override
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
         System.out.println("onRemoteUserStateChanged " + (uid & 0xFFFFFFFFL) + " "+ reason + " " +  elapsed);
         for(AGEventHandler handler: handlers){
@@ -44,6 +53,10 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
         System.out.println("onFirstLocalVideoFrame " + width + " " + height + " " + elapsed);
     }
 
+    @Override
+    public void onError(int i) {
+        System.out.println("Video error");
+    }
 
     @Override
     public void onConnectionLost() {
