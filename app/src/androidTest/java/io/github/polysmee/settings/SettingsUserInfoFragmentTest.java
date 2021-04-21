@@ -63,7 +63,7 @@ public class SettingsUserInfoFragmentTest {
     }
 
     @Test
-    public static void checkFragmentIsWellDisplayed(){
+    public void checkFragmentIsWellDisplayed(){
         checkFragmentIsDisplayed(userName, userEmail);
         clickOn(R.string.title_settings_main_user_name);
         UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
