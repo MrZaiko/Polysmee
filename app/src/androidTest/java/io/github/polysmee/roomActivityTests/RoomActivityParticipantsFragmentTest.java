@@ -115,29 +115,6 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
-    @Test
-    public void leaveChannelWorks() {
-        DatabaseAppointment appointment = new DatabaseAppointment("test");
-        List usersLeft = new ArrayList<String>();
-        appointment.addInCallListener(new BooleanChildListener() {
-            @Override
-            public void childRemoved(String key, boolean value) {
-                usersLeft.add(key);
-            }
-        });
-                Bundle bundle = new Bundle();
-                bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-                FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-                sleep(5, SECONDS);
-                clickOn(R.id.roomActivityParticipantElementCallButton);
-                sleep(5, SECONDS);
-                clickOn(R.id.roomActivityParticipantElementCallButton);
-                sleep(5, SECONDS);
-                assert (!usersLeft.isEmpty());
-                assertEquals(MainUserSingleton.getInstance().getId(), usersLeft.get(0));
-
-
-    }
 
     @Test
     public void muteWorks() {

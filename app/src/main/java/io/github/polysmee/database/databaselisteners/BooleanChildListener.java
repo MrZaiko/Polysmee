@@ -18,28 +18,28 @@ public interface BooleanChildListener extends ChildEventListener {
     default public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         boolean data = (boolean) snapshot.getValue();
-            childAdded(key, data);
+        childAdded(key, data);
     }
 
     @Override
     default public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         boolean data = (boolean) snapshot.getValue();
-            childChanged(key,data);
+        childChanged(key,data);
     }
 
     @Override
     default public void onChildRemoved(@NonNull DataSnapshot snapshot) {
         String key = snapshot.getKey();
         boolean data = (boolean) snapshot.getValue();
-            childRemoved(key, data);
+        childRemoved(key, data);
     }
 
     @Override
     default public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         boolean data = (boolean) snapshot.getValue();
-            childMoved(key, data);
+        childMoved(key, data);
     }
 
     @Override
