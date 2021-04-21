@@ -128,11 +128,11 @@ public class RoomActivityParticipantsFragmentTest {
                 Bundle bundle = new Bundle();
                 bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
                 FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
-                sleep(1, SECONDS);
+                sleep(5, SECONDS);
                 clickOn(R.id.roomActivityParticipantElementCallButton);
-                sleep(1, SECONDS);
+                sleep(5, SECONDS);
                 clickOn(R.id.roomActivityParticipantElementCallButton);
-                sleep(1, SECONDS);
+                sleep(5, SECONDS);
                 assert (!usersLeft.isEmpty());
                 assertEquals(MainUserSingleton.getInstance().getId(), usersLeft.get(0));
 
