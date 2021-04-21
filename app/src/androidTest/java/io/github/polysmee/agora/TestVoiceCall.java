@@ -1,5 +1,8 @@
 package io.github.polysmee.agora;
 
+import android.os.Bundle;
+
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.tasks.Tasks;
@@ -25,6 +28,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 @RunWith(JUnit4.class)
 public class TestVoiceCall {
@@ -44,6 +48,10 @@ public class TestVoiceCall {
 
     @Test
     public void joinChannelWorks() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
         IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
         List usersInCall = new ArrayList<String>();
         DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
@@ -64,6 +72,10 @@ public class TestVoiceCall {
 
     @Test
     public void leaveChannelWorks() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
         IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
         DatabaseAppointment appointment = new DatabaseAppointment("test");
         List usersLeft = new ArrayList<String>();
@@ -83,6 +95,10 @@ public class TestVoiceCall {
 
     @Test
     public void muteWorks() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
         IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
         DatabaseAppointment appointment = new DatabaseAppointment("test");
         List usersMuted = new ArrayList<String>();
