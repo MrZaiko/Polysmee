@@ -130,6 +130,7 @@ public class RoomActivityParticipantsFragmentTest {
                 FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
                 sleep(1, SECONDS);
                 clickOn(R.id.roomActivityParticipantElementCallButton);
+                sleep(1, SECONDS);
                 clickOn(R.id.roomActivityParticipantElementCallButton);
                 sleep(1, SECONDS);
                 assert (!usersLeft.isEmpty());
