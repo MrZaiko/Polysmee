@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.polysmee.R;
+import io.github.polysmee.settings.fragments.SettingsMainFragment;
+import io.github.polysmee.settings.fragments.SettingsUserInfoFragment;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -22,8 +24,14 @@ public class SettingsActivityTest extends TestCase {
 
     @Test
     public void appointmentsReminderSettingFragmentsIsLaunchWhenClickOnMain(){
-        FragmentSettingsMainTest.checkFragmentIsDisplayed();
+        SettingsMainFragmentTest.checkFragmentIsDisplayed();
         clickOn(R.string.title_settings_appointments_reminder);
-        FragmentSettingsAppointmentsReminderTest.checkFragmentIsDisplayed();
+        SettingsAppointmentsReminderFragmentTest.checkFragmentIsDisplayed();
+    }
+    @Test
+    public void settingsUserInfoFragmentIsLaunchWhenClickOnMain(){
+        SettingsMainFragmentTest.checkFragmentIsDisplayed();
+        clickOn(R.string.title_settings_main_user_info);
+        SettingsUserInfoFragmentTest.checkFragmentIsDisplayed();
     }
 }

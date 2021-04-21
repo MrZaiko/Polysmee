@@ -2,7 +2,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <Preference
-        app:fragment="io.github.polysmee.settings.FragmentSettingsAppointmentsReminder"
+        app:fragment="io.github.polysmee.settings.fragments.Settings.AppointmnetsReminderFragment"
         app:icon="@drawable/settings_reminder"
         app:title="@string/title_settings_appointments_reminder" />
+    <Preference
+        app:fragment="io.github.polysmee.settings.fragments.SettingsUserInfoFragment"
+        app:icon="@drawable/settings_user_info"
+        app:title="@string/title_settings_main_user_name"
+        />
 </PreferenceScreen>
