@@ -1,7 +1,6 @@
 package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -13,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -27,7 +25,7 @@ import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
-import io.github.polysmee.interfaces.DataPasser;
+import io.github.polysmee.appointments.DataPasser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
 
@@ -125,12 +123,12 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchBanLayout);
             searchLayout.setVisibility(View.GONE);
 
-            appointment.getBansAndThen(p -> {
+            /*appointment.getBansAndThen(p -> {
                 for (String id : p) {
                     User user = new DatabaseUser(id);
                     user.getNameAndThen(this::addBan);
                 }
-            });
+            });*/
 
             appointment.getOwnerIdAndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))

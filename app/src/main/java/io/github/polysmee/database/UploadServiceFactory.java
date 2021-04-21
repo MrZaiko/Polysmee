@@ -1,8 +1,5 @@
 package io.github.polysmee.database;
 
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-
 public final class UploadServiceFactory {
 
     private UploadServiceFactory(){}

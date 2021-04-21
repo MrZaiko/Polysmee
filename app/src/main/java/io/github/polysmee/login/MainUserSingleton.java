@@ -5,7 +5,8 @@ import io.github.polysmee.database.User;
 
 public class MainUserSingleton {
 
-    public static User getInstance() throws NullPointerException { //maybe replace with optional ? throw is very rare so not sure
+    public static User getInstance() {
         return new DatabaseUser(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid());
     }
+
 }

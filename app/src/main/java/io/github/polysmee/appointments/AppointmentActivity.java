@@ -23,7 +23,6 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
-import io.github.polysmee.interfaces.DataPasser;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
@@ -263,7 +262,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         //if startTime is bigger than endTime we have a negative duration which doesn't work
         //It isn't possible to create an appointment scheduled before the current time
-        if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarStartTime.getTimeInMillis() <= System.currentTimeMillis()){
+        if (calendarStartTime.getTimeInMillis() >= calendarEndTime.getTimeInMillis() || calendarEndTime.getTimeInMillis() <= System.currentTimeMillis()) {//calendarStartTime.getTimeInMillis() <= System.currentTimeMillis()){
             txtTimeError.setVisibility(View.VISIBLE);
             error = true;
         }
@@ -491,7 +490,12 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                             appointment.removeParticipant(user);
                         }
                     }
-
+                    for( String addedBan : bans) {
+                        if(name.equals(addedBan)) {
+                            user.removeAppointment(appointment);
+                            appointment.removeParticipant(user);
+                        }
+                    }
                     for (String removedBan : removedBans) {
                         if (name.equals(removedBan)) {
                             appointment.removeBan(user);

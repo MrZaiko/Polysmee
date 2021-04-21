@@ -1,7 +1,6 @@
 package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,7 +10,6 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -30,7 +28,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.interfaces.DataPasser;
+import io.github.polysmee.appointments.DataPasser;
 import io.github.polysmee.login.MainUserSingleton;
 
 /**
@@ -127,12 +125,12 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchAddLayout);
             searchLayout.setVisibility(View.GONE);
 
-            appointment.getParticipantsIdAndThen(p -> {
+            /*appointment.getParticipantsIdAndThen(p -> {
                 for (String id : p) {
                     User user = new DatabaseUser(id);
                     user.getNameAndThen(this::addInvite);
                 }
-            });
+            });*/
 
             appointment.getOwnerIdAndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))
