@@ -20,11 +20,17 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 
+import io.agora.rtc.IRtcEngineEventHandler;
 import io.github.polysmee.R;
+import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
@@ -40,6 +46,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -81,6 +88,30 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementCallButton);
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         clickOn(R.id.roomActivityParticipantElementMuteButton);
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+    }
+
+    @Test
+    public void joinChannelWorks() {
+        List usersInCall = new ArrayList<String>();
+        DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
+        appointment.addInCallListener(new BooleanChildListener() {
+            @Override
+            public void childAdded(String key, boolean value) {
+                usersInCall.add(key);
+            }
+        });
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+
+
+
+        sleep(1, SECONDS);
+        assert(!usersInCall.isEmpty());
+        assertEquals(MainUserSingleton.getInstance().getId(),usersInCall.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
