@@ -54,7 +54,7 @@ public class TestVoiceCall {
             }
         });
         VoiceCall voiceCall = new VoiceCall(appointment, ApplicationProvider.getApplicationContext(), handler);
-        assertEquals(0, voiceCall.joinChannel());
+        assertEquals(VoiceCall.SUCCESS_CODE, voiceCall.joinChannel());
         sleep(1, SECONDS);
         assert(!usersInCall.isEmpty());
         assertEquals(MainUserSingleton.getInstance().getId(),usersInCall.get(0));
@@ -75,10 +75,32 @@ public class TestVoiceCall {
         });
         VoiceCall voiceCall = new VoiceCall(appointment, ApplicationProvider.getApplicationContext(), handler);
         voiceCall.joinChannel();
-        assertEquals(0, voiceCall.leaveChannel());
+        assertEquals(VoiceCall.SUCCESS_CODE, voiceCall.leaveChannel());
         sleep(1, SECONDS);
         assert(!usersLeft.isEmpty());
         assertEquals(MainUserSingleton.getInstance().getId(),usersLeft.get(0));
+    }
+
+    @Test
+    public void muteWorks() {
+        IRtcEngineEventHandler handler = new IRtcEngineEventHandler() {};
+        DatabaseAppointment appointment = new DatabaseAppointment("test");
+        List usersMuted = new ArrayList<String>();
+        appointment.addInCallListener(new BooleanChildListener() {
+            @Override
+            public void childChanged(String key, boolean value) {
+                if(value) {
+                    usersMuted.add(key);
+                }
+
+            }
+        });
+        VoiceCall voiceCall = new VoiceCall(appointment, ApplicationProvider.getApplicationContext(), handler);
+        voiceCall.joinChannel();
+        assertEquals(VoiceCall.SUCCESS_CODE, voiceCall.mute(true));
+        sleep(1, SECONDS);
+        assert(!usersMuted.isEmpty());
+        assertEquals(MainUserSingleton.getInstance().getId(),usersMuted.get(0));
     }
 
 

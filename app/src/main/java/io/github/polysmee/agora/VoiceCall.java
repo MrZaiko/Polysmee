@@ -1,12 +1,7 @@
 package io.github.polysmee.agora;
 
 import android.content.Context;
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
-import androidx.test.core.app.ApplicationProvider;
-
-import java.util.HashMap;
-import java.util.Map;
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
@@ -98,10 +93,13 @@ public class VoiceCall {
     /**
      * mute (unmute) local user if mute arg is set to true (false)
      * @param mute
+     * @return the result of the mute method of RtcEngine (0 if success, not 0 otherwise)
      */
-    public void mute(boolean mute) {
-        mRtcEngine.muteLocalAudioStream(mute);
+    public int mute(boolean mute) {
+        int result = mRtcEngine.muteLocalAudioStream(mute);
         appointment.muteUser(new DatabaseUser(MainUserSingleton.getInstance().getId()), mute);
+
+        return result;
     }
 
 
