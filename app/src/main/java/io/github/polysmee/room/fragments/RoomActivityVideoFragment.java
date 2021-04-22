@@ -13,6 +13,7 @@ import android.widget.FrameLayout;
 import java.util.HashMap;
 
 import io.agora.rtc.Constants;
+import io.agora.rtc.IRtcEngineEventHandler;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
@@ -50,13 +51,13 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     @Override
     public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
         System.out.println("I successfully joined the call");
+        runOnUiThread(this::setupLocalVideoView);
     }
 
     @Override
     public void onUserOffline(int uid, int reason){
         System.out.println("A remote user quit the call");
-        removeVideo(R.id.bg_video_container);
-        ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).removeAllViewsInLayout();
+        runOnUiThread(()->removeVideo(R.id.bg_video_container));
     }
 
     @Override
@@ -66,13 +67,21 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
 
     @Override
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
-        if(state == Constants.REMOTE_VIDEO_STATE_STOPPED){
-            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).removeAllViewsInLayout();
-            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).removeAllViews();
+        if(state == Constants.REMOTE_VIDEO_STATE_STOPPED && reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_MUTED){
+            runOnUiThread(()->
+            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.GONE));
+
         }
-        else if(state == Constants.REMOTE_VIDEO_STATE_STARTING || state == Constants.REMOTE_VIDEO_STATE_DECODING){
-            SurfaceView remoteView = call.createRemoteUI(getContext(),uid);
+        else if(state == Constants.REMOTE_VIDEO_STATE_STARTING){
+            System.out.println("Remote started sharing video");
+            runOnUiThread(()->{
+            SurfaceView remoteView = call.createRemoteUI(getActivity().getBaseContext(),uid);
             ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).addView(remoteView);
+            });
+        }
+        else if(state == Constants.REMOTE_VIDEO_STATE_DECODING){
+            runOnUiThread(()->
+            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.VISIBLE));
         }
     }
 
@@ -80,19 +89,25 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     public void onLocalVideoStateChanged(int localVideoState, int error) {
         if(error == Constants.LOCAL_VIDEO_STREAM_ERROR_OK){
             if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_STOPPED){
-                //delete surfaceView
-                ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).removeAllViewsInLayout();
+                runOnUiThread(()->
+                ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.GONE));
             }
             else if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_CAPTURING){
-                //fill the surfaceView
                 System.out.println("CAPTURING WHOOOOOOOOOOOOOO");
-                SurfaceView localView = call.createLocalUI(getContext());
-                ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).addView(localView);
+                runOnUiThread(() ->
+                        ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.VISIBLE)
+                );
             }
         }
         else{
             System.out.println("ERROR ERROR ERROR");
         }
+    }
+
+    @Override
+    public void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats) {
+        removeVideo(R.id.floating_video_container);
+        removeVideo(R.id.bg_video_container);
     }
 
     public String getAppointmentId(){
@@ -103,17 +118,17 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     private void removeVideo(int containerID) {
         FrameLayout videoContainer = rootView.findViewById(containerID);
         videoContainer.removeAllViews();
+        videoContainer.removeAllViewsInLayout();
     }
 
     private void setupLocalVideoView(){
-        SurfaceView localView = call.createLocalUI(getContext());
+        SurfaceView localView = call.createLocalUI(getActivity().getBaseContext());
         localView.setVisibility(View.GONE);
         ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).addView(localView);
     }
 
-    private void setupRemoteVideoView(int uid){
-        SurfaceView remoteView = call.createRemoteUI(getContext(),uid);
 
-        ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).addView(remoteView);
+    private void runOnUiThread(Runnable runnable){
+        getActivity().runOnUiThread(runnable);
     }
 }

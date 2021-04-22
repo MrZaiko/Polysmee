@@ -1,5 +1,7 @@
 package io.github.polysmee.agora.video.handlers;
 
+import io.agora.rtc.IRtcEngineEventHandler;
+
 public interface DuringCallEventHandler extends AGEventHandler {
 
 
@@ -14,4 +16,6 @@ public interface DuringCallEventHandler extends AGEventHandler {
     void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed);
 
     void onLocalVideoStateChanged(int localVideoState,int error);
+
+    void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats);
 }

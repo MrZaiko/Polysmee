@@ -18,7 +18,7 @@ import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
  */
 public class RoomPagerAdapter extends FragmentStateAdapter {
     private final String appointmentId;
-    public static String[] FRAGMENT_NAME = new String[]{"MESSAGES", "CALL","VIDEO"};
+    public static String[] FRAGMENT_NAME = new String[]{"MESSAGES", "VIDEO","CALL"};
     private final static int FRAGMENTS_NUMBER = 3;
     private Call call;
     public RoomPagerAdapter(FragmentActivity fm, String appointmentId) {
@@ -42,18 +42,18 @@ public class RoomPagerAdapter extends FragmentStateAdapter {
                 fragment.setArguments(bundle);
                 return fragment;
             case 1:
-                fragment = new RoomActivityParticipantsFragment(call);
-                bundle = new Bundle();
-                bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-                fragment.setArguments(bundle);
-                call.setParticipantFragment(fragment);
-                return fragment;
-            case 2:
                 fragment = new RoomActivityVideoFragment(call);
                 bundle = new Bundle();
                 bundle.putString(RoomActivityVideoFragment.VIDEO_KEY, appointmentId);
                 fragment.setArguments(bundle);
                 call.setVideoFragment(fragment);
+                return fragment;
+            case 2:
+                fragment = new RoomActivityParticipantsFragment(call);
+                bundle = new Bundle();
+                bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+                fragment.setArguments(bundle);
+                call.setParticipantFragment(fragment);
                 return fragment;
             default:
                 throw new IllegalArgumentException();

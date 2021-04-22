@@ -39,6 +39,24 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
     }
 
     @Override
+    public void onLeaveChannel(RtcStats rtcStats) {
+        for(AGEventHandler handler: handlers){
+            if(handler instanceof DuringCallEventHandler){
+                ((DuringCallEventHandler) handler).onLeaveChannel(rtcStats);
+            }
+        }
+    }
+
+    @Override
+    public void onUserOffline(int uid, int reason) {
+        for(AGEventHandler handler: handlers){
+            if(handler instanceof DuringCallEventHandler){
+                ((DuringCallEventHandler) handler).onUserOffline(uid,reason);
+            }
+        }
+    }
+
+    @Override
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
         System.out.println("onRemoteUserStateChanged " + (uid & 0xFFFFFFFFL) + " "+ reason + " " +  elapsed);
         for(AGEventHandler handler: handlers){

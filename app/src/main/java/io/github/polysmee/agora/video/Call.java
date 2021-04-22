@@ -1,5 +1,6 @@
 package io.github.polysmee.agora.video;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.SurfaceView;
 import android.view.View;
@@ -267,8 +268,8 @@ public class Call {
 
     public SurfaceView createRemoteUI(Context context, final int uid){
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
-        surfaceV.setZOrderOnTop(true);
-        surfaceV.setZOrderMediaOverlay(true);
+        //surfaceV.setZOrderOnTop(true);
+        //surfaceV.setZOrderMediaOverlay(true);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN,uid));
         surfaceV.layout(0,0,20,10);
         return surfaceV;
@@ -278,7 +279,7 @@ public class Call {
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
         surfaceV.setZOrderOnTop(true);
         surfaceV.setZOrderMediaOverlay(true);
-        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN,0));
+        mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceV));
         surfaceV.layout(0,0,20,10);
         return surfaceV;
     }
@@ -292,5 +293,9 @@ public class Call {
 
     public void setVideoFragment(Fragment fragment){
         this.videoRoom = (RoomActivityVideoFragment) fragment;
+    }
+
+    public Fragment getRoomActivity(){
+        return room;
     }
 }
