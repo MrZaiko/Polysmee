@@ -6,7 +6,7 @@ import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.messages.Message;
+import io.github.polysmee.database.Message;
 
 public class DatabaseAppointment implements Appointment {
 

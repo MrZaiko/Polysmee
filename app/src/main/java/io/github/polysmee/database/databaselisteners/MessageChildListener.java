@@ -7,7 +7,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
-import io.github.polysmee.messages.Message;
+import io.github.polysmee.database.Message;
 
 public interface MessageChildListener extends ChildEventListener {
     default void childAdded(String key, Message value) {}

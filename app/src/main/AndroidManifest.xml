@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.github.polysmee">
 
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
@@ -24,14 +25,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Polysmee"
-        android:usesCleartextTraffic="true">
-        <activity android:name=".invites.InvitesManagementActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+        android:usesCleartextTraffic="true"
+        tools:targetApi="m">
+        <activity android:name=".invites.InvitesManagementActivity"/>
         <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"
@@ -41,7 +37,7 @@
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />
-        <activity android:name=".room.RoomActivity"></activity>
+        <activity android:name=".room.RoomActivity" />
         <activity android:name=".login.LoginCheckActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

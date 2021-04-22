@@ -1,4 +1,4 @@
-package io.github.polysmee.database.messages;
+package io.github.polysmee.database;
 
 import androidx.annotation.NonNull;
 
