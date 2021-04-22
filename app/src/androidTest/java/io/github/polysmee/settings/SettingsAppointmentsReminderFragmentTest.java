@@ -2,33 +2,27 @@ package io.github.polysmee.settings;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.view.KeyEvent;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.UiDevice;
-
-import com.schibsted.spain.barista.rule.cleardata.ClearPreferencesRule;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import io.github.polysmee.R;
+import io.github.polysmee.settings.fragments.SettingsAppointmentsReminderFragment;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @RunWith(AndroidJUnit4.class)
-public class FragmentSettingsAppointmentsReminderTest {
+public class SettingsAppointmentsReminderFragmentTest {
 
     private static Context context(){
         return ApplicationProvider.getApplicationContext();
@@ -48,12 +42,16 @@ public class FragmentSettingsAppointmentsReminderTest {
     }
     @Before
     public void createFragment(){
-        FragmentScenario.launchInContainer(FragmentSettingsAppointmentsReminder.class);
+        FragmentScenario.launchInContainer(SettingsAppointmentsReminderFragment.class);
         sleep(1, SECONDS);
     }
 
     //used in tests (this test or any other) to know if the fragment is been displayed
     public static void checkFragmentIsDisplayed(){
+        PreferenceManager.getDefaultSharedPreferences(context()).edit().putInt(
+                context().getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)).commit();
+        sleep(1, SECONDS);
         assertDisplayed(R.string.title_settings_appointments_reminder_notification_time_from_appointment);
         assertDisplayed(R.string.summary_settings_appointments_reminder_notification_time_from_appointment);
         assertDisplayed(""+ApplicationProvider.getApplicationContext().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min));

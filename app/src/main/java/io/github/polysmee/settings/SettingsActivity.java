@@ -9,6 +9,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import io.github.polysmee.R;
+import io.github.polysmee.settings.fragments.SettingsMainFragment;
 
 /*
  *  greatly inspired from https://developer.android.com/guide/topics/ui/settings
@@ -23,7 +24,7 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         if (savedInstanceState == null) {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.container_settings, new FragmentSettingsMain())
+                    .replace(R.id.container_settings, new SettingsMainFragment())
                     .commit();
         }
     }
@@ -42,8 +43,8 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         // Instantiate the new Fragment
         final Bundle args = pref.getExtras();
         final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
-                getClassLoader(),
-                pref.getFragment());
+                    getClassLoader(),
+                    pref.getFragment());
         fragment.setArguments(args);
         fragment.setTargetFragment(caller, 0);
         // Replace the existing Fragment with the new Fragment

@@ -27,6 +27,12 @@ public interface User{
     void getName_Once_AndThen(StringValueListener valueListener);
 
     /**
+     * Change the name of the user to the given value passed
+     * @param value the new name value to set up, if a empty string is passed it does nothing.
+     */
+    void setName(String value);
+
+    /**
      * @param valueListener the listener to be removed from listening to the user name
      */
     void removeNameListener(StringValueListener valueListener);
