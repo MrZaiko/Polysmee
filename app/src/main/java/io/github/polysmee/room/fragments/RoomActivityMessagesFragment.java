@@ -40,12 +40,16 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+
+import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.MessageChildListener;
+import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.database.messages.MessagesManager;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -58,14 +62,14 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private String appointmentId;
 
-    private MessagesManager messagesManager;
-
     private ViewGroup rootView;
     private LayoutInflater inflater;
     private  ImageView picture;
-    private final Map<String, View> messagesDisplayed = new HashMap<>();
 
+    private final Map<String, View> messagesDisplayed = new HashMap<>();
+    private DatabaseAppointment databaseAppointment;
     private ActionMode actionMode;
+    private MessageChildListener listener;
 
     @Nullable
     @Override
@@ -73,6 +77,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_messages, container, false);
 
         appointmentId = requireArguments().getString(MESSAGES_KEY);
+        databaseAppointment = new DatabaseAppointment(appointmentId);
 
         ImageView send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
@@ -80,8 +85,10 @@ public class RoomActivityMessagesFragment extends Fragment {
         picture = rootView.findViewById(R.id.roomActivitySendPictureButton);
         picture.setOnClickListener(this::openGallery);
 
+        String appointmentId = requireArguments().getString(MESSAGES_KEY);
+
         this.inflater = getLayoutInflater();
-        initializeAndLaunchMessagesManager(appointmentId);
+        initializeAndDisplayDatabase();
 
         return rootView;
     }
@@ -100,8 +107,9 @@ public class RoomActivityMessagesFragment extends Fragment {
 
             try (InputStream iStream = getContext().getContentResolver().openInputStream(imageUri)) {
                 UploadServiceFactory.getAdaptedInstance().uploadImage(getBytes(iStream),
-                        appointmentId, id -> messagesManager.sendMessage(id,
-                                MainUserSingleton.getInstance().getId(), true), s -> showErrorToast());
+                        appointmentId, id -> databaseAppointment.addMessage(
+                                new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
+                        ), s -> showErrorToast());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -129,6 +137,12 @@ public class RoomActivityMessagesFragment extends Fragment {
         return byteBuffer.toByteArray();
     }
 
+    @Override
+    public void onDestroy() {
+        databaseAppointment.removeMessageListener(listener);
+        super.onDestroy();
+    }
+
     /**
      * @param view
      */
@@ -139,10 +153,25 @@ public class RoomActivityMessagesFragment extends Fragment {
         String messageToAdd = messageEditText.getText().toString();
         String userId = MainUserSingleton.getInstance().getId();
 
-        //sends the message using the uid of the current user and the text from the EditText of the room
-        messagesManager.sendMessage(messageToAdd, userId, false);
+        databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
         messageEditText.setText("");
     }
+
+    /*
+     * Edits the content of the message whose key is messageKey to newContent in the database
+     */
+    private void editMessage(String messageKey, String newContent) {
+        databaseAppointment.editMessage(messageKey, newContent);
+    }
+
+    /*
+     * Deletes the message whose key is messageKey from the database
+     */
+    private void deleteMessage(String messageKey) {
+        databaseAppointment.removeMessage(messageKey);
+    }
+
+
 
     private void closeKeyboard() {
         try {
@@ -241,7 +270,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.roomEditMessageMenuDelete:
-                        messagesManager.deleteMessage(messageKey);
+                        databaseAppointment.removeMessage(messageKey);
                         mode.finish();
                         return true;
                     case R.id.roomEditMessageMenuEdit:
@@ -276,7 +305,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         editMessage.setHint(messageView.getText());
 
         builder.setPositiveButton("Edit", (dialog, id) -> {
-            messagesManager.editMessage(messageKey, editMessage.getText().toString());
+            databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
         });
 
         builder.setNeutralButton("Cancel", (dialog, id) -> {
@@ -293,44 +322,47 @@ public class RoomActivityMessagesFragment extends Fragment {
      * Initializes the path of the database, displays the messages from the database and adds an event listener on the value of the messages
      * in order to update them in case of changes
      */
-    private void initializeAndLaunchMessagesManager(String appointmentId) {
-        messagesManager = new MessagesManager(appointmentId);
 
-        messagesManager.createListener(
-                (message, key) -> {
-                    String currentID = MainUserSingleton.getInstance().getId();
-                    View messageToAddLayout = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()),
-                            message.getSender(), message.getMessageTime(), message.getIsAPicture(), key);
-                    messagesDisplayed.put(key, messageToAddLayout);
+    private void initializeAndDisplayDatabase() {
 
-                    LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);
-                    messages.addView(messageToAddLayout);
 
-                    //Blank text view to add a space between messages
-                    messages.addView(new TextView(rootView.getContext()));
+        listener = new MessageChildListener() {
 
-                    //Scroll down the view to see the latest messages
-                    ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
-                    scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
-                },
-                (message, key) -> {
-                    if (!message.getIsAPicture())
-                        ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(message.getContent());
-                 },
-                (message, key) -> {
-                    LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);
-                    View viewToRemove = messagesDisplayed.get(key);
-                    int indexOfMessage = messages.indexOfChild(viewToRemove);
-                    //remove the white space under the message and the message itself from the LinearLayout
-                    messages.removeViewAt(indexOfMessage+1);
-                    messages.removeView(messagesDisplayed.get(key));
-                    messagesDisplayed.remove(key);
-                },
-                (message, key) -> {});
+            @Override
+            public void childAdded(String key, Message value) {
 
+                String userId = MainUserSingleton.getInstance().getId();
+                View messageToAddLayout = generateMessageTextView(value.getContent(), userId.equals(value.getSender()), value.getSender(), value.getMessageTime(), value.getIsAPicture(), key);
+                messagesDisplayed.put(key, messageToAddLayout);
+                LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);
+                messages.addView(messageToAddLayout);
+
+                //Blank text view to add a space between messages
+                messages.addView(new TextView(rootView.getContext()));
+
+                //Scroll down the view to see the latest messages
+                ScrollView scrollView = rootView.findViewById(R.id.roomActivityMessagesScrollView);
+                scrollView.post(() -> scrollView.fullScroll(View.FOCUS_DOWN));
+            }
+
+            @Override
+            public void childChanged(String key, Message value) {
+                ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(value.getContent());
+            }
+
+            @Override
+            public void childRemoved(String key, Message value) {
+                LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);
+                TextView viewToRemove = messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent);
+                int indexOfMessage = messages.indexOfChild(viewToRemove);
+                //remove the white space under the message and the message itself from the LinearLayout
+                messages.removeViewAt(indexOfMessage + 1);
+                messages.removeView(messagesDisplayed.get(key));
+                messagesDisplayed.remove(key);
+            }
+
+        };
+        databaseAppointment.addMessageListener(listener);
     }
-
-
-
 
 }
