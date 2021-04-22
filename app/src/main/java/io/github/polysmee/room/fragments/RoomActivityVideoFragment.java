@@ -2,6 +2,7 @@ package io.github.polysmee.room.fragments;
 
 import android.os.Bundle;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -9,6 +10,8 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import java.util.HashMap;
 
@@ -22,9 +25,11 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
 
     private ViewGroup rootView;
     public final static String VIDEO_KEY = "io.github.polysme.room.fragments.roomActivityVideoFragment.VIDEO_KEY";
-    private final HashMap<Integer, SurfaceView> mUidsList = new HashMap<>();
+    private final HashMap<Integer, FrameLayout> idsToVideoFrames = new HashMap<>();
     private final HashMap<Integer, String> uidsToNames = new HashMap<>();
     private Call call;
+    private LinearLayout videoLayout;
+    private LayoutInflater inflater;
 
     public RoomActivityVideoFragment() {
         // Required empty public constructor
@@ -39,6 +44,8 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         // Inflate the layout for this fragment
 
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_room_activity_video, container, false);
+        videoLayout = (LinearLayout) rootView.findViewById(R.id.roomActivityVideosLayout);
+        this.inflater = inflater;
         return rootView;
     }
 
@@ -57,7 +64,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     @Override
     public void onUserOffline(int uid, int reason){
         System.out.println("A remote user quit the call");
-        runOnUiThread(()->removeVideo(R.id.bg_video_container));
+        runOnUiThread(()->removeVideo(uid));
     }
 
     @Override
@@ -69,19 +76,28 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
         if(state == Constants.REMOTE_VIDEO_STATE_STOPPED && reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_MUTED){
             runOnUiThread(()->
-            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.GONE));
+                    idsToVideoFrames.get(uid).getChildAt(0).setVisibility(View.GONE));
+            //((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.GONE));
 
         }
         else if(state == Constants.REMOTE_VIDEO_STATE_STARTING){
-            System.out.println("Remote started sharing video");
+            System.out.println("Remote started sharing video" + uid);
             runOnUiThread(()->{
-            SurfaceView remoteView = call.createRemoteUI(getActivity().getBaseContext(),uid);
-            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).addView(remoteView);
+                SurfaceView remoteView = call.createRemoteUI(getActivity().getBaseContext(),uid);
+
+                ConstraintLayout remoteContainer = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_video,null);
+                FrameLayout remoteVideoContainer = remoteContainer.findViewById(R.id.roomActivityVideoElement);
+                remoteVideoContainer.addView(remoteView);
+                remoteContainer.removeView(remoteVideoContainer);
+                idsToVideoFrames.put(uid,remoteVideoContainer);
+                videoLayout.addView(remoteVideoContainer);
+                //((FrameLayout)rootView.findViewById(R.id.bg_video_container)).addView(remoteView);
             });
         }
         else if(state == Constants.REMOTE_VIDEO_STATE_DECODING){
             runOnUiThread(()->
-            ((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.VISIBLE));
+                    idsToVideoFrames.get(uid).getChildAt(0).setVisibility(View.VISIBLE));
+            //((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.VISIBLE));
         }
     }
 
@@ -90,13 +106,15 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         if(error == Constants.LOCAL_VIDEO_STREAM_ERROR_OK){
             if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_STOPPED){
                 runOnUiThread(()->
-                ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.GONE));
+                        idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.GONE));
+                //((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.GONE));
             }
             else if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_CAPTURING){
                 System.out.println("CAPTURING WHOOOOOOOOOOOOOO");
                 runOnUiThread(() ->
-                        ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.VISIBLE)
-                );
+                        idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.VISIBLE));
+                        //((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.VISIBLE)
+                //);
             }
         }
         else{
@@ -106,25 +124,44 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
 
     @Override
     public void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats) {
-        removeVideo(R.id.floating_video_container);
-        removeVideo(R.id.bg_video_container);
+        removeVideo(-1);
     }
 
     public String getAppointmentId(){
         return requireArguments().getString(VIDEO_KEY);
     }
 
+    private void removeVideo(int uid){
+        if(uid == -1){
+            idsToVideoFrames.clear();
+            videoLayout.removeAllViews();
+            return;
+        }
+        videoLayout.removeView(idsToVideoFrames.get(uid));
+    }
 
-    private void removeVideo(int containerID) {
+    private void removeVideo(int containerID, int uid) {
         FrameLayout videoContainer = rootView.findViewById(containerID);
-        videoContainer.removeAllViews();
-        videoContainer.removeAllViewsInLayout();
+        if(uid == -1){
+            idsToVideoFrames.clear();
+            videoContainer.removeAllViews();
+            return;
+        }
+        videoContainer.removeView(idsToVideoFrames.get(uid));
+        /*videoContainer.removeAllViews();
+        videoContainer.removeAllViewsInLayout();*/
     }
 
     private void setupLocalVideoView(){
         SurfaceView localView = call.createLocalUI(getActivity().getBaseContext());
         localView.setVisibility(View.GONE);
-        ((FrameLayout)rootView.findViewById(R.id.floating_video_container)).addView(localView);
+
+        ConstraintLayout localContainer = (ConstraintLayout)inflater.inflate(R.layout.element_room_activity_video,null);
+        FrameLayout localVideoContainer = (FrameLayout) localContainer.findViewById(R.id.roomActivityVideoElement);
+        localVideoContainer.addView(localView);
+        localContainer.removeView(localVideoContainer);
+        videoLayout.addView(localVideoContainer,0);
+        idsToVideoFrames.put(0,localVideoContainer);
     }
 
 
