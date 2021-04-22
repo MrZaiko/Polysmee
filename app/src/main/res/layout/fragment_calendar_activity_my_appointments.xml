@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/calendarActivityMyAppointmentsGuidelineAt20pourcent">
+        app:layout_constraintTop_toBottomOf="@id/todayDateMyAppointmentsCalendarActivity">
 
         <LinearLayout
             android:id="@+id/calendarActivityMyAppointmentsScrollLayout"
@@ -98,6 +98,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.12" />
+        app:layout_constraintGuide_percent="0.15"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
