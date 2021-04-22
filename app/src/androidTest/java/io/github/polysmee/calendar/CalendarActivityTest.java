@@ -115,6 +115,7 @@ public class CalendarActivityTest {
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3,SECONDS);
+            scrollTo(info.getTitle());
             clickOn(info.getTitle());
             assertDisplayed(withHint(info.getTitle()));
             assertDisplayed(withHint(info.getCourse()));
@@ -148,7 +149,7 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
+            clickOn(R.id.activityCalendarMonthMyAppointments);
             setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
             long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(false);
             Date date = new Date(epochTimeToday);
@@ -174,7 +175,7 @@ public class CalendarActivityTest {
             }
             assertTrue(thrown);
 
-            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
+            clickOn(R.id.activityCalendarMonthMyAppointments);
             setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
             sleep(2,SECONDS);
             assertDisplayed(appointmentTitle);
