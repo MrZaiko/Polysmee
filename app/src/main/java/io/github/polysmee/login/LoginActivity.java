@@ -10,13 +10,11 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Collections;
 import java.util.List;
 
-import io.github.polysmee.MainActivity;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseFactory;
@@ -86,7 +84,8 @@ public class LoginActivity extends AppCompatActivity {
                     .child(MainUserSingleton.getInstance().getId())
                     .child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
-
+            //TODO
+            //AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
             Intent intent = new Intent(this, CalendarActivity.class);
 
             startActivity(intent);
