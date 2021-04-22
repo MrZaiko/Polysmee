@@ -78,6 +78,7 @@ public class RoomActivityNotParticipantTest {
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+           sleep(2, TimeUnit.SECONDS);
            assertDisplayed(R.id.roomActivityRemovedDialogText);
            assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
         }

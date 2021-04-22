@@ -206,10 +206,12 @@ public class CalendarActivityTest {
             }
 
             for(int i = 0; i<number_of_appointments;++i){
+                scrollTo(infos[i].getTitle());
                 assertDisplayed(infos[i].getTitle());
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
                 Date startDate = new Date(infos[i].getStartTime());
                 Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
+                scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
                 assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
             }
 
@@ -217,11 +219,13 @@ public class CalendarActivityTest {
             sleep(3,SECONDS);
             for(int i = 0; i<number_of_appointments;++i){
                 if(i%2 != 0){
-                assertDisplayed(infos[i].getTitle());
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                Date startDate = new Date(infos[i].getStartTime());
-                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
-                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+                    infos[i].getTitle();
+                    assertDisplayed(infos[i].getTitle());
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                    Date startDate = new Date(infos[i].getStartTime());
+                    Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
+                    scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
+                    assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
                 }
             }
         }

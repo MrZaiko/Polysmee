@@ -80,7 +80,7 @@ public interface User{
     /**
      * @param valueListener a listener that will be run once that will receive the list of every user on the database
      */
-    static void getAllUsersIdsAndThenOnce(StringSetValueListener valueListener){
+    static void getAllUsersIds_Once_AndThen(StringSetValueListener valueListener){
         DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
     }
 }
