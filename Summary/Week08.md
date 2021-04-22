@@ -34,7 +34,11 @@ Next time, I'll connect the activity I created to the database and add the UI su
 wants to select the course, they can only choose among a given list, which will make it much easier to look through public appointments for a specific course.
 
 ## Thomas 
+This sprint I implemented a way for the user to have access at his username and his email from the application. He can also change his name but not his email.
 
+My time estimate for this week was perfect. I even manage it, so I could integrate the notification setter that I developed in the weeks before in the main.
+
+Next time, I hope to manage that well my time.
 
 ## Sami
 I connected the picture sharing backend to the room UI. I also started to work on the theme.
