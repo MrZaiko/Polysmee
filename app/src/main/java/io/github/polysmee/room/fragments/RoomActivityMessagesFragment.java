@@ -37,8 +37,10 @@ import java.util.Locale;
 import java.util.Map;
 
 import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.messages.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
@@ -52,10 +54,10 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private ViewGroup rootView;
     private LayoutInflater inflater;
-    private DatabaseReference databaseReference;
     private final Map<String, View> messagesDisplayed = new HashMap<>();
-
+    private DatabaseAppointment databaseAppointment;
     private ActionMode actionMode;
+    private MessageChildListener listener;
 
     @Nullable
     @Override
@@ -63,16 +65,22 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_messages, container, false);
 
         String appointmentId = requireArguments().getString(MESSAGES_KEY);
-
+        databaseAppointment = new DatabaseAppointment(appointmentId);
         ImageView send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
 
         this.inflater = getLayoutInflater();
-        initializeAndDisplayDatabase(appointmentId);
+        initializeAndDisplayDatabase();
 
 
         return rootView;
 
+    }
+
+    @Override
+    public void onDestroy() {
+        databaseAppointment.removeMessageListener(listener);
+        super.onDestroy();
     }
 
     /**
@@ -86,7 +94,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         String userId = MainUserSingleton.getInstance().getId();
 
         //sends the message using the uid of the current user and the text from the EditText of the room
-        Message.sendMessage(messageToAdd, databaseReference, userId);
+        databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis()));
         messageEditText.setText("");
     }
 
@@ -94,14 +102,14 @@ public class RoomActivityMessagesFragment extends Fragment {
      * Edits the content of the message whose key is messageKey to newContent in the database
      */
     private void editMessage(String messageKey, String newContent) {
-        databaseReference.child(messageKey).child("content").setValue(newContent);
+        databaseAppointment.editMessage(messageKey, newContent);
     }
 
     /*
      * Deletes the message whose key is messageKey from the database
      */
     private void deleteMessage(String messageKey) {
-        databaseReference.child(messageKey).removeValue();
+        databaseAppointment.removeMessage(messageKey);
     }
 
 
@@ -222,22 +230,17 @@ public class RoomActivityMessagesFragment extends Fragment {
      * Initializes the path of the database, displays the messages from the database and adds an event listener on the value of the messages
      * in order to update them in case of changes
      */
-    private void initializeAndDisplayDatabase(String appointmentId) {
-
-        //Initialize the database reference to the right path
-        databaseReference = DatabaseFactory.getAdaptedInstance().getReference("appointments/" + appointmentId + "/messages");
+    private void initializeAndDisplayDatabase() {
 
 
-        databaseReference.addChildEventListener(new ChildEventListener() {
+        listener = new MessageChildListener() {
+
             @Override
-            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                Message message = snapshot.getValue(Message.class);
+            public void childAdded(String key, Message value) {
 
-                String key = snapshot.getKey();
-                String currentID = MainUserSingleton.getInstance().getId();
-                View messageToAddLayout = generateMessageTextView(message.getContent(), currentID.equals(message.getSender()), message.getSender(), message.getMessageTime(), key);
+                String userId = MainUserSingleton.getInstance().getId();
+                View messageToAddLayout = generateMessageTextView(value.getContent(), userId.equals(value.getSender()), value.getSender(), value.getMessageTime(), key);
                 messagesDisplayed.put(key, messageToAddLayout);
-
                 LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
                 messages.addView(messageToAddLayout);
 
@@ -250,16 +253,12 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
 
             @Override
-            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                //update the corresponding textView
-                Message message = snapshot.getValue(Message.class);
-                String key = snapshot.getKey();
-                ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(message.getContent());
+            public void childChanged(String key, Message value) {
+                ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(value.getContent());
             }
 
             @Override
-            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-                String key = snapshot.getKey();
+            public void childRemoved(String key, Message value) {
                 LinearLayout messages = rootView.findViewById(R.id.rommActivityScrollViewLayout);
                 TextView viewToRemove = messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent);
                 int indexOfMessage = messages.indexOfChild(viewToRemove);
@@ -269,15 +268,10 @@ public class RoomActivityMessagesFragment extends Fragment {
                 messagesDisplayed.remove(key);
             }
 
-            @Override
-            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {}
+        };
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {}
-        });
+        databaseAppointment.addMessageListener(listener);
+
     }
-
-
-
 
 }
