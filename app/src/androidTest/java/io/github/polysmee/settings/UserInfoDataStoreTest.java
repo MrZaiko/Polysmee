@@ -49,7 +49,7 @@ public class UserInfoDataStoreTest {
     @Test
     public void putString() {
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
-        String stringToPut = "string putted";
+        String stringToPut = "string putted to test";
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
         testNameDatabase(stringToPut);
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, userName);
