@@ -33,6 +33,7 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 
@@ -68,6 +69,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         user = MainUserSingleton.getInstance();
         userAppointmentsListener = null;
         rootView.findViewById(R.id.calendarActivityCreateAppointmentButton).setOnClickListener((v) -> createAppointment());
+        rootView.findViewById(R.id.calendarActivityInvitationsButton).setOnClickListener((v) -> viewInvitations());
 
         rootView.findViewById(R.id.todayDateMyAppointmentsCalendarActivity).setOnClickListener((v) -> {
             chooseDate();
@@ -109,6 +111,13 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      */
     private void createAppointment() {
         Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+        startActivity(intent);
+    }
+    /*
+     * Behavior of the view invitations button
+     */
+    private void viewInvitations() {
+        Intent intent = new Intent(rootView.getContext(), InvitesManagementActivity.class);
         startActivity(intent);
     }
 

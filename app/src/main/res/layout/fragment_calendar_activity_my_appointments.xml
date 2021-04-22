@@ -84,6 +84,17 @@
         android:layout_margin="16dp" />
 
 
+    <Button
+        android:id="@+id/calendarActivityInvitationsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:src="@drawable/baseline_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="16dp"
+        android:text="Invitations" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/calendarActivityMyAppointmentsGuidelineAtBeginning"
         android:layout_width="wrap_content"
