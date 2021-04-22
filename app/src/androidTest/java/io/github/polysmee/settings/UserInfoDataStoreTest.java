@@ -54,7 +54,7 @@ public class UserInfoDataStoreTest {
         testNameDatabase(stringToPut);
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, userName);
         testNameDatabase(userName);
-        userInfoDataStore.putString(null, stringToPut);
+        userInfoDataStore.putString("efse", stringToPut);
         testNameDatabase(userName);
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserEmail, stringToPut);
         testNameDatabase(userName);

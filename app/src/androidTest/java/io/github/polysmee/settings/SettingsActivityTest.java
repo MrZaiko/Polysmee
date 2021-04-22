@@ -31,7 +31,7 @@ public class SettingsActivityTest {
 
 
     private final static String userEmail = "SettingsActivityTest@gmail.com";
-    private final static String userName = "SettingsUserInfoTest";
+    private final static String userName = "SettingsActivityTest";
     private final static String userPassword = "fakePassword";
 
 

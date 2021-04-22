@@ -47,7 +47,7 @@ public class SettingsUserInfoFragmentTest {
     @Before
     public void createFragment(){
         FragmentScenario.launchInContainer(SettingsUserInfoFragment.class);
-        sleep(1, SECONDS);
+        sleep(2, SECONDS);
     }
 
     //used in tests (this test or any other) to know if the fragment is been displayed

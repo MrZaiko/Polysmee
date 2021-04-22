@@ -15,7 +15,7 @@ public class UserInfoDataStore extends PreferenceDataStore {
 
     @Override
     public void putString(@NonNull String key, @Nullable String value) {
-        if(value==null || key==null){
+        if(value==null){
             return;
         }
         switch (key){
