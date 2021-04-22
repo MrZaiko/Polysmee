@@ -9,8 +9,8 @@ import io.github.polysmee.login.MainUserSingleton;
 
 public class UserInfoDataStore extends PreferenceDataStore {
     private User dataBaseMainUser = MainUserSingleton.getInstance();
-    public static final String preferenceKeyMainUserName = "preference_key_main_user_info";
-    public static String preferenceKeyMainUserEmail = "preference_key_main_user_info";
+    public static final String preferenceKeyMainUserName = "preference_key_main_user_info_name";
+    public static String preferenceKeyMainUserEmail = "preference_key_main_user_info_email";
 
 
     @Override
