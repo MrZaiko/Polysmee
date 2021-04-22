@@ -104,4 +104,57 @@ public class RoomActivityParticipantsFragmentTest {
         assertEquals(MainUserSingleton.getInstance().getId(), usersInCall.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
+
+    @Test
+    public void muteWorks() {
+        List usersMuted = new ArrayList<String>();
+        DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
+        appointment.addInCallListener(new BooleanChildListener() {
+            @Override
+            public void childChanged(String key, boolean value) {
+                if(value) {
+                    usersMuted.add(key);
+                }
+            }
+        });
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementMuteButton);
+        sleep(1, SECONDS);
+        assert(!usersMuted.isEmpty());
+        assertEquals(MainUserSingleton.getInstance().getId(),usersMuted.get(0));
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+    }
+    @Test
+    public void unMuteWorks() {
+        List usersUnmuted = new ArrayList<String>();
+        DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
+        appointment.addInCallListener(new BooleanChildListener() {
+            @Override
+            public void childChanged(String key, boolean value) {
+                if(!value) {
+                    usersUnmuted.add(key);
+                }
+            }
+        });
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementMuteButton);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementMuteButton);
+        sleep(1,SECONDS);
+        assert(!usersUnmuted.isEmpty());
+        assertEquals(MainUserSingleton.getInstance().getId(),usersUnmuted.get(0));
+        clickOn(R.id.roomActivityParticipantElementCallButton);
+    }
+
+
 }
