@@ -48,6 +48,10 @@ public class SettingsAppointmentsReminderFragmentTest {
 
     //used in tests (this test or any other) to know if the fragment is been displayed
     public static void checkFragmentIsDisplayed(){
+        PreferenceManager.getDefaultSharedPreferences(context()).edit().putInt(
+                context().getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                context().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)).commit();
+        sleep(1, SECONDS);
         assertDisplayed(R.string.title_settings_appointments_reminder_notification_time_from_appointment);
         assertDisplayed(R.string.summary_settings_appointments_reminder_notification_time_from_appointment);
         assertDisplayed(""+ApplicationProvider.getApplicationContext().getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min));
