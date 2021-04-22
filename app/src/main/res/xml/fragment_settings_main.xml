@@ -5,4 +5,6 @@
         app:fragment="io.github.polysmee.settings.FragmentSettingsAppointmentsReminder"
         app:icon="@drawable/settings_reminder"
         app:title="@string/title_settings_appointments_reminder" />
+    <SwitchPreference
+        app:title="Dark theme"/>
 </PreferenceScreen>

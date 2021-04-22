@@ -20,9 +20,9 @@ public class TestMessages {
     public void gettersReturnTheRightValue() {
         String content = "content";
         String userId = "userId";
-        long messageTime = 0l;
+        long messageTime = 0L;
 
-        Message message = new Message(userId, content, 0l);
+        Message message = new Message(userId, content, 0l, false);
 
         assertEquals(content, message.getContent());
         assertEquals(userId, message.getSender());
@@ -31,36 +31,36 @@ public class TestMessages {
 
     @Test
     public void equalsMethodReturnsFalseWithOtherTypesOfObject() {
-        Message message = new Message("userID", "content", 0);
-        assertEquals(false, message.equals("test"));
-        assertEquals(false, message.equals(new Integer(10)));
-        assertEquals(false, message.equals(new ArrayList<>()));
+        Message message = new Message("userID", "content", 0, false);
+        assertFalse(message.equals("test"));
+        assertFalse(message.equals(new Integer(10)));
+        assertFalse(message.equals(new ArrayList<>()));
     }
 
     @Test
     public void equalsMethodReturnsFalseWithNullArg() {
-        Message message = new Message("userID", "content", 0);
-        assertEquals(false, message.equals(null));
+        Message message = new Message("userID", "content", 0, false);
+        assertFalse(message.equals(null));
     }
 
     @Test
     public void equalsMethodReturnsFalseWhenOneAttributDiffers() {
-        Message message = new Message("userID", "content", 0);
-        Message message1 = new Message("userID1", "content", 0);
-        Message message2 = new Message("userID", "content1", 0);
-        Message message3 = new Message("userID", "content", 1);
+        Message message = new Message("userID", "content", 0, false);
+        Message message1 = new Message("userID1", "content", 0, false);
+        Message message2 = new Message("userID", "content1", 0, false);
+        Message message3 = new Message("userID", "content", 1, false);
 
-        assertEquals(false, message.equals(message1));
-        assertEquals(false, message.equals(message2));
-        assertEquals(false, message.equals(message3));
+        assertFalse(message.equals(message1));
+        assertFalse(message.equals(message2));
+        assertFalse(message.equals(message3));
     }
 
 
     @Test
     public void equalsReturnsTrueWhenSameValues() {
-        Message message1 = new Message("userID", "content", 0);
-        Message message2 = new Message("userID", "content", 0);
-        assertEquals(true, message1.equals(message2));
+        Message message1 = new Message("userID", "content", 0, false);
+        Message message2 = new Message("userID", "content", 0, false);
+        assertTrue(message1.equals(message2));
     }
 
 }
