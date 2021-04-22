@@ -5,10 +5,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.Message;
 
 /**
  * A generic appointment
@@ -188,6 +191,7 @@ public interface Appointment {
      */
     void getBans_Once_AndThen(StringSetValueListener s);
 
+
     /**
      * @param s the listener to be removed from listening to the banned list
      */
@@ -230,6 +234,67 @@ public interface Appointment {
      * @param isPrivate do you really need an explanation ? ;)
      */
     void setPrivate(boolean isPrivate);
+
+    /**
+     * Adds the given user to the set of in call users
+     * @param inCall
+     */
+    void addInCallUser(User inCall);
+
+    /**
+     * Set the given User as muted (unmuted) if muted is true (false)
+     * @param user
+     * @param muted
+     */
+    void muteUser(User user, boolean muted);
+
+    /**
+     * Removes the given user from in call users
+     * @param outOfCall
+     */
+    void removeOfCall(User outOfCall);
+
+    /**
+     * @param listener the listener to be added to the changes of the inCall set of the appointment
+     *                 The childAdded method is executed for every child when added
+     */
+    void addInCallListener(BooleanChildListener listener);
+
+    /**
+     * @param listener the listener to be removed from listening the inCall set
+     */
+    void removeInCallListener(BooleanChildListener listener);
+
+    /**
+     * Adds the given message to the set of Message
+     * @param message
+     */
+    void addMessage(Message message);
+
+    /**
+     * Removes the message with given key from the database
+     * @param key
+     */
+    void removeMessage(String key);
+
+    /**
+     * replaces the content of the message with given key by the new content given
+     * @param key
+     * @param newContent
+     */
+    void editMessage(String key, String newContent);
+
+    /**
+     * Adds given listener to the set of messages of the appointment
+     * @param listener
+     */
+    void addMessageListener(MessageChildListener listener);
+
+    /**
+     * Removes the given listener from the set of messages of the appointment
+     * @param listener
+     */
+    void removeMessageListener(MessageChildListener listener);
 
     /**
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as

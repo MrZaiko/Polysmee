@@ -80,7 +80,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      */
     private void attributeSetters(View rootView) {
         users = new ArrayList<>();
-        User.getAllUsersIdsAndThenOnce(this::UsersNamesGetter);
+        User.getAllUsersIds_Once_AndThen(this::UsersNamesGetter);
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, users);
@@ -99,7 +99,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
         for(String userId : allIds){
             User user = new DatabaseUser(userId);
-            user.getNameAndThen((name) -> {
+            user.getName_Once_AndThen((name) -> {
                 users.add(name);
             });
         }
@@ -125,14 +125,14 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchAddLayout);
             searchLayout.setVisibility(View.GONE);
 
-            /*appointment.getParticipantsIdAndThen(p -> {
+            appointment.getParticipantsId_Once_AndThen(p -> {
                 for (String id : p) {
                     User user = new DatabaseUser(id);
-                    user.getNameAndThen(this::addInvite);
+                    user.getName_Once_AndThen(this::addInvite);
                 }
-            });*/
+            });
 
-            appointment.getOwnerIdAndThen(owner -> {
+            appointment.getOwnerId_Once_AndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))
                     searchLayout.setVisibility(View.VISIBLE);
             });

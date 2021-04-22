@@ -467,7 +467,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             appointment.setPrivate(isPrivate);
         }
 
-        User.getAllUsersIdsAndThenOnce(this::updateAppointmentParticipantsAndBans);
+        User.getAllUsersIds_Once_AndThen(this::updateAppointmentParticipantsAndBans);
     }
 
     /**
