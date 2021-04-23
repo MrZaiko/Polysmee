@@ -44,7 +44,7 @@ public class UserInfoDataStoreTest {
         new DatabaseUser(MainUserSingleton.getInstance().getId()).getName_Once_AndThen(name -> assertEquals(value, name ));
         sleep(1, SECONDS);
     }
-    /*@Test
+    @Test
     public void putString() {
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
         String stringToPut = "name change test";
@@ -58,7 +58,7 @@ public class UserInfoDataStoreTest {
         testNameDatabase(userName);
         userInfoDataStore.putString("fkesjnfejsf", stringToPut);
         testNameDatabase(userName);
-    }*/
+    }
 
     @Test
     public void getString() {

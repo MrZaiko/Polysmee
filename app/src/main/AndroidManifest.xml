@@ -34,7 +34,7 @@
             android:label="@string/title_activity_settings" />
         <activity android:name=".calendar.CalendarActivity" />
 
-        <receiver android:name=".znotification.AppointmentReminderNotificationPublisher" />
+        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".room.RoomActivity" />

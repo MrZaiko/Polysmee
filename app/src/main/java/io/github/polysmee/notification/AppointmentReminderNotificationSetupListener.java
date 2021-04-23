@@ -1,4 +1,4 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -120,7 +120,6 @@ public final class AppointmentReminderNotificationSetupListener {
 
             }
         }
-        isListenerSetup = true;
     }
 
     /*
@@ -137,5 +136,6 @@ public final class AppointmentReminderNotificationSetupListener {
         mContext = context;
         AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
         MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
+        isListenerSetup = true;
     }
 }
