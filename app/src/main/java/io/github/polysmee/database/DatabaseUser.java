@@ -1,5 +1,7 @@
 package io.github.polysmee.database;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.HashMap;
@@ -61,6 +63,20 @@ public final class DatabaseUser implements User {
                 .child(self_id)
                 .child("name")
                 .addListenerForSingleValueEvent(valueListener);
+    }
+
+
+    @Override
+    public void setName(@NonNull String value) {
+        if (value.isEmpty()){
+            return;
+        }
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("name")
+                .setValue(value);
     }
 
     @Override

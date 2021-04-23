@@ -37,3 +37,6 @@ hs_err_pid*
 /captures
 .externalNativeBuild
 .cxx
+.firebaserc
+database.rules.json
+firebase.json
