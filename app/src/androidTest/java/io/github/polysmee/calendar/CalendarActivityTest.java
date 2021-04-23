@@ -86,7 +86,7 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             String title = "NewTitle";
-            long startTime = calendar.getTimeInMillis() + 3600*1000;
+            long startTime = calendar.getTimeInMillis() + 60*1000;
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMeBruh", "ClickMeBoi" ,
                     startTime ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
@@ -111,7 +111,7 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMe", "ClickMe" ,
-                    calendar.getTimeInMillis() + 3600*1000 ,3600*6*1000,appointmentId+5);
+                    calendar.getTimeInMillis() + 60*1000 ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3,SECONDS);
