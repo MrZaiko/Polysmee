@@ -26,6 +26,7 @@ import io.github.polysmee.login.MainUserSingleton;
 public final class AppointmentReminderNotificationSetupListener {
     private final static Map<String, LongValueListener> appointmentStartTimeListeners = new HashMap<>();
     private static boolean isListenerSetup = false;
+    private static boolean isNotificationSetterEnable = true;
 
     //need to have those variable as we cannot pass Context and CurrentTime to the done function who need to be of a specified form since it will
     // be use as a lambda to have a StringSetValueListener
@@ -129,7 +130,7 @@ public final class AppointmentReminderNotificationSetupListener {
      */
     public static void appointmentReminderNotificationSetListeners(@NonNull Context context, @NonNull AlarmManager alarmManager) {
         //to be sure that the listener will be setup only once, more robustness
-        if (isListenerSetup) {
+        if (isListenerSetup || !isNotificationSetterEnable) {
             return;
         }
         //set the variable that would be used in other function more specifically the done function
@@ -137,5 +138,15 @@ public final class AppointmentReminderNotificationSetupListener {
         AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
         MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
         isListenerSetup = true;
+    }
+
+    /**
+     * Set the value of isNotificationSetterEnable to the given value. If isNotificationSetterEnable is false before calling appointmentReminderNotificationSetListeners
+     * then the appointment reminder notification listeners will not be set. By default isNotificationSetterEnable has true value.
+     *
+     * @param value the value to give isNotificationSetterEnable
+     */
+    public static void setIsNotificationSetterEnable(boolean value){
+        isNotificationSetterEnable = value;
     }
 }
