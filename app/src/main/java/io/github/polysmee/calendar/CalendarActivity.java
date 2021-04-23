@@ -35,9 +35,9 @@ public class CalendarActivity extends AppCompatActivity{
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(CalendarActivityPagerAdapter.FRAGMENT_NAME[position])).attach();
 
-        AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(
+        /*AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(
                 getApplicationContext(),
-                (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
+                (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));*/
 
     }
 
