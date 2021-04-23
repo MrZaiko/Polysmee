@@ -27,6 +27,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
@@ -58,7 +59,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
         startTime = Calendar.getInstance();
         startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
-
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();

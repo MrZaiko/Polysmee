@@ -21,6 +21,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -49,6 +50,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

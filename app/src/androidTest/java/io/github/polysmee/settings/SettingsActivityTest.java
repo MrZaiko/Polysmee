@@ -20,6 +20,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.fragments.SettingsMainFragment;
 import io.github.polysmee.settings.fragments.SettingsUserInfoFragment;
 
@@ -40,6 +41,7 @@ public class SettingsActivityTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
