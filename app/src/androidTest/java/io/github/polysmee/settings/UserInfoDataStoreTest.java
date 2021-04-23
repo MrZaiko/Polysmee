@@ -42,13 +42,14 @@ public class UserInfoDataStoreTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
     }
 
-    public static void testNameDatabase(String value){
+    public static void testNameDatabase(String value) throws Exception{
         sleep(1, SECONDS);
-        new DatabaseUser(MainUserSingleton.getInstance().getId()).getName_Once_AndThen(name -> assertEquals(value, name ));
-        sleep(1, SECONDS);
+        String name  = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+                .child(MainUserSingleton.getInstance().getId()).child("name").get()).getValue();
+        assertEquals(value, name);
     }
     @Test
-    public void putString() {
+    public void putString() throws Exception{
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
         String stringToPut = "name change test";
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
