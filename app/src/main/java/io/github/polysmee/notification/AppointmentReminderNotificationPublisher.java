@@ -1,4 +1,4 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -14,9 +14,7 @@ import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
 import io.github.polysmee.R;
-import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.LoginCheckActivity;
-import io.github.polysmee.login.MainUserSingleton;
 
 
 /**

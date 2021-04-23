@@ -25,6 +25,7 @@ import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -63,7 +64,7 @@ public class InvitesManagementActivityTest {
         startTime.set(2022, 4, 22, 18, 3, 0);
         Calendar endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.MILLISECOND, (int) duration);
-
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

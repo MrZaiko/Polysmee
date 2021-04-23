@@ -26,6 +26,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
@@ -74,7 +75,7 @@ public class AppointmentActivityDetailModeOwnerTest {
         startTime.set(2022,4,22,18,3,0);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.MILLISECOND, (int) duration);
-
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

@@ -1,4 +1,4 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -26,6 +26,7 @@ import io.github.polysmee.login.MainUserSingleton;
 public final class AppointmentReminderNotificationSetupListener {
     private final static Map<String, LongValueListener> appointmentStartTimeListeners = new HashMap<>();
     private static boolean isListenerSetup = false;
+    private static boolean isNotificationSetterEnable = true;
 
     //need to have those variable as we cannot pass Context and CurrentTime to the done function who need to be of a specified form since it will
     // be use as a lambda to have a StringSetValueListener
@@ -38,28 +39,51 @@ public final class AppointmentReminderNotificationSetupListener {
     }
 
     /*
-     * The return pendingIntent is uniquely identify by the android system by the appointmentId and the fact that
+     * The return pendingIntent is uniquely identify by the android system by the reminder notification time of the appointment and the fact that
      * it is a broadcast for AppointmentReminderNotificationPublisher
      *
-     * we need a android version Q to be able to use setIdentifier on the intent
+     * @param appointmentReminderNotificationTimeMin the epoch time in minutes of when the notification should appear
+     *
      */
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    private static PendingIntent getReminderNotificationPendingIntent(@NonNull Context context, @NonNull String appointmentID) {
-        Intent notificationIntent = new Intent(context, AppointmentReminderNotificationPublisher.class).setIdentifier(appointmentID);
-        return PendingIntent.getBroadcast(context, 0, notificationIntent, 0);
+    private static PendingIntent getReminderNotificationPendingIntent(int appointmentReminderNotificationTimeMin) {
+        assert mContext!=null;
+        Intent notificationIntent = new Intent(mContext, AppointmentReminderNotificationPublisher.class);
+        return PendingIntent.getBroadcast(mContext, appointmentReminderNotificationTimeMin, notificationIntent, 0);
     }
 
 
+    /**
+     * Remove the reminder notification appointment of the appointment from alarmManager and update the local state of setted reminder appointment.
+     * If the reminder notification of the appointment is not setted up do nothing
+     * @param appointmentId the appointmentId of the appointment to remove the reminder notification
+     * @param localAppointmentsReminderTime the SharedPreference that contain all the reminder notification already setted up
+     */
+    private static void removeAppointmentReminderNotification(@NonNull String appointmentId, @NonNull SharedPreferences localAppointmentsReminderTime ){
+        assert alarmManager!=null;
+        int appointmentNotificationTimeMin = localAppointmentsReminderTime.getInt(appointmentId, -1);
+        //not setted up if it take default value
+        if (appointmentNotificationTimeMin==-1){
+            return;
+        }
+        localAppointmentsReminderTime.edit().remove(appointmentId).apply();
+        Set<String> appointmentsId = localAppointmentsReminderTime.getAll().keySet();
+        for(String settedAppointmentId : appointmentsId){
+            if ( appointmentNotificationTimeMin == localAppointmentsReminderTime.getInt(settedAppointmentId, -2)){
+                return;
+            }
+        }
+        alarmManager.cancel(getReminderNotificationPendingIntent( appointmentNotificationTimeMin));
+        return;
+    }
+
     //launch at the start so that the reminder set are consistent with the database. i.e remove the reminder that are set but that the user are no longer part of
-    @RequiresApi(api = Build.VERSION_CODES.Q)
     private static void onDone(Set<String> o) {
         //read the only public function first to understand more easily
         assert (alarmManager != null);
         assert (mContext != null);
-        SharedPreferences localAppointmentsReminderSettedUp = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
-        SharedPreferences.Editor localAppointmentsStateEditor = localAppointmentsReminderSettedUp.edit();
+        SharedPreferences localAppointmentsReminderTime = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
         //remove all the appointments reminder that are setup in the system but that doesn't exist for the main user anymore
-        Set<String> localAppointments = localAppointmentsReminderSettedUp.getAll().keySet();
+        Set<String> localAppointments = localAppointmentsReminderTime.getAll().keySet();
         ArrayList<String> toRemove = new ArrayList<>();
         for (String appointmentId : localAppointments) {
             if (!o.contains(appointmentId)) {
@@ -67,36 +91,36 @@ public final class AppointmentReminderNotificationSetupListener {
             }
         }
         for (String appointmentId : toRemove) {
-            alarmManager.cancel(getReminderNotificationPendingIntent(mContext, appointmentId));
-            localAppointmentsStateEditor.remove(appointmentId);
             if (appointmentStartTimeListeners.containsKey(appointmentId)) {
                 new DatabaseAppointment(appointmentId).removeStartListener(appointmentStartTimeListeners.get(appointmentId));
                 appointmentStartTimeListeners.remove(appointmentId);
             }
+            removeAppointmentReminderNotification(appointmentId, localAppointmentsReminderTime);
         }
-        localAppointmentsStateEditor.apply();
         //add listener to all the appointments that do not have listener set up yet
+        SharedPreferences.Editor localAppointmentsReminderTimeEditor = localAppointmentsReminderTime.edit();
         for (String appointmentId : o) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
-                DatabaseAppointment databaseAppointment = new DatabaseAppointment(appointmentId);
-                //TODO remove all alamrm Manager replace them with
                 LongValueListener startTimeValueListener = (long startTime) -> {
-                    long appointment_reminder_notification_time_ms = startTime - TimeUnit.MINUTES.toMillis(PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
+                    int appointmentReminderNotificationTimeMin = (int) (TimeUnit.MILLISECONDS.toMinutes(startTime) - PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
                             mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
                             mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
                     //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
                     //will trigger directly the alarm if the time passed as argument is greater than the current time
                     if (startTime > System.currentTimeMillis()) {
-                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, appointment_reminder_notification_time_ms, getReminderNotificationPendingIntent(mContext, appointmentId));
-                        localAppointmentsStateEditor.putBoolean(appointmentId, true).apply();
+                        //if the appointment reminder is not setup at the correct time remove it
+                        if(localAppointmentsReminderTime.getInt(appointmentId, -1)!=appointmentReminderNotificationTimeMin){
+                            removeAppointmentReminderNotification(appointmentId, localAppointmentsReminderTime);
+                            localAppointmentsReminderTimeEditor.putInt(appointmentId, appointmentReminderNotificationTimeMin).apply();
+                        }
+                        alarmManager.setExact(AlarmManager.RTC_WAKEUP, TimeUnit.MINUTES.toMillis(appointmentReminderNotificationTimeMin), getReminderNotificationPendingIntent(appointmentReminderNotificationTimeMin));
                     }
                 };
-                databaseAppointment.getStartTimeAndThen(startTimeValueListener);
+                new DatabaseAppointment(appointmentId).getStartTimeAndThen(startTimeValueListener);
                 appointmentStartTimeListeners.put(appointmentId, startTimeValueListener);
 
             }
         }
-        isListenerSetup = true;
     }
 
     /*
@@ -106,12 +130,23 @@ public final class AppointmentReminderNotificationSetupListener {
      */
     public static void appointmentReminderNotificationSetListeners(@NonNull Context context, @NonNull AlarmManager alarmManager) {
         //to be sure that the listener will be setup only once, more robustness
-        if (isListenerSetup) {
+        if (isListenerSetup || !isNotificationSetterEnable) {
             return;
         }
         //set the variable that would be used in other function more specifically the done function
         mContext = context;
         AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
         MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
+        isListenerSetup = true;
+    }
+
+    /**
+     * Set the value of isNotificationSetterEnable to the given value. If isNotificationSetterEnable is false before calling appointmentReminderNotificationSetListeners
+     * then the appointment reminder notification listeners will not be set. By default isNotificationSetterEnable has true value.
+     *
+     * @param value the value to give isNotificationSetterEnable
+     */
+    public static void setIsNotificationSetterEnable(boolean value){
+        isNotificationSetterEnable = value;
     }
 }

@@ -17,6 +17,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -32,6 +33,7 @@ public class UserInfoDataStoreTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -40,12 +42,14 @@ public class UserInfoDataStoreTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
     }
 
-    public static void testNameDatabase(String value){
-        new DatabaseUser(MainUserSingleton.getInstance().getId()).getName_Once_AndThen(name -> assertEquals(value, name ));
+    public static void testNameDatabase(String value) throws Exception{
         sleep(1, SECONDS);
+        String name  = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+                .child(MainUserSingleton.getInstance().getId()).child("name").get()).getValue();
+        assertEquals(value, name);
     }
-    /*@Test
-    public void putString() {
+    @Test
+    public void putString() throws Exception{
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
         String stringToPut = "name change test";
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
@@ -58,7 +62,7 @@ public class UserInfoDataStoreTest {
         testNameDatabase(userName);
         userInfoDataStore.putString("fkesjnfejsf", stringToPut);
         testNameDatabase(userName);
-    }*/
+    }
 
     @Test
     public void getString() {
