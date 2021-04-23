@@ -33,7 +33,7 @@
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".calendar.CalendarActivity" />
-
+        <activity android:name=".photo.editing.PictureEditActivity"/>
         <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />

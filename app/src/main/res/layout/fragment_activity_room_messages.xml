@@ -12,12 +12,27 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/baseline_image"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/roomActivitySendMessageButton"
+        app:layout_constraintEnd_toStartOf="@+id/roomActivityTakePictureButton"
         app:layout_constraintStart_toEndOf="@+id/roomActivityMessageText"
+        app:layout_constraintTop_toBottomOf="@+id/roomActivityMessagesScrollView"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <ImageView
+        android:id="@+id/roomActivityTakePictureButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginBottom="8dp"
+        android:src="@drawable/baseline_photo_camera"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/roomActivitySendMessageButton"
+        app:layout_constraintStart_toEndOf="@+id/roomActivitySendPictureButton"
         app:layout_constraintTop_toBottomOf="@+id/roomActivityMessagesScrollView"
         app:layout_constraintVertical_bias="1.0" />
 
@@ -27,12 +42,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
+        android:layout_marginEnd="4dp"
         android:layout_marginBottom="8dp"
         android:src="@drawable/baseline_send"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/roomActivitySendPictureButton"
+        app:layout_constraintStart_toEndOf="@+id/roomActivityTakePictureButton"
         app:layout_constraintTop_toBottomOf="@+id/roomActivityMessagesScrollView"
         app:layout_constraintVertical_bias="1.0" />
 
