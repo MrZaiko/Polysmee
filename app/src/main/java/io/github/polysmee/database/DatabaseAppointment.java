@@ -329,7 +329,6 @@ public class DatabaseAppointment implements Appointment {
                 .removeEventListener(bool);
     }
 
-
     @Override
     public void setPrivate(boolean isPrivate) {
         DatabaseFactory

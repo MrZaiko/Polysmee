@@ -513,7 +513,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                     for(String inviteName : invites) {
                         if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
                             user.addAppointment(appointment);
-                            appointment.addParticipant(user);
+                            appointment.addInvite(user);
                         }
                     }
                 });

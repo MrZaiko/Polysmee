@@ -35,6 +35,17 @@ public final class DatabaseUser implements User {
     }
 
     @Override
+    public void removeAppointment(Appointment appointment) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .setValue(null);
+    }
+
+    @Override
     public void getInvitesAndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -76,15 +87,16 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void removeAppointment(Appointment appointment) {
+    public void removeInvite(Appointment appointment) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("users")
                 .child(self_id)
-                .child("appointments")
+                .child("invites")
                 .child(appointment.getId())
                 .setValue(null);
     }
+
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {

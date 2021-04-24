@@ -84,13 +84,16 @@ public interface User{
     void addInvite(Appointment newAppointment);
 
     /**
+     * Removes the given appointment to the set of invites
+     * @param appointment the appointment to be removed
+     */
+    void removeInvite(Appointment appointment);
+
+    /**
      * Removes the given appointment to the set of appointments
      * @param appointment the appointment to be removed
      */
     void removeAppointment(Appointment appointment);
-
-
-
 
     /**
      * @param start the start time of the new appointment
