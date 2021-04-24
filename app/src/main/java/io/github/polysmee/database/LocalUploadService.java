@@ -20,4 +20,12 @@ public class LocalUploadService implements UploadService {
     public void downloadImage(String id, DownloadValueListener onSuccess, LoadValueListener onFailure) {
         onSuccess.onDone(hash.get(id));
     }
+
+    @Override
+    public void deleteImage(String id, LoadValueListener onSuccess, LoadValueListener onFailure) {
+        if(hash.remove(id) == null)
+            onFailure.onDone("file not found");
+        else
+            onSuccess.onDone(id);
+    }
 }
