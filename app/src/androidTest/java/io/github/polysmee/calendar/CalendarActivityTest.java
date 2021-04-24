@@ -23,6 +23,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -63,7 +64,7 @@ public class CalendarActivityTest {
     public static void setUp() throws Exception {
         startTime = Calendar.getInstance();
         startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
-
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -86,7 +87,7 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             String title = "NewTitle";
-            long startTime = calendar.getTimeInMillis() + 3600*1000;
+            long startTime = calendar.getTimeInMillis() + 60*1000;
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMeBruh", "ClickMeBoi" ,
                     startTime ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
@@ -111,10 +112,11 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMe", "ClickMe" ,
-                    calendar.getTimeInMillis() + 3600*1000 ,3600*6*1000,appointmentId+5);
+                    calendar.getTimeInMillis() + 60*1000 ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3,SECONDS);
+            scrollTo(info.getTitle());
             clickOn(info.getTitle());
             assertDisplayed(withHint(info.getTitle()));
             assertDisplayed(withHint(info.getCourse()));
@@ -148,7 +150,7 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
+            clickOn(R.id.activityCalendarMonthMyAppointments);
             setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
             long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(false);
             Date date = new Date(epochTimeToday);
@@ -174,7 +176,7 @@ public class CalendarActivityTest {
             }
             assertTrue(thrown);
 
-            clickOn(R.id.todayDateMyAppointmentsCalendarActivity);
+            clickOn(R.id.activityCalendarMonthMyAppointments);
             setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
             sleep(2,SECONDS);
             assertDisplayed(appointmentTitle);
@@ -206,10 +208,12 @@ public class CalendarActivityTest {
             }
 
             for(int i = 0; i<number_of_appointments;++i){
+                scrollTo(infos[i].getTitle());
                 assertDisplayed(infos[i].getTitle());
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
                 Date startDate = new Date(infos[i].getStartTime());
                 Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
+                scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
                 assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
             }
 
@@ -217,11 +221,13 @@ public class CalendarActivityTest {
             sleep(3,SECONDS);
             for(int i = 0; i<number_of_appointments;++i){
                 if(i%2 != 0){
-                assertDisplayed(infos[i].getTitle());
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                Date startDate = new Date(infos[i].getStartTime());
-                Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
-                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+                    infos[i].getTitle();
+                    assertDisplayed(infos[i].getTitle());
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                    Date startDate = new Date(infos[i].getStartTime());
+                    Date endDate = new Date((infos[i].getStartTime()+infos[i].getDuration()));
+                    scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
+                    assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
                 }
             }
         }

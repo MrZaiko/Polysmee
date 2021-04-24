@@ -7,17 +7,14 @@ import java.util.Map;
 
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
+import io.agora.rtc.models.UserInfo;
 import io.github.polysmee.agora.video.VideoConstantsApp;
 
 public class VideoEngineEventHandler extends IRtcEngineEventHandler {
 
-    private Map<Integer, String> usersConnected;
-    private Map<Integer, String> usersConnectedToVideo;
     private List<AGEventHandler> handlers;
 
-    public VideoEngineEventHandler(Map<Integer, String> usersConnected, Map<Integer, String> usersConnectedToVideo){
-        this.usersConnected = usersConnected;
-        this.usersConnectedToVideo = usersConnectedToVideo;
+    public VideoEngineEventHandler(){
         handlers = new ArrayList<>();
     }
 
@@ -95,4 +92,5 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
             }
         }
     }
+
 }

@@ -1,9 +1,8 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.content.Context;
 import android.content.Intent;
 
-import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
@@ -20,20 +19,18 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.notification.AppointmentReminderNotificationPublisher;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
-public class AppointmentReminderNotificationPublisherTest {
+public class AppointmentReminderNotificationTest {
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-    public Context context = ApplicationProvider.getApplicationContext();
-    public final String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text_prepend_time_left) + " "
-            + PreferenceManager.getDefaultSharedPreferences(context).getInt(
-            context.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-            context.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min))
-            + context.getResources().getString(R.string.appointment_reminder_notification_notification_text_append_time_left);
+    private static UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+    private static Context context = ApplicationProvider.getApplicationContext();
+    private final static String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text);
+    private final static String notification_title = context.getResources().getString(R.string.appointment_reminder_notification_notification_title);
 
     @Before
     @After
@@ -50,13 +47,25 @@ public class AppointmentReminderNotificationPublisherTest {
 
     @Test
     public void notification_launch_with_good_title_and_text() {
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+
         AppointmentReminderNotificationPublisher publisher = new AppointmentReminderNotificationPublisher();
         Intent intent = new Intent(context, AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(context, intent);
         String expectedAppName = context.getString(R.string.app_name);
+        reminderNotificationPresent();
+
+    }
+
+    //assert that a notification reminder is present in the system at return notification layout will be closed
+    public static void reminderNotificationPresent(){
+        String expectedAppName = context.getString(R.string.app_name);
         uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(notification_text)));
+        assertNotNull(uiDevice.findObject(By.text(notification_title)));
+        Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+        context.sendBroadcast(closeIntent);
     }
+
+
 }

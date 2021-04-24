@@ -10,7 +10,7 @@
 
     <FrameLayout
         android:id="@+id/roomActivityVideoElement"
-        android:layout_width="108dp"
+        android:layout_width="140dp"
         android:layout_height="192dp"
         tools:layout_editor_absoluteX="61dp"
         tools:layout_editor_absoluteY="178dp"

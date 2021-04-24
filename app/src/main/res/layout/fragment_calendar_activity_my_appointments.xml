@@ -13,13 +13,13 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/calendarActivityInvitationsButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/calendarActivityMyAppointmentsGuidelineAt20pourcent">
+        app:layout_constraintTop_toBottomOf="@id/todayDateMyAppointmentsCalendarActivity">
 
         <LinearLayout
             android:id="@+id/calendarActivityMyAppointmentsScrollLayout"
@@ -84,6 +84,19 @@
         android:layout_margin="16dp" />
 
 
+    <Button
+        android:id="@+id/calendarActivityInvitationsButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|bottom"
+        android:src="@drawable/baseline_add"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendarActivityMyAppointmentScroll"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_margin="16dp"
+        android:text="Invitations" />
+
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/calendarActivityMyAppointmentsGuidelineAtBeginning"
         android:layout_width="wrap_content"
@@ -98,14 +111,6 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.20" />
-
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/calendarActivityMyAppointmentsGuidelineAtTheEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_begin="20dp"
-        app:layout_constraintGuide_percent="0.80" />
+        app:layout_constraintGuide_percent="0.15"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

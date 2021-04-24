@@ -27,6 +27,12 @@ public interface User{
     void getName_Once_AndThen(StringValueListener valueListener);
 
     /**
+     * Change the name of the user to the given value passed
+     * @param value the new name value to set up, if a empty string is passed it does nothing.
+     */
+    void setName(String value);
+
+    /**
      * @param valueListener the listener to be removed from listening to the user name
      */
     void removeNameListener(StringValueListener valueListener);
@@ -74,7 +80,7 @@ public interface User{
     /**
      * @param valueListener a listener that will be run once that will receive the list of every user on the database
      */
-    static void getAllUsersIdsAndThenOnce(StringSetValueListener valueListener){
+    static void getAllUsersIds_Once_AndThen(StringSetValueListener valueListener){
         DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
     }
 }

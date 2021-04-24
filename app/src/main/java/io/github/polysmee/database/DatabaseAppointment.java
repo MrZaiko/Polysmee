@@ -1,9 +1,12 @@
 package io.github.polysmee.database;
 
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.Message;
 
 public class DatabaseAppointment implements Appointment {
 
@@ -326,6 +329,7 @@ public class DatabaseAppointment implements Appointment {
                 .removeEventListener(bool);
     }
 
+
     @Override
     public void setPrivate(boolean isPrivate) {
         DatabaseFactory
@@ -356,5 +360,113 @@ public class DatabaseAppointment implements Appointment {
                 .child("banned")
                 .child(unbanned.getId())
                 .setValue(null);
+    }
+
+    @Override
+    public void addInCallUser(User inCall) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(inCall.getId())
+                .setValue(false);
+    }
+
+    @Override
+    public void muteUser(User user, boolean muted) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(user.getId())
+                .setValue(muted);
+    }
+
+    @Override
+    public void removeOfCall(User outOfCall) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(outOfCall.getId())
+                .setValue(null);
+    }
+
+    @Override
+    public void addInCallListener(BooleanChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .addChildEventListener(listener);
+    }
+
+    @Override
+    public void removeInCallListener(BooleanChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .removeEventListener(listener);
+    }
+
+    @Override
+    public void addMessage(Message message) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .push()
+                .setValue(message);
+
+    }
+
+    @Override
+    public void removeMessage(String key) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .removeValue();
+    }
+
+    @Override
+    public void editMessage(String key, String newContent) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .child("content")
+                .setValue(newContent);
+    }
+
+    @Override
+    public void addMessageListener(MessageChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .addChildEventListener(listener);
+    }
+
+    @Override
+    public void removeMessageListener(MessageChildListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .removeEventListener(listener);
     }
 }

@@ -24,6 +24,7 @@ import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.RoomActivity;
 
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
@@ -53,6 +54,7 @@ public class RoomActivityTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
+        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -101,6 +103,7 @@ public class RoomActivityTest {
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+            swipeViewPagerForward();
             swipeViewPagerForward();
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed("You");

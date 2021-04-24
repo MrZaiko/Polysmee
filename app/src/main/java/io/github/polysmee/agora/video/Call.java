@@ -21,7 +21,10 @@ import io.github.polysmee.agora.RtcTokenBuilder;
 import io.github.polysmee.agora.video.handlers.AGEventHandler;
 import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
+import io.github.polysmee.database.DatabaseAppointment;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
 
@@ -40,20 +43,27 @@ public class Call {
     private IRtcEngineEventHandler handler;
     private final String appointmentId;
     private final Context context;
-    private ActivityResultLauncher<String> requestPermissionLauncher;
-    private Map<Integer, String> usersConnected;
-    private Map<Integer, String> usersConnectedToVideo;
+
     private RoomActivityParticipantsFragment room;
     private RoomActivityVideoFragment videoRoom;
     private boolean videoEnabled = false;
+    private DatabaseAppointment appointment;
 
 
 
     public Call(String appointmentId, Context context){
         this.appointmentId = appointmentId;
+        this.appointment = new DatabaseAppointment(appointmentId);
+        initializeHandler();
         this.context = context;
-        usersConnected = new HashMap<>();
-        usersConnectedToVideo = new HashMap<>();
+
+        try {
+            mRtcEngine = RtcEngine.create(context, APP_ID, handler);
+            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
     /**
@@ -63,9 +73,6 @@ public class Call {
     public Call(@NonNull RoomActivityParticipantsFragment room) {
         this.appointmentId = room.getAppointmentId();
         this.context = room.getContext();
-        this.requestPermissionLauncher = room.getRequestPermissionLauncher();
-        usersConnected = new HashMap<Integer, String>();
-        usersConnectedToVideo = new HashMap<>();
         this.room = room;
     }
 
@@ -74,18 +81,16 @@ public class Call {
      *
      * @param appointmentId
      * @param context
-     * @param requestPermissionLauncher
      * @param handler
      */
-    public Call(@NonNull String appointmentId, @NonNull Context context, ActivityResultLauncher<String> requestPermissionLauncher, @NonNull IRtcEngineEventHandler handler) {
+    public Call(@NonNull String appointmentId, @NonNull Context context, @NonNull IRtcEngineEventHandler handler) {
         this.appointmentId = appointmentId;
+        this.appointment = new DatabaseAppointment(appointmentId);
         this.context = context;
-        this.requestPermissionLauncher = requestPermissionLauncher;
-        usersConnected = new HashMap<Integer, String>();
-        usersConnectedToVideo = new HashMap<>();
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -97,45 +102,25 @@ public class Call {
      * @return 0 if the channel is successfully joined
      */
     public int joinChannel() {
-
-        if (mRtcEngine == null) {
-            initializeHandler();
-
-            try {
-                mRtcEngine = RtcEngine.create(context, APP_ID, handler);
-                mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-
-                IRtcEngineEventHandler eventHandler = new VideoEngineEventHandler(usersConnected,usersConnectedToVideo);
-                ((VideoEngineEventHandler)eventHandler).addEventHandler(this.videoRoom);
-                mRtcEngine.addHandler(eventHandler);
-
-                mRtcEngine.enableVideo();
-                mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(VideoEncoderConfiguration.VD_1280x720, VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
-                        VideoEncoderConfiguration.STANDARD_BITRATE,
-                        VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
-                mRtcEngine.enableLocalVideo(false);
-
-            } catch (Exception e) {
-                System.out.println(e.getMessage());
-                throw new RuntimeException(e.getMessage());
-            }
-
-
-        }
-
         String userId =  AuthenticationFactory.getAdaptedInstance().getUid();
         String token = generateToken(userId);
 
-        return mRtcEngine.joinChannelWithUserAccount(token,appointmentId,userId);
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token,appointment.getId(),userId);
+        if(joinStatus == SUCCESS_CODE) {
+            appointment.addInCallUser(new DatabaseUser(userId));
+            return SUCCESS_CODE;
+        }
+        return ERROR_CODE;
     }
 
     /**
      * leaves the channel
      */
     public int leaveChannel() {
-        if(mRtcEngine != null) {
-            setAllUsersOffline();
-            return mRtcEngine.leaveChannel();
+        int leaveStatus = mRtcEngine.leaveChannel();
+        if(leaveStatus == SUCCESS_CODE) {
+            appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
+            return SUCCESS_CODE;
         }
 
         //fail
@@ -146,8 +131,11 @@ public class Call {
      * mute (unmute) local user if mute arg is set to true (false)
      * @param mute
      */
-    public void mute(boolean mute) {
-        mRtcEngine.muteLocalAudioStream(mute);
+    public int mute(boolean mute) {
+        int result = mRtcEngine.muteLocalAudioStream(mute);
+        appointment.muteUser(new DatabaseUser(MainUserSingleton.getInstance().getId()), mute);
+
+        return result;
     }
 
     /**
@@ -174,7 +162,7 @@ public class Call {
 
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("sucesss");
+                System.out.println("Huge sucesss");
             }
 
             @Override
@@ -186,53 +174,34 @@ public class Call {
             public void onUserJoined(int uid, int elapsed) {
                 System.out.println("room null");
                 System.out.println(room == null);
-                if(usersConnected.containsKey(uid) && room != null) {
-                    System.out.println("lets go !!!");
-                    room.setUserOnline(true, usersConnected.get(uid));
-                }
+                System.out.println("lets go !!!");
                 System.out.println("user joined : " + uid);
             }
 
             @Override
             public void onUserInfoUpdated(int uid, UserInfo userInfo) {
                 System.out.println("user connected : " + userInfo.userAccount);
-                usersConnected.put(uid, userInfo.userAccount);
                 onUserJoined(uid, 0);
 
             }
 
             @Override
             public void onUserOffline(int uid, int elapsed) {
-                System.out.println("user offline : " + usersConnected.get(uid));
-                if(room != null && usersConnected.containsKey(uid)) {
-                    room.setUserOnline(false,usersConnected.get(uid));
-                }
-            }
-
-            @Override
-            public void onRemoteAudioStateChanged(int uid, int state, int reason, int elapsed) {
-                String userId = usersConnected.get(uid);
-                switch (reason) {
-                    case Constants.REMOTE_VIDEO_STATE_REASON_LOCAL_MUTED : room.muteUser(true, userId);
-                        break;
-                    case Constants.REMOTE_AUDIO_REASON_LOCAL_UNMUTED : room.muteUser(false, userId);
-                }
+                System.out.println("user offline : " + uid);
             }
 
         };
     }
 
     /**
-     * set the users of the room offline in the frontend
+     * Makes the user leave the channel and removes the handler
      */
-    private void setAllUsersOffline() {
-        if(room != null) {
-            for(String userId : usersConnected.values()) {
-                room.setUserOnline(false, userId);
-            }
-        }
-
+    public void destroy() {
+        leaveChannel();
+        mRtcEngine.removeHandler(handler);
     }
+
+
 
     /**
      * Add functions for:
@@ -293,6 +262,16 @@ public class Call {
 
     public void setVideoFragment(Fragment fragment){
         this.videoRoom = (RoomActivityVideoFragment) fragment;
+
+        VideoEngineEventHandler eventHandler = new VideoEngineEventHandler();
+        eventHandler.addEventHandler(this.videoRoom);
+        mRtcEngine.addHandler(eventHandler);
+
+        mRtcEngine.enableVideo();
+        mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(VideoEncoderConfiguration.VD_1280x720, VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
+                VideoEncoderConfiguration.STANDARD_BITRATE,
+                VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
+        mRtcEngine.enableLocalVideo(false);
     }
 
     public Fragment getRoomActivity(){

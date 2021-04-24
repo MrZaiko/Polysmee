@@ -26,7 +26,8 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     private ViewGroup rootView;
     public final static String VIDEO_KEY = "io.github.polysme.room.fragments.roomActivityVideoFragment.VIDEO_KEY";
     private final HashMap<Integer, FrameLayout> idsToVideoFrames = new HashMap<>();
-    private final HashMap<Integer, String> uidsToNames = new HashMap<>();
+    private final HashMap<FrameLayout, Integer> videoFramesToIds = new HashMap<>();
+    private FrameLayout bigVideoContainer;
     private Call call;
     private LinearLayout videoLayout;
     private LayoutInflater inflater;
@@ -45,6 +46,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
 
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_room_activity_video, container, false);
         videoLayout = (LinearLayout) rootView.findViewById(R.id.roomActivityVideosLayout);
+        bigVideoContainer = (FrameLayout) rootView.findViewById(R.id.roomActivityFocusedVideoFrame);
         this.inflater = inflater;
         return rootView;
     }
@@ -84,14 +86,35 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
             System.out.println("Remote started sharing video" + uid);
             runOnUiThread(()->{
                 SurfaceView remoteView = call.createRemoteUI(getActivity().getBaseContext(),uid);
-
                 ConstraintLayout remoteContainer = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_video,null);
                 FrameLayout remoteVideoContainer = remoteContainer.findViewById(R.id.roomActivityVideoElement);
                 remoteVideoContainer.addView(remoteView);
                 remoteContainer.removeView(remoteVideoContainer);
+
                 idsToVideoFrames.put(uid,remoteVideoContainer);
+                videoFramesToIds.put(remoteVideoContainer,uid);
+
                 videoLayout.addView(remoteVideoContainer);
-                //((FrameLayout)rootView.findViewById(R.id.bg_video_container)).addView(remoteView);
+
+                remoteVideoContainer.setOnClickListener((view) ->{
+                    View bigVideo = bigVideoContainer.getChildAt(0);
+                    bigVideoContainer.removeAllViewsInLayout();
+                    View smallVideo = remoteVideoContainer.getChildAt(0);
+                    remoteVideoContainer.removeAllViewsInLayout();
+
+                    int smallVideoOwner = videoFramesToIds.get(remoteVideoContainer);
+                    int bigVideoOwner = videoFramesToIds.get(bigVideoContainer);
+
+                    videoFramesToIds.put(bigVideoContainer,smallVideoOwner);
+                    videoFramesToIds.put(remoteVideoContainer, bigVideoOwner);
+
+                    idsToVideoFrames.put(smallVideoOwner,bigVideoContainer);
+                    idsToVideoFrames.put(bigVideoOwner,remoteVideoContainer);
+
+                    bigVideoContainer.addView(smallVideo);
+                    remoteVideoContainer.addView(bigVideo);
+                });
+
             });
         }
         else if(state == Constants.REMOTE_VIDEO_STATE_DECODING){
@@ -134,10 +157,42 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     private void removeVideo(int uid){
         if(uid == -1){
             idsToVideoFrames.clear();
-            videoLayout.removeAllViews();
+            videoFramesToIds.clear();
+            videoLayout.removeAllViewsInLayout();
+            bigVideoContainer.removeAllViewsInLayout();
             return;
         }
-        videoLayout.removeView(idsToVideoFrames.get(uid));
+        FrameLayout videoToDelete = idsToVideoFrames.get(uid);
+        if(videoToDelete == bigVideoContainer){
+            View bigVideo = bigVideoContainer.getChildAt(0);
+            bigVideoContainer.removeAllViewsInLayout();
+            FrameLayout localVideoContainer = idsToVideoFrames.get(0);
+            View smallVideo = localVideoContainer.getChildAt(0);
+            localVideoContainer.removeAllViewsInLayout();
+
+            int smallVideoOwner = videoFramesToIds.get(localVideoContainer);
+            int bigVideoOwner = videoFramesToIds.get(bigVideoContainer);
+
+            videoFramesToIds.put(bigVideoContainer,smallVideoOwner);
+            videoFramesToIds.put(localVideoContainer, bigVideoOwner);
+
+            idsToVideoFrames.put(smallVideoOwner,bigVideoContainer);
+            idsToVideoFrames.put(bigVideoOwner,localVideoContainer);
+
+            bigVideoContainer.addView(smallVideo);
+            localVideoContainer.addView(bigVideo);
+
+            videoToDelete = idsToVideoFrames.get(uid);
+            videoLayout.removeView(videoToDelete);
+            videoFramesToIds.remove(videoToDelete);
+            idsToVideoFrames.remove(uid);
+
+        }
+        else{
+            videoLayout.removeView(videoToDelete);
+            videoFramesToIds.remove(videoToDelete);
+            idsToVideoFrames.remove(uid);
+        }
     }
 
     private void removeVideo(int containerID, int uid) {
@@ -152,20 +207,21 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         videoContainer.removeAllViewsInLayout();*/
     }
 
-    private void setupLocalVideoView(){
+    private void setupLocalVideoView(){ //called when the local user joins the call; the local video frame is the big one
         SurfaceView localView = call.createLocalUI(getActivity().getBaseContext());
         localView.setVisibility(View.GONE);
 
-        ConstraintLayout localContainer = (ConstraintLayout)inflater.inflate(R.layout.element_room_activity_video,null);
-        FrameLayout localVideoContainer = (FrameLayout) localContainer.findViewById(R.id.roomActivityVideoElement);
-        localVideoContainer.addView(localView);
-        localContainer.removeView(localVideoContainer);
-        videoLayout.addView(localVideoContainer,0);
-        idsToVideoFrames.put(0,localVideoContainer);
+        bigVideoContainer.addView(localView);
+
+        idsToVideoFrames.put(0,bigVideoContainer);
+        videoFramesToIds.put(bigVideoContainer,0);
     }
 
 
     private void runOnUiThread(Runnable runnable){
         getActivity().runOnUiThread(runnable);
     }
+
+
+
 }
