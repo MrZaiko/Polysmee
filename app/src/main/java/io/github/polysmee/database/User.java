@@ -61,10 +61,35 @@ public interface User{
     void addAppointment(Appointment newAppointment);
 
     /**
+     * @param valueListener the listener to be added for changes to the invites the user is part of.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getInvitesAndThen(StringSetValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be added for changes to the invites the user is part of.
+     *          It is scheduled only once.
+     */
+    void getInvites_Once_AndThen(StringSetValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be removed from listening to the invites list
+     */
+    void removeInvitesListener(StringSetValueListener valueListener);
+
+    /**
+     * Adds the given invite to the set of invite
+     * @param newAppointment the appointment to be added
+     */
+    void addInvite(Appointment newAppointment);
+
+    /**
      * Removes the given appointment to the set of appointments
      * @param appointment the appointment to be removed
      */
     void removeAppointment(Appointment appointment);
+
+
 
 
     /**

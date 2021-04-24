@@ -32,7 +32,7 @@ public final class FirebaseUploadService implements UploadService {
     public void deleteImage(String id, LoadValueListener onSuccess, LoadValueListener onFailure) {
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(id);
         ref.delete()
-            .addOnSuccessListener(aVoid -> onSuccess.onDone(id))
+            .addOnSuccessListener(vo_id -> onSuccess.onDone(id))
             .addOnFailureListener(exc   -> onFailure.onDone(exc.getMessage()));
     }
 }

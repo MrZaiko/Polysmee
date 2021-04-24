@@ -341,6 +341,58 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void getInvitesIdAndThen(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .addValueEventListener(s);
+    }
+
+    @Override
+    public void getInvitesId_Once_AndThen(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .addListenerForSingleValueEvent(s);
+    }
+
+    @Override
+    public void removeInvitesListener(StringSetValueListener s) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .removeEventListener(s);
+    }
+
+    @Override
+    public void addInvite(User newParticipant) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .child(newParticipant.getId())
+                .setValue(true);
+    }
+
+    @Override
+    public void removeInvite(User participant) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .child(participant.getId())
+                .setValue(null);
+    }
+
+    @Override
     public void addBan(User banned) {
         DatabaseFactory
                 .getAdaptedInstance()

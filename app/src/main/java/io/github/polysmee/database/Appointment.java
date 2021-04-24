@@ -235,6 +235,41 @@ public interface Appointment {
      */
     void setPrivate(boolean isPrivate);
 
+    //================= INVITES ====================
+    /**
+     * @param s the listener to be added for changes to the participant list.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getInvitesIdAndThen(StringSetValueListener s);
+
+    /**
+     * @param s the listener to be added for changes to the participant list.
+     *          It is scheduled only once.
+     */
+    void getInvitesId_Once_AndThen(StringSetValueListener s);
+
+    /**
+     * @param s the listener to be removed from listening to the participant list
+     */
+    void removeInvitesListener(StringSetValueListener s);
+
+    /**
+     * Adds the given user to the set of participant
+     *
+     * @param newParticipant the user to be added
+     */
+    void addInvite(User newParticipant);
+
+    /**
+     * Removes the given user to the set of participant
+     *
+     * @param participant the user to be removed
+     */
+    void removeInvite(User participant);
+
+
+    //================= CALLS =======================
+
     /**
      * Adds the given user to the set of in call users
      * @param inCall
@@ -264,6 +299,8 @@ public interface Appointment {
      * @param listener the listener to be removed from listening the inCall set
      */
     void removeInCallListener(BooleanChildListener listener);
+
+    //===================== MESSAGES ==================
 
     /**
      * Adds the given message to the set of Message
