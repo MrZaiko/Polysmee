@@ -7,9 +7,6 @@ import io.agora.rtc.IRtcEngineEventHandler;
 
 public class VideoEngineEventHandler extends IRtcEngineEventHandler {
 
-
-    private int EVENT_TYPE_ON_APP_ERROR = 13;
-    public static final int NO_CONNECTION_ERROR = 3;
     private List<AGEventHandler> handlers;
 
     public VideoEngineEventHandler(){
@@ -20,6 +17,9 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
         return handlers.add(handler);
     }
 
+    public List<AGEventHandler> getHandlers(){
+        return handlers;
+    }
 
     @Override
     public void onJoinChannelSuccess(String channel, int uid, int elapsed) {

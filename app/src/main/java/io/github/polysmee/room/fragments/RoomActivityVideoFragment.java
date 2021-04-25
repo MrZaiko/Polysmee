@@ -75,7 +75,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         System.out.println("A remote user quit the call");
         runOnUiThread(()->removeVideo(uid));
     }
-    
+
     @Override
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
         if(state == Constants.REMOTE_VIDEO_STATE_STOPPED && reason == Constants.REMOTE_VIDEO_STATE_REASON_REMOTE_MUTED){
