@@ -9,9 +9,14 @@ import android.view.LayoutInflater;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
 
@@ -31,6 +36,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     private Call call;
     private LinearLayout videoLayout;
     private LayoutInflater inflater;
+    static final Logger LOGGER = LoggerFactory.getLogger(RoomActivityVideoFragment.class);
 
     public RoomActivityVideoFragment() {
         // Required empty public constructor
@@ -47,6 +53,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_room_activity_video, container, false);
         videoLayout = (LinearLayout) rootView.findViewById(R.id.roomActivityVideosLayout);
         bigVideoContainer = (FrameLayout) rootView.findViewById(R.id.roomActivityFocusedVideoFrame);
+        ((FloatingActionButton)rootView.findViewById(R.id.roomActivitySwitchVideoButton)).setOnClickListener((view)-> call.switchCamera());
         this.inflater = inflater;
         return rootView;
     }
@@ -59,7 +66,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
 
     @Override
     public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-        System.out.println("I successfully joined the call");
+        LOGGER.info("I successfully joined the call");
         runOnUiThread(this::setupLocalVideoView);
     }
 
@@ -128,16 +135,19 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     public void onLocalVideoStateChanged(int localVideoState, int error) {
         if(error == Constants.LOCAL_VIDEO_STREAM_ERROR_OK){
             if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_STOPPED){
-                runOnUiThread(()->
-                        idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.GONE));
+                runOnUiThread(()->{
+                    ((FloatingActionButton)rootView.findViewById(R.id.roomActivitySwitchVideoButton)).setVisibility(View.GONE);
+                    idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.GONE);
+                });
+                LOGGER.info("Local video stopped");
                 //((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.GONE));
             }
             else if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_CAPTURING){
-                System.out.println("CAPTURING WHOOOOOOOOOOOOOO");
-                runOnUiThread(() ->
-                        idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.VISIBLE));
-                        //((FrameLayout)rootView.findViewById(R.id.floating_video_container)).getChildAt(0).setVisibility(View.VISIBLE)
-                //);
+                runOnUiThread(()->{
+                    ((FloatingActionButton)rootView.findViewById(R.id.roomActivitySwitchVideoButton)).setVisibility(View.VISIBLE);
+                    idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.VISIBLE);
+                });
+                LOGGER.info("Local video fired");
             }
         }
         else{
@@ -148,13 +158,14 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     @Override
     public void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats) {
         removeVideo(-1);
+        LOGGER.info("I left the channel");
     }
 
     public String getAppointmentId(){
         return requireArguments().getString(VIDEO_KEY);
     }
 
-    private void removeVideo(int uid){
+    protected void removeVideo(int uid){
         if(uid == -1){
             idsToVideoFrames.clear();
             videoFramesToIds.clear();
@@ -163,7 +174,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
             return;
         }
         FrameLayout videoToDelete = idsToVideoFrames.get(uid);
-        if(videoToDelete == bigVideoContainer){
+        if(videoToDelete == bigVideoContainer) {
             View bigVideo = bigVideoContainer.getChildAt(0);
             bigVideoContainer.removeAllViewsInLayout();
             FrameLayout localVideoContainer = idsToVideoFrames.get(0);
@@ -173,42 +184,28 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
             int smallVideoOwner = videoFramesToIds.get(localVideoContainer);
             int bigVideoOwner = videoFramesToIds.get(bigVideoContainer);
 
-            videoFramesToIds.put(bigVideoContainer,smallVideoOwner);
+            videoFramesToIds.put(bigVideoContainer, smallVideoOwner);
             videoFramesToIds.put(localVideoContainer, bigVideoOwner);
 
-            idsToVideoFrames.put(smallVideoOwner,bigVideoContainer);
-            idsToVideoFrames.put(bigVideoOwner,localVideoContainer);
+            idsToVideoFrames.put(smallVideoOwner, bigVideoContainer);
+            idsToVideoFrames.put(bigVideoOwner, localVideoContainer);
 
             bigVideoContainer.addView(smallVideo);
             localVideoContainer.addView(bigVideo);
 
             videoToDelete = idsToVideoFrames.get(uid);
-            videoLayout.removeView(videoToDelete);
-            videoFramesToIds.remove(videoToDelete);
-            idsToVideoFrames.remove(uid);
+        }
 
-        }
-        else{
-            videoLayout.removeView(videoToDelete);
-            videoFramesToIds.remove(videoToDelete);
-            idsToVideoFrames.remove(uid);
-        }
+        videoLayout.removeView(videoToDelete);
+        videoFramesToIds.remove(videoToDelete);
+        idsToVideoFrames.remove(uid);
+
     }
 
-    private void removeVideo(int containerID, int uid) {
-        FrameLayout videoContainer = rootView.findViewById(containerID);
-        if(uid == -1){
-            idsToVideoFrames.clear();
-            videoContainer.removeAllViews();
-            return;
-        }
-        videoContainer.removeView(idsToVideoFrames.get(uid));
-        /*videoContainer.removeAllViews();
-        videoContainer.removeAllViewsInLayout();*/
-    }
 
-    private void setupLocalVideoView(){ //called when the local user joins the call; the local video frame is the big one
+    protected void setupLocalVideoView(){ //called when the local user joins the call; the local video frame is the big one
         SurfaceView localView = call.createLocalUI(getActivity().getBaseContext());
+        localView.setId(R.id.roomActivityVideoElement);
         localView.setVisibility(View.GONE);
 
         bigVideoContainer.addView(localView);
@@ -218,7 +215,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     }
 
 
-    private void runOnUiThread(Runnable runnable){
+    protected void runOnUiThread(Runnable runnable){
         getActivity().runOnUiThread(runnable);
     }
 

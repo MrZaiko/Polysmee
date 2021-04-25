@@ -129,6 +129,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
 
                 ImageView videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
+                videoButton.setTag(R.drawable.baseline_video_off);
 
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
 
@@ -169,8 +170,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(call.isVideoEnabled()){
             //disable button
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);
+            ((ImageView) cameraButton).setTag(R.drawable.baseline_video_off);
         }else{
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video);
+            ((ImageView) cameraButton).setTag(R.drawable.baseline_video);
         }
         call.shareLocalVideo();
     }

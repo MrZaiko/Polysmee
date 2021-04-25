@@ -230,7 +230,7 @@ public class Call {
      * Lets the user switch their camera if they want to.
      * @return error code: if the operation was successful or not
      */
-    public int switchCamera(View view){
+    public int switchCamera(){
         return mRtcEngine.switchCamera();
     }
 

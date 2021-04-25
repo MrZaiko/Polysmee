@@ -70,6 +70,9 @@ dependencies {
     androidTestImplementation 'androidx.test.uiautomator:uiautomator:2.2.0'
     testImplementation "org.mockito:mockito-core:3.9.0"
     androidTestImplementation "org.mockito:mockito-android:3.9.0"
+
+    implementation 'org.slf4j:slf4j-api:1.7.25'
+    implementation 'com.github.tony19:logback-android:1.1.1-12'
 }
 
 tasks.withType(Test) {
