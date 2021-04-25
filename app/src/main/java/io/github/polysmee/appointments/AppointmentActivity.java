@@ -512,8 +512,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 appointment.getBansAndThen( bannedUsers -> {
                     for(String inviteName : invites) {
                         if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
-                            user.addAppointment(appointment);
-                            appointment.addParticipant(user);
+                            user.addInvite(appointment);
+                            appointment.addInvite(user);
                         }
                     }
                 });

@@ -8,7 +8,7 @@ public final class UploadServiceFactory {
 
     /**
      * @return an upload service that either runs locally or not,
-     * depending on state
+     * depending on state   
      */
     public static UploadService getAdaptedInstance(){
         if(isTest) {
