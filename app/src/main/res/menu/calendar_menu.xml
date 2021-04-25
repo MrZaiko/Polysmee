@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/calendarMenuNotifications"
+        android:icon="@drawable/baseline_notifications"
+        android:title="Notifications"
+        app:showAsAction="ifRoom"/>
+
     <item
         android:id="@+id/calendarMenuSettings"
         android:icon="@drawable/baseline_settings"

@@ -1,5 +1,6 @@
 package io.github.polysmee.room.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +10,6 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -41,7 +41,6 @@ import java.util.Locale;
 import java.util.Map;
 
 
-import io.github.polysmee.agora.VoiceCall;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
@@ -50,6 +49,7 @@ import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.photo.editing.PictureEditActivity;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -59,12 +59,13 @@ import static android.app.Activity.RESULT_OK;
 public class RoomActivityMessagesFragment extends Fragment {
     public static String MESSAGES_KEY = "io.github.polysme.room.fragments.roomActivityMessagesFragment.MESSAGES_KEY";
     private static final int PICK_IMAGE = 100;
+    private static final int TAKE_PICTURE = 200;
+    private static final int SEND_PICTURE = 300;
 
     private String appointmentId;
 
     private ViewGroup rootView;
     private LayoutInflater inflater;
-    private  ImageView picture;
 
     private final Map<String, View> messagesDisplayed = new HashMap<>();
     private DatabaseAppointment databaseAppointment;
@@ -82,8 +83,11 @@ public class RoomActivityMessagesFragment extends Fragment {
         ImageView send = rootView.findViewById(R.id.roomActivitySendMessageButton);
         send.setOnClickListener(this::sendMessage);
 
-        picture = rootView.findViewById(R.id.roomActivitySendPictureButton);
-        picture.setOnClickListener(this::openGallery);
+        ImageView pickGallery = rootView.findViewById(R.id.roomActivitySendPictureButton);
+        pickGallery.setOnClickListener(this::openGallery);
+
+        ImageView takePicture = rootView.findViewById(R.id.roomActivityTakePictureButton);
+        takePicture.setOnClickListener(this::takePicture);
 
         String appointmentId = requireArguments().getString(MESSAGES_KEY);
 
@@ -98,21 +102,52 @@ public class RoomActivityMessagesFragment extends Fragment {
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    private void takePicture(View view) {
+        Intent gallery = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(gallery, TAKE_PICTURE);
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE){
-            Uri imageUri = data.getData();
+        if (resultCode == RESULT_OK ) {
+            byte[] picturesToByte = new byte[0];
+            
+            switch (requestCode) {
+                case SEND_PICTURE:
+                    picturesToByte = data.getByteArrayExtra("data");
 
+                    UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
+                            appointmentId, id -> databaseAppointment.addMessage(
+                                    new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
+                            ), s -> showErrorToast());
 
-            try (InputStream iStream = getContext().getContentResolver().openInputStream(imageUri)) {
-                UploadServiceFactory.getAdaptedInstance().uploadImage(getBytes(iStream),
-                        appointmentId, id -> databaseAppointment.addMessage(
-                                new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
-                        ), s -> showErrorToast());
-            } catch (IOException e) {
-                e.printStackTrace();
+                    return;
+
+                case PICK_IMAGE:
+                    Uri imageUri = data.getData();
+                    try (InputStream iStream = getContext().getContentResolver().openInputStream(imageUri)) {
+                        picturesToByte = getBytes(iStream);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    break;
+                case TAKE_PICTURE:
+                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                    picturesToByte = stream.toByteArray();
+                    bmp.recycle();
+
+                    break;
+                default:
+                    return;
             }
+
+            Intent intent = new Intent(getContext(), PictureEditActivity.class);
+            intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, picturesToByte);
+            startActivityForResult(intent, SEND_PICTURE);
         }
     }
 
@@ -157,20 +192,6 @@ public class RoomActivityMessagesFragment extends Fragment {
         messageEditText.setText("");
     }
 
-    /*
-     * Edits the content of the message whose key is messageKey to newContent in the database
-     */
-    private void editMessage(String messageKey, String newContent) {
-        databaseAppointment.editMessage(messageKey, newContent);
-    }
-
-    /*
-     * Deletes the message whose key is messageKey from the database
-     */
-    private void deleteMessage(String messageKey) {
-        databaseAppointment.removeMessage(messageKey);
-    }
-
 
 
     private void closeKeyboard() {
@@ -200,7 +221,13 @@ public class RoomActivityMessagesFragment extends Fragment {
         messageLayout.setLayoutParams(params);
 
         if (isAPicture) {
-            uploadPicture(message, messageLayout);
+            downloadPicture(message, messageLayout);
+            if (!isSent) {
+                TextView sendText = messageLayout.findViewById(R.id.roomActivityMessageElementPictureSenderText);
+                sendText.setVisibility(View.VISIBLE);
+                sender.getName_Once_AndThen(sendText::setText);
+                sendText.setBackgroundResource(R.drawable.background_received_picture);
+            }
         } else {
             TextView messageView = (TextView) messageLayout.getViewById(R.id.roomActivityMessageElementMessageContent);
             messageView.setText(message);
@@ -235,7 +262,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         return messageLayout;
     }
 
-    private void uploadPicture(String id, View messageLayout) {
+    private void downloadPicture(String id, View messageLayout) {
         UploadServiceFactory.getAdaptedInstance().downloadImage(id, imageBytes -> {
             Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
@@ -266,6 +293,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 return false;
             }
 
+            @SuppressLint("NonConstantResourceId")
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
@@ -353,7 +381,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void childRemoved(String key, Message value) {
                 LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);
-                TextView viewToRemove = messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent);
+                View viewToRemove = messagesDisplayed.get(key);
                 int indexOfMessage = messages.indexOfChild(viewToRemove);
                 //remove the white space under the message and the message itself from the LinearLayout
                 messages.removeViewAt(indexOfMessage + 1);

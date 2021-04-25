@@ -36,6 +36,10 @@
             android:label="@string/title_activity_settings" />
         <activity android:name=".calendar.CalendarActivity" />
 
+
+
+        <activity android:name=".photo.editing.PictureEditActivity"/>
+
         <receiver android:name=".znotification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />
