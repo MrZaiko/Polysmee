@@ -234,7 +234,7 @@ public class DatabaseAppointmentTest {
         AtomicBoolean listenerRan = new AtomicBoolean(false);
         StringSetValueListener sv = (ids) -> {
             lock.lock();
-            listenerRan.set(ids.size() > 0);
+            listenerRan.set(Boolean.TRUE);
             bool.set(Boolean.TRUE);
             cv.signal();
             lock.unlock();
