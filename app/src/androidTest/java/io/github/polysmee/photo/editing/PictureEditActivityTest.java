@@ -52,6 +52,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.isAssignableFrom;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaRadioButtonInteractions.clickRadioButtonItem;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSeekBarInteractions.setProgressTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -249,12 +250,19 @@ public class PictureEditActivityTest {
         intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+            scrollTo(R.id.pictureEditBinary);
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditBinary);
             bitmapMatcher(applyColorFilter(Filters.binaryFilter()));
+
+            scrollTo(R.id.pictureEditSepia);
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
             bitmapMatcher(applyColorFilter(Filters.sepiaFilter()));
+
+            scrollTo(R.id.pictureEditInvert);
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditInvert);
             bitmapMatcher(applyColorFilter(Filters.invertFilter()));
+
+            scrollTo(R.id.pictureEditNormal);
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditNormal);
             bitmapMatcher(bigYoshiBitmap);
         }
@@ -266,14 +274,23 @@ public class PictureEditActivityTest {
         intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+            scrollTo(R.id.pictureEditBlue);
             clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditBlue);
             colorMatcher(R.color.blue);
+
+            scrollTo(R.id.pictureEditRed);
             clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditRed);
             colorMatcher(R.color.red);
+
+            scrollTo(R.id.pictureEditYellow);
             clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditYellow);
             colorMatcher(R.color.yellow);
+
+            scrollTo(R.id.pictureEditGreen);
             clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditGreen);
             colorMatcher(R.color.green);
+
+            scrollTo(R.id.pictureEditBlack);
             clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditBlack);
             colorMatcher(R.color.black);
         }
