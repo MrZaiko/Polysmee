@@ -68,7 +68,7 @@ public class RoomActivityVideoFragmentTest {
 
     @Test
     public void localVideoCallbacksAreCalledSuccessfully(){
-       /* Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         List usersInCall = new ArrayList<String>();
@@ -109,7 +109,7 @@ public class RoomActivityVideoFragmentTest {
             assertTrue(logBackMessages.contains("Local video stopped"));
             assertTrue(logBackMessages.contains("Local video fired"));
             assertTrue(logBackMessages.contains("I left the channel"));
-        }*/
-        assertTrue(true);
+        }
+        //assertTrue(true);
     }
 }
