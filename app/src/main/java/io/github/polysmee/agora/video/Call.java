@@ -48,9 +48,6 @@ public class Call {
     private RoomActivityVideoFragment videoRoom;
     private boolean videoEnabled = false;
     private DatabaseAppointment appointment;
-
-
-
     public Call(String appointmentId, Context context){
         this.appointmentId = appointmentId;
         this.appointment = new DatabaseAppointment(appointmentId);
@@ -66,36 +63,7 @@ public class Call {
         }
     }
 
-    /**
-     * Builds a VoiceCall instance for the corresponding room
-     * @param room
-     */
-    public Call(@NonNull RoomActivityParticipantsFragment room) {
-        this.appointmentId = room.getAppointmentId();
-        this.context = room.getContext();
-        this.room = room;
-    }
 
-    /**
-     * alternative constructor for making tests
-     *
-     * @param appointmentId
-     * @param context
-     * @param handler
-     */
-    public Call(@NonNull String appointmentId, @NonNull Context context, @NonNull IRtcEngineEventHandler handler) {
-        this.appointmentId = appointmentId;
-        this.appointment = new DatabaseAppointment(appointmentId);
-        this.context = context;
-        try {
-            mRtcEngine = RtcEngine.create(context, APP_ID, handler);
-            mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
-            throw new RuntimeException(e.getMessage());
-        }
-    }
 
     /**
      * Joins the channel of the room
@@ -210,8 +178,6 @@ public class Call {
 
     public SurfaceView createRemoteUI(Context context, final int uid){
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
-        //surfaceV.setZOrderOnTop(true);
-        //surfaceV.setZOrderMediaOverlay(true);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN,uid));
         surfaceV.layout(0,0,20,10);
         return surfaceV;
@@ -235,7 +201,6 @@ public class Call {
 
     public void setVideoFragment(Fragment fragment){
         this.videoRoom = (RoomActivityVideoFragment) fragment;
-
         VideoEngineEventHandler eventHandler = new VideoEngineEventHandler();
         eventHandler.addEventHandler(this.videoRoom);
         mRtcEngine.addHandler(eventHandler);
@@ -245,9 +210,5 @@ public class Call {
                 VideoEncoderConfiguration.STANDARD_BITRATE,
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
         mRtcEngine.enableLocalVideo(false);
-    }
-
-    public Fragment getRoomActivity(){
-        return room;
     }
 }
