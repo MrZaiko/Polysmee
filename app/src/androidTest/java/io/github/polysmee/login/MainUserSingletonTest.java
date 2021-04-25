@@ -1,24 +1,17 @@
 package io.github.polysmee.login;
 
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-import com.google.firebase.auth.FirebaseAuth;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static org.junit.Assert.*;
 

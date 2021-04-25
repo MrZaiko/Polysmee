@@ -1,10 +1,7 @@
 package io.github.polysmee.calendar;
 
 
-import android.content.Intent;
-
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -24,13 +21,10 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
-import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
-import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;

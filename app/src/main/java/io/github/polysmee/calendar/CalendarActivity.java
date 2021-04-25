@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar;
 
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
@@ -17,7 +18,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.invites.InvitesManagementActivity;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.SettingsActivity;
 
 public class CalendarActivity extends AppCompatActivity{
@@ -59,14 +61,18 @@ public class CalendarActivity extends AppCompatActivity{
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.calendarMenuSettings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 return true;
+            case R.id.calendarMenuNotifications:
+                Intent notificationsIntent = new Intent(this, InvitesManagementActivity.class);
+                startActivity(notificationsIntent);
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -1,4 +1,4 @@
-package io.github.polysmee.notification;
+package io.github.polysmee.znotification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;

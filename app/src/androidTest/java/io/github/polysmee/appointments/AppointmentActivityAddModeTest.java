@@ -1,42 +1,29 @@
 package io.github.polysmee.appointments;
 
 import android.content.Intent;
-import android.os.Bundle;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.ViewAction;
-import androidx.test.espresso.action.GeneralLocation;
-import androidx.test.espresso.action.GeneralSwipeAction;
-import androidx.test.espresso.action.Press;
-import androidx.test.espresso.action.Swipe;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.CalendarActivity;
-import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
-import static androidx.test.espresso.Espresso.onView;
-import static androidx.test.espresso.action.ViewActions.swipeUp;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
 import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled;
@@ -48,7 +35,6 @@ import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

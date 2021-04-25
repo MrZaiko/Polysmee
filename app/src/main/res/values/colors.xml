@@ -8,6 +8,11 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
+    <color name="red">#DAFF4343</color>
+    <color name="green">#DA3DF437</color>
+    <color name="yellow">#DCFFEB3B</color>
+    <color name="blue">#03A9F4</color>
+
     <color name="primaryColor">#ef5350</color>
     <color name="primaryLightColor">#ff867c</color>
     <color name="primaryDarkColor">#b61827</color>

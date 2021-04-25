@@ -1,7 +1,6 @@
 package io.github.polysmee.appointments;
 
 import android.content.Intent;
-import android.text.format.DateFormat;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -9,8 +8,6 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.After;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,12 +18,10 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
-import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
-import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
