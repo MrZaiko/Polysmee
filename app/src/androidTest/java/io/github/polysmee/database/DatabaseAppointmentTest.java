@@ -124,7 +124,6 @@ public class DatabaseAppointmentTest {
         } finally {
             lock.unlock();
             new DatabaseAppointment(apid).getCourse_Once_AndThen((l) -> {});
-
         }
     }
 
@@ -214,6 +213,32 @@ public class DatabaseAppointmentTest {
         } finally {
             lock.unlock();
             new DatabaseAppointment(apid).getParticipantsId_Once_AndThen((l) -> {});
+        }
+    }
+
+    @Test
+    public void getInvitesIdAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean listenerRan = new AtomicBoolean(false);
+        StringSetValueListener sv = (ids) -> {
+            lock.lock();
+            listenerRan.set(Boolean.TRUE);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            new DatabaseAppointment(apid).getInvitesIdAndThen(sv);
+            while(!bool.get())
+                cv.await();
+            new DatabaseAppointment(apid).removeInvitesListener(sv);
+            assertTrue(listenerRan.get());
+        } finally {
+            lock.unlock();
+            new DatabaseAppointment(apid).getInvitesId_Once_AndThen((l) -> {});
         }
     }
 
