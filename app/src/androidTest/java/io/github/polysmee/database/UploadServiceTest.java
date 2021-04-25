@@ -8,6 +8,7 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -25,7 +26,7 @@ public class UploadServiceTest {
         );
         us.downloadImage(
                 "nums",
-                (gotten) -> assertEquals(gotten, new byte[]{2,3,4}),
+                (gotten) -> assertArrayEquals(gotten, new byte[]{2,3,4}),
                 (exc) -> {throw new IllegalStateException("failed in test lmao");}
         );
         us.deleteImage(
