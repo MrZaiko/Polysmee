@@ -1,10 +1,12 @@
 package io.github.polysmee.roomActivityTests;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
+import androidx.test.espresso.intent.Intents;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -16,6 +18,7 @@ import org.junit.runners.JUnit4;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
@@ -26,6 +29,9 @@ import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.closeSoftKeyboard;
 import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
+import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -33,6 +39,8 @@ import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
+import static com.schibsted.spain.barista.intents.BaristaIntents.mockAndroidCamera;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
@@ -158,5 +166,29 @@ public class RoomActivityMessagesFragmentTest {
         sleep(1, SECONDS);
         longClickOn(secondMessage);
         assertDisplayed("Choose an option");
+    }
+
+    @Test
+    public void openGalleryWorksCorrectly() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
+
+        Intents.init();
+        clickOn(R.id.roomActivitySendPictureButton);
+        intended(hasAction("android.intent.action.PICK"));
+        Intents.release();
+    }
+
+    @Test
+    public void openPhotoWorksCorrectly() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
+
+        Intents.init();
+        //mockAndroidCamera();
+        clickOn(R.id.roomActivityTakePictureButton);
+        Intents.release();
     }
 }
