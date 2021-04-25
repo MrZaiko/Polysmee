@@ -11,9 +11,8 @@ public class LocalUploadService implements UploadService {
 
     @Override
     public void uploadImage(byte[] data, String fileName, LoadValueListener onSuccess, LoadValueListener onFailure) {
-        String newName = "" + System.currentTimeMillis() + fileName;
-        hash.put(newName, data);
-        onSuccess.onDone(newName);
+        hash.put(fileName, data);
+        onSuccess.onDone(fileName);
     }
 
     @Override
