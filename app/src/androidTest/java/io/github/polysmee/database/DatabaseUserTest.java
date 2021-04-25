@@ -135,6 +135,37 @@ public class DatabaseUserTest {
     }
 
     @Test
+    public void getInvitesAndThen() throws InterruptedException, ExecutionException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean oneElem = new AtomicBoolean(false);
+
+        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE", false);
+        StringSetValueListener ssv = (set) -> {
+            lock.lock();
+            oneElem.set(set.size() > 0);
+            Log.d("METAAPP", "" + oneElem.get());
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+
+        lock.lock();
+        try {
+            MainUserSingleton.getInstance().getInvitesAndThen(ssv);
+            while(!bool.get())
+                cv.await();
+            MainUserSingleton.getInstance().removeInvitesListener(ssv);
+            assertTrue(oneElem.get());
+        } finally {
+            lock.unlock();
+            MainUserSingleton.getInstance().getInvites_Once_AndThen((e) -> {});
+            Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
+        }
+    }
+
+    @Test
     public void testEquals() {
         assertEquals(new DatabaseUser("hello"), new DatabaseUser("hello"));
     }
