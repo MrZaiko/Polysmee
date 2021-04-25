@@ -1,17 +1,15 @@
 package io.github.polysmee.agora.video.handlers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
-import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
-import io.agora.rtc.models.UserInfo;
-import io.github.polysmee.agora.video.VideoConstantsApp;
 
 public class VideoEngineEventHandler extends IRtcEngineEventHandler {
 
+
+    private int EVENT_TYPE_ON_APP_ERROR = 13;
+    public static final int NO_CONNECTION_ERROR = 3;
     private List<AGEventHandler> handlers;
 
     public VideoEngineEventHandler(){
@@ -60,25 +58,6 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
         }
     }
 
-    @Override
-    public void onFirstLocalVideoFrame(int width, int height, int elapsed) {
-        System.out.println("onFirstLocalVideoFrame " + width + " " + height + " " + elapsed);
-    }
-
-    @Override
-    public void onError(int i) {
-        System.out.println("Video error");
-    }
-
-    @Override
-    public void onConnectionLost() {
-        System.out.println("onConnectionLost");
-        for(AGEventHandler handler: handlers) {
-            if (handler instanceof DuringCallEventHandler) {
-                ((DuringCallEventHandler) handler).onExtraCallback(AGEventHandler.EVENT_TYPE_ON_APP_ERROR, VideoConstantsApp.AppError.NO_CONNECTION_ERROR);
-            }
-        }
-    }
 
     @Override
     public void onLocalVideoStateChanged(int localVideoState, int error) {
