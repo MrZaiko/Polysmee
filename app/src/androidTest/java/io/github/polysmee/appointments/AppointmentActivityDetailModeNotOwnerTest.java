@@ -1,7 +1,6 @@
 package io.github.polysmee.appointments;
 
 import android.content.Intent;
-import android.text.format.DateFormat;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -21,7 +20,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
 import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
