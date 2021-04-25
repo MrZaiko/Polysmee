@@ -26,7 +26,7 @@ public class PictureEditActivity extends AppCompatActivity {
     private static final float MAX_STROKE = 100f;
     private static final float MIN_STROKE = 1f;
 
-    private Bitmap pictureBitmap, displayedBitmap;
+    private Bitmap pictureBitmap;
     private DrawableImageView displayedPictureView;
     private SeekBar strokeBar;
 
@@ -36,6 +36,7 @@ public class PictureEditActivity extends AppCompatActivity {
         setContentView(R.layout.activity_picture_edit);
 
         byte[] pictureBytes = getIntent().getByteArrayExtra(PICTURE_BYTES_KEY);
+
         pictureBitmap = BitmapFactory.decodeByteArray(pictureBytes, 0, pictureBytes.length);
 
         displayedPictureView = findViewById(R.id.pictureEditPicture);
@@ -76,7 +77,6 @@ public class PictureEditActivity extends AppCompatActivity {
         Bitmap newPicture = Bitmap.createBitmap(pictureBitmap.getWidth(), pictureBitmap.getHeight(), pictureBitmap.getConfig());
         Canvas canvas = new Canvas(newPicture);
         canvas.drawBitmap(pictureBitmap, 0, 0, paint);
-        displayedBitmap = newPicture;
 
         displayedPictureView.setImageBitmap(newPicture);
     }
@@ -95,45 +95,12 @@ public class PictureEditActivity extends AppCompatActivity {
     private void reset() {
         displayedPictureView.setImageBitmap(pictureBitmap);
         strokeBar.setProgress(0);
-        displayedPictureView.setColor(R.color.red);
+        displayedPictureView.setColor(R.color.black);
         ((RadioButton) findViewById(R.id.pictureEditNormal)).setChecked(true);
-        ((RadioButton) findViewById(R.id.pictureEditRed)).setChecked(true);
+        ((RadioButton) findViewById(R.id.pictureEditBlack)).setChecked(true);
     }
 
-    private ColorMatrix binaryFilter() {
-        ColorMatrix colorMatrix = new ColorMatrix();
-        colorMatrix.setSaturation(0);
 
-        float m = 255f;
-        float t = -255*128f;
-        ColorMatrix threshold = new ColorMatrix(new float[] {
-                m, 0, 0, 1, t,
-                0, m, 0, 1, t,
-                0, 0, m, 1, t,
-                0, 0, 0, 1, 0
-        });
-
-        // Convert to grayscale, then scale and clamp
-        colorMatrix.postConcat(threshold);
-
-        return colorMatrix;
-    }
-    private ColorMatrix invertFilter() {
-        return new ColorMatrix(new float[] {
-                -1,  0,  0,  0, 255,
-                0, -1,  0,  0, 255,
-                0,  0, -1,  0, 255,
-                0,  0,  0,  1,   0
-        });
-    }
-    private ColorMatrix sepiaFilter() {
-        return new ColorMatrix(new float[] {
-                0.393f, 0.769f, 0.189f, 0, 0,
-                0.349f, 0.686f, 0.168f, 0, 0,
-                0.272f, 0.534f, 0.131f, 0, 0,
-                0,     0,     0,     1, 0,
-        });
-    }
 
     @SuppressLint("NonConstantResourceId")
     public void onFilterSelected(View view) {
@@ -147,17 +114,17 @@ public class PictureEditActivity extends AppCompatActivity {
 
             case R.id.pictureEditBinary:
                 if (checked)
-                    applyColorFilter(binaryFilter());
+                    applyColorFilter(Filters.binaryFilter());
                 break;
 
             case R.id.pictureEditInvert:
                 if (checked)
-                    applyColorFilter(invertFilter());
+                    applyColorFilter(Filters.invertFilter());
                 break;
 
             case R.id.pictureEditSepia:
                 if (checked)
-                    applyColorFilter(sepiaFilter());
+                    applyColorFilter(Filters.sepiaFilter());
                 break;
         }
     }
@@ -170,6 +137,11 @@ public class PictureEditActivity extends AppCompatActivity {
             case R.id.pictureEditRed:
                 if (checked)
                     displayedPictureView.setColor(R.color.red);
+                break;
+
+            case R.id.pictureEditBlack:
+                if (checked)
+                    displayedPictureView.setColor(R.color.black);
                 break;
 
             case R.id.pictureEditBlue:

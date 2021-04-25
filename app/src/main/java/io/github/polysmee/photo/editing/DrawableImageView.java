@@ -17,24 +17,28 @@ import android.widget.ImageView;
 import io.github.polysmee.R;
 
 public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageView {
-    private Paint paint;
-    private Path path;
+    private final Paint paint;
+    private final Path path;
 
     private Canvas alteredCanvas;
     private Bitmap alteredBitmap;
 
-    private float previousX, x;
-    private float previousY, y;
+    private int currentColorId;
+    private float currentStrokeWidth;
+
+    private float previousX, previousY;
 
     public DrawableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
         paint = new Paint();
         paint.setColor(getResources().getColor(R.color.primaryColor));
+        currentColorId = R.color.primaryColor;
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
         paint.setStrokeWidth(5);
+        currentStrokeWidth = 5;
 
         path = new Path();
     }
@@ -72,11 +76,21 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     }
 
     public void setStrokeWidth(float strokeWidth) {
+        currentStrokeWidth = strokeWidth;
         paint.setStrokeWidth(strokeWidth);
     }
 
+    public float getCurrentStrokeWidth() {
+        return currentStrokeWidth;
+    }
+
     public void setColor(int colorId) {
+        currentColorId = colorId;
         paint.setColor(getResources().getColor(colorId));
+    }
+
+    public int getCurrentColorId() {
+        return currentColorId;
     }
 
     private void touchStart(float x, float y) {

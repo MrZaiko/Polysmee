@@ -79,10 +79,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent">
 
-            <RadioButton android:id="@+id/pictureEditRed"
+            <RadioButton android:id="@+id/pictureEditBlack"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:text="Black"
+                android:onClick="onColorSelected"/>
+            <RadioButton android:id="@+id/pictureEditRed"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Red"
                 android:onClick="onColorSelected"/>
             <RadioButton android:id="@+id/pictureEditBlue"
