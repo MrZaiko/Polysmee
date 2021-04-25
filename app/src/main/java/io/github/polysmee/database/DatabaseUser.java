@@ -46,6 +46,59 @@ public final class DatabaseUser implements User {
     }
 
     @Override
+    public void getInvitesAndThen(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("invites")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getInvites_Once_AndThen(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("invites")
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void removeInvitesListener(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("invites")
+                .removeEventListener(valueListener);
+    }
+
+    @Override
+    public void addInvite(Appointment newAppointment) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("invites")
+                .child(newAppointment.getId())
+                .setValue(true);
+    }
+
+    @Override
+    public void removeInvite(Appointment appointment) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("invites")
+                .child(appointment.getId())
+                .setValue(null);
+    }
+
+
+    @Override
     public void getNameAndThen(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
