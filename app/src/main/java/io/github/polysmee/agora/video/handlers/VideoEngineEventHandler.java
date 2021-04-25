@@ -22,9 +22,6 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
         return handlers.add(handler);
     }
 
-    public boolean removeEventHandler(AGEventHandler handler){
-        return handlers.remove(handler);
-    }
 
     @Override
     public void onJoinChannelSuccess(String channel, int uid, int elapsed) {

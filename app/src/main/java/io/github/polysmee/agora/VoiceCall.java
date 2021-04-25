@@ -1,14 +1,5 @@
 package io.github.polysmee.agora;
 
-import android.content.Context;
-import androidx.annotation.NonNull;
-import io.agora.rtc.Constants;
-import io.agora.rtc.IRtcEngineEventHandler;
-import io.agora.rtc.RtcEngine;
-import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.login.MainUserSingleton;
-
 /**
  * Back-end of the voice call feature
  */
