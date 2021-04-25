@@ -9,21 +9,16 @@ import androidx.test.espresso.NoMatchingViewException;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.security.SecureRandom;
-import java.util.Random;
-import java.util.concurrent.ExecutionException;
-
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -39,7 +34,6 @@ import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
-import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogNegativeButton;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;

@@ -3,8 +3,6 @@ package io.github.polysmee.settings;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.uiautomator.UiDevice;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -18,11 +16,9 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
-import io.github.polysmee.settings.fragments.SettingsAppointmentsReminderFragment;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.fragments.SettingsUserInfoFragment;
 
-import static android.view.KeyEvent.*;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;

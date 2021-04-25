@@ -156,40 +156,13 @@ public class Call {
 
         handler = new IRtcEngineEventHandler() {
             @Override
-            public void onWarning(int warn) {
-                System.out.println("Warning: " + warn);
-            }
-
-            @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
                 System.out.println("Huge sucesss");
             }
-
             @Override
             public void onError(int err) {
                 System.out.println("error : " + err);
             }
-
-            @Override
-            public void onUserJoined(int uid, int elapsed) {
-                System.out.println("room null");
-                System.out.println(room == null);
-                System.out.println("lets go !!!");
-                System.out.println("user joined : " + uid);
-            }
-
-            @Override
-            public void onUserInfoUpdated(int uid, UserInfo userInfo) {
-                System.out.println("user connected : " + userInfo.userAccount);
-                onUserJoined(uid, 0);
-
-            }
-
-            @Override
-            public void onUserOffline(int uid, int elapsed) {
-                System.out.println("user offline : " + uid);
-            }
-
         };
     }
 

@@ -1,7 +1,6 @@
 package io.github.polysmee.invites;
 
 import android.content.Intent;
-import android.view.View;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -9,23 +8,18 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.hamcrest.Description;
-import org.hamcrest.Matcher;
-import org.hamcrest.TypeSafeMatcher;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.io.Serializable;
 import java.util.Calendar;
 
-import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
