@@ -144,7 +144,7 @@ public class DatabaseUserTest {
         String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE", false);
         StringSetValueListener ssv = (set) -> {
             lock.lock();
-            oneElem.set(set.size() > 0);
+            oneElem.set(Boolean.TRUE);
             Log.d("METAAPP", "" + oneElem.get());
             bool.set(Boolean.TRUE);
             cv.signal();
