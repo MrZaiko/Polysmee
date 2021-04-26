@@ -160,6 +160,17 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         return requireArguments().getString(VIDEO_KEY);
     }
 
+    /**
+     * Remove videos frames according to this logic:
+     *  - If uid == -1, this means that the local user quit the call; this deletes
+     *    all video views and empties the frames
+     *  - Otherwise, it means the user with the given uid has quit the call. If their video
+     *    was focused on by the local user, the local user's video (whether it's running or not)
+     *    replaces theirs. After that, the frame containing the remote video is deleted.
+     *    If the video was not focused on, it's simply deleted.
+     * @param uid specifies which videos to delete: if -1, delete all; otherwise, delete only the specified
+     *            user's video
+     */
     protected void removeVideo(int uid){
         if(uid == -1){
             idsToVideoFrames.clear();
@@ -198,7 +209,11 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     }
 
 
-    protected void setupLocalVideoView(){ //called when the local user joins the call; the local video frame is the big one
+    /**
+     * Called when the local user joins the call; sets up the local video frame,
+     * which is the big one.
+     */
+    protected void setupLocalVideoView(){
         SurfaceView localView = call.createLocalUI(getActivity().getBaseContext());
         localView.setId(R.id.roomActivityVideoElement);
         localView.setVisibility(View.GONE);
@@ -210,6 +225,10 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     }
 
 
+    /**
+     * Shortcut method to run the code I need to run on UI thread faster.
+     * @param runnable the code I want to run, wrapped in a runnable.
+     */
     protected void runOnUiThread(Runnable runnable){
         getActivity().runOnUiThread(runnable);
     }
