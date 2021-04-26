@@ -82,7 +82,8 @@ public class Call {
     }
 
     /**
-     * leaves the channel
+     * Leaves the channel of the room
+     * @return 0 if the channel is successfully left
      */
     public int leaveChannel() {
         int leaveStatus = mRtcEngine.leaveChannel();
@@ -96,8 +97,8 @@ public class Call {
     }
 
     /**
-     * mute (unmute) local user if mute arg is set to true (false)
-     * @param mute
+     * Mute (unmute) local user if mute arg is set to true (false)
+     * @param mute specifies if the user should be muted or not.
      */
     public int mute(boolean mute) {
         int result = mRtcEngine.muteLocalAudioStream(mute);
@@ -118,7 +119,7 @@ public class Call {
     }
 
     /**
-     * initializes the IRtcEngineEventHandler
+     * Initializes the IRtcEngineEventHandler
      */
     private void initializeHandler() {
 
@@ -143,14 +144,6 @@ public class Call {
     }
 
 
-
-    /**
-     * Add functions for:
-     * 1. Setting up the local video (part of it will be in the fragment); when a user enables his
-     * local camera, setup the layout that will containt it
-     * 2. When a remote user joins, add a layout with their video feed minimized
-     */
-
     //======================== Video part ======================//
 
     /**
@@ -163,6 +156,9 @@ public class Call {
         return mRtcEngine.enableLocalVideo(videoEnabled);
     }
 
+    /**
+     * @return whether the video is enabled or not.
+     */
     public boolean isVideoEnabled(){
         return videoEnabled;
     }
@@ -175,7 +171,12 @@ public class Call {
         return mRtcEngine.switchCamera();
     }
 
-
+    /**
+     * Creates a remote user's video UI when they join the video call
+     * @param context the context in which the video view is created
+     * @param uid the user's id
+     * @return the surface view containing the remote video of specified remote user
+     */
     public SurfaceView createRemoteUI(Context context, final int uid){
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
         mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN,uid));
@@ -183,6 +184,11 @@ public class Call {
         return surfaceV;
     }
 
+    /**
+     * Create the local user's video UI
+     * @param context the context in which the video view is created
+     * @return the surface view containing the local video
+     */
     public SurfaceView createLocalUI(Context context){
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
         surfaceV.setZOrderOnTop(true);
