@@ -48,7 +48,7 @@ public class AppointmentActivityAddModeTest {
     private static String id3 = "sdflkhsfdlkhsfd";
     private static final String username3 = "Léo La fouine";
 
-    private static final String course = "AquaPoney";
+    private static final String course = "SDP";
     private static final String title = "Aglouglou sur mon cheval";
 
     @BeforeClass
@@ -130,6 +130,8 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
+            assertDisplayed("Error");
+            clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
@@ -147,6 +149,8 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(18, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
+            assertDisplayed("Error");
+            clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
@@ -201,12 +205,21 @@ public class AppointmentActivityAddModeTest {
             assertDisplayed("Error");
             clickOn("OK");
 
+            scrollTo(R.id.appointmentCreationCourseLayout);
+            writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, "qwefphqpewufh");
+            closeSoftKeyboard();
+            clickOn(R.id.appointmentCreationbtnDone);
+            assertDisplayed("Error");
+            clickOn("OK");
+
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnAdd);
             clickOn(R.id.appointmentSettingsBtnAdd);
 
             clickOn(R.id.appointmentCreationbtnDone);
+            assertDisplayed("Error");
+            clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationAddBanError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
