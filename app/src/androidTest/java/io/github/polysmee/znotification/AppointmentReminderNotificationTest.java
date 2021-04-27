@@ -19,7 +19,6 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.notification.AppointmentReminderNotificationPublisher;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

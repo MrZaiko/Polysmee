@@ -1,4 +1,4 @@
-package io.github.polysmee.notification;
+package io.github.polysmee.znotification;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;

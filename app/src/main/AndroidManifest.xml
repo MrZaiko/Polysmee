@@ -40,7 +40,7 @@
 
         <activity android:name=".photo.editing.PictureEditActivity"/>
 
-        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
+        <receiver android:name=".znotification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".room.RoomActivity" />

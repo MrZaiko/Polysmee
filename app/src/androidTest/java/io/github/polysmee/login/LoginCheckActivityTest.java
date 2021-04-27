@@ -18,7 +18,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.MainActivity;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
