@@ -11,18 +11,19 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -31,7 +32,9 @@ import io.github.polysmee.znotification.AppointmentReminderNotificationSetupList
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -74,6 +77,14 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
     }
 
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+2).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+3).child("private").setValue(true);
+    }
+
 
     @Before
     public void setupDailyCalendar(){
@@ -94,7 +105,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
     @Test
     public void anotherUsersAppointmentIsVisible(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("vent","amogus",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId);
+        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","amogus",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId);
         addAppointmentOtherUser(calendarAppointmentInfo);
         FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
         sleep(5,TimeUnit.SECONDS);
@@ -123,7 +134,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     @Test
     public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
 
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("BonjourGoogle","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
+        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
         addAppointmentOtherUser(calendarAppointmentInfo);
         FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
         sleep(3,TimeUnit.SECONDS);
@@ -148,7 +159,9 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
             sleep(1,TimeUnit.SECONDS);
 
-            clickOn("PUBLIC APPOINTMENTS");
+            //clickOn("PUBLIC APPOINTMENTS");
+            onView(withId(R.id.calendarActivityPager)).perform(swipeLeft());
+            sleep(1, SECONDS);
 
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
             closeSoftKeyboard();

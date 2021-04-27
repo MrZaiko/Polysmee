@@ -55,7 +55,7 @@ public class CalendarActivityTest {
 
     private static final String username1 = "Youssef le dindon";
     private static final String appointmentTitle = "J'adore le surf";
-    private static final String appointmentCourse = "Surf";
+    private static final String appointmentCourse = "SDP";
     private static final String appointmentId = "-lsdqrhrrdtisjhmf";
 
     private static Calendar startTime;
@@ -108,7 +108,7 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             String title = "NewTitle";
             long startTime = calendar.getTimeInMillis() + 60*1000;
-            CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMeBruh", "ClickMeBoi" ,
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi" ,
                     startTime ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
@@ -131,7 +131,7 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
-            CalendarAppointmentInfo info = new CalendarAppointmentInfo("ClickMe", "ClickMe" ,
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMe" ,
                     calendar.getTimeInMillis() + 60*1000 ,3600*6*1000,appointmentId+5);
             MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
@@ -139,8 +139,7 @@ public class CalendarActivityTest {
             scrollTo(info.getTitle());
             clickOn(info.getTitle());
             assertDisplayed(withHint(info.getTitle()));
-            assertDisplayed(withHint(info.getCourse()));
-
+            assertDisplayed(withText(info.getCourse()));
         }
     }
 
@@ -214,7 +213,7 @@ public class CalendarActivityTest {
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
-            infos[i] = new CalendarAppointmentInfo("FakeCourse" + i, "FakeTitle" + i,
+            infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
                     DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i);
 
         }

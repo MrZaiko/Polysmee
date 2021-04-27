@@ -220,7 +220,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         appointment.getTitleAndThen(title -> editTitle.setHint(title));
 
-        appointment.getCourseAndThen(course -> editCourse.setHint(course));
+        appointment.getCourseAndThen(course -> editCourse.setText(course));
 
         appointment.getOwnerIdAndThen(owner -> {
             if (owner.equals(MainUserSingleton.getInstance().getId())) {
