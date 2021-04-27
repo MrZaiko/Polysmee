@@ -1,6 +1,5 @@
 package io.github.polysmee.roomActivityTests;
 
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
@@ -18,10 +17,9 @@ import org.junit.runners.JUnit4;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.notification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
 import static androidx.test.espresso.Espresso.onView;
