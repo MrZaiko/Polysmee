@@ -1,7 +1,10 @@
 package io.github.polysmee.calendar;
 
 
+import android.content.Intent;
+
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
@@ -19,14 +22,20 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
+import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
+import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -126,15 +135,45 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         assertDisplayed(calendarAppointmentInfo.getTitle());
 
     }
+
+    @Test
+    public void filterButtonLeavesOnlyAppointmentWithCorrespondingCourse(){
+        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing1",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+2);
+        CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG","BonjourBing2",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+3);
+        addAppointmentOtherUser(calendarAppointmentInfo);
+        addAppointmentOtherUser(calendarAppointmentInfo2);
+
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
+
+        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(1,TimeUnit.SECONDS);
+
+            clickOn("PUBLIC APPOINTMENTS");
+
+            writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
+            closeSoftKeyboard();
+            clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
+            assertDisplayed("Error");
+            clickOn("OK");
+            writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "SDP");
+            closeSoftKeyboard();
+            clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
+            sleep(1, SECONDS);
+            assertDisplayed("BonjourBing1");
+            onView(withText("BonjourBing2")).check(doesNotExist());
+        }
+
+    }
+
     private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo){
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("id").setValue(calendarAppointmentInfo.getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("duration").setValue(calendarAppointmentInfo.getDuration());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(false);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(calendarAppointmentInfo.getTitle());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(calendarAppointmentInfo.getCourse());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(calendarAppointmentInfo.getStartTime());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("id").setValue(calendarAppointmentInfo.getId());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("duration").setValue(calendarAppointmentInfo.getDuration());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("private").setValue(false);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("owner").setValue(id2);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("participants").child(id2).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("title").setValue(calendarAppointmentInfo.getTitle());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("course").setValue(calendarAppointmentInfo.getCourse());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("start").setValue(calendarAppointmentInfo.getStartTime());
     }
 
 }
