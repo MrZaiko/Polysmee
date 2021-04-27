@@ -1,5 +1,6 @@
 package io.github.polysmee.appointments;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
@@ -10,11 +11,15 @@ import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -71,12 +76,18 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private Set<String> invites, bans, removedInvites, removedBans;
     private boolean isAddShown, isBanShown;
 
+    //Courses
+    private ArrayList<String> courses;
+    AlertDialog.Builder builder;
+
     // Misc
     private boolean isOwner;
     boolean isKeyboardShowing;
 
+
     // Layout related attributes
-    private EditText editTitle, editCourse;
+    private EditText editTitle;
+    private AutoCompleteTextView editCourse;
     private Button btnDone, btnReset;
     private TextView txtTimeError, txtAddBanError, txtStartTime, txtEndTime, txtAdd, txtBan;
     private SwitchCompat privateSelector;
@@ -168,6 +179,15 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtEndTime = findViewById(R.id.appointmentCreationEndTime);
         txtAdd = findViewById(R.id.appointmentCreationAddTextView);
         txtBan = findViewById(R.id.appointmentCreationBanTextView);
+
+        //for now the database doesn't support courses so we use a fixed array
+        courses = new ArrayList<>(Arrays.asList("SDP", "Sweng", "ICG", "Quantique", "AI", "Databases", "SHS", "Misc", "Analysis", "IntroProg"));
+
+        builder = new AlertDialog.Builder(this);
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, courses);
+        editCourse.setAdapter(adapter);
     }
 
     /**
@@ -200,7 +220,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         appointment.getTitleAndThen(title -> editTitle.setHint(title));
 
-        appointment.getCourseAndThen(course -> editCourse.setHint(course));
+        appointment.getCourseAndThen(course -> editCourse.setText(course));
 
         appointment.getOwnerIdAndThen(owner -> {
             if (owner.equals(MainUserSingleton.getInstance().getId())) {
@@ -270,6 +290,18 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         // A user cannot be banned and added at the same time
         if (!invitesInterBans.isEmpty()) {
             txtAddBanError.setVisibility(View.VISIBLE);
+            error = true;
+        }
+
+        String s = editCourse.getText().toString();
+        if(!courses.contains(s)) {
+            builder.setMessage("Course not found")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
             error = true;
         }
 

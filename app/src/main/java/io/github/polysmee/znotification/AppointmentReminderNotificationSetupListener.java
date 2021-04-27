@@ -59,6 +59,7 @@ public final class AppointmentReminderNotificationSetupListener {
     private static void removeAppointmentReminderNotification(@NonNull String appointmentId, @NonNull SharedPreferences localAppointmentsReminderTime ){
         assert alarmManager!=null;
         int appointmentNotificationTimeMin = localAppointmentsReminderTime.getInt(appointmentId, -1);
+
         //not setted up if it take default value
         if (appointmentNotificationTimeMin==-1){
             return;
@@ -71,7 +72,6 @@ public final class AppointmentReminderNotificationSetupListener {
             }
         }
         alarmManager.cancel(getReminderNotificationPendingIntent( appointmentNotificationTimeMin));
-        return;
     }
 
     //launch at the start so that the reminder set are consistent with the database. i.e remove the reminder that are set but that the user are no longer part of

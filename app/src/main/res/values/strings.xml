@@ -73,6 +73,8 @@
     <string name="appointmentCreationAddBanError">A user cannot be both added and banned</string>
     <string name="calendarActivityTodayDatePublicAppointments">Date</string>
     <string name="invites_management_current_invitations">Current invitations</string>
+    <string name="calendarActivityPublicAppointmentsCourse">Course</string>
+    <string name="calendarActivityPublicAppointmentsFilter">Filter</string>
 
 </resources>
 

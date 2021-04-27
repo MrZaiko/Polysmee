@@ -44,7 +44,7 @@ public class AppointmentActivityDetailModeNotOwnerTest {
     private static final String username3 = "Léo La fouine";
 
     private static final String appointmentId = "opkdsfmcvx";
-    private static final String course = "AquaPoney";
+    private static final String course = "SDP";
     private static final String title = "Aglouglou sur mon cheval";
     private static final long duration = 3600000;
     private static Calendar startTime;

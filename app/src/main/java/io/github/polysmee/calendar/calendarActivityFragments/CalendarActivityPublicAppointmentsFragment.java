@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -11,11 +12,15 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +59,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     private Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
     private Map<String, View> appointmentIdsToView = new HashMap<>();
 
+    private ArrayList<String> courses;
+    private String currentCourse = "";
+    AlertDialog.Builder builder;
+    AutoCompleteTextView courseSelector;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -68,12 +78,38 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
             getAllPublicAppointmentsForTheDay();
             ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setRefreshing(false);
         });
-        rootView.findViewById(R.id.todayDatePublicAppointmentsCalendarActivity).setOnClickListener((v) -> {
-            chooseDate();
-        });
+        rootView.findViewById(R.id.todayDatePublicAppointmentsCalendarActivity).setOnClickListener(v -> chooseDate());
+
+        courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
+
+        //for now the database doesn't support courses so we use a fixed array
+        courses = new ArrayList<>(Arrays.asList("SDP", "Sweng", "ICG", "Quantique", "AI", "Databases", "SHS", "Misc", "Analysis", "IntroProg", ""));
+
+        builder = new AlertDialog.Builder(getActivity());
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_dropdown_item_1line, courses);
+        courseSelector.setAdapter(adapter);
+        rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
 
         getAllPublicAppointmentsForTheDay();
         return rootView;
+    }
+
+    private void filter(){
+        String s = courseSelector.getText().toString();
+        if(!courses.contains(s)) {
+            builder.setMessage("Course not found")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
+        } else {
+            currentCourse = s;
+            getAllPublicAppointmentsForTheDay();
+        }
     }
 
 
@@ -110,7 +146,13 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos,true);
         if(!todayAppointments.isEmpty()){
             for(CalendarAppointmentInfo appointment : todayAppointments){
-                addAppointmentToCalendarLayout(appointment);
+                if(!currentCourse.equals("")) {
+                    if(appointment.getCourse().equals(currentCourse)) {
+                        addAppointmentToCalendarLayout(appointment);
+                    }
+                } else {
+                    addAppointmentToCalendarLayout(appointment);
+                }
             }
         }
     }
@@ -178,7 +220,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     }
     /**
      * Gets all public appointments once, display only the ones on the selected day; to be called
-     * when the fragment is loaded for the first time or when clicking on the refresh button.
+     * when the fragment is loaded for the first time, when clicking on the refresh button or when filtering.
      */
     protected void getAllPublicAppointmentsForTheDay() {
         Appointment.getAllPublicAppointmentsOnce((allPublicAppointmentsIds) ->{

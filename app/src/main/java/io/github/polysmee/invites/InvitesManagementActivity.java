@@ -77,8 +77,10 @@ public class InvitesManagementActivity extends AppCompatActivity {
 
         InviteEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId()));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
-        String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
+        SimpleDateFormat formatterStartTime = new SimpleDateFormat("dd/MM/yyyy - HH:mm", Locale.US);
+        SimpleDateFormat formatterEndTime = new SimpleDateFormat("HH:mm", Locale.US);
+
+        String appointmentDate = formatterStartTime.format(startDate) + " - " + formatterEndTime.format(endDate);
         ((TextView) InviteEntry.findViewById(R.id.InvitationEntryAppointmentDate)).setText(appointmentDate);
 
         ImageView status = InviteEntry.findViewById(R.id.InvitationEntryStatus);
@@ -98,16 +100,12 @@ public class InvitesManagementActivity extends AppCompatActivity {
      */
     private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
         DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
-        //for now the database doesn't support invites so the buttons don't do anything
-        /*if(accept) {
+        if(accept) {
             user.addAppointment(apt);
             apt.addParticipant(user);
-        }*/
-        //user.removeInvite(apt);
-
-        //we remove the user's appointment for testing purposes, to check that deleting an invite does delete the view from the activity
-        user.removeAppointment(apt);
-        apt.removeParticipant(user);
+        }
+        user.removeInvite(apt);
+        apt.removeInvite(user);
     }
 
     public void goToAppointmentDetails(String id) {
@@ -145,9 +143,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
         }
 
         userInvitesListener = currentUserInvitesListener();
-        //for now the database doesn't support invites so in order to make sure that everything apart from the connection to the database works
-        //we get the user's actual appointments for now
-        user.getAppointmentsAndThen(userInvitesListener);
+        user.getInvitesAndThen(userInvitesListener);
     }
 
     /**
@@ -167,7 +163,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
 
     protected StringSetValueListener currentUserInvitesListener() {
 
-        StringSetValueListener userAppointmentsListener = setOfIds -> {
+        return setOfIds -> {
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
             Set<String> newAppointments = new HashSet<>(setOfIds);
 
@@ -225,7 +221,5 @@ public class InvitesManagementActivity extends AppCompatActivity {
                 });
             }
         };
-
-        return userAppointmentsListener;
     }
 }
