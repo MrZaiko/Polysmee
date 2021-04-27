@@ -28,6 +28,7 @@ import java.util.Map;
 
 import io.github.polysmee.R;
 import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
@@ -49,11 +50,17 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private boolean isMuted = false;
     private boolean isInCall = false;
+
+
+    //private VoiceCall voiceCall;
     private DatabaseAppointment databaseAppointment;
-    private VoiceCall voiceCall;
+    //private VoiceCall voiceCall;
+
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
     private BooleanChildListener listener;
+
+    private Call call;
 
     @Nullable
     @Override
@@ -67,17 +74,29 @@ public class RoomActivityParticipantsFragment extends Fragment {
         generateParticipantsView();
         initializePermissionRequester();
         initializeAndDisplayDatabase();
-        voiceCall = new VoiceCall(databaseAppointment,getContext());
+        //voiceCall = new VoiceCall(databaseAppointment,getContext());
 
         return rootView;
     }
 
+
+    public RoomActivityParticipantsFragment(){
+        // Required empty public constructor
+    }
+
+    public RoomActivityParticipantsFragment(Call call){
+        this.call = call;
+    }
+
     @Override
     public void onDestroy() {
-        voiceCall.destroy();
+        if(call != null){
+            call.destroy();
+        }
         databaseAppointment.removeInCallListener(listener);
         super.onDestroy();
     }
+
 
 
     /*
@@ -109,7 +128,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
                 ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
 
+                ImageView videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
+                videoButton.setTag(R.drawable.baseline_video_off);
+
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
+
                 participantsButtonLayout.setVisibility(View.VISIBLE);
                 callButton.setVisibility(View.GONE);
                 String userId = MainUserSingleton.getInstance().getId();
@@ -129,7 +152,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     });
 
                     muteButton.setOnClickListener(v -> muteUser());
-
+                    videoButton.setOnClickListener(this::shareVideoBehavior);
                 } else {
                     user.getNameAndThen(participantName::setText);
                 }
@@ -139,12 +162,21 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 //Add a blank textView to add space between participant entries
                 layout.addView(new TextView(rootView.getContext()));
             }
-        });
+        });}
 
+
+    private void shareVideoBehavior(View cameraButton){
+        System.out.println("VIDEO");
+        if(call.isVideoEnabled()){
+            //disable button
+            ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);
+            ((ImageView) cameraButton).setTag(R.drawable.baseline_video_off);
+        }else{
+            ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video);
+            ((ImageView) cameraButton).setTag(R.drawable.baseline_video);
+        }
+        call.shareLocalVideo();
     }
-
-
-
 
     /**
      *
@@ -162,22 +194,26 @@ public class RoomActivityParticipantsFragment extends Fragment {
             return;
         }
 
-        if(voiceCall == null) {
 
-            voiceCall = new VoiceCall(databaseAppointment, this.getContext());
+        if(!checkPermission(Manifest.permission.CAMERA)){
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
 
-        voiceCall.joinChannel();
+        if(call == null){
+            call = new Call(getAppointmentId(),this.getContext());
+        }
+        call.joinChannel();
 
     }
+
 
     /**
      *
      * @return true if the channel is successfully left and false otherwise
      */
     private void leaveChannel() {
-        if(voiceCall != null) {
-            voiceCall.leaveChannel();
+        if(call != null) {
+            call.leaveChannel();
         }
 
     }
@@ -186,8 +222,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * Mutes current user in the call if he is not muted and unmutes him otherwise
      */
     private void muteUser() {
-        if(voiceCall != null) {
-            voiceCall.mute(!isMuted);
+        if(call != null) {
+            call.mute(!isMuted);
         }
     }
 
@@ -200,9 +236,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         ConstraintLayout participantsLayout = participantsViews.get(id);
         View muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
+        View videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
         if(online) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
+            videoButton.setVisibility(View.VISIBLE);
             if(id.equals(MainUserSingleton.getInstance().getId())) {
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
@@ -213,6 +251,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         else {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
             muteButton.setVisibility(View.GONE);
+            videoButton.setVisibility(View.GONE);
             if(id.equals(MainUserSingleton.getInstance().getId())) {
                 isInCall = false;
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);

@@ -15,8 +15,6 @@ import java.util.zip.CRC32;
  * Util class for generating tokens
  */
 public class Utils {
-    public static final int VERSION_LENGTH = 3;
-    public static final int APP_ID_LENGTH = 32;
 
     public static byte[] hmacSign(String keyString, byte[] msg) throws InvalidKeyException, NoSuchAlgorithmException {
         SecretKeySpec keySpec = new SecretKeySpec(keyString.getBytes(), "HmacSHA256");
@@ -31,18 +29,10 @@ public class Utils {
         return buffer.asBytes();
     }
 
-    public static void unpack(byte[] data, PackableEx packableEx) {
-        ByteBuf buffer = new ByteBuf(data);
-        packableEx.unmarshal(buffer);
-    }
 
     public static String base64Encode(byte[] data) {
         byte[] encodedBytes = Base64.encodeBase64(data);
         return new String(encodedBytes);
-    }
-
-    public static byte[] base64Decode(String data) {
-        return Base64.decodeBase64(data.getBytes());
     }
 
     public static int crc32(String data) {

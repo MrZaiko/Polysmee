@@ -26,7 +26,9 @@ import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+
 import io.github.polysmee.room.RoomActivity;
+
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
