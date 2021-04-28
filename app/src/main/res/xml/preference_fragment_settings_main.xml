@@ -10,4 +10,7 @@
         app:icon="@drawable/settings_user_info"
         app:title="@string/title_settings_main_user_info"
         />
+    <SwitchPreference
+        app:key="@string/preference_key_is_dark_mode"
+        app:title="Dark theme"/>
 </PreferenceScreen>
