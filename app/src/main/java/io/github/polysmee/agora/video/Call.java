@@ -10,13 +10,17 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.RtcTokenBuilder;
 import io.github.polysmee.agora.video.handlers.AGEventHandler;
 import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
@@ -41,22 +45,26 @@ public class Call {
     private static final int EXPIRATION_TIME = 3600;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler handler;
-    private final String appointmentId;
-    private final Context context;
-
     private RoomActivityParticipantsFragment room;
     private RoomActivityVideoFragment videoRoom;
     private boolean videoEnabled = false;
     private DatabaseAppointment appointment;
+    private final Map<Integer, String> usersCallId;
+    private final Set<Integer> usersInCall;
+    private final Set<Integer> talking;
+    private  Command<Boolean, String> command;
+
     public Call(String appointmentId, Context context){
-        this.appointmentId = appointmentId;
         this.appointment = new DatabaseAppointment(appointmentId);
+        usersCallId = new HashMap<Integer,String>();
+        usersInCall = new HashSet<Integer>();
+        talking = new HashSet<Integer>();
         initializeHandler();
-        this.context = context;
 
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+            mRtcEngine.enableAudioVolumeIndication(100, 3, true);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -115,7 +123,15 @@ public class Call {
     public String generateToken(@NonNull String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
-        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+    }
+
+    /**
+     * Sets the command attribute to the value given
+     * @param command the new value of command
+     */
+    public void setCommand(@NonNull Command<Boolean,String> command) {
+        this.command = command;
     }
 
     /**
@@ -124,14 +140,62 @@ public class Call {
     private void initializeHandler() {
 
         handler = new IRtcEngineEventHandler() {
+
+            @Override
+            public void onUserJoined(int uid, int elapsed) {
+                usersInCall.add(uid);
+            }
+
+            @Override
+            public void onUserOffline(int uid, int reason) {
+                usersInCall.remove(uid);
+            }
+
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("Huge sucesss");
+                System.out.println("sucesss");
             }
+
             @Override
-            public void onError(int err) {
-                System.out.println("error : " + err);
+            public void onUserInfoUpdated(int uid, UserInfo userInfo) {
+                System.out.println(uid + " => user account : " + userInfo.userAccount);
+                usersCallId.put(uid, userInfo.userAccount);
             }
+
+            @Override
+            public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+                Set<Integer> newUsersInCall = new HashSet<Integer>();
+                if(speakers != null) {
+                    for(int i = 0; i < speakers.length; ++i) {
+                        AudioVolumeInfo audioVolumeInfo = speakers[i];
+                        int uid = audioVolumeInfo.uid;
+                        if(audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
+                            String userId = usersCallId.get(uid);
+                            //System.out.println(audioVolumeInfo.uid + " => user " + userId + " has volume : " + audioVolumeInfo.volume);
+                            command.execute(true, userId);
+                            newUsersInCall.add(uid);
+                            System.out.println("talking");
+                        }
+                    }
+                }
+
+                for(int uid : usersInCall) {
+                    if(!newUsersInCall.contains(uid)) {
+
+                        if(talking.contains(uid)) {
+                            talking.remove(uid);
+                        }
+                        else {
+                            System.out.println("not talking");
+                            command.execute(false, usersCallId.get(uid));
+                        }
+
+                    }
+                }
+                talking.addAll(newUsersInCall);
+
+            }
+
         };
     }
 
