@@ -30,6 +30,7 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.login.MainUserSingleton;
 
 
@@ -111,7 +112,18 @@ public class RoomActivityParticipantsFragment extends Fragment {
             layout.removeAllViewsInLayout();
 
             for (String id : p) {
+
                 User user = new DatabaseUser(id);
+
+                appointment.getTimeCodeOnceAndThen(user, new LongValueListener() {
+                    @Override
+                    public void onDone(long o) {
+                        if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
+                            appointment.removeOfCall(user);
+                        }
+                    }
+                });
+
                 ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
                 participantsViews.put(id,participantsLayout);
                 participantsLayout.setBackgroundColor(Color.LTGRAY);

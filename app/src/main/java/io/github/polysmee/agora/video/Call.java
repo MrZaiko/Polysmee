@@ -27,6 +27,7 @@ import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
@@ -39,7 +40,8 @@ public class Call {
 
     public static final int SUCCESS_CODE = 0;
     public static final int ERROR_CODE = 1;
-
+    public static final int TIME_CODE_FREQUENCY = 30;
+    public static final int INVALID_TIME_CODE_TIME = 90000;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
     private static final int EXPIRATION_TIME = 3600;
@@ -53,6 +55,8 @@ public class Call {
     private final Set<Integer> usersInCall;
     private final Set<Integer> talking;
     private  Command<Boolean, String> command;
+    private String token;
+    private int timeCodeIndicator = 0;
 
     public Call(String appointmentId, Context context){
         this.appointment = new DatabaseAppointment(appointmentId);
@@ -60,6 +64,12 @@ public class Call {
         usersInCall = new HashSet<Integer>();
         talking = new HashSet<Integer>();
         initializeHandler();
+        appointment.getTokenOnceAndThen(new DatabaseUser(MainUserSingleton.getInstance().getId()), new StringValueListener() {
+            @Override
+            public void onDone(String o) {
+                token = o;
+            }
+        });
 
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
@@ -75,33 +85,23 @@ public class Call {
 
     /**
      * Joins the channel of the room
-     * @return 0 if the channel is successfully joined
      */
-    public int joinChannel() {
-        String userId =  AuthenticationFactory.getAdaptedInstance().getUid();
-        String token = generateToken(userId);
-
-        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token,appointment.getId(),userId);
-        if(joinStatus == SUCCESS_CODE) {
+    public void joinChannel() {
+        System.out.println("yayayayayayayaya");
+        String userId = AuthenticationFactory.getAdaptedInstance().getUid();
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token, appointment.getId(), userId);
+        if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
-            return SUCCESS_CODE;
         }
-        return ERROR_CODE;
     }
 
     /**
      * Leaves the channel of the room
-     * @return 0 if the channel is successfully left
      */
-    public int leaveChannel() {
-        int leaveStatus = mRtcEngine.leaveChannel();
-        if(leaveStatus == SUCCESS_CODE) {
-            appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
-            return SUCCESS_CODE;
-        }
+    public void leaveChannel() {
+        mRtcEngine.leaveChannel();
+        appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
 
-        //fail
-        return ERROR_CODE;
     }
 
     /**
@@ -164,6 +164,7 @@ public class Call {
 
             @Override
             public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+                System.out.println("total volume : " + totalVolume);
                 Set<Integer> newUsersInCall = new HashSet<Integer>();
                 if(speakers != null) {
                     for(int i = 0; i < speakers.length; ++i) {
@@ -195,6 +196,29 @@ public class Call {
                 talking.addAll(newUsersInCall);
 
             }
+
+            @Override
+            public void onTokenPrivilegeWillExpire(String token) {
+                onRequestToken();
+                }
+
+            @Override
+            public void onRequestToken() {
+                System.out.println("noooooooooooooooooooooooooooo");
+                String uid = MainUserSingleton.getInstance().getId();
+                token = generateToken(uid);
+                appointment.setToken(new DatabaseUser(uid), token);
+                mRtcEngine.renewToken(token);
+            }
+
+            @Override
+            public void onLocalAudioStats(LocalAudioStats stats) {
+                if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
+                    appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
+                }
+                timeCodeIndicator += 1;
+            }
+
 
         };
     }
