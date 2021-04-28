@@ -25,7 +25,7 @@ public final class SettingsMainFragment extends PreferenceFragmentCompat {
         });
     }
 
-    public void onDarkModeClick(){
+    private void onDarkModeClick(){
         boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(getContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
         if (isDarkMode==true){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
