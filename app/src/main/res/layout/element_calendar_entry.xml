@@ -31,7 +31,6 @@
                 android:text="Title"
                 android:textSize="18sp"
                 android:gravity="center"
-                android:textColor="@color/black"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
