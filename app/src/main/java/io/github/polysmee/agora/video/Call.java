@@ -40,8 +40,8 @@ public class Call {
 
     public static final int SUCCESS_CODE = 0;
     public static final int ERROR_CODE = 1;
-    public static final int TIME_CODE_FREQUENCY = 30;
-    public static final int INVALID_TIME_CODE_TIME = 90000;
+    public static final int TIME_CODE_FREQUENCY = 10;
+    public static final int INVALID_TIME_CODE_TIME = 30000;
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -142,6 +142,8 @@ public class Call {
 
             @Override
             public void onUserOffline(int uid, int reason) {
+
+                System.out.println("offline : " + usersCallId.get(uid));
                 usersInCall.remove(uid);
             }
 
@@ -168,7 +170,7 @@ public class Call {
                             //System.out.println(audioVolumeInfo.uid + " => user " + userId + " has volume : " + audioVolumeInfo.volume);
                             command.execute(true, userId);
                             newUsersInCall.add(uid);
-                            System.out.println("talking");
+                            //System.out.println("talking");
                         }
                     }
                 }
@@ -180,7 +182,7 @@ public class Call {
                             talking.remove(uid);
                         }
                         else {
-                            System.out.println("not talking");
+                            //System.out.println("not talking");
                             command.execute(false, usersCallId.get(uid));
                         }
 
