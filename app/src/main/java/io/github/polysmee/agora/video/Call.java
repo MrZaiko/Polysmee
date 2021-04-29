@@ -145,6 +145,7 @@ public class Call {
 
                 System.out.println("offline : " + usersCallId.get(uid));
                 usersInCall.remove(uid);
+                appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
             }
 
             @Override
