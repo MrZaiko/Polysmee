@@ -67,7 +67,12 @@ public class Call {
         appointment.getTokenOnceAndThen(new DatabaseUser(MainUserSingleton.getInstance().getId()), new StringValueListener() {
             @Override
             public void onDone(String o) {
-                token = o;
+                if(!o.isEmpty()) {
+                    token = o;
+                }
+                else {
+                    token = generateToken(MainUserSingleton.getInstance().getId());
+                }
             }
         });
 
