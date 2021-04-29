@@ -114,14 +114,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
             for (String id : p) {
                 User user = new DatabaseUser(id);
 
-                /*appointment.getTimeCodeOnceAndThen(user, new LongValueListener() {
+                appointment.getTimeCodeOnceAndThen(user, new LongValueListener() {
                     @Override
                     public void onDone(long o) {
                         if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
                             appointment.removeOfCall(user);
                         }
                     }
-                });*/
+                });
 
                 ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
                 participantsViews.put(id,participantsLayout);

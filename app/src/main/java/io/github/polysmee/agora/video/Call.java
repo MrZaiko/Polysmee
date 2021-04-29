@@ -94,8 +94,8 @@ public class Call {
      */
     public void joinChannel() {
         String userId = AuthenticationFactory.getAdaptedInstance().getUid();
-        //String token1 = generateToken(userId);
-        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token, appointment.getId(), userId);
+        String token1 = generateToken(userId);
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
         if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
         }
@@ -216,13 +216,13 @@ public class Call {
                 mRtcEngine.renewToken(token);
             }
 
-            /*@Override
+            @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
                 if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
                     appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
                 }
                 timeCodeIndicator += 1;
-            }*/
+            }
 
         };
     }
