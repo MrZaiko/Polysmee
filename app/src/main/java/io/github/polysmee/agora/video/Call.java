@@ -94,8 +94,8 @@ public class Call {
      */
     public void joinChannel() {
         String userId = AuthenticationFactory.getAdaptedInstance().getUid();
-        String token1 = generateToken(userId);
-        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
+        //String token1 = generateToken(userId);
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token, appointment.getId(), userId);
         if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
         }
@@ -127,10 +127,9 @@ public class Call {
      * @return a token generated using the userId and the appointmentId of the room as channel name
      */
     public String generateToken(@NonNull String userId) {
-        RtcTokenBuilder token = new RtcTokenBuilder();
+        RtcTokenBuilder tokenBuilder = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
-        System.out.println("TOKEN : " + token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp - 172800000));
-        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+        return tokenBuilder.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
     /**
