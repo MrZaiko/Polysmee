@@ -333,6 +333,23 @@ public interface Appointment {
      */
     void removeMessageListener(MessageChildListener listener);
 
+
+    /**
+     *
+     * @param user
+     * @param listener the listener to be added for changes to the token of the given user.
+     *                 It is scheduled only once.
+     */
+    void getTimeCodeOnceAndThen(User user, LongValueListener listener);
+
+
+    /**
+     * sets the timeCode of the given user to the given value
+     * @param user
+     * @param timeCode
+     */
+    void setTimeCode(User user, Long timeCode);
+
     /**
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as
      *            public

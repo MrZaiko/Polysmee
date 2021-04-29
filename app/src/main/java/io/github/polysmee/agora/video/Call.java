@@ -10,19 +10,24 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
 import io.agora.rtc.Constants;
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.agora.rtc.RtcEngine;
 import io.agora.rtc.models.UserInfo;
 import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.RtcTokenBuilder;
 import io.github.polysmee.agora.video.handlers.AGEventHandler;
 import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
@@ -35,28 +40,34 @@ public class Call {
 
     public static final int SUCCESS_CODE = 0;
     public static final int ERROR_CODE = 1;
-
+    public static final int TIME_CODE_FREQUENCY = 10;
+    public static final int INVALID_TIME_CODE_TIME = 30000;
+    private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
     private static final int EXPIRATION_TIME = 3600;
     private RtcEngine mRtcEngine;
     private IRtcEngineEventHandler handler;
-    private final String appointmentId;
-    private final Context context;
-
     private RoomActivityParticipantsFragment room;
     private RoomActivityVideoFragment videoRoom;
     private boolean videoEnabled = false;
     private DatabaseAppointment appointment;
+    private final Map<Integer, String> usersCallId;
+    private final Set<Integer> usersInCall;
+    private final Set<Integer> talking;
+    private  Command<Boolean, String> command;
+
     public Call(String appointmentId, Context context){
-        this.appointmentId = appointmentId;
         this.appointment = new DatabaseAppointment(appointmentId);
+        usersCallId = new HashMap<Integer,String>();
+        usersInCall = new HashSet<Integer>();
+        talking = new HashSet<Integer>();
         initializeHandler();
-        this.context = context;
 
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
+            mRtcEngine.enableAudioVolumeIndication(100, 3, true);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -69,31 +80,22 @@ public class Call {
      * Joins the channel of the room
      * @return 0 if the channel is successfully joined
      */
-    public int joinChannel() {
-        String userId =  AuthenticationFactory.getAdaptedInstance().getUid();
-        String token = generateToken(userId);
-
-        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token,appointment.getId(),userId);
-        if(joinStatus == SUCCESS_CODE) {
+    public void joinChannel() {
+        String userId = AuthenticationFactory.getAdaptedInstance().getUid();
+        String token1 = generateToken(userId);
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
+        if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
-            return SUCCESS_CODE;
         }
-        return ERROR_CODE;
     }
 
     /**
      * Leaves the channel of the room
      * @return 0 if the channel is successfully left
      */
-    public int leaveChannel() {
-        int leaveStatus = mRtcEngine.leaveChannel();
-        if(leaveStatus == SUCCESS_CODE) {
-            appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
-            return SUCCESS_CODE;
-        }
-
-        //fail
-        return ERROR_CODE;
+    public void leaveChannel() {
+        mRtcEngine.leaveChannel();
+        appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
     }
 
     /**
@@ -113,9 +115,17 @@ public class Call {
      * @return a token generated using the userId and the appointmentId of the room as channel name
      */
     public String generateToken(@NonNull String userId) {
-        RtcTokenBuilder token = new RtcTokenBuilder();
+        RtcTokenBuilder tokenBuilder = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
-        return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointmentId,userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+        return tokenBuilder.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+    }
+
+    /**
+     * Sets the command attribute to the value given
+     * @param command the new value of command
+     */
+    public void setCommand(@NonNull Command<Boolean,String> command) {
+        this.command = command;
     }
 
     /**
@@ -124,14 +134,70 @@ public class Call {
     private void initializeHandler() {
 
         handler = new IRtcEngineEventHandler() {
+
+            @Override
+            public void onUserJoined(int uid, int elapsed) {
+                usersInCall.add(uid);
+            }
+
+            @Override
+            public void onUserOffline(int uid, int reason) {
+
+                System.out.println("offline : " + usersCallId.get(uid));
+                usersInCall.remove(uid);
+                appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
+            }
+
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("Huge sucesss");
+                System.out.println("sucesss");
             }
+
             @Override
-            public void onError(int err) {
-                System.out.println("error : " + err);
+            public void onUserInfoUpdated(int uid, UserInfo userInfo) {
+                System.out.println(uid + " => user account : " + userInfo.userAccount);
+                usersCallId.put(uid, userInfo.userAccount);
             }
+
+            @Override
+            public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+                Set<Integer> newUsersInCall = new HashSet<Integer>();
+                if(speakers != null) {
+                    for(int i = 0; i < speakers.length; ++i) {
+                        AudioVolumeInfo audioVolumeInfo = speakers[i];
+                        int uid = audioVolumeInfo.uid;
+                        if(audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
+                            String userId = usersCallId.get(uid);
+                            command.execute(true, userId);
+                            newUsersInCall.add(uid);
+                        }
+                    }
+                }
+
+                for(int uid : usersInCall) {
+                    if(!newUsersInCall.contains(uid)) {
+
+                        if(talking.contains(uid)) {
+                            talking.remove(uid);
+                        }
+                        else {
+                            command.execute(false, usersCallId.get(uid));
+                        }
+
+                    }
+                }
+                talking.addAll(newUsersInCall);
+
+            }
+
+            @Override
+            public void onLocalAudioStats(LocalAudioStats stats) {
+                if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
+                    appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
+                }
+                timeCodeIndicator += 1;
+            }
+
         };
     }
 

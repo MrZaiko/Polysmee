@@ -1,14 +1,12 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -21,20 +19,18 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import io.github.polysmee.R;
-import io.github.polysmee.agora.VoiceCall;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
-import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.login.MainUserSingleton;
 
 
@@ -52,9 +48,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private boolean isInCall = false;
 
 
-    //private VoiceCall voiceCall;
     private DatabaseAppointment databaseAppointment;
-    //private VoiceCall voiceCall;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
@@ -74,7 +68,15 @@ public class RoomActivityParticipantsFragment extends Fragment {
         generateParticipantsView();
         initializePermissionRequester();
         initializeAndDisplayDatabase();
-        //voiceCall = new VoiceCall(databaseAppointment,getContext());
+
+        if(call != null) {
+            call.setCommand(new Command<Boolean, String>() {
+                @Override
+                public void execute(Boolean value, String key) {
+                    setTalkingUser(value,key);
+                }
+            });
+        }
 
         return rootView;
     }
@@ -111,6 +113,16 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
             for (String id : p) {
                 User user = new DatabaseUser(id);
+
+                appointment.getTimeCodeOnceAndThen(user, new LongValueListener() {
+                    @Override
+                    public void onDone(long o) {
+                        if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
+                            appointment.removeOfCall(user);
+                        }
+                    }
+                });
+
                 ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
                 participantsViews.put(id,participantsLayout);
                 participantsLayout.setBackgroundColor(Color.LTGRAY);
@@ -201,6 +213,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         if(call == null){
             call = new Call(getAppointmentId(),this.getContext());
+            call.setCommand(new Command<Boolean, String>() {
+                @Override
+                public void execute(Boolean value, String key) {
+                    setTalkingUser(value,key);
+                }
+            });
         }
         call.joinChannel();
 
@@ -279,6 +297,21 @@ public class RoomActivityParticipantsFragment extends Fragment {
             if(id.equals(MainUserSingleton.getInstance().getId())) {
                 isMuted = false;
             }
+        }
+    }
+
+    /**
+     * Sets the UI so that the given user appears as talking if talking is set to true, is set to normal in call background otherwise
+     * @param talking if the user is talking or not
+     * @param id the id of the user
+     */
+    public void setTalkingUser(boolean talking, @NonNull String id) {
+        ConstraintLayout participantsLayout = participantsViews.get(id);
+        if(talking) {
+            participantsLayout.setBackgroundResource(R.drawable.background_participant_talking_element);
+        }
+        else {
+            participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
         }
     }
 

@@ -520,4 +520,30 @@ public class DatabaseAppointment implements Appointment {
                 .child("messages")
                 .removeEventListener(listener);
     }
+
+
+    @Override
+    public void getTimeCodeOnceAndThen(User user, LongValueListener listener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("callStates")
+                .child(user.getId())
+                .child("timeCode")
+                .addListenerForSingleValueEvent(listener);
+    }
+
+
+    @Override
+    public void setTimeCode(User user, Long timeCode) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("callStates")
+                .child(user.getId())
+                .child("timeCode")
+                .setValue(timeCode);
+    }
 }
