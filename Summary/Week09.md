@@ -7,6 +7,9 @@ My time estimate was accurate.
 
 Next time, I'll keep trying to make good time estimates
 ## Mathis 
+This week I worked on getting the invitation system working. Now, when a user creates an appointment, he cannot directly add people into it, but needs to ask the guest first. This works fine and has a GUI made by Leo.
+I think I got the time estimate right this week, and will work to keep it that way.
+Next week, I will work on investigating how we can implement the offline mode for the user.
 ## Adrien
 I implemented the possibility for the users to see who is talking when they are in a call, I also added a Timecode to the database so that users that lose connection or kill the app while they are in a call won't appear in call anymore.
 
