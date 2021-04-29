@@ -214,7 +214,7 @@ public class Call {
             @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
                 if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
-                    appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
+                    //appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
                 }
                 timeCodeIndicator += 1;
             }

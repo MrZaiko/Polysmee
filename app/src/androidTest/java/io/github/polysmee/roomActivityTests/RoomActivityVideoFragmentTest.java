@@ -67,50 +67,46 @@ public class RoomActivityVideoFragmentTest {
 
 
     @Test
-    public void localVideoCallbacksAreCalledSuccessfully() {
-        try {
-            Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
-            intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+    public void localVideoCallbacksAreCalledSuccessfully(){
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
-            List usersInCall = new ArrayList<String>();
-            DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
-            appointment.addInCallListener(new BooleanChildListener() {
-                @Override
-                public void childAdded(String key, boolean value) {
-                    usersInCall.add(key);
-                }
-            });
-
-            try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
-
-                Logger videoFragmentLogger = (Logger) LoggerFactory.getLogger(RoomActivityVideoFragment.class);
-                CyclicBufferAppender<ILoggingEvent> cyclicBufferAppender = new CyclicBufferAppender<>();
-                cyclicBufferAppender.start();
-                videoFragmentLogger.addAppender(cyclicBufferAppender);
-                List<String> logBackMessages = new ArrayList<>();
-
-
-                swipeViewPagerForward();
-                sleep(1, TimeUnit.SECONDS);
-                swipeViewPagerForward();
-                sleep(2, TimeUnit.SECONDS);
-                clickOn(R.id.roomActivityParticipantElementCallButton);
-                sleep(1, SECONDS);
-                clickOn(R.id.roomActivityParticipantElementVideoButton);
-                sleep(2, SECONDS);
-
-                clickOn(R.id.roomActivityParticipantElementVideoButton);
-                clickOn(R.id.roomActivityParticipantElementCallButton);
-                sleep(2, SECONDS);
-                for (int i = 0; i < cyclicBufferAppender.getLength(); ++i) {
-                    logBackMessages.add(cyclicBufferAppender.get(i).getMessage());
-                }
-
-                //assertTrue(logBackMessages.contains("I successfully joined the call"));
-                //assertTrue(logBackMessages.contains("I left the channel"));
+        List usersInCall = new ArrayList<String>();
+        DatabaseAppointment appointment = new DatabaseAppointment(appointmentId);
+        appointment.addInCallListener(new BooleanChildListener() {
+            @Override
+            public void childAdded(String key, boolean value) {
+                usersInCall.add(key);
             }
-        } catch(Exception e) {
+        });
 
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+
+            Logger videoFragmentLogger  = (Logger) LoggerFactory.getLogger(RoomActivityVideoFragment.class);
+            CyclicBufferAppender<ILoggingEvent> cyclicBufferAppender = new CyclicBufferAppender<>();
+            cyclicBufferAppender.start();
+            videoFragmentLogger.addAppender(cyclicBufferAppender);
+            List<String> logBackMessages = new ArrayList<>();
+
+
+            swipeViewPagerForward();
+            sleep(1, TimeUnit.SECONDS);
+            swipeViewPagerForward();
+            sleep(2, TimeUnit.SECONDS);
+            clickOn(R.id.roomActivityParticipantElementCallButton);
+            sleep(1, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementVideoButton);
+            sleep(2, SECONDS);
+
+            clickOn(R.id.roomActivityParticipantElementVideoButton);
+            clickOn(R.id.roomActivityParticipantElementCallButton);
+            sleep(2, SECONDS);
+            for(int i = 0; i < cyclicBufferAppender.getLength(); ++i){
+                logBackMessages.add(cyclicBufferAppender.get(i).getMessage());
+            }
+
+            assertTrue(logBackMessages.contains("I successfully joined the call"));
+            assertTrue(logBackMessages.contains("I left the channel"));
         }
     }
 }
