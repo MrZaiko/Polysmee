@@ -94,7 +94,8 @@ public class Call {
      */
     public void joinChannel() {
         String userId = AuthenticationFactory.getAdaptedInstance().getUid();
-        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token, appointment.getId(), userId);
+        String token1 = generateToken(userId);
+        int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
         if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
         }
@@ -128,6 +129,7 @@ public class Call {
     public String generateToken(@NonNull String userId) {
         RtcTokenBuilder token = new RtcTokenBuilder();
         int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
+        System.out.println("TOKEN : " + token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp - 172800000));
         return token.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
@@ -214,6 +216,14 @@ public class Call {
                 appointment.setToken(new DatabaseUser(uid), token);
                 mRtcEngine.renewToken(token);
             }
+
+            /*@Override
+            public void onLocalAudioStats(LocalAudioStats stats) {
+                if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
+                    appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
+                }
+                timeCodeIndicator += 1;
+            }*/
 
         };
     }
