@@ -56,7 +56,6 @@ public class Call {
     private final Set<Integer> usersInCall;
     private final Set<Integer> talking;
     private  Command<Boolean, String> command;
-    private String token;
 
     public Call(String appointmentId, Context context){
         this.appointment = new DatabaseAppointment(appointmentId);
@@ -64,17 +63,6 @@ public class Call {
         usersInCall = new HashSet<Integer>();
         talking = new HashSet<Integer>();
         initializeHandler();
-        appointment.getTokenOnceAndThen(new DatabaseUser(MainUserSingleton.getInstance().getId()), new StringValueListener() {
-            @Override
-            public void onDone(String o) {
-                if(!o.isEmpty()) {
-                    token = o;
-                }
-                else {
-                    token = generateToken(MainUserSingleton.getInstance().getId());
-                }
-            }
-        });
 
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
@@ -200,20 +188,6 @@ public class Call {
                 }
                 talking.addAll(newUsersInCall);
 
-            }
-
-            @Override
-            public void onTokenPrivilegeWillExpire(String token) {
-                onRequestToken();
-            }
-
-            @Override
-            public void onRequestToken() {
-                System.out.println("noooooooooooooooooooooooooooo");
-                String uid = MainUserSingleton.getInstance().getId();
-                token = generateToken(uid);
-                appointment.setToken(new DatabaseUser(uid), token);
-                mRtcEngine.renewToken(token);
             }
 
             @Override

@@ -521,17 +521,6 @@ public class DatabaseAppointment implements Appointment {
                 .removeEventListener(listener);
     }
 
-    @Override
-    public void getTokenOnceAndThen(User user, StringValueListener listener) {
-        DatabaseFactory
-                .getAdaptedInstance()
-                .getReference("appointments")
-                .child(id)
-                .child("callStates")
-                .child(user.getId())
-                .child("token")
-                .addListenerForSingleValueEvent(listener);
-    }
 
     @Override
     public void getTimeCodeOnceAndThen(User user, LongValueListener listener) {
@@ -545,17 +534,6 @@ public class DatabaseAppointment implements Appointment {
                 .addListenerForSingleValueEvent(listener);
     }
 
-    @Override
-    public void setToken(User user, String token) {
-        DatabaseFactory
-                .getAdaptedInstance()
-                .getReference("appointments")
-                .child(id)
-                .child("callStates")
-                .child(user.getId())
-                .child("token")
-                .setValue(token);
-    }
 
     @Override
     public void setTimeCode(User user, Long timeCode) {
