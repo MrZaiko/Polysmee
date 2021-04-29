@@ -77,7 +77,6 @@
         android:layout_marginTop="8dp"
         android:layout_marginBottom="8dp"
         android:autofillHints=""
-        android:background="@android:drawable/editbox_background_normal"
         android:ems="10"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toBottomOf="parent"

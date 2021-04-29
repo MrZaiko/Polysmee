@@ -11,6 +11,8 @@ import android.view.MenuItem;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -30,6 +32,13 @@ public class CalendarActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calendar);
+
+        boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getApplicationContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
+        if (isDarkMode==true){
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        }else{
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
 
         ViewPager2 pager = findViewById(R.id.calendarActivityPager);
         FragmentStateAdapter pagerAdapter = new CalendarActivityPagerAdapter(this);

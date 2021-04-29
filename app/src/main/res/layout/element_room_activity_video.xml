@@ -14,7 +14,6 @@
         android:layout_height="192dp"
         tools:layout_editor_absoluteX="61dp"
         tools:layout_editor_absoluteY="178dp"
-        android:background="@android:color/background_light"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
