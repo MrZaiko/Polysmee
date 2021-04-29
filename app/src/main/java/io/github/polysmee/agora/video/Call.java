@@ -145,7 +145,7 @@ public class Call {
 
                 System.out.println("offline : " + usersCallId.get(uid));
                 usersInCall.remove(uid);
-                appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
+                //appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
             }
 
             @Override
@@ -168,10 +168,8 @@ public class Call {
                         int uid = audioVolumeInfo.uid;
                         if(audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
                             String userId = usersCallId.get(uid);
-                            //System.out.println(audioVolumeInfo.uid + " => user " + userId + " has volume : " + audioVolumeInfo.volume);
                             command.execute(true, userId);
                             newUsersInCall.add(uid);
-                            //System.out.println("talking");
                         }
                     }
                 }
@@ -183,7 +181,6 @@ public class Call {
                             talking.remove(uid);
                         }
                         else {
-                            //System.out.println("not talking");
                             command.execute(false, usersCallId.get(uid));
                         }
 
