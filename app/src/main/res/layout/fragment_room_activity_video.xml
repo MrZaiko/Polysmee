@@ -8,11 +8,13 @@
 
     <FrameLayout
         android:id="@+id/roomActivityFocusedVideoFrame"
-        android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/roomActivityScroll"
-        android:layout_width="0dp">
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/roomActivityVideoScroll"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
 
     </FrameLayout>
 
@@ -28,17 +30,19 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <ScrollView
-        android:id="@+id/roomActivityScroll"
-        android:layout_width="140dp"
-        android:layout_height="match_parent"
+        android:id="@+id/roomActivityVideoScroll"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/roomActivityFocusedVideoFrame"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
         <LinearLayout
             android:id="@+id/roomActivityVideosLayout"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="vertical" />
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
     </ScrollView>
 
     <androidx.constraintlayout.widget.Guideline

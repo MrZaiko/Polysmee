@@ -5,13 +5,14 @@
     <color name="purple_700">#FF3700B3</color>
     <color name="teal_200">#FF03DAC5</color>
     <color name="teal_700">#FF018786</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
     <color name="red">#DAFF4343</color>
     <color name="green">#DA3DF437</color>
     <color name="yellow">#DCFFEB3B</color>
     <color name="blue">#03A9F4</color>
+    <color name="grey">#DF939393</color>
 
     <color name="primaryColor">#ef5350</color>
     <color name="primaryLightColor">#ff867c</color>

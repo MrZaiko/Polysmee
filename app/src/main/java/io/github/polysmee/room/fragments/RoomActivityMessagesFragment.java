@@ -9,7 +9,9 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -29,9 +31,11 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
@@ -49,6 +53,7 @@ import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 
 import static android.app.Activity.RESULT_OK;
@@ -103,57 +108,80 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     private void takePicture(View view) {
-        Intent gallery = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(gallery, TAKE_PICTURE);
+        /*Intent gallery = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(gallery, TAKE_PICTURE);*/
+        dispatchTakePictureIntent();
     }
+
+    //==================================================================================================
+
+    Uri currentPhotoUri;
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            try {
+                photoFile = FileHelper.createImageFile(getContext());
+            } catch (IOException ex) {
+                // Error occurred while creating the File
+            }
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                this.currentPhotoUri = FileProvider.getUriForFile(getContext(),
+                        "com.example.android.fileprovider",
+                        photoFile);
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, currentPhotoUri);
+                startActivityForResult(takePictureIntent, TAKE_PICTURE);
+            }
+        }
+    }
+
+
+
+    //==================================================================================================
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK ) {
-            byte[] picturesToByte = new byte[0];
-            
             switch (requestCode) {
                 case SEND_PICTURE:
-                    picturesToByte = data.getByteArrayExtra("data");
+                    currentPhotoUri = (Uri) data.getExtras().get("data");
 
-                    UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
-                            appointmentId, id -> databaseAppointment.addMessage(
-                                    new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
-                            ), s -> showErrorToast());
-
-                    return;
-
-                case PICK_IMAGE:
-                    Uri imageUri = data.getData();
-                    try (InputStream iStream = getContext().getContentResolver().openInputStream(imageUri)) {
-                        picturesToByte = getBytes(iStream);
+                    byte[] picturesToByte = new byte[0];
+                    try {
+                        picturesToByte = getBytes(getContext().getContentResolver().openInputStream(currentPhotoUri));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-                    break;
-                case TAKE_PICTURE:
-                    Bitmap bmp = (Bitmap) data.getExtras().get("data");
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                    picturesToByte = stream.toByteArray();
-                    bmp.recycle();
+                    UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
+                            appointmentId, id -> databaseAppointment.addMessage(
+                                    new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
+                            ), s -> showToast("An error occurred"));
 
-                    break;
-                default:
                     return;
-            }
 
-            Intent intent = new Intent(getContext(), PictureEditActivity.class);
-            intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, picturesToByte);
-            startActivityForResult(intent, SEND_PICTURE);
+                case PICK_IMAGE:
+                    currentPhotoUri = data.getData();
+
+                case TAKE_PICTURE:
+                    Intent intent = new Intent(getContext(), PictureEditActivity.class);
+                    intent.putExtra(PictureEditActivity.PICTURE_URI, currentPhotoUri);
+                    startActivityForResult(intent, SEND_PICTURE);
+                    break;
+
+                default:
+            }
         }
     }
 
-    private void showErrorToast() {
+    private void showToast(String message) {
         Context context = getContext();
-        CharSequence text = "An error occurred";
+        CharSequence text = message;
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
@@ -245,18 +273,18 @@ public class RoomActivityMessagesFragment extends Fragment {
             messageLayout.setOnLongClickListener(v -> {
                 if (actionMode != null)
                     return false;
-                actionMode = getActivity().startActionMode(generateCallback(messageKey, isAPicture));
+                actionMode = getActivity().startActionMode(generateCallback(messageKey, isAPicture, message));
                 return true;
             });
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setText(formatter.format(currentDate));
 
             if (isAPicture)
-                ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setBackgroundColor(Color.BLACK);
+                messageLayout.findViewById(R.id.roomActivityMessageElementDateSent).setBackgroundColor(Color.BLACK);
         } else {
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived)).setText(formatter.format(currentDate));
 
             if (isAPicture)
-                ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived)).setBackgroundColor(Color.BLACK);
+                messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived).setBackgroundColor(Color.BLACK);
         }
 
         return messageLayout;
@@ -268,11 +296,11 @@ public class RoomActivityMessagesFragment extends Fragment {
             ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
             image.setImageBitmap(Bitmap.createBitmap(bmp));
         }, s -> {
-            ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText)).setVisibility(View.VISIBLE);
+            messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE);
         });
     }
 
-    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture) {
+    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId) {
         return new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -298,6 +326,8 @@ public class RoomActivityMessagesFragment extends Fragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.roomEditMessageMenuDelete:
+                        if (isAPicture)
+                            UploadServiceFactory.getAdaptedInstance().deleteImage(pictureId, l -> showToast("Picture successfully removed") , l -> showToast("An error occurred"));
                         databaseAppointment.removeMessage(messageKey);
                         mode.finish();
                         return true;

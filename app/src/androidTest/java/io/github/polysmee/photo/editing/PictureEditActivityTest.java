@@ -208,7 +208,7 @@ public class PictureEditActivityTest {
     @Test
     public void bigYoshiIsCorrectlyDisplayed() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             bitmapMatcher(bigYoshiBitmap);
@@ -229,7 +229,7 @@ public class PictureEditActivityTest {
     @Test
     public void filtersAreCorrectlyApplied() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             scrollTo(R.id.pictureEditBinary);
@@ -253,7 +253,7 @@ public class PictureEditActivityTest {
     @Test
     public void colorsAreCorrectlyApplied() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             scrollTo(R.id.pictureEditBlue);
@@ -281,7 +281,7 @@ public class PictureEditActivityTest {
     @Test
     public void strokeWidthIsCorrectlySet() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             setProgressTo(R.id.pictureEditStrokeWidthBar, 0);
@@ -300,7 +300,7 @@ public class PictureEditActivityTest {
     @Test
     public void resetButtonWorks() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
@@ -314,7 +314,7 @@ public class PictureEditActivityTest {
     @Test
     public void returnedPictureIsTheAlteredPicture() throws InterruptedException {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_BYTES_KEY, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         ActivityScenario<PictureEditActivity> scenario = ActivityScenario.launch(intent);
         clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
