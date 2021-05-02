@@ -105,6 +105,36 @@ public interface User{
      */
     String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate);
 
+
+    /**
+     * @param user the user to be added to the friend list
+     */
+    void addFriend(User user);
+
+    /**
+     * @param user the user to be removed from the friend list
+     */
+    void removeFriend(User user);
+
+    /**
+     * @param valueListener the listener to be added for changes to the user's friends list.
+     *          It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getFriendsAndThen(StringSetValueListener valueListener);
+    /**
+     * @param valueListener the listener to be added for changes to the user's friends list.
+     *                      It is scheduled only once.
+     */
+    void getFriends_Once_And_Then(StringSetValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be removed from listening to changes to the user's friend
+     *                      list.
+     */
+    void removeFriendsListener(StringSetValueListener valueListener);
+
+
+
     /**
      * @param valueListener a listener that will be run once that will receive the list of every user on the database
      */
