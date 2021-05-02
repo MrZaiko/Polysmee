@@ -51,7 +51,7 @@ public class Call {
     private RoomActivityParticipantsFragment room;
     private RoomActivityVideoFragment videoRoom;
     private boolean videoEnabled = false;
-    private DatabaseAppointment appointment;
+    private final DatabaseAppointment appointment;
     private final Map<Integer, String> usersCallId;
     private final Set<Integer> usersInCall;
     private final Set<Integer> talking;
@@ -68,6 +68,7 @@ public class Call {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
             mRtcEngine.enableAudioVolumeIndication(100, 3, true);
+            mRtcEngine.setAudioEffectPreset(Constants.VOICE_CHANGER_EFFECT_HULK);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -107,6 +108,14 @@ public class Call {
         appointment.muteUser(new DatabaseUser(MainUserSingleton.getInstance().getId()), mute);
 
         return result;
+    }
+
+    /**
+     * Sets the audio effect to the give effect
+     * @param effect
+     */
+    public void setVoiceEffect(int effect) {
+        mRtcEngine.setAudioEffectPreset(effect);
     }
 
     /**

@@ -246,6 +246,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     /**
+     * Sets the audio effect to the give effect
+     * @param effect
+     */
+    private void setAudioEffect(int effect) {
+        call.setVoiceEffect(effect);
+    }
+
+    /**
      * Make the user whose id is given appear as online (offline) in the room frontend if online is set to true (false)
      * @param online
      * @param id
