@@ -20,7 +20,9 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
@@ -53,6 +55,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
     private BooleanChildListener listener;
+    private Set<String> inCall = new HashSet<String>();
 
     private Call call;
 
@@ -106,6 +109,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
      */
     private void generateParticipantsView() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
+
         participantsViews = new HashMap<String, ConstraintLayout>();
 
         appointment.getParticipantsIdAndThen(p -> {
@@ -174,7 +178,50 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 //Add a blank textView to add space between participant entries
                 layout.addView(new TextView(rootView.getContext()));
             }
-        });}
+            refreshViews();
+        });
+
+    }
+
+    /**
+     * regenerates the participant views in the room
+     */
+    private void refreshViews() {
+            LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
+            layout.removeAllViews();
+            String userId = MainUserSingleton.getInstance().getId();
+            //add current user for it to appear first
+            layout.addView(participantsViews.get(userId));
+            layout.addView(new TextView(rootView.getContext()));
+
+            Set<String> nowInCall = new HashSet<String>(inCall);
+            Set<String> notInCall = new HashSet<String>();
+
+            //make the users that are connected to the call appear on the top of the screen
+            for(String id : participantsViews.keySet()) {
+                if(!id.equals(userId)) {
+                    if(nowInCall.contains(id)) {
+                        System.out.println("inCall");
+                        layout.addView(participantsViews.get(id));
+                        //Add a blank textView to add space between participant entries
+                        layout.addView(new TextView(rootView.getContext()));
+                    }
+                    else {
+                        System.out.println("notInCall");
+                        notInCall.add(id);
+                    }
+                }
+
+            }
+
+            for(String id : notInCall) {
+                System.out.println("mainId: " + userId);
+                System.out.println("id : " + id);
+                layout.addView(participantsViews.get(id));
+                //Add a blank textView to add space between participant entries
+                layout.addView(new TextView(rootView.getContext()));
+            }
+        }
 
 
     private void shareVideoBehavior(View cameraButton){
@@ -318,9 +365,13 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(talking) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_talking_element);
         }
-        else {
+        else if(inCall.contains(id)){
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
         }
+        else {
+            participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
+        }
+
     }
 
     /**
@@ -365,14 +416,19 @@ public class RoomActivityParticipantsFragment extends Fragment {
         listener = new BooleanChildListener() {
             @Override
             public void childAdded(String key, boolean value) {
-
+                inCall.add(key);
+                refreshViews();
                 setUserOnline(true, key);
                 setMutedUser(value, key);
+
             }
 
             @Override
             public void childRemoved(String key, boolean value) {
+                inCall.remove(key);
+                refreshViews();
                 setUserOnline(false, key);
+
             }
 
             @Override
