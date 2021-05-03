@@ -56,6 +56,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private Map<String, ConstraintLayout> participantsViews;
     private BooleanChildListener listener;
     private Set<String> inCall = new HashSet<String>();
+    private Set<String> locallyMuted = new HashSet<String>();
 
     private Call call;
 
@@ -170,8 +171,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     muteButton.setOnClickListener(v -> muteUser());
                     videoButton.setOnClickListener(this::shareVideoBehavior);
                 } else {
+                    muteButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
                     user.getNameAndThen(participantName::setText);
                 }
+
+
 
                 layout.addView(participantsLayout);
 
@@ -348,11 +352,37 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 isMuted = true;
             }
         } else {
-            muteButton.setImageResource(R.drawable.baseline_mic);
+            if(!locallyMuted.contains(id)) {
+                muteButton.setImageResource(R.drawable.baseline_mic);
+            }
+
             if(id.equals(MainUserSingleton.getInstance().getId())) {
                 isMuted = false;
             }
         }
+    }
+
+    /**
+     * Mutes (unmutes) the given user locally if muted is set to true (false)
+     * @param muted
+     * @param id
+     */
+    private void muteUserLocally(boolean muted, @NonNull String id) {
+        if(isInCall) {
+            ConstraintLayout participantsLayout = participantsViews.get(id);
+            ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
+            call.muteUserLocally(muted, id);
+            if(muted) {
+                locallyMuted.add(id);
+                muteButton.setImageResource(R.drawable.baseline_mic_off);
+            }
+            else {
+                locallyMuted.remove(id);
+                muteButton.setImageResource(R.drawable.baseline_mic);
+            }
+
+        }
+
     }
 
     /**

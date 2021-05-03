@@ -42,6 +42,8 @@ public class Call {
     public static final int ERROR_CODE = 1;
     public static final int TIME_CODE_FREQUENCY = 10;
     public static final int INVALID_TIME_CODE_TIME = 30000;
+    private static final int VOLUME_OFF = 0;
+    private static final int STANDARD_VOLUME = 100;
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -116,6 +118,19 @@ public class Call {
      */
     public void setVoiceEffect(int effect) {
         mRtcEngine.setAudioEffectPreset(effect);
+    }
+
+    /**
+     * Mutes (unmutes) the given user locally if muted is set to true (false)
+     * @param muted
+     * @param id
+     */
+    public void muteUserLocally(boolean muted, String id) {
+        for(int uid : usersCallId.keySet()) {
+            if(usersCallId.get(uid).equals(id)) {
+                mRtcEngine.adjustUserPlaybackSignalVolume(uid, muted ? VOLUME_OFF : STANDARD_VOLUME);
+            }
+        }
     }
 
     /**
