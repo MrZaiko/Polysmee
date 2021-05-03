@@ -49,6 +49,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
 
     private DatabaseAppointment databaseAppointment;
+    private RoomActivityVideoFragment videoFragment;
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
@@ -69,13 +70,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
         initializePermissionRequester();
         initializeAndDisplayDatabase();
 
+        videoFragment = (RoomActivityVideoFragment) getActivity().getSupportFragmentManager().getFragments().get(1);
+
         if(call != null) {
-            call.setCommand(new Command<Boolean, String>() {
-                @Override
-                public void execute(Boolean value, String key) {
-                    setTalkingUser(value,key);
-                }
-            });
+            call.setCommand(this::setTalkingUser);
         }
 
         return rootView;
@@ -182,10 +180,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(call.isVideoEnabled()){
             //disable button
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);
-            ((ImageView) cameraButton).setTag(R.drawable.baseline_video_off);
+            cameraButton.setTag(R.drawable.baseline_video_off);
         }else{
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video);
-            ((ImageView) cameraButton).setTag(R.drawable.baseline_video);
+            cameraButton.setTag(R.drawable.baseline_video);
         }
         call.shareLocalVideo();
     }
@@ -212,16 +210,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
 
         if(call == null){
-            call = new Call(getAppointmentId(),this.getContext());
-            call.setCommand(new Command<Boolean, String>() {
-                @Override
-                public void execute(Boolean value, String key) {
-                    setTalkingUser(value,key);
-                }
-            });
+            call = new Call(getAppointmentId(), getContext());
+            call.setCommand(this::setTalkingUser);
         }
-        call.joinChannel();
 
+        call.joinChannel();
     }
 
 
@@ -233,7 +226,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(call != null) {
             call.leaveChannel();
         }
-
     }
 
     /**
@@ -306,6 +298,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * @param id the id of the user
      */
     public void setTalkingUser(boolean talking, @NonNull String id) {
+        int uid = call.getUid(id);
+        if (call != null && uid != -1) {
+            videoFragment.setTalking(uid, talking);
+        }
+
         ConstraintLayout participantsLayout = participantsViews.get(id);
         if(talking) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_talking_element);
