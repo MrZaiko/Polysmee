@@ -138,7 +138,7 @@ public class FriendsActivity extends AppCompatActivity {
     protected void createFriendEntry(String userId, String name){
         ConstraintLayout friendEntryLayout = (ConstraintLayout)inflater.inflate(R.layout.element_friends_activity_entry,null);
         ((TextView)friendEntryLayout.findViewById(R.id.friendEntryName)).setText(name);
-        ((FloatingActionButton)friendEntryLayout.findViewById(R.id.removeFriendButton)).setOnClickListener((v)->{
+        ((FloatingActionButton)friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton)).setOnClickListener((v)->{
             user.removeFriend(new DatabaseUser(userId));
         });
         TextView padding = new TextView(this);
