@@ -48,7 +48,8 @@
     <string name="roomInfoTitleText">Title</string>
     <string name="roomInfoCourseText">Course</string>
 
-    <string name="friendsActivityEncouragingMessage">Add and see your friends below!</string>
+    <string name="friendsActivityEncouragingMessage1">Add and see your friends below!</string>
+    <string name="friendsActivityEncouragingMessage2">Add friends here!</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
     <string name="sync_header">Sync</string>
