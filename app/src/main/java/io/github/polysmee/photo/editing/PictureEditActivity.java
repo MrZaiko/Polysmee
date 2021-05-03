@@ -2,19 +2,17 @@ package io.github.polysmee.photo.editing;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.UriMatcher;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.SeekBar;
 
@@ -25,13 +23,11 @@ import androidx.core.content.FileProvider;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.github.polysmee.R;
-
-import static android.os.ParcelFileDescriptor.MODE_TRUNCATE;
+import top.defaults.colorpicker.ColorPickerPopup;
 
 public class PictureEditActivity extends AppCompatActivity {
 
@@ -40,6 +36,7 @@ public class PictureEditActivity extends AppCompatActivity {
     private static final float MIN_STROKE = 1f;
 
     private Bitmap pictureBitmap;
+    private Button colorPickerButton;
     private DrawableImageView displayedPictureView;
     private Uri pictureUri;
     private SeekBar strokeBar;
@@ -59,13 +56,17 @@ public class PictureEditActivity extends AppCompatActivity {
 
         displayedPictureView = findViewById(R.id.pictureEditPicture);
         displayedPictureView.setImageBitmap(pictureBitmap);
-        displayedPictureView.setColor(R.color.red);
+        displayedPictureView.setColor(Color.RED);
 
         strokeBar = findViewById(R.id.pictureEditStrokeWidthBar);
         strokeBar.setOnSeekBarChangeListener(strokeBarBehavior());
 
         findViewById(R.id.pictureEditResetButton).setOnClickListener(v -> reset());
         findViewById(R.id.pictureEditDoneButton).setOnClickListener(this::doneBehavior);
+
+        colorPickerButton = findViewById(R.id.pictureEditColorPicker);
+        colorPickerButton.setBackgroundColor(Color.RED);
+        colorPickerButton.setOnClickListener(this::colorPickerButtonBehavior);
 
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
@@ -76,6 +77,28 @@ public class PictureEditActivity extends AppCompatActivity {
         };
 
         getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    private void colorPickerButtonBehavior(View view) {
+        new ColorPickerPopup.Builder(PictureEditActivity.this)
+                .initialColor(Color.RED)
+                .enableBrightness(true)
+                .enableAlpha(true)
+                .okTitle("Choose")
+                .cancelTitle("Cancel")
+                .showIndicator(true)
+                .showValue(false)
+                .build()
+                .show(
+                        view,
+                        new ColorPickerPopup.ColorPickerObserver() {
+                            @Override
+                            public void
+                            onColorPicked(int color) {
+                                displayedPictureView.setColor(color);
+                                view.setBackgroundColor(color);
+                            }
+                        });
     }
 
     private SeekBar.OnSeekBarChangeListener strokeBarBehavior() {
@@ -135,9 +158,9 @@ public class PictureEditActivity extends AppCompatActivity {
     private void reset() {
         displayedPictureView.setImageBitmap(pictureBitmap);
         strokeBar.setProgress(0);
-        displayedPictureView.setColor(R.color.black);
+        displayedPictureView.setColor(Color.RED);
+        colorPickerButton.setBackgroundColor(Color.RED);
         ((RadioButton) findViewById(R.id.pictureEditNormal)).setChecked(true);
-        ((RadioButton) findViewById(R.id.pictureEditBlack)).setChecked(true);
     }
 
 
@@ -165,38 +188,6 @@ public class PictureEditActivity extends AppCompatActivity {
             case R.id.pictureEditSepia:
                 if (checked)
                     applyColorFilter(Filters.sepiaFilter());
-                break;
-        }
-    }
-
-    @SuppressLint("NonConstantResourceId")
-    public void onColorSelected(View view) {
-        boolean checked = ((RadioButton) view).isChecked();
-
-        switch(view.getId()) {
-            case R.id.pictureEditRed:
-                if (checked)
-                    displayedPictureView.setColor(R.color.red);
-                break;
-
-            case R.id.pictureEditBlack:
-                if (checked)
-                    displayedPictureView.setColor(R.color.black);
-                break;
-
-            case R.id.pictureEditBlue:
-                if (checked)
-                    displayedPictureView.setColor(R.color.blue);
-                break;
-
-            case R.id.pictureEditYellow:
-                if (checked)
-                    displayedPictureView.setColor(R.color.yellow);
-                break;
-
-            case R.id.pictureEditGreen:
-                if (checked)
-                    displayedPictureView.setColor(R.color.green);
                 break;
         }
     }

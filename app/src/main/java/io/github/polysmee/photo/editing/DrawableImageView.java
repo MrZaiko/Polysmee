@@ -94,7 +94,7 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     public void setColor(int colorId) {
         currentColorId = colorId;
-        paint.setColor(getResources().getColor(colorId));
+        paint.setColor(colorId);
     }
 
     public int getCurrentColorId() {
