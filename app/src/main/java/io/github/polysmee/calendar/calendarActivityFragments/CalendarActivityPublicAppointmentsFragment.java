@@ -1,14 +1,7 @@
 package io.github.polysmee.calendar.calendarActivityFragments;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +10,11 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,15 +30,16 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
-import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
-import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.RoomActivity;
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.*;
+
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.setDayText;
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.setTodayDateInDailyCalendar;
 
 public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 

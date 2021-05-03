@@ -33,11 +33,12 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
 
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.*;
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.setDayText;
+import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.setTodayDateInDailyCalendar;
 
 public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
