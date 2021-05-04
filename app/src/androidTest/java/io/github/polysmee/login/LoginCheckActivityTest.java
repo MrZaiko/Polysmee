@@ -16,7 +16,6 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.ExecutionException;
 
-import io.github.polysmee.MainActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 

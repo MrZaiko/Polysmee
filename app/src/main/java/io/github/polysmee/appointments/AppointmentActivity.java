@@ -295,12 +295,12 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         String s = editCourse.getText().toString();
         if(!courses.contains(s)) {
-            builder.setMessage("Course not found")
+            builder.setMessage(getString(R.string.genericCourseNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
             error = true;
         }

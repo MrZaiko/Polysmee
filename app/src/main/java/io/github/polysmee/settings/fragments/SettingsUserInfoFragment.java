@@ -53,7 +53,7 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
         userEmailEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserEmail);
         userEmailEditTextPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_email));
         userEmailEditTextPreference.setEnabled(false);
-        userEmailEditTextPreference.setDefaultValue("Please wait");
+        userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
         if(user!=null){
             userEmailEditTextPreference.setSummary(user.getEmail());

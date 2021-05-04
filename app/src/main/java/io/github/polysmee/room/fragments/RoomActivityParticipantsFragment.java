@@ -151,7 +151,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
                 if (id.equals(userId)) {
 
-                    participantName.setText("You");
+                    participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
 
                     callButton.setOnClickListener(v ->  {

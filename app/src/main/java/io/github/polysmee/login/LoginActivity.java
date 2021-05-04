@@ -92,9 +92,9 @@ public class LoginActivity extends AppCompatActivity {
             finish();
 
         } else if(response == null) {
-            Toast.makeText(this, "user canceled login", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.loginActivityUserCancelled), Toast.LENGTH_LONG).show();
         } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-            Toast.makeText(this, "no network is available", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.loginActivityNoNetwork), Toast.LENGTH_LONG).show();
         }
 
     }

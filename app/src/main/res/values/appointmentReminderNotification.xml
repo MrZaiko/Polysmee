@@ -1,7 +1,6 @@
 <resources>
-    <string name="appointment_reminder_notification_chanel_id">appointment_reminder_notication</string>
-    <string name="appointment_reminder_notification_chanel_name">appointment reminder notification</string>
+    <string name="appointment_reminder_notification_chanel_id" translatable="false">appointment_reminder_notication</string>
+    <string name="appointment_reminder_notification_chanel_name" translatable="false">appointment reminder notification</string>
     <string name="appointment_reminder_notification_chanel_description">Notification chanel used to remind the user that he/she has an appointment coming soon</string>
-    <string name="appointment_reminder_notification_notification_title">Appointment reminder :)</string>
-    <string name="appointment_reminder_notification_notification_text">You have a appointment starting soon</string>
+    <string name="">Appointment reminder :)</string>
 </resources>

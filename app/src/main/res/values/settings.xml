@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="title_settings_appointments_reminder">Appointments reminder settings</string>
-    <string name="preference_key_appointments_reminder_notification_time_from_appointment_minutes">preference_key_appointments_reminder_notification_time_from_appointment_min</string>
-    <string name="preference_key_is_dark_mode">preference_key_is_dark_mode</string>
+    <string name="preference_key_appointments_reminder_notification_time_from_appointment_minutes" translatable="false">preference_key_appointments_reminder_notification_time_from_appointment_min</string>
+    <string name="preference_key_is_dark_mode" translatable="false">preference_key_is_dark_mode</string>
     <string name="title_settings_appointments_reminder_notification_time_from_appointment">Remind me before</string>
     <integer name="default_appointment_reminder_notification__time_from_appointment_min">10</integer>
     <string name="summary_settings_appointments_reminder_notification_time_from_appointment">Set how much time before a appointment you should be reminded (in minutes)</string>
     <string name="title_settings_main_user_name">Username</string>
     <string name="title_settings_main_user_email">Email</string>
-    <string name="title_settings_main_user_info">User information</string>
+    <string name="">User information</string>
 </resources>

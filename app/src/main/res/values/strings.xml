@@ -18,10 +18,12 @@
     <string name="calendarEntryDetailsActivityInviteHint">Who do you want to add?</string>
     <string name="calendarEntryDetailsActivityBanHint">Who do you want to ban?</string>
 
-    <string name="title_activity_appointment">AppointmentActivity</string>
-    <string name="title_activity_login_check">LoginCheckActivity</string>
+    <string name="title_activity_appointment" translatable="false">AppointmentActivity</string>
+    <string name="title_activity_login_check" translatable="false">LoginCheckActivity</string>
     <string name="user_prompt">Hello user ! You are not connected. Please login !</string>
     <string name="login">Login</string>
+    <string name="loginActivityNoNetwork">no network is available</string>
+    <string name="loginActivityUserCancelled">user canceled login</string>
 
     <string name="appointment_creation_appointment_title">Title</string>
     <string name="appointment_creation_appointment_course">Course</string>
@@ -61,11 +63,11 @@
     <string name="attachment_title">Download incoming attachments</string>
     <string name="attachment_summary_on">Automatically download attachments for incoming emails</string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="title_activity_settings">SettingsActivity</string>
+    <string name="title_activity_settings" translatable="false">SettingsActivity</string>
     <string name="roomActivityRemovedDialogQuitButton">Quit appointment</string>
     <string name="roomActivityRemovedDialogText">You are not a member of this appointment!</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="AppointmentActivityDetailModeApplyChanges">Apply changes</string>
     <string name="AppointmentActivityDetailModeParticipants">Participants</string>
     <string name="AppointmentActivityDetailModeBannedParticipants">Banned participants</string>
@@ -75,6 +77,28 @@
     <string name="invites_management_current_invitations">Current invitations</string>
     <string name="calendarActivityPublicAppointmentsCourse">Course</string>
     <string name="calendarActivityPublicAppointmentsFilter">Filter</string>
+    <string name="calendarActivityMyAppointments">My appointments</string>
+    <string name="calendarActivityPublicAppointments">Public appointments</string>
+    <string name="genericTitlePlaceHolder">Title</string>
+    <string name="genericDatePlaceholder">Date</string>
+    <string name="genericJoinText">Join</string>
+    <string name="genericAcceptText">Accept</string>
+    <string name="genericRefuseText">Refuse</string>
+    <string name="genericSenderPlaceholder">Sender</string>
+    <string name="genericContentPlaceholder">Content</string>
+    <string name="genericParticipantPlaceholder">Participant</string>
+    <string name="genericOwnerText">Owner</string>
+    <string name="genericPictureFailedToLoadText">Picture failed to load</string>
+    <string name="genericCreateANewAppointmentText">Create a new appointment</string>
+    <string name="genericErrorText">An error occurred</string>
+    <string name="genericOkText">OK</string>
+    <string name="genericCourseNotFoundText">Course not found</string>
+    <string name="genericUserNotFoundText">User not found</string>
+    <string name="genericNamesHintText">Type Names Here</string>
+    <string name="genericYouText">You</string>
+    <string name="genericWaitText">Please wait</string>
+    <string name="appointment_reminder_notification_notification_text">Appointment reminder :)</string>
+
 
 </resources>
 

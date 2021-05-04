@@ -153,7 +153,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private void showErrorToast() {
         Context context = getContext();
-        CharSequence text = "An error occurred";
+        CharSequence text = getString(R.string.genericErrorText);
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);

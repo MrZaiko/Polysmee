@@ -117,7 +117,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         }
 
         btnBan.setOnClickListener(this::banButtonBehavior);
-        searchBan.setHint("Type names here");
+        searchBan.setHint(getString(R.string.genericNamesHintText));
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchBanLayout);
@@ -146,12 +146,12 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private void banButtonBehavior(View view) {
         String s = searchBan.getText().toString();
         if(!users.contains(s)) {
-            builder.setMessage("User not found")
+            builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
         }
 

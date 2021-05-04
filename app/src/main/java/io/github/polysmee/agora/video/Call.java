@@ -150,7 +150,7 @@ public class Call {
 
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("sucesss");
+                System.out.println("success");
             }
 
             @Override
