@@ -270,6 +270,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             });
         }
         call.joinChannel();
+        System.out.println("yi");
 
     }
 
@@ -317,13 +318,20 @@ public class RoomActivityParticipantsFragment extends Fragment {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
             videoButton.setVisibility(View.VISIBLE);
+
             if(id.equals(MainUserSingleton.getInstance().getId())) {
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
                 System.out.println("child added");
-            } else {
-                speakerButton.setVisibility(View.VISIBLE);
+
+            } else{
+                inCall.add(id);
+                if(isInCall) {
+                    speakerButton.setVisibility(View.VISIBLE);
+                }
+
+
             }
         }
         else {
@@ -332,12 +340,21 @@ public class RoomActivityParticipantsFragment extends Fragment {
             videoButton.setVisibility(View.GONE);
             if(id.equals(MainUserSingleton.getInstance().getId())) {
                 isInCall = false;
+                locallyMuted.clear();
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call);
             } else {
                 speakerButton.setVisibility(View.GONE);
+                inCall.remove(id);
+
             }
 
+        }
+
+        if(id.equals(MainUserSingleton.getInstance().getId())) {
+            for(String userId : inCall) {
+                displaySpeakerButton(online, userId);
+            }
         }
     }
 
@@ -407,6 +424,17 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     /**
+     * Displays the speaker button of the given user in the call if on is set to true and makes it disappear otherwise
+     * @param on
+     * @param id
+     */
+    private void displaySpeakerButton(boolean on, @NonNull String id) {
+        ConstraintLayout participantsLayout = participantsViews.get(id);
+        View speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
+        speakerButton.setVisibility(on ? View.VISIBLE : View.GONE);
+    }
+
+    /**
      * Initializes the request permission requester
      */
     private void initializePermissionRequester() {
@@ -448,18 +476,19 @@ public class RoomActivityParticipantsFragment extends Fragment {
         listener = new BooleanChildListener() {
             @Override
             public void childAdded(String key, boolean value) {
-                inCall.add(key);
-                refreshViews();
+
                 setUserOnline(true, key);
                 setMutedUser(value, key);
+                refreshViews();
+
 
             }
 
             @Override
             public void childRemoved(String key, boolean value) {
-                inCall.remove(key);
-                refreshViews();
                 setUserOnline(false, key);
+                refreshViews();
+
 
             }
 
