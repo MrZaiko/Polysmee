@@ -171,7 +171,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     muteButton.setOnClickListener(v -> muteUser());
                     videoButton.setOnClickListener(this::shareVideoBehavior);
                 } else {
-                    muteButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
+                    ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
+                    speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
                     user.getNameAndThen(participantName::setText);
                 }
 
@@ -205,13 +206,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
             for(String id : participantsViews.keySet()) {
                 if(!id.equals(userId)) {
                     if(nowInCall.contains(id)) {
-                        System.out.println("inCall");
                         layout.addView(participantsViews.get(id));
                         //Add a blank textView to add space between participant entries
                         layout.addView(new TextView(rootView.getContext()));
                     }
                     else {
-                        System.out.println("notInCall");
                         notInCall.add(id);
                     }
                 }
@@ -219,8 +218,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             }
 
             for(String id : notInCall) {
-                System.out.println("mainId: " + userId);
-                System.out.println("id : " + id);
+
                 layout.addView(participantsViews.get(id));
                 //Add a blank textView to add space between participant entries
                 layout.addView(new TextView(rootView.getContext()));
@@ -314,6 +312,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         ConstraintLayout participantsLayout = participantsViews.get(id);
         View muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
         View videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
+        View speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
         if(online) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
@@ -323,6 +322,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
                 System.out.println("child added");
+            } else {
+                speakerButton.setVisibility(View.VISIBLE);
             }
         }
         else {
@@ -333,7 +334,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 isInCall = false;
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call);
+            } else {
+                speakerButton.setVisibility(View.GONE);
             }
+
         }
     }
 
@@ -368,20 +372,18 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * @param id
      */
     private void muteUserLocally(boolean muted, @NonNull String id) {
-        if(isInCall) {
             ConstraintLayout participantsLayout = participantsViews.get(id);
-            ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
+            ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
             call.muteUserLocally(muted, id);
             if(muted) {
                 locallyMuted.add(id);
-                muteButton.setImageResource(R.drawable.baseline_mic_off);
+                speakerButton.setImageResource(R.drawable.outline_volume_off);
             }
             else {
                 locallyMuted.remove(id);
-                muteButton.setImageResource(R.drawable.baseline_mic);
+                speakerButton.setImageResource(R.drawable.outline_volume_up);
             }
 
-        }
 
     }
 
