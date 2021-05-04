@@ -5,12 +5,13 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import io.github.polysmee.R;
 import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityMyAppointmentsFragment;
 import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
 
 public class CalendarActivityPagerAdapter extends FragmentStateAdapter {
 
-    public static String[] FRAGMENT_NAME = new String[]{"MY APPOINTMENTS", "PUBLIC APPOINTMENTS"};
+    public static int[] FRAGMENT_NAME_ID = new int[]{R.string.calendarActivityMyAppointments, R.string.calendarActivityPublicAppointments};
     private final static int FRAGMENTS_NUMBER = 2;
 
     public CalendarActivityPagerAdapter(FragmentActivity fm) {

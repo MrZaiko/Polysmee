@@ -38,8 +38,8 @@
     <string name="appointment_creation_only_users_in_database">Vous ne pouvez inviter ou bannir que les utilisateurs dans la base de données</string>
     <string name="appointment_creation_end_time_txt">Cliquer pour choisir</string>
     <string name="appointment_creation_start_time_txt">Cliquer pour choisir</string>
-    <string name="appointment_settings_check_invites">Voir/Supprimer les invitations</string>
-    <string name="appointment_settings_check_bans">Voir/Supprimer les bannissements</string>
+    <string name="appointment_settings_invite_user">Voir/Supprimer les invitations</string>
+    <string name="appointment_settings_ban_user">Voir/Supprimer les bannissements</string>
     <string name="appointment_creation_settings">Paramètres</string>
     <string name="appointment_settings_invite">Inviter des utilisateurs</string>
     <string name="appointment_settings_ban">Bannir des utilisateurs</string>
@@ -89,4 +89,17 @@
     <string name="genericNamesHintText">Entrez les noms ici</string>
     <string name="genericYouText">Vous</string>
     <string name="genericWaitText">Veuillez patienter</string>
+    <string name="title_settings_main_user_info">Informations utilisateur</string>
+    <string name="appointment_reminder_notification_notification_title">Rappel de meeting :)</string>
+    <string name="title_activity_settings">Paramètres</string>
+    <string name="appointment_creation_end_txt">Fin :</string>
+    <string name="appointment_creation_start_txt">Début :</string>
+    <string name="dark_theme_text">Thème sombre</string>
+    <string name="roomTabMessagesText">Messages</string>
+    <string name="roomTabVideoText">Vidéo</string>
+    <string name="roomTabCallText">Appel</string>
+    <string name="roomMessageOptionText">Choissisez une option</string>
+    <string name="roomEditMessageText">Modifier le message</string>
+    <string name="genericEditText">Modifier</string>
+    <string name="genericCancelText">Annuler</string>
 </resources>

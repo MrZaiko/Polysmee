@@ -166,7 +166,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
             closeSoftKeyboard();
             clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "SDP");
             closeSoftKeyboard();

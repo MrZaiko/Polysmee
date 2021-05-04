@@ -278,7 +278,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
-                mode.setTitle("Choose an option");
+                mode.setTitle(getString(R.string.roomMessageOptionText));
 
                 if (isAPicture)
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
@@ -324,7 +324,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         TextView messageView = messagesDisplayed.get(messageKey).findViewById(R.id.roomActivityMessageElementMessageContent);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Edit message");
+        builder.setTitle(getString(R.string.roomEditMessageText));
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_room_activity_edit_and_delete, null);
@@ -332,11 +332,11 @@ public class RoomActivityMessagesFragment extends Fragment {
         EditText editMessage = dialogView.findViewById(R.id.roomActivityEditDialogText);
         editMessage.setHint(messageView.getText());
 
-        builder.setPositiveButton("Edit", (dialog, id) -> {
+        builder.setPositiveButton(getString(R.string.genericEditText), (dialog, id) -> {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
         });
 
-        builder.setNeutralButton("Cancel", (dialog, id) -> {
+        builder.setNeutralButton(getString(R.string.genericCancelText), (dialog, id) -> {
             //Nothing to do
         });
 

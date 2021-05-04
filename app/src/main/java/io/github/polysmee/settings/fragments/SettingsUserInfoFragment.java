@@ -43,7 +43,7 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
         userInfoDataStore = new UserInfoDataStore();
         userNameEditTextPreference.setPreferenceDataStore(userInfoDataStore);
         userNameEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserName);
-        userNameEditTextPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_name));
+        userNameEditTextPreference.setTitle(getString(R.string.title_settings_main_user_name));
         nameListener = getStringValuetListenerForDefaultValue(userNameEditTextPreference);
         MainUserSingleton.getInstance().getNameAndThen(nameListener);
 
@@ -51,7 +51,7 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
         EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
         userEmailEditTextPreference.setPreferenceDataStore(userInfoDataStore);
         userEmailEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserEmail);
-        userEmailEditTextPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_email));
+        userEmailEditTextPreference.setTitle(getString(R.string.title_settings_main_user_email));
         userEmailEditTextPreference.setEnabled(false);
         userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
@@ -66,7 +66,7 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
     }
 
     private static StringValueListener getStringValuetListenerForDefaultValue(EditTextPreference editTextPreference){
-        return string -> editTextPreference.setSummary(string);
+        return editTextPreference::setSummary;
     }
 
     @Override

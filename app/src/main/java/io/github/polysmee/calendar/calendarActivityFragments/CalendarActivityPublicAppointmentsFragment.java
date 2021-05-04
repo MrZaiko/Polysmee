@@ -179,7 +179,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         Date current = new Date(System.currentTimeMillis());
         calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId(),this,rootView));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentDate)).setText(appointmentDate);
 

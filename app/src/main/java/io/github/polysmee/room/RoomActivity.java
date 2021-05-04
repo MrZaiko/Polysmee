@@ -49,7 +49,7 @@ public class RoomActivity extends AppCompatActivity {
 
         TabLayout tabs = findViewById(R.id.roomActivityTabs);
         new TabLayoutMediator(tabs, pager,
-                (tab, position) -> tab.setText(RoomPagerAdapter.FRAGMENT_NAME[position])).attach();
+                (tab, position) -> tab.setText(getString(RoomPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
     }
 
     private void checkIfParticipant() {

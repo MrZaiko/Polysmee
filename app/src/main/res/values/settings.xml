@@ -8,5 +8,5 @@
     <string name="summary_settings_appointments_reminder_notification_time_from_appointment">Set how much time before a appointment you should be reminded (in minutes)</string>
     <string name="title_settings_main_user_name">Username</string>
     <string name="title_settings_main_user_email">Email</string>
-    <string name="">User information</string>
+    <string name="title_settings_main_user_info">User information</string>
 </resources>

@@ -130,7 +130,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
@@ -149,7 +149,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(18, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
@@ -188,7 +188,7 @@ public class AppointmentActivityAddModeTest {
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnBan);
             clickOn(R.id.appointmentSettingsBtnBan);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
 
             writeTo(R.id.appointmentSettingsSearchBan, username2);
@@ -202,14 +202,14 @@ public class AppointmentActivityAddModeTest {
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnAdd);
             clickOn(R.id.appointmentSettingsBtnAdd);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
 
             scrollTo(R.id.appointmentCreationCourseLayout);
             writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, "qwefphqpewufh");
             closeSoftKeyboard();
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
 
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
@@ -218,7 +218,7 @@ public class AppointmentActivityAddModeTest {
             clickOn(R.id.appointmentSettingsBtnAdd);
 
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationAddBanError);

@@ -12,5 +12,5 @@
         />
     <SwitchPreference
         app:key="@string/preference_key_is_dark_mode"
-        app:title="Dark theme"/>
+        app:title="@string/dark_theme_text"/>
 </PreferenceScreen>

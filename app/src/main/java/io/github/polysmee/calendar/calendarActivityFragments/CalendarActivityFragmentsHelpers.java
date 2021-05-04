@@ -45,10 +45,10 @@ public class CalendarActivityFragmentsHelpers {
         long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(publicApp);
         Date today = new Date(epochTimeToday);
 
-        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.US);
+        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.getDefault());
         day.setText(dayFormat.format(today));
 
-        SimpleDateFormat monthFormat = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
         month.setText(monthFormat.format(today));
     }
 
