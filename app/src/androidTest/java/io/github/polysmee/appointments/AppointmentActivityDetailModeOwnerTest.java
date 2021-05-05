@@ -89,6 +89,8 @@ public class AppointmentActivityDetailModeOwnerTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("banned").child(id3).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(newCourse).setValue(newCourse);
     }
     /**
     @Test

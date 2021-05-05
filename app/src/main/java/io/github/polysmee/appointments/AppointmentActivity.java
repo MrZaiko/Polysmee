@@ -28,6 +28,7 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
+import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
@@ -180,14 +181,15 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtAdd = findViewById(R.id.appointmentCreationAddTextView);
         txtBan = findViewById(R.id.appointmentCreationBanTextView);
 
-        //for now the database doesn't support courses so we use a fixed array
-        courses = new ArrayList<>(Arrays.asList("SDP", "Sweng", "ICG", "Quantique", "AI", "Databases", "SHS", "Misc", "Analysis", "IntroProg"));
+        Course.getAllCourses_Once_AndThen(s ->  {
+                    courses = new ArrayList<>(s);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                        android.R.layout.simple_dropdown_item_1line, courses);
+                    editCourse.setAdapter(adapter);
+                }
+        );
 
         builder = new AlertDialog.Builder(this);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, courses);
-        editCourse.setAdapter(adapter);
     }
 
     /**

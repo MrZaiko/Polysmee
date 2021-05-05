@@ -43,9 +43,9 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class AppointmentActivityAddModeTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "bxcwviusergpoza";
+    private static final String id2 = "bxcwviusergpoza";
     private static final String username2 = "Sami L'imposteur";
-    private static String id3 = "sdflkhsfdlkhsfd";
+    private static final String id3 = "sdflkhsfdlkhsfd";
     private static final String username3 = "Léo La fouine";
 
     private static final String course = "SDP";
@@ -62,6 +62,7 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
     }
 
 

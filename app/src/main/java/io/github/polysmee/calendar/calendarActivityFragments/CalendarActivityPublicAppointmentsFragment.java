@@ -35,6 +35,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
+import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
@@ -82,14 +83,15 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
 
-        //for now the database doesn't support courses so we use a fixed array
-        courses = new ArrayList<>(Arrays.asList("SDP", "Sweng", "ICG", "Quantique", "AI", "Databases", "SHS", "Misc", "Analysis", "IntroProg", ""));
+        Course.getAllCourses_Once_AndThen(s ->  {
+                    courses = new ArrayList<>(s);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, courses);
+                    courseSelector.setAdapter(adapter);
+                }
+        );
 
         builder = new AlertDialog.Builder(getActivity());
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line, courses);
-        courseSelector.setAdapter(adapter);
         rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
 
         getAllPublicAppointmentsForTheDay();
