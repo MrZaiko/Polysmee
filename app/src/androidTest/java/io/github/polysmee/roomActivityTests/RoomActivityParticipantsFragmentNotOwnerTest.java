@@ -68,4 +68,13 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         assertDisplayed("You");
         assertDisplayed(username2);
     }
+
+    @Test
+    public void addingAndRemovingFriendFromRoomTest(){
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
+        
+    }
 }
