@@ -47,7 +47,7 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        if (alteredBitmap.getWidth() > alteredBitmap.getHeight()) {
+        if (alteredBitmap.getWidth() >= alteredBitmap.getHeight()) {
             float aspectRatio = alteredBitmap.getWidth() / (float) alteredBitmap.getHeight();
             int height = Math.round(w / aspectRatio);
             alteredBitmap = Bitmap.createScaledBitmap(
@@ -57,7 +57,6 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
             int width = Math.round(h / aspectRatio);
             alteredBitmap = Bitmap.createScaledBitmap(
                     alteredBitmap, width, h, false);
-
         }
 
 
@@ -68,19 +67,9 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     public void setImageBitmap(Bitmap bitmap) {
         super.setImageBitmap(bitmap);
 
-        int width = bitmap.getWidth();
-        int height = bitmap.getHeight();
-
-        if (alteredBitmap != null) {
-            width = alteredBitmap.getWidth();
-            height = alteredBitmap.getHeight();
-        }
-
         alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
         alteredCanvas = new Canvas(alteredBitmap);
         alteredCanvas.drawBitmap(bitmap,0,0,null);
-
-        onSizeChanged(width, height, bitmap.getWidth(), bitmap.getHeight());
     }
 
     public void setStrokeWidth(float strokeWidth) {

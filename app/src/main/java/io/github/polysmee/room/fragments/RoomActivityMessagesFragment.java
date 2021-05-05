@@ -77,6 +77,9 @@ public class RoomActivityMessagesFragment extends Fragment {
     private ActionMode actionMode;
     private MessageChildListener listener;
 
+    private Uri currentPhotoUri;
+
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -108,16 +111,6 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     private void takePicture(View view) {
-        /*Intent gallery = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(gallery, TAKE_PICTURE);*/
-        dispatchTakePictureIntent();
-    }
-
-    //==================================================================================================
-
-    Uri currentPhotoUri;
-
-    private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
@@ -140,8 +133,6 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
 
-
-    //==================================================================================================
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -295,9 +286,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
             image.setImageBitmap(Bitmap.createBitmap(bmp));
-        }, s -> {
-            messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE);
-        });
+        }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE));
     }
 
     private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId) {

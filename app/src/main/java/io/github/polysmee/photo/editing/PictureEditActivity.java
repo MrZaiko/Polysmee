@@ -93,8 +93,7 @@ public class PictureEditActivity extends AppCompatActivity {
                         view,
                         new ColorPickerPopup.ColorPickerObserver() {
                             @Override
-                            public void
-                            onColorPicked(int color) {
+                            public void onColorPicked(int color) {
                                 displayedPictureView.setColor(color);
                                 view.setBackgroundColor(color);
                             }
@@ -110,14 +109,10 @@ public class PictureEditActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStartTrackingTouch(SeekBar seekBar) {}
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
+            public void onStopTrackingTouch(SeekBar seekBar) {}
         };
     }
 
