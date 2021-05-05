@@ -78,9 +78,11 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     }
 
     @AfterClass
-    public static void clearUp(){
-        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+2).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+3).child("private").setValue(true);
     }
 
 

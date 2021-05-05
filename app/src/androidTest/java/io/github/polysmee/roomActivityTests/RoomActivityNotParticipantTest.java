@@ -10,7 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,11 +64,6 @@ public class RoomActivityNotParticipantTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
-    @AfterClass
-    public static void clearUp(){
-        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
-    }
     @Test
     public void onlyParticipantCanJoinARoom() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
