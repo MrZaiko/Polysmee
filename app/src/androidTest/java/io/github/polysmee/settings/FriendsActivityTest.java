@@ -53,11 +53,6 @@ public class FriendsActivityTest {
     }
 
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
-
     @Test
     public void encouragingMessageIsDisplayedTest(){
         Intent intent = new Intent(getApplicationContext(),FriendsActivity.class);

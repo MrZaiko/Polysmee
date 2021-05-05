@@ -43,11 +43,6 @@ public class SettingsActivityTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
     }
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
-
     @Test
     public void appointmentsReminderSettingFragmentsIsLaunchWhenClickOnMain(){
         SettingsMainFragmentTest.checkFragmentIsDisplayed();

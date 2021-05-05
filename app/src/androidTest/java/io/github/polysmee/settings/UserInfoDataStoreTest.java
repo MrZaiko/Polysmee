@@ -42,10 +42,6 @@ public class UserInfoDataStoreTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
     }
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
 
     public static void testNameDatabase(String value) throws Exception{
         sleep(1, SECONDS);
