@@ -16,7 +16,7 @@ import io.github.polysmee.znotification.AppointmentReminderNotificationSetupList
 import static org.junit.Assert.*;
 
 //@RunWith(AndroidJUnit4.class)
-public class MainUserSingletonTest {
+public class MainUserTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -31,12 +31,12 @@ public class MainUserSingletonTest {
     @Test(expected = NullPointerException.class)
     public void getInstanceThrows() {
         AuthenticationFactory.getAdaptedInstance().signOut();
-        MainUserSingleton.getInstance();
+        MainUser.getMainUser();
     }
 
     @Test
     public void getInstanceWorks() throws ExecutionException, InterruptedException {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
-        assertEquals(MainUserSingleton.getInstance().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
+        assertEquals(MainUser.getMainUser().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
     }
 }

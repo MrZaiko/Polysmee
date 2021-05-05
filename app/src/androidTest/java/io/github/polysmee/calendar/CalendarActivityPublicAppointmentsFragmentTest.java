@@ -26,7 +26,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.calendar.fragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -72,7 +72,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityPublicAppointmentsFragmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("courses").child("SDP").setValue("SDP");
         DatabaseFactory.getAdaptedInstance().getReference("courses").child("ICG").setValue("ICG");

@@ -1,11 +1,8 @@
 package io.github.polysmee.agora.video;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.SurfaceView;
-import android.view.View;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -22,14 +19,11 @@ import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.RtcTokenBuilder;
-import io.github.polysmee.agora.video.handlers.AGEventHandler;
-import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
 
@@ -95,7 +89,7 @@ public class Call {
      */
     public void leaveChannel() {
         mRtcEngine.leaveChannel();
-        appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
+        appointment.removeOfCall(new DatabaseUser(MainUser.getMainUser().getId()));
     }
 
     /**
@@ -104,7 +98,7 @@ public class Call {
      */
     public int mute(boolean mute) {
         int result = mRtcEngine.muteLocalAudioStream(mute);
-        appointment.muteUser(new DatabaseUser(MainUserSingleton.getInstance().getId()), mute);
+        appointment.muteUser(new DatabaseUser(MainUser.getMainUser().getId()), mute);
 
         return result;
     }
@@ -193,7 +187,7 @@ public class Call {
             @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
                 if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
-                    appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
+                    appointment.setTimeCode(new DatabaseUser(MainUser.getMainUser().getId()), System.currentTimeMillis());
                 }
                 timeCodeIndicator += 1;
             }

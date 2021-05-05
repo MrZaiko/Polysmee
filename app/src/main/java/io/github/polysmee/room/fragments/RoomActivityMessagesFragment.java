@@ -48,7 +48,7 @@ import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 
 import static android.app.Activity.RESULT_OK;
@@ -119,7 +119,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             appointmentId, id -> databaseAppointment.addMessage(
-                                    new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
+                                    new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
                             ), s -> showErrorToast());
 
                     return;
@@ -186,7 +186,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
-        String userId = MainUserSingleton.getInstance().getId();
+        String userId = MainUser.getMainUser().getId();
 
         databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
         messageEditText.setText("");
@@ -359,7 +359,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void childAdded(String key, Message value) {
 
-                String userId = MainUserSingleton.getInstance().getId();
+                String userId = MainUser.getMainUser().getId();
                 View messageToAddLayout = generateMessageTextView(value.getContent(), userId.equals(value.getSender()), value.getSender(), value.getMessageTime(), value.getIsAPicture(), key);
                 messagesDisplayed.put(key, messageToAddLayout);
                 LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);

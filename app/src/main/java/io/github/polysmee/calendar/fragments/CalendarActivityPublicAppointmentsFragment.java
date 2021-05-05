@@ -36,7 +36,7 @@ import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
 
@@ -71,7 +71,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         this.inflater = inflater;
         setTodayDateInDailyCalendar(true);
         setDayText(rootView,true);
-        user = MainUserSingleton.getInstance();
+        user = MainUser.getMainUser();
         ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setOnRefreshListener(()->{
             getAllPublicAppointmentsForTheDay();
             ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setRefreshing(false);

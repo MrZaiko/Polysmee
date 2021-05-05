@@ -22,7 +22,7 @@ import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static org.junit.Assert.*;
@@ -43,8 +43,8 @@ public class DatabaseAppointmentTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
-        apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro", false);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
+        apid = MainUser.getMainUser().createNewUserAppointment(0, 3600, "AU", "chihiro", false);
         Thread.sleep(1000);
     }
 
@@ -172,7 +172,7 @@ public class DatabaseAppointmentTest {
             while(!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeOwnerListener(sv);
-            assertEquals(MainUserSingleton.getInstance().getId(), gotName.get());
+            assertEquals(MainUser.getMainUser().getId(), gotName.get());
         } finally {
             lock.unlock();
             new DatabaseAppointment(apid).getOwnerId_Once_AndThen((l) -> {});

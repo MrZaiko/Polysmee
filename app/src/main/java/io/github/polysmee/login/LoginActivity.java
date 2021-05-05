@@ -81,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
             // Successfully signed in
             FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
             db.getReference("users")
-                    .child(MainUserSingleton.getInstance().getId())
+                    .child(MainUser.getMainUser().getId())
                     .child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
             //TODO

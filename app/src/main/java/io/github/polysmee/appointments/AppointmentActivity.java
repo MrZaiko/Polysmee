@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -33,7 +32,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 /**
  * Activity to interact with appointment
@@ -225,7 +224,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         appointment.getCourseAndThen(course -> editCourse.setText(course));
 
         appointment.getOwnerIdAndThen(owner -> {
-            if (owner.equals(MainUserSingleton.getInstance().getId())) {
+            if (owner.equals(MainUser.getMainUser().getId())) {
                 setupClickable(true);
                 isOwner = true;
                 bottomBarSetup(true);
@@ -482,7 +481,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         boolean isPrivate = privateSelector.isChecked();
 
         if (mode == ADD_MODE) {
-            String aptID = MainUserSingleton.getInstance().createNewUserAppointment(startTime, duration, course, title, isPrivate);
+            String aptID = MainUser.getMainUser().createNewUserAppointment(startTime, duration, course, title, isPrivate);
             appointment = new DatabaseAppointment(aptID);
         } else {
             //TODO mb a new function to edit everything at once

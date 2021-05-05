@@ -23,7 +23,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static org.junit.Assert.*;
@@ -42,26 +42,26 @@ public class DatabaseUserTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
         Thread.sleep(1000);
     }
 
     @Test
     public void getId() {
-        assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUserSingleton.getInstance().getId());
+        assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUser.getMainUser().getId());
     }
 
     @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
-        MainUserSingleton.getInstance().addAppointment(new DatabaseAppointment("AZERTY"));
+        MainUser.getMainUser().addAppointment(new DatabaseAppointment("AZERTY"));
         FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
         String id = Tasks.await(db.getReference()
                 .child("users")
-                .child(MainUserSingleton.getInstance().getId())
+                .child(MainUser.getMainUser().getId())
                 .child("appointments")
                 .child("AZERTY").get()).getKey();
         assertNotNull(id);
-        MainUserSingleton.getInstance().removeAppointment(new DatabaseAppointment("AZERTY"));
+        MainUser.getMainUser().removeAppointment(new DatabaseAppointment("AZERTY"));
 
     }
 
@@ -80,20 +80,20 @@ public class DatabaseUserTest {
         };
         lock.lock();
         try {
-            MainUserSingleton.getInstance().getNameAndThen(sv);
+            MainUser.getMainUser().getNameAndThen(sv);
             while(!bool.get())
                 cv.await();
-            MainUserSingleton.getInstance().removeNameListener(sv);
+            MainUser.getMainUser().removeNameListener(sv);
             assertEquals(gotName.get(), username);
         } finally {
             lock.unlock();
-            MainUserSingleton.getInstance().getName_Once_AndThen((e) -> {});
+            MainUser.getMainUser().getName_Once_AndThen((e) -> {});
         }
     }
 
     @Test
     public void createNewUserAppointment() {
-        String id = MainUserSingleton.getInstance().createNewUserAppointment(0, 1, "AICC", "rév", false);
+        String id = MainUser.getMainUser().createNewUserAppointment(0, 1, "AICC", "rév", false);
         String ac = DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
@@ -106,7 +106,7 @@ public class DatabaseUserTest {
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicBoolean oneElem = new AtomicBoolean(false);
 
-        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE", false);
+        String apid = MainUser.getMainUser().createNewUserAppointment(3, 3, "AI", "HE", false);
         StringSetValueListener ssv = (set) -> {
             lock.lock();
             oneElem.set(set.size() > 0);
@@ -118,14 +118,14 @@ public class DatabaseUserTest {
 
         lock.lock();
         try {
-            MainUserSingleton.getInstance().getAppointmentsAndThen(ssv);
+            MainUser.getMainUser().getAppointmentsAndThen(ssv);
             while(!bool.get())
                 cv.await();
-            MainUserSingleton.getInstance().removeAppointmentsListener(ssv);
+            MainUser.getMainUser().removeAppointmentsListener(ssv);
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            MainUserSingleton.getInstance().getAppointments_Once_AndThen((e) -> {});
+            MainUser.getMainUser().getAppointments_Once_AndThen((e) -> {});
             Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
@@ -137,7 +137,7 @@ public class DatabaseUserTest {
         AtomicBoolean bool = new AtomicBoolean(false);
         AtomicBoolean oneElem = new AtomicBoolean(false);
 
-        String apid = MainUserSingleton.getInstance().createNewUserAppointment(3, 3, "AI", "HE", false);
+        String apid = MainUser.getMainUser().createNewUserAppointment(3, 3, "AI", "HE", false);
         StringSetValueListener ssv = (set) -> {
             lock.lock();
             oneElem.set(Boolean.TRUE);
@@ -149,14 +149,14 @@ public class DatabaseUserTest {
 
         lock.lock();
         try {
-            MainUserSingleton.getInstance().getInvitesAndThen(ssv);
+            MainUser.getMainUser().getInvitesAndThen(ssv);
             while(!bool.get())
                 cv.await();
-            MainUserSingleton.getInstance().removeInvitesListener(ssv);
+            MainUser.getMainUser().removeInvitesListener(ssv);
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            MainUserSingleton.getInstance().getInvites_Once_AndThen((e) -> {});
+            MainUser.getMainUser().getInvites_Once_AndThen((e) -> {});
             Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }

@@ -30,7 +30,7 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.appointments.DataPasser;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove participants to an appointment
@@ -121,7 +121,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             });
 
             appointment.getOwnerId_Once_AndThen(owner -> {
-                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                if (owner.equals(MainUser.getMainUser().getId()))
                     searchLayout.setVisibility(View.VISIBLE);
             });
         }
@@ -190,7 +190,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             removeButton.setVisibility(View.GONE);
 
             appointment.getOwnerIdAndThen(owner -> {
-                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                if (owner.equals(MainUser.getMainUser().getId()))
                     removeButton.setVisibility(View.VISIBLE);
             });
         }

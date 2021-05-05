@@ -5,10 +5,10 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceDataStore;
 
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 public class UserInfoDataStore extends PreferenceDataStore {
-    private User dataBaseMainUser = MainUserSingleton.getInstance();
+    private final User dataBaseMainUser = MainUser.getMainUser();
     public static final String preferenceKeyMainUserName = "preference_key_main_user_info_name";
     public static String preferenceKeyMainUserEmail = "preference_key_main_user_info_email";
 

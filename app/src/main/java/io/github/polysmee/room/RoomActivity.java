@@ -19,7 +19,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
 
 /**
@@ -55,7 +55,7 @@ public class RoomActivity extends AppCompatActivity {
     private void checkIfParticipant() {
         appointment.getParticipantsIdAndThen(p -> {
             appointment.getBansAndThen(b -> {
-                if (!p.contains(MainUserSingleton.getInstance().getId()) || b.contains(MainUserSingleton.getInstance().getId())) {
+                if (!p.contains(MainUser.getMainUser().getId()) || b.contains(MainUser.getMainUser().getId())) {
                     generateRemovedDialog();
                 }
             });

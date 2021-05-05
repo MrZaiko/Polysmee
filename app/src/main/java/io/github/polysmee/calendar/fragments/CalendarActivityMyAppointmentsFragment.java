@@ -33,7 +33,7 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.RoomActivity;
 
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
@@ -65,7 +65,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         this.inflater = inflater;
         setTodayDateInDailyCalendar(false);
         setDayText(rootView, false);
-        user = MainUserSingleton.getInstance();
+        user = MainUser.getMainUser();
         userAppointmentsListener = null;
         rootView.findViewById(R.id.calendarActivityCreateAppointmentButton).setOnClickListener((v) -> createAppointment());
 
