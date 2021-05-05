@@ -66,10 +66,6 @@ public class RoomActivityVideoFragmentTest {
 
     }
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
 
     @Test
     public void localVideoCallbacksAreCalledSuccessfully(){

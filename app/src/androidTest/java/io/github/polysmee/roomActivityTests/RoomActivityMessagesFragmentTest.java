@@ -84,10 +84,7 @@ public class RoomActivityMessagesFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUserSingleton.getInstance().getId());
     }
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
+
 
     @Test
     public void messagesShouldBeDisplayed() {

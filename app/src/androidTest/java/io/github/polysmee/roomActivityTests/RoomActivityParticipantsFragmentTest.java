@@ -62,10 +62,6 @@ public class RoomActivityParticipantsFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
     }
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
 
     @Test
     public void participantsAreCorrectlyDisplayed() {

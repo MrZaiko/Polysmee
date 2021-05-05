@@ -60,11 +60,6 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
-    @AfterClass
-    public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-    }
-
     @Test
     public void participantsAreCorrectlyDisplayed() {
         Bundle bundle = new Bundle();
