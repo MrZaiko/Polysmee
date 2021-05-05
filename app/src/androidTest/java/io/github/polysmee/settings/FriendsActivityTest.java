@@ -29,6 +29,7 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -91,6 +92,7 @@ public class FriendsActivityTest {
             clickOn(R.id.friendActivityAddButton);
             sleep(1,TimeUnit.SECONDS);
             assertDisplayed("Oops");
+            clickDialogPositiveButton();
         }
     }
 
@@ -104,6 +106,7 @@ public class FriendsActivityTest {
             clickOn(R.id.friendActivityAddButton);
             sleep(1,TimeUnit.SECONDS);
             assertDisplayed("Error");
+            clickDialogPositiveButton();
         }
     }
 
