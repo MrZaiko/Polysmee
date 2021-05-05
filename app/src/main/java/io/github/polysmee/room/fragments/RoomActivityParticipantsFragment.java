@@ -1,6 +1,7 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -27,6 +28,8 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.video.Call;
+import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
+import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
@@ -149,13 +152,19 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 videoButton.setTag(R.drawable.baseline_video_off);
 
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
-
                 participantsButtonLayout.setVisibility(View.VISIBLE);
                 callButton.setVisibility(View.GONE);
+
                 String userId = MainUserSingleton.getInstance().getId();
 
                 if (id.equals(userId)) {
-
+                    //set the participants layout for the use using the app
+                    ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
+                    audioTune.setVisibility(View.VISIBLE);
+                    audioTune.setOnClickListener(v ->{
+                        Intent intent = new Intent(getContext(), VoiceTunerActivity.class);
+                        startActivity(intent);
+                    });
                     participantName.setText("You");
                     callButton.setVisibility(View.VISIBLE);
 

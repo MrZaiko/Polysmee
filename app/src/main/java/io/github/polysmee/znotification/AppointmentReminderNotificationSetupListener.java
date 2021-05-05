@@ -33,7 +33,7 @@ public final class AppointmentReminderNotificationSetupListener {
 
     private static String getlocalSharedPreferenceName() {
         assert (mContext != null);
-        return mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationMaster);
+        return mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationSetupListener);
     }
 
     /*
