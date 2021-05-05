@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -46,6 +47,12 @@ public class DatabaseAppointmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username);
         apid = MainUserSingleton.getInstance().createNewUserAppointment(0, 3600, "AU", "chihiro", false);
         Thread.sleep(1000);
+    }
+
+
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
@@ -187,7 +194,7 @@ public class DatabaseAppointmentTest {
 
     @Test
     public void getAllPublicAppointmentsOnce() {
-        Appointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() > 1));
+        Appointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() >= 1));
     }
 
     @Test

@@ -51,10 +51,10 @@ public class FriendsActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
     }
 
+
     @AfterClass
-    public static void cleanUsers(){
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test

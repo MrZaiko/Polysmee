@@ -260,7 +260,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         if (mode == AppointmentActivity.DETAIL_MODE) {
             removeButton.setVisibility(View.GONE);
 
-            appointment.getOwnerIdAndThen(owner -> {
+            appointment.getOwnerId_Once_AndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))
                     removeButton.setVisibility(View.VISIBLE);
             });
