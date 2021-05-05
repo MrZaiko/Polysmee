@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -42,7 +43,11 @@ public class SettingsActivityTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
     }
 
-
+    @AfterClass
+    public static void clearUp(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
+    }
 
 
     @Test

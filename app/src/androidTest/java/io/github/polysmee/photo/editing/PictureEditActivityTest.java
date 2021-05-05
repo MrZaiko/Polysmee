@@ -18,6 +18,7 @@ import com.google.firebase.FirebaseApp;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -152,6 +153,12 @@ public class PictureEditActivityTest {
         //Thread.sleep(5000);
 
         bigYoshiBitmap = BitmapFactory.decodeByteArray(bigYoshi, 0, bigYoshi.length);
+    }
+
+    @AfterClass
+    public static void clearUp(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
     }
 
     public void bitmapMatcher(Bitmap bitmap) {

@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,7 +41,11 @@ public class UserInfoDataStoreTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
     }
-
+    @AfterClass
+    public static void clearUp(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
+    }
     public static void testNameDatabase(String value) throws Exception{
         sleep(1, SECONDS);
         String name  = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")

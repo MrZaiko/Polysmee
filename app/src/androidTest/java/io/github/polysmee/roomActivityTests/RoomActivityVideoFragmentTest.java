@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,7 +65,11 @@ public class RoomActivityVideoFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
 
     }
-
+    @AfterClass
+    public static void clearUp(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
+    }
 
     @Test
     public void localVideoCallbacksAreCalledSuccessfully(){

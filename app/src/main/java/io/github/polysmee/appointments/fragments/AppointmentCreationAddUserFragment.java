@@ -161,8 +161,18 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     }
 
     private void inviteFriendButtonBehavior(View view){
-        List<Integer> friendsToInvite = new ArrayList<>();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(friendUsernames.size() == 0){
+            builder.setMessage("Add some friends first :( ")
+                    .setCancelable(false)
+                    .setPositiveButton("Ok", null);
+
+            AlertDialog alert = builder.create();
+            alert.setTitle("Error");
+            alert.show();
+            return;
+        }
+        List<Integer> friendsToInvite = new ArrayList<>();
         boolean[] alreadyInvitedFriends = new boolean[friendUsernames.size()];
         for(int i = 0; i < alreadyInvitedFriends.length;++i){
             alreadyInvitedFriends[i] = invites.contains(friendUsernames.get(i));

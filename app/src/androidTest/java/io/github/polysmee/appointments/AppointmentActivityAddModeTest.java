@@ -8,6 +8,7 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -64,6 +65,12 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
     }
 
+
+    @AfterClass
+    public static void clearUp(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
+    }
 
     @Test
     public void allTestsAtOnce() throws InterruptedException {

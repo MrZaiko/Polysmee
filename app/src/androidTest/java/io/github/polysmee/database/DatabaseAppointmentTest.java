@@ -6,6 +6,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +49,11 @@ public class DatabaseAppointmentTest {
         Thread.sleep(1000);
     }
 
+    @AfterClass
+    public static void clearUp(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").setValue(null);
+    }
     @Test
     public void getStartTimeAndThen() throws InterruptedException {
         ReentrantLock lock = new ReentrantLock();
@@ -187,7 +193,7 @@ public class DatabaseAppointmentTest {
 
     @Test
     public void getAllPublicAppointmentsOnce() {
-        Appointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() > 1));
+        Appointment.getAllPublicAppointmentsOnce((ss) -> assertTrue(ss.size() >= 1));
     }
 
     @Test
