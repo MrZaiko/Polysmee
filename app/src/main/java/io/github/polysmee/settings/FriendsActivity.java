@@ -22,6 +22,7 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUserSingleton;
 
 import androidx.appcompat.app.AlertDialog;
@@ -43,6 +44,7 @@ public class FriendsActivity extends AppCompatActivity {
     private final Set<String> friendsIds = new HashSet<>();
     private LinearLayout scrollLayout;
     private final User user = MainUserSingleton.getInstance();
+    private StringSetValueListener friendsValuesListener;
 
 
     @Override
@@ -50,9 +52,16 @@ public class FriendsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
         attributeSet();
+        friendsValuesListener = friendListener();
         showFriendList();
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        user.removeFriendsListener(friendsValuesListener);
+    }
 
     protected void attributeSet(){
         allUsers = new ArrayList<>();
@@ -111,7 +120,26 @@ public class FriendsActivity extends AppCompatActivity {
     }
 
     protected void showFriendList(){
-        user.getFriendsAndThen((idsOfFriends)->{
+        user.getFriendsAndThen(friendsValuesListener);
+    }
+
+    protected void createFriendEntry(String userId, String name){
+        ConstraintLayout friendEntryLayout = (ConstraintLayout)inflater.inflate(R.layout.element_friends_activity_entry,null);
+        ((TextView)friendEntryLayout.findViewById(R.id.friendEntryName)).setText(name);
+        ((FloatingActionButton)friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton)).setOnClickListener((v)->{
+            user.removeFriend(new DatabaseUser(userId));
+        });
+        TextView padding = new TextView(this);
+        List<View> friendViews = new ArrayList<>();
+        friendViews.add(friendEntryLayout);
+        friendViews.add(padding);
+        scrollLayout.addView(friendEntryLayout);
+        scrollLayout.addView(padding);
+        idsToFriendEntries.put(userId,friendViews);
+    }
+
+    protected StringSetValueListener friendListener(){
+        return idsOfFriends -> {
             Set<String> deletedFriends = new HashSet<>(friendsIds);
             Set<String> newFriends = new HashSet<>(idsOfFriends);
             deletedFriends.removeAll(newFriends);
@@ -132,21 +160,6 @@ public class FriendsActivity extends AppCompatActivity {
                     createFriendEntry(newFriendId,name);
                 });
             }
-        });
-    }
-
-    protected void createFriendEntry(String userId, String name){
-        ConstraintLayout friendEntryLayout = (ConstraintLayout)inflater.inflate(R.layout.element_friends_activity_entry,null);
-        ((TextView)friendEntryLayout.findViewById(R.id.friendEntryName)).setText(name);
-        ((FloatingActionButton)friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton)).setOnClickListener((v)->{
-            user.removeFriend(new DatabaseUser(userId));
-        });
-        TextView padding = new TextView(this);
-        List<View> friendViews = new ArrayList<>();
-        friendViews.add(friendEntryLayout);
-        friendViews.add(padding);
-        scrollLayout.addView(friendEntryLayout);
-        scrollLayout.addView(padding);
-        idsToFriendEntries.put(userId,friendViews);
+        };
     }
 }

@@ -83,6 +83,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+1).child("private").setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+2).child("private").setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId+3).child("private").setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).setValue(null);
     }
 
 

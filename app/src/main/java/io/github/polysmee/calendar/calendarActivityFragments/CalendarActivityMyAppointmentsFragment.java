@@ -50,8 +50,6 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private LayoutInflater inflater;
 
     private User user;
-    private final AtomicInteger childrenCounters = new AtomicInteger(0);
-
     private Map<String, View> appointmentIdsToView = new HashMap<>();
     private Set<String> appointmentSet = new HashSet<>();
     private Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();

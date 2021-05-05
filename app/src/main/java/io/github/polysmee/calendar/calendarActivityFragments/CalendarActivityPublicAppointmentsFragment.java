@@ -50,10 +50,6 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
 
     private User user;
-    public static final String APPOINTMENT_DETAIL_CALENDAR_ID_FROM = "APPOINTMENT_DETAIL_CALENDAR_ID_FROM";
-    private final AtomicInteger childrenCounters = new AtomicInteger(0);
-    private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
-
     private Set<String> appointmentSet = new HashSet<>();
     private Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
     private Map<String, View> appointmentIdsToView = new HashMap<>();

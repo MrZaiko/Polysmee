@@ -11,6 +11,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -25,19 +26,15 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
-
 import io.github.polysmee.room.RoomActivity;
-
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.ComponentNameMatchers.hasShortClassName;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -68,8 +65,6 @@ public class CalendarActivityTest {
     private static final SimpleDateFormat dayFormatter = new SimpleDateFormat("d");
     private static final SimpleDateFormat letterDayFormatter = new SimpleDateFormat("EEEE");
 
-
-
     @BeforeClass
     public static void setUp() throws Exception {
         startTime = Calendar.getInstance();
@@ -82,6 +77,11 @@ public class CalendarActivityTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId).setValue(true);
+    }
+
+    @AfterClass
+    public static void cleanUpUser(){
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).setValue(null);
     }
 
     @Before
@@ -211,7 +211,7 @@ public class CalendarActivityTest {
 
         Calendar todayDate = Calendar.getInstance();
         todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight(false)));
-        int number_of_appointments = 3;
+        int number_of_appointments = 2;
 
         CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
         for(int i = 0; i<number_of_appointments; ++i){
@@ -242,7 +242,6 @@ public class CalendarActivityTest {
             sleep(3,SECONDS);
             for(int i = 0; i<number_of_appointments;++i){
                 if(i%2 != 0){
-                    infos[i].getTitle();
                     assertDisplayed(infos[i].getTitle());
                     SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
                     Date startDate = new Date(infos[i].getStartTime());
