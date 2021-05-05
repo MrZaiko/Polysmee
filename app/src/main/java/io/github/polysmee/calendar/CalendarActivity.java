@@ -34,7 +34,7 @@ public class CalendarActivity extends AppCompatActivity{
         setContentView(R.layout.activity_calendar);
 
         boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getApplicationContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
-        if (isDarkMode==true){
+        if (isDarkMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);

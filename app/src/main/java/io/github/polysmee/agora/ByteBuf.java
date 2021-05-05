@@ -10,7 +10,7 @@ import java.util.TreeMap;
  *
  */
 public class ByteBuf {
-    ByteBuffer buffer = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
+    private ByteBuffer buffer = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
 
     public ByteBuf() {
     }

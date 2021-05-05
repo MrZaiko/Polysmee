@@ -17,14 +17,13 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
+import io.github.polysmee.calendar.fragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;

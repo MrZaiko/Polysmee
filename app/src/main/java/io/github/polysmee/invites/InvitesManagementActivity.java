@@ -161,7 +161,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
     }
 
 
-    protected StringSetValueListener currentUserInvitesListener() {
+    private StringSetValueListener currentUserInvitesListener() {
 
         return setOfIds -> {
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);

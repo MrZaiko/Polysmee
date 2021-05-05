@@ -24,6 +24,7 @@ import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.appointments.AppointmentsUtility;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
@@ -80,7 +81,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      */
     private void attributeSetters(View rootView) {
         users = new ArrayList<>();
-        User.getAllUsersIds_Once_AndThen(this::UsersNamesGetter);
+        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.usersNamesGetter(s, users));
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, users);
@@ -90,19 +91,6 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invites = new HashSet<>();
         removedInvites = new HashSet<>();
         builder = new AlertDialog.Builder(getActivity());
-    }
-
-    private void UsersNamesGetter(Set<String> allIds) {
-        //This function is called at the creation of the fragment
-        //So here we get the names at the beginning of the fragment's life cycle and the listeners should updated them, but not remove the old name
-        //While this may cause small problems if a user changes their name during this time,
-        //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
-        for(String userId : allIds){
-            User user = new DatabaseUser(userId);
-            user.getName_Once_AndThen((name) -> {
-                users.add(name);
-            });
-        }
     }
 
     /**

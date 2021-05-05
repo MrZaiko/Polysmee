@@ -54,8 +54,8 @@ import io.github.polysmee.login.MainUserSingleton;
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
     // Intents related attributes
-    public static String LAUNCH_MODE = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_LAUNCH_MODE";
-    public static String APPOINTMENT_ID = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_APPOINTMENT_ID";
+    public static final String LAUNCH_MODE = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_LAUNCH_MODE";
+    public static final String APPOINTMENT_ID = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_APPOINTMENT_ID";
 
     public static final int ADD_MODE = 0;
     public static final int DETAIL_MODE = 1;
@@ -555,11 +555,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
     }
 
-    /**
-     * Used by the fragments to send data to this activity
-     * @param data sent data
-     * @param id id of this data
-     */
     @Override
     public void dataPass(Set<String> data, String id) {
         //Any changes to the sets may correct the error

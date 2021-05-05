@@ -6,8 +6,8 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityMyAppointmentsFragment;
-import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
+import io.github.polysmee.calendar.fragments.CalendarActivityMyAppointmentsFragment;
+import io.github.polysmee.calendar.fragments.CalendarActivityPublicAppointmentsFragment;
 
 public class CalendarActivityPagerAdapter extends FragmentStateAdapter {
 

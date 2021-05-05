@@ -1,7 +1,6 @@
-package io.github.polysmee.calendar.calendarActivityFragments;
+package io.github.polysmee.calendar.fragments;
 
 import android.app.DatePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,7 +30,6 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
-import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Course;
@@ -40,8 +37,8 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.RoomActivity;
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.*;
+
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
 
 public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
@@ -56,9 +53,9 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     private final AtomicInteger childrenCounters = new AtomicInteger(0);
     private final int CALENDAR_ENTRY_DETAIL_CODE = 51;
 
-    private Set<String> appointmentSet = new HashSet<>();
-    private Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
-    private Map<String, View> appointmentIdsToView = new HashMap<>();
+    private final Set<String> appointmentSet = new HashSet<>();
+    private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
+    private final Map<String, View> appointmentIdsToView = new HashMap<>();
 
     private ArrayList<String> courses;
     private String currentCourse = "";
@@ -163,7 +160,6 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * Creates an appointment's textual description following a certain format
      * to show in the calendar
      * @param appointment the appointment's whose description is created
-     * @return the textual representation of the appointment in the calendar
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
