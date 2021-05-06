@@ -23,6 +23,7 @@ import com.google.firebase.FirebaseApp;
 
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -188,6 +189,12 @@ public class PictureEditActivityTest {
 
         bigYoshiUri = FileProvider.getUriForFile(ApplicationProvider.getApplicationContext(),
                 "com.example.android.fileprovider", photoFile);
+    }
+
+
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
     public void bitmapMatcher(Bitmap bitmap) {

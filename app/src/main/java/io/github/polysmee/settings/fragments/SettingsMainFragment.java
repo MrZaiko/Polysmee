@@ -1,6 +1,5 @@
 package io.github.polysmee.settings.fragments;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatDelegate;
@@ -18,13 +17,16 @@ public final class SettingsMainFragment extends PreferenceFragmentCompat {
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         setPreferencesFromResource(R.xml.preference_fragment_settings_main, rootKey);
-        SwitchPreference switchPreference = findPreference(getContext().getResources().getString(R.string.preference_key_is_dark_mode));
+        SwitchPreference switchPreference = findPreference(getString(R.string.preference_key_is_dark_mode));
         switchPreference.setOnPreferenceClickListener(x -> {
             this.onDarkModeClick();
             return true;
         });
     }
 
+    /**
+     * Function called when the switch settings for dark mode is clicked on, it set the application theme to the one specified by the value of this switch settings
+     */
     private void onDarkModeClick(){
         boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(getContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
         if (isDarkMode==true){

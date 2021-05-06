@@ -19,17 +19,19 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.appointments.AppointmentsUtility;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.appointments.DataPasser;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove participants to an appointment
@@ -42,7 +44,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
 
     private AutoCompleteTextView searchInvite;
-    private ImageView btnInvite;
+    private ImageView btnInvite, btnFriendInvite;
     private LinearLayout invitesList;
 
     private Set<String> invites, removedInvites;
@@ -53,6 +55,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
 
     private int mode;
     private Appointment appointment;
+    private List<String> friendUsernames;
 
 
     @Override
@@ -80,7 +83,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      */
     private void attributeSetters(View rootView) {
         users = new ArrayList<>();
-        User.getAllUsersIds_Once_AndThen(this::UsersNamesGetter);
+        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.usersNamesGetter(s, users));
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, users);
@@ -90,19 +93,15 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invites = new HashSet<>();
         removedInvites = new HashSet<>();
         builder = new AlertDialog.Builder(getActivity());
-    }
-
-    private void UsersNamesGetter(Set<String> allIds) {
-        //This function is called at the creation of the fragment
-        //So here we get the names at the beginning of the fragment's life cycle and the listeners should updated them, but not remove the old name
-        //While this may cause small problems if a user changes their name during this time,
-        //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
-        for(String userId : allIds){
-            User user = new DatabaseUser(userId);
-            user.getName_Once_AndThen((name) -> {
-                users.add(name);
-            });
-        }
+        btnFriendInvite = rootView.findViewById(R.id.appointmentSettingsBtnAddFriend);
+        friendUsernames = new ArrayList<>();
+        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) ->{
+            for(String id: friendsIds){
+                (new DatabaseUser(id)).getName_Once_AndThen((name)->{
+                    friendUsernames.add(name);
+                });
+            }
+        });
     }
 
     /**
@@ -119,7 +118,8 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         }
 
         btnInvite.setOnClickListener(this::inviteButtonBehavior);
-        searchInvite.setHint("Type names here");
+        btnFriendInvite.setOnClickListener(this::inviteFriendButtonBehavior);
+        searchInvite.setHint(getString(R.string.genericNamesHintText));
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchAddLayout);
@@ -133,7 +133,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
             });
 
             appointment.getOwnerId_Once_AndThen(owner -> {
-                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                if (owner.equals(MainUser.getMainUser().getId()))
                     searchLayout.setVisibility(View.VISIBLE);
             });
         }
@@ -148,6 +148,38 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.removeAllViews();
     }
 
+    private void inviteFriendButtonBehavior(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(friendUsernames.size() == 0){
+            createErrorMessage(builder,"Add some friends first :( ");
+            return;
+        }
+        List<Integer> friendsToInvite = new ArrayList<>();
+        boolean[] alreadyInvitedFriends = new boolean[friendUsernames.size()];
+        for(int i = 0; i < alreadyInvitedFriends.length;++i){
+            alreadyInvitedFriends[i] = invites.contains(friendUsernames.get(i));
+        }
+        builder.setTitle("Select which friend(s) to invite");
+        builder.setMultiChoiceItems(friendUsernames.toArray(new CharSequence[0]),alreadyInvitedFriends,(dialog, which, isChecked) -> {
+            if(isChecked){
+                friendsToInvite.add(which);
+            }
+            else if(friendsToInvite.contains(which)){
+                friendsToInvite.remove(which);
+            }
+        });
+        builder.setPositiveButton(getString(R.string.genericOkText),(dialog, which) -> {
+           for(int index: friendsToInvite){
+               String s = friendUsernames.get(index);
+               if(!invites.contains(s)){
+                   addNewInvite(s);
+               }
+           }
+        });
+        builder.setNegativeButton(getString(R.string.genericCancelText),null);
+        builder.create().show();
+    }
+
     /**
      * ADD_MODE     =>  Add the user with the specified name to the participants list
      * DETAIL_MODE  =>  Add the user with the specified name to the participants list and remove
@@ -156,26 +188,11 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     private void inviteButtonBehavior(View view) {
         String s = searchInvite.getText().toString();
         if(!users.contains(s)) {
-            builder.setMessage("User not found")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok", null);
-
-            AlertDialog alert = builder.create();
-            alert.setTitle("Error");
-            alert.show();
+            createErrorMessage(builder,getString(R.string.genericUserNotFoundText));
         }
 
         else if(!invites.contains(s)) {
-            invites.add(s);
-            dataPasser.dataPass(invites, AppointmentActivity.INVITES);
-            searchInvite.setText("");
-
-            if (mode == AppointmentActivity.DETAIL_MODE) {
-                removedInvites.remove(s);
-                dataPasser.dataPass(removedInvites, AppointmentActivity.REMOVED_INVITES);
-            }
-
-            addInvite(s);
+            addNewInvite(s);
         }
         else {
             searchInvite.setText("");
@@ -201,8 +218,8 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         if (mode == AppointmentActivity.DETAIL_MODE) {
             removeButton.setVisibility(View.GONE);
 
-            appointment.getOwnerIdAndThen(owner -> {
-                if (owner.equals(MainUserSingleton.getInstance().getId()))
+            appointment.getOwnerId_Once_AndThen(owner -> {
+                if (owner.equals(MainUser.getMainUser().getId()))
                     removeButton.setVisibility(View.VISIBLE);
             });
         }
@@ -222,4 +239,26 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.addView(newBanLayout);
     }
 
+    protected void addNewInvite(String s){
+        invites.add(s);
+        dataPasser.dataPass(invites, AppointmentActivity.INVITES);
+        searchInvite.setText("");
+
+        if (mode == AppointmentActivity.DETAIL_MODE) {
+            removedInvites.remove(s);
+            dataPasser.dataPass(removedInvites, AppointmentActivity.REMOVED_INVITES);
+        }
+
+        addInvite(s);
+    }
+
+    protected void createErrorMessage(AlertDialog.Builder builder,String errorMessage){
+        builder.setMessage(errorMessage)
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.genericOkText), null);
+
+        AlertDialog alert = builder.create();
+        alert.setTitle(getString(R.string.genericErrorText));
+        alert.show();
+    }
 }

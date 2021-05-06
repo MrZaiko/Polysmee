@@ -8,6 +8,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,7 +16,7 @@ import org.junit.Test;
 
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -38,13 +39,14 @@ public class UserInfoDataStoreTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(userName);
     }
+
 
     public static void testNameDatabase(String value) throws Exception{
         sleep(1, SECONDS);
         String name  = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
-                .child(MainUserSingleton.getInstance().getId()).child("name").get()).getValue();
+                .child(MainUser.getMainUser().getId()).child("name").get()).getValue();
         assertEquals(value, name);
     }
     @Test

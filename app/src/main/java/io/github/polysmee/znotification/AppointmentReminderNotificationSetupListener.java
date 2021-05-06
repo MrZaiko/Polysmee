@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 
 public final class AppointmentReminderNotificationSetupListener {
@@ -31,9 +31,13 @@ public final class AppointmentReminderNotificationSetupListener {
     private static Context mContext;
     private static AlarmManager alarmManager;
 
-    private static String getlocalSharedPreferenceName() {
+    /**
+     *
+     * @return the local SharePreferences used by this class
+     */
+    private static SharedPreferences getlocalSharedPreference() {
         assert (mContext != null);
-        return mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationMaster);
+        return  mContext.getSharedPreferences(mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationSetupListener), Context.MODE_PRIVATE);
     }
 
     /*
@@ -79,7 +83,7 @@ public final class AppointmentReminderNotificationSetupListener {
         //read the only public function first to understand more easily
         assert (alarmManager != null);
         assert (mContext != null);
-        SharedPreferences localAppointmentsReminderTime = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
+        SharedPreferences localAppointmentsReminderTime = getlocalSharedPreference();
         //remove all the appointments reminder that are setup in the system but that doesn't exist for the main user anymore
         Set<String> localAppointments = localAppointmentsReminderTime.getAll().keySet();
         ArrayList<String> toRemove = new ArrayList<>();
@@ -121,9 +125,11 @@ public final class AppointmentReminderNotificationSetupListener {
         }
     }
 
-    /*
-     * This function should be called as soon as the MainUserCurrentrSingleton exist so that the reminder of appointments can be coherent with the database Value
+    /**
+     * This function should be called as soon as the MainUserCurrentrSingleton exist so that the reminder of appointments can be coherent with the database Value,
+     * i.e. as soon as possible but it need MainUsercurrentSingleton
      * @param context The Context in which to perform the setup
+     * @param alarmManager the AlarmManager to use that will trigger a AppointmentReminderNotificaitonPublisher
      *
      */
     public static void appointmentReminderNotificationSetListeners(@NonNull Context context, @NonNull AlarmManager alarmManager) {
@@ -134,7 +140,7 @@ public final class AppointmentReminderNotificationSetupListener {
         //set the variable that would be used in other function more specifically the done function
         mContext = context;
         AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
-        MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
+        MainUser.getMainUser().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
         isListenerSetup = true;
     }
 

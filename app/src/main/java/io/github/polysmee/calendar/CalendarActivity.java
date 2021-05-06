@@ -20,11 +20,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
-
 import io.github.polysmee.invites.InvitesManagementActivity;
-
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.SettingsActivity;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 public class CalendarActivity extends AppCompatActivity{
 
@@ -46,7 +44,7 @@ public class CalendarActivity extends AppCompatActivity{
 
         TabLayout tabs = findViewById(R.id.calendarActivityTabs);
         new TabLayoutMediator(tabs, pager,
-                (tab, position) -> tab.setText(CalendarActivityPagerAdapter.FRAGMENT_NAME[position])).attach();
+                (tab, position) -> tab.setText(getString(CalendarActivityPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
 
         AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(
                 getApplicationContext(),

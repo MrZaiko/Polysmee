@@ -1,4 +1,4 @@
-package io.github.polysmee.calendar.calendarActivityFragments;
+package io.github.polysmee.calendar.fragments;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -33,11 +33,10 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.invites.InvitesManagementActivity;
-import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.login.MainUser;
 
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.*;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
 
 public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
@@ -49,11 +48,10 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private LayoutInflater inflater;
 
     private User user;
-    private final AtomicInteger childrenCounters = new AtomicInteger(0);
 
-    private Map<String, View> appointmentIdsToView = new HashMap<>();
-    private Set<String> appointmentSet = new HashSet<>();
-    private Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
+    private final Map<String, View> appointmentIdsToView = new HashMap<>();
+    private final Set<String> appointmentSet = new HashSet<>();
+    private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
 
 
     @Nullable
@@ -66,7 +64,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         this.inflater = inflater;
         setTodayDateInDailyCalendar(false);
         setDayText(rootView, false);
-        user = MainUserSingleton.getInstance();
+        user = MainUser.getMainUser();
         userAppointmentsListener = null;
         rootView.findViewById(R.id.calendarActivityCreateAppointmentButton).setOnClickListener((v) -> createAppointment());
 
@@ -132,9 +130,8 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      * to show in the calendar
      *
      * @param appointment the appointment's whose description is created
-     * @return the textual representation of the appointment in the calendar
      */
-    protected void makeAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
+    protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
         Date startDate = new Date(appointment.getStartTime());
@@ -146,7 +143,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         else
             calendarEntry.setOnClickListener((v) -> launchRoomActivityWhenClickingOnDescription(appointment.getId()));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentDate)).setText(appointmentDate);
 
@@ -180,7 +177,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      */
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry, null);
-        makeAppointmentEntry(appointment, appointmentEntryLayout);
+        createAppointmentEntry(appointment, appointmentEntryLayout);
         TextView emptySpace = new TextView(rootView.getContext());
 
         scrollLayout.addView(appointmentEntryLayout);
@@ -253,7 +250,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                                 } else {
                                     appointmentInfoMap.put(appointment.getId(), appointmentInfo);
                                     if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it.
-                                        makeAppointmentEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
+                                        createAppointmentEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
                                     } else { //we add the new appointment and update the layout.
                                         scrollLayout.removeAllViewsInLayout();
                                         changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));

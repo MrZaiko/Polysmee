@@ -1,4 +1,4 @@
-package io.github.polysmee.calendar.calendarActivityFragments;
+package io.github.polysmee.calendar.fragments;
 
 import android.content.Intent;
 import android.view.ViewGroup;
@@ -10,15 +10,11 @@ import androidx.fragment.app.Fragment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
-import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
-import io.github.polysmee.room.RoomActivity;
 
 public class CalendarActivityFragmentsHelpers {
 
@@ -45,10 +41,10 @@ public class CalendarActivityFragmentsHelpers {
         long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(publicApp);
         Date today = new Date(epochTimeToday);
 
-        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.US);
+        SimpleDateFormat dayFormat = new SimpleDateFormat("d", Locale.getDefault());
         day.setText(dayFormat.format(today));
 
-        SimpleDateFormat monthFormat = new SimpleDateFormat("EEEE", Locale.US);
+        SimpleDateFormat monthFormat = new SimpleDateFormat("EEEE", Locale.getDefault());
         month.setText(monthFormat.format(today));
     }
 

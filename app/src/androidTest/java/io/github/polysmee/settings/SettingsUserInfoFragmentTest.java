@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -15,7 +16,7 @@ import org.junit.runner.RunWith;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.fragments.SettingsUserInfoFragment;
 
@@ -39,8 +40,9 @@ public class SettingsUserInfoFragmentTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(userName);
     }
+
 
     @Before
     public void createFragment(){
@@ -73,6 +75,13 @@ public class SettingsUserInfoFragmentTest {
         clickOn("ok");
         sleep(1, SECONDS);
         checkFragmentIsDisplayed("AFU", userEmail);**/
+    }
+
+    @Test
+    public void clickingOnFriendButtonLaunchesFriendsActivity() throws InterruptedException {
+        clickOn(R.string.title_settings_main_user_friends);
+        Thread.sleep(1500);
+        assertDisplayed(R.string.friendsActivityEncouragingMessage1);
     }
 
 

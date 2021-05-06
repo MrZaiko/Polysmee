@@ -10,13 +10,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.ExecutionException;
 
-import io.github.polysmee.MainActivity;
+import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
@@ -36,6 +37,11 @@ public class LoginCheckActivityTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
     }
 
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+    }
+
     @Test
     public void firesLoginWhenNotLoggedIn() {
         AuthenticationFactory.getAdaptedInstance().signOut();
@@ -50,10 +56,10 @@ public class LoginCheckActivityTest {
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
         Intents.init();
         try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
-            intending(hasComponent(MainActivity.class.getName()));
+            intending(hasComponent(CalendarActivity.class.getName()));
         }
         Intents.release();
     }

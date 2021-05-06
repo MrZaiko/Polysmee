@@ -5,6 +5,7 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -16,7 +17,7 @@ import io.github.polysmee.znotification.AppointmentReminderNotificationSetupList
 import static org.junit.Assert.*;
 
 //@RunWith(AndroidJUnit4.class)
-public class MainUserSingletonTest {
+public class MainUserTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -28,15 +29,20 @@ public class MainUserSingletonTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
     }
 
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+    }
+
     @Test(expected = NullPointerException.class)
     public void getInstanceThrows() {
         AuthenticationFactory.getAdaptedInstance().signOut();
-        MainUserSingleton.getInstance();
+        MainUser.getMainUser();
     }
 
     @Test
     public void getInstanceWorks() throws ExecutionException, InterruptedException {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
-        assertEquals(MainUserSingleton.getInstance().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
+        assertEquals(MainUser.getMainUser().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
     }
 }

@@ -17,35 +17,35 @@ public interface MessageChildListener extends ChildEventListener {
 
 
     @Override
-    default public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+    default void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         Message data = snapshot.getValue(Message.class);
         childAdded(key, data);
     }
 
     @Override
-    default public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+    default void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         Message data = snapshot.getValue(Message.class);
         childChanged(key,data);
     }
 
     @Override
-    default public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+    default void onChildRemoved(@NonNull DataSnapshot snapshot) {
         String key = snapshot.getKey();
         Message data = snapshot.getValue(Message.class);
         childRemoved(key, data);
     }
 
     @Override
-    default public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+    default void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         Message data = snapshot.getValue(Message.class);
         childMoved(key, data);
     }
 
     @Override
-    default public void onCancelled(@NonNull DatabaseError error) {
+    default void onCancelled(@NonNull DatabaseError error) {
 
     }
 }

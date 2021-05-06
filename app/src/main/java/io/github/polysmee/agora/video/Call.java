@@ -1,11 +1,8 @@
 package io.github.polysmee.agora.video;
 
-import android.app.Activity;
 import android.content.Context;
 import android.view.SurfaceView;
-import android.view.View;
 
-import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
@@ -22,14 +19,11 @@ import io.agora.rtc.video.VideoCanvas;
 import io.agora.rtc.video.VideoEncoderConfiguration;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.RtcTokenBuilder;
-import io.github.polysmee.agora.video.handlers.AGEventHandler;
-import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
 
@@ -42,6 +36,10 @@ public class Call {
     public static final int ERROR_CODE = 1;
     public static final int TIME_CODE_FREQUENCY = 10;
     public static final int INVALID_TIME_CODE_TIME = 30000;
+    private static final int VOLUME_OFF = 0;
+    private static final int STANDARD_VOLUME = 100;
+    private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK, Constants.VOICE_CHANGER_EFFECT_OLDMAN,
+                                                Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -51,11 +49,12 @@ public class Call {
     private RoomActivityParticipantsFragment room;
     private RoomActivityVideoFragment videoRoom;
     private boolean videoEnabled = false;
-    private DatabaseAppointment appointment;
+    private final DatabaseAppointment appointment;
     private final Map<Integer, String> usersCallId;
     private final Set<Integer> usersInCall;
     private final Set<Integer> talking;
     private  Command<Boolean, String> command;
+
 
     public Call(String appointmentId, Context context){
         this.appointment = new DatabaseAppointment(appointmentId);
@@ -68,6 +67,7 @@ public class Call {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
             mRtcEngine.enableAudioVolumeIndication(100, 3, true);
+            mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -90,6 +90,7 @@ public class Call {
     public void joinChannel() {
         String userId = AuthenticationFactory.getAdaptedInstance().getUid();
         String token1 = generateToken(userId);
+        mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
         if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
@@ -102,7 +103,7 @@ public class Call {
      */
     public void leaveChannel() {
         mRtcEngine.leaveChannel();
-        appointment.removeOfCall(new DatabaseUser(MainUserSingleton.getInstance().getId()));
+        appointment.removeOfCall(new DatabaseUser(MainUser.getMainUser().getId()));
     }
 
     /**
@@ -111,9 +112,30 @@ public class Call {
      */
     public int mute(boolean mute) {
         int result = mRtcEngine.muteLocalAudioStream(mute);
-        appointment.muteUser(new DatabaseUser(MainUserSingleton.getInstance().getId()), mute);
+        appointment.muteUser(new DatabaseUser(MainUser.getMainUser().getId()), mute);
 
         return result;
+    }
+
+    /**
+     * Sets the audio effect to the effect whose index is given
+     * @param effectIndex
+     */
+    public void setVoiceEffect(int effectIndex) {
+            mRtcEngine.setAudioEffectPreset(VOICE_EFFECTS[effectIndex]);
+    }
+
+    /**
+     * Mutes (unmutes) the given user locally if muted is set to true (false)
+     * @param muted
+     * @param id
+     */
+    public void muteUserLocally(boolean muted, String id) {
+        for(int uid : usersCallId.keySet()) {
+            if(usersCallId.get(uid).equals(id)) {
+                mRtcEngine.adjustUserPlaybackSignalVolume(uid, muted ? VOLUME_OFF : STANDARD_VOLUME);
+            }
+        }
     }
 
     /**
@@ -157,7 +179,7 @@ public class Call {
 
             @Override
             public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("sucesss");
+                System.out.println("success");
             }
 
             @Override
@@ -198,7 +220,7 @@ public class Call {
             @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
                 if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
-                    appointment.setTimeCode(new DatabaseUser(MainUserSingleton.getInstance().getId()), System.currentTimeMillis());
+                    appointment.setTimeCode(new DatabaseUser(MainUser.getMainUser().getId()), System.currentTimeMillis());
                 }
                 timeCodeIndicator += 1;
             }

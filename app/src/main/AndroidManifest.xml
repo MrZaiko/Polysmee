@@ -51,15 +51,14 @@
 
 
         <activity android:name=".invites.InvitesManagementActivity"/>
+        <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
+        <activity android:name=".settings.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />
         <activity android:name=".calendar.CalendarActivity" />
-
-
-
-        <activity android:name=".photo.editing.PictureEditActivity"/>
+        <activity android:name=".photo.editing.PictureEditActivity" />
 
         <receiver android:name=".znotification.AppointmentReminderNotificationPublisher" />
 
@@ -72,7 +71,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

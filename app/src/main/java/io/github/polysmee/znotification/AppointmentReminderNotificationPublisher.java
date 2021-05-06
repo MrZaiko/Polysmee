@@ -24,16 +24,20 @@ import io.github.polysmee.login.LoginCheckActivity;
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
  *
  **/
-public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
+public final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
     private final static int NOTIFICATION_LOCKSCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
 
 
-    // From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
-    //"It's safe to call this repeatedly because creating an existing notification channel performs no operation."
-    //Later when doing the notification with ressource file move it to the app launch as suggested
+    /**
+     * Create the notification channel for the reminder notification
+     * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
+     * "It's safe to call this repeatedly because creating an existing notification channel performs no operation."
+     * Later when doing the notification with ressource file move it to the app launch as suggested
+     */
+
     private static void createNotificationChannel(Context context) {
         assert context != null;
         // Create the NotificationChannel, but only on API 26+ because
@@ -50,14 +54,6 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         }
     }
 
-
-    /**
-     * Create a notification that remind the user, he/she has a appointment coming with the parameter
-     * specified in the values resources, in appointmentReminderNotification.xml
-     *
-     * @param context The Context in which the receiver is running.
-     * @param intent  The Intent being received.
-     */
     @Override
     public void onReceive(@NonNull Context context,@NonNull Intent intent) {
         Intent fullScreenIntent = new Intent(context, LoginCheckActivity.class);

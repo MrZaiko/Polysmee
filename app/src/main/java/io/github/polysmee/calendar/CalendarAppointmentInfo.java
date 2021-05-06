@@ -1,10 +1,5 @@
 package io.github.polysmee.calendar;
 
-import androidx.annotation.Nullable;
-
-import io.github.polysmee.database.User;
-
-
 /**
  * This class serves as a way to keep an appointment's information
  * to display them on the calendar without having to use callbacks all the time.

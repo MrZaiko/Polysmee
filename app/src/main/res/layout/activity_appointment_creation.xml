@@ -62,7 +62,7 @@
                         android:id="@+id/appointmentCreationStartTimeText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Start :"
+                        android:text="@string/appointment_creation_start_txt"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/appointmentCreationStartTime"
@@ -96,7 +96,7 @@
                         android:id="@+id/appointementCreationEndTimeText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="End :"
+                        android:text="@string/appointment_creation_end_txt"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/appointmentCreationEndTime"
@@ -189,13 +189,13 @@
                     android:id="@+id/appointmentCreationAddTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Add User"
-                    android:textSize="16sp"
                     android:gravity="end"
+                    android:text="@string/appointment_settings_invite_user"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@id/appointmentCreationAddUserFragment"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/appointmentCreationShowAdd"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <fragment
                     android:id="@+id/appointmentCreationAddUserFragment"
@@ -238,13 +238,13 @@
                     android:id="@+id/appointmentCreationBanTextView"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="Ban user"
-                    android:textSize="16sp"
                     android:gravity="end"
+                    android:text="@string/appointment_settings_ban_user"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@id/appointmentCreationBanUserFragment"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/appointmentCreationShowBan"
-                    app:layout_constraintTop_toTopOf="parent"/>
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <fragment
                     android:id="@+id/appointmentCreationBanUserFragment"

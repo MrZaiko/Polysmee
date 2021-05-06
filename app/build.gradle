@@ -54,8 +54,10 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'commons-codec:commons-codec:1.14'
 
-    implementation 'io.agora.rtc:full-sdk:3.1.0'
-    implementation "androidx.recyclerview:recyclerview:1.2.0"
+
+    implementation 'io.agora.rtc:full-sdk:3.3.1'
+    implementation "androidx.recyclerview:recyclerview:1.1.0"
+
     // For control over item selection of both touch and mouse driven selection
     implementation "androidx.recyclerview:recyclerview-selection:1.1.0"
 

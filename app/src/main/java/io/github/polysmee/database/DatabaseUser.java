@@ -194,6 +194,59 @@ public final class DatabaseUser implements User {
     }
 
     @Override
+    public void addFriend(User user) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("friends")
+                .child(user.getId())
+                .setValue(true);
+    }
+
+    @Override
+    public void removeFriend(User user) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("friends")
+                .child(user.getId())
+                .setValue(null);
+    }
+
+    @Override
+    public void getFriendsAndThen(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("friends")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getFriends_Once_And_Then(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("friends")
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void removeFriendsListener(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("friends")
+                .removeEventListener(valueListener);
+    }
+
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;

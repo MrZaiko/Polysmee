@@ -27,7 +27,7 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 public class InvitesManagementActivity extends AppCompatActivity {
 
@@ -52,7 +52,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
         Button okButton = findViewById(R.id.InvitesManagementButtonOk);
         okButton.setOnClickListener(v -> finish());
 
-        user = MainUserSingleton.getInstance();
+        user = MainUser.getMainUser();
 
         setListenerUserAppointments();
     }
@@ -161,7 +161,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
     }
 
 
-    protected StringSetValueListener currentUserInvitesListener() {
+    private StringSetValueListener currentUserInvitesListener() {
 
         return setOfIds -> {
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
@@ -191,11 +191,11 @@ public class InvitesManagementActivity extends AppCompatActivity {
             for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
                 Appointment appointment = new DatabaseAppointment(id);
                 CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
-                appointment.getStartTimeAndThen((start) -> {
+                appointment.getStartTime_Once_AndThen((start) -> {
                     appointmentInfo.setStartTime(start);
-                    appointment.getDurationAndThen((duration) -> {
+                    appointment.getDuration_Once_AndThen((duration) -> {
                         appointmentInfo.setDuration(duration);
-                        appointment.getTitleAndThen((title) -> {
+                        appointment.getTitle_Once_AndThen((title) -> {
                             appointmentInfo.setTitle((title));
                             if (!appointmentSet.contains(id)) { //the appointment was removed; we thus have to remove it from the displayed appointments
                                 appointmentInfoMap.remove(id);
