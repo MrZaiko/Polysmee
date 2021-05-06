@@ -11,6 +11,7 @@ import androidx.test.espresso.intent.Intents;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -82,6 +83,7 @@ public class RoomActivityMessagesFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUserSingleton.getInstance().getId());
     }
+
 
 
     @Test

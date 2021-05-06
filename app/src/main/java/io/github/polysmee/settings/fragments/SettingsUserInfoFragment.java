@@ -1,11 +1,13 @@
 package io.github.polysmee.settings.fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.EditTextPreference;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceDataStore;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
@@ -18,6 +20,7 @@ import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.settings.FriendsActivity;
 import io.github.polysmee.settings.UserInfoDataStore;
 
 public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
@@ -59,8 +62,19 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
             userEmailEditTextPreference.setSummary(user.getEmail());
         }
 
+        Preference friendManagerPreference =  new Preference(context);
+        friendManagerPreference.setPreferenceDataStore(userInfoDataStore);
+        friendManagerPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_friends));
+        friendManagerPreference.setKey(UserInfoDataStore.PREFERENCE_KEY_MAIN_USER_FRIENDS);
+        friendManagerPreference.setOnPreferenceClickListener((v) ->{
+            Intent intent = new Intent(getContext(), FriendsActivity.class);
+            startActivity(intent);
+            return false;
+        });
+
         screen.addPreference(userNameEditTextPreference);
         screen.addPreference(userEmailEditTextPreference);
+        screen.addPreference(friendManagerPreference);
         setPreferenceScreen(screen);
 
     }

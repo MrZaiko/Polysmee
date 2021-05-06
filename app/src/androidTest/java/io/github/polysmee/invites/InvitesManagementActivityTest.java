@@ -8,6 +8,7 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -95,6 +96,11 @@ public class InvitesManagementActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("participants").child(id2).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("owner").setValue(id2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("private").setValue(false);
+    }
+
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test

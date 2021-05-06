@@ -54,11 +54,9 @@ public class RoomActivity extends AppCompatActivity {
 
     private void checkIfParticipant() {
         appointment.getParticipantsIdAndThen(p -> {
-            appointment.getBansAndThen(b -> {
-                if (!p.contains(MainUserSingleton.getInstance().getId()) || b.contains(MainUserSingleton.getInstance().getId())) {
-                    generateRemovedDialog();
-                }
-            });
+            if (!p.contains(MainUserSingleton.getInstance().getId())) {
+                generateRemovedDialog();
+            }
         });
     }
 

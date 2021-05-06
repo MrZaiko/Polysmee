@@ -7,6 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -42,6 +43,7 @@ public class SettingsUserInfoFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
     }
 
+
     @Before
     public void createFragment(){
         FragmentScenario.launchInContainer(SettingsUserInfoFragment.class);
@@ -73,6 +75,13 @@ public class SettingsUserInfoFragmentTest {
         clickOn("ok");
         sleep(1, SECONDS);
         checkFragmentIsDisplayed("AFU", userEmail);**/
+    }
+
+    @Test
+    public void clickingOnFriendButtonLaunchesFriendsActivity() throws InterruptedException {
+        clickOn(R.string.title_settings_main_user_friends);
+        Thread.sleep(1500);
+        assertDisplayed(R.string.friendsActivityEncouragingMessage1);
     }
 
 
