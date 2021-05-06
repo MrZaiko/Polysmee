@@ -121,9 +121,11 @@ public final class AppointmentReminderNotificationSetupListener {
         }
     }
 
-    /*
-     * This function should be called as soon as the MainUserCurrentrSingleton exist so that the reminder of appointments can be coherent with the database Value
+    /**
+     * This function should be called as soon as the MainUserCurrentrSingleton exist so that the reminder of appointments can be coherent with the database Value,
+     * i.e. as soon as possible but it need MainUsercurrentSingleton
      * @param context The Context in which to perform the setup
+     * @param alarmManager the AlarmManager to use that will trigger a AppointmentReminderNotificaitonPublisher
      *
      */
     public static void appointmentReminderNotificationSetListeners(@NonNull Context context, @NonNull AlarmManager alarmManager) {
