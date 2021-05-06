@@ -67,9 +67,20 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     public void setImageBitmap(Bitmap bitmap) {
         super.setImageBitmap(bitmap);
 
-        alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        //keep the previous size
+        if (alteredBitmap != null) {
+            width = alteredBitmap.getWidth();
+            height = alteredBitmap.getHeight();
+        }
+
+        alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         alteredCanvas = new Canvas(alteredBitmap);
         alteredCanvas.drawBitmap(bitmap,0,0,null);
+
+        onSizeChanged(width, height, bitmap.getWidth(), bitmap.getHeight());
     }
 
     public void setStrokeWidth(float strokeWidth) {

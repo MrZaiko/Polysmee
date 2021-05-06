@@ -250,33 +250,15 @@ public class PictureEditActivityTest {
         }
     }
 
-    @Test
+    /*@Test
     public void colorsAreCorrectlyApplied() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
-            scrollTo(R.id.pictureEditBlue);
-            clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditBlue);
-            colorMatcher(R.color.blue);
 
-            scrollTo(R.id.pictureEditRed);
-            clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditRed);
-            colorMatcher(R.color.red);
-
-            scrollTo(R.id.pictureEditYellow);
-            clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditYellow);
-            colorMatcher(R.color.yellow);
-
-            scrollTo(R.id.pictureEditGreen);
-            clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditGreen);
-            colorMatcher(R.color.green);
-
-            scrollTo(R.id.pictureEditBlack);
-            clickRadioButtonItem(R.id.pictureEditColors, R.id.pictureEditBlack);
-            colorMatcher(R.color.black);
         }
-    }
+    }*/
 
     @Test
     public void strokeWidthIsCorrectlySet() {
