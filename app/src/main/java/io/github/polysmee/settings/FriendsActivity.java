@@ -23,7 +23,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -43,7 +43,7 @@ public class FriendsActivity extends AppCompatActivity {
     private Map<String, List<View>> idsToFriendEntries;
     private final Set<String> friendsIds = new HashSet<>();
     private LinearLayout scrollLayout;
-    private final User user = MainUserSingleton.getInstance();
+    private final User user = MainUser.getMainUser();
     private StringSetValueListener friendsValuesListener;
 
 

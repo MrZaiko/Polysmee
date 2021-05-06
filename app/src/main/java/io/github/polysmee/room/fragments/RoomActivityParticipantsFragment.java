@@ -169,7 +169,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     videoButton.setOnClickListener(this::shareVideoBehavior);
                 } else {
                     user.getNameAndThen(participantName::setText);
-                    MainUserSingleton.getInstance().getFriends_Once_And_Then((friendsIds)->{
+                    MainUser.getMainUser().getFriends_Once_And_Then((friendsIds)->{
                         if(friendsIds.contains(id)){
                             friendshipButton.setImageResource(R.drawable.baseline_remove);
                         }
@@ -190,14 +190,14 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
 
     private void friendshipButtonBehavior(View friendshipButton, String userId){
-        MainUserSingleton.getInstance().getFriends_Once_And_Then((friendsIds)->{
+        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds)->{
             if(friendsIds.contains(userId)){
                 ((ImageView)friendshipButton).setImageResource(R.drawable.baseline_add);
-                MainUserSingleton.getInstance().removeFriend(new DatabaseUser(userId));
+                MainUser.getMainUser().removeFriend(new DatabaseUser(userId));
             }
             else{
                 ((ImageView)friendshipButton).setImageResource(R.drawable.baseline_remove);
-                MainUserSingleton.getInstance().addFriend(new DatabaseUser(userId));
+                MainUser.getMainUser().addFriend(new DatabaseUser(userId));
             }
         });
     }
