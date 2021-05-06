@@ -69,6 +69,6 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         sleep(1, SECONDS);
         assertDisplayed("You");
         assertDisplayed(username2);
-        assertNotDisplayed(R.id.voiceTunerSpinner);
+        assertNotDisplayed(R.id.roomActivityParticipantElementOwnerVoiceMenu);
     }
 }

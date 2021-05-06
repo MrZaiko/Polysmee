@@ -76,7 +76,7 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         clickOn(R.id.roomActivityParticipantElementCallButton);
-        assertDisplayed(R.id.voiceTunerSpinner);
+        assertDisplayed(R.id.roomActivityParticipantElementOwnerVoiceMenu);
     }
 
     @Test
@@ -160,10 +160,8 @@ public class RoomActivityParticipantsFragmentTest {
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
         sleep(1, SECONDS);
         clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
-        clickOn(R.id.voiceTunerSpinner);
-        assertEquals(true,true);
-        pressBack();
         clickSpinnerItem(R.id.voiceTunerSpinner, 2);
+        pressBack();
         int currentVoicePosition = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()).getInt(
                 ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune) ,0);
         Assert.assertEquals(currentVoicePosition, 2);
