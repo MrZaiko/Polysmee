@@ -70,7 +70,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
         initializePermissionRequester();
         initializeAndDisplayDatabase();
 
-        videoFragment = (RoomActivityVideoFragment) getActivity().getSupportFragmentManager().getFragments().get(1);
+        if (getActivity().getSupportFragmentManager().getFragments().size() > 1)
+            videoFragment = (RoomActivityVideoFragment) getActivity().getSupportFragmentManager().getFragments().get(1);
 
         if(call != null) {
             call.setCommand(this::setTalkingUser);
