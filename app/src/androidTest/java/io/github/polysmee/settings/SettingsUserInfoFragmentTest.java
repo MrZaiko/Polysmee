@@ -77,5 +77,12 @@ public class SettingsUserInfoFragmentTest {
         checkFragmentIsDisplayed("AFU", userEmail);**/
     }
 
+    @Test
+    public void clickingOnFriendButtonLaunchesFriendsActivity() throws InterruptedException {
+        clickOn(R.string.title_settings_main_user_friends);
+        Thread.sleep(1500);
+        assertDisplayed(R.string.friendsActivityEncouragingMessage1);
+    }
+
 
 }
