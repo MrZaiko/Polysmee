@@ -156,7 +156,7 @@ public class RoomActivityParticipantsFragmentTest {
         sleep(1, SECONDS);
         clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
         clickOn(R.id.voiceTunerSpinner);
-
+        assertEquals(true,true);
     }
 
 
