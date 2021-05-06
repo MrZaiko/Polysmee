@@ -14,6 +14,8 @@ import android.net.Uri;
 import androidx.core.content.FileProvider;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.espresso.NoActivityResumedException;
+import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 
 import com.google.android.gms.tasks.Tasks;
@@ -38,11 +40,15 @@ import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
+import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.contrib.ActivityResultMatchers.hasResultCode;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickBack;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaRadioButtonInteractions.clickRadioButtonItem;
@@ -54,6 +60,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
 public class PictureEditActivityTest {
@@ -290,6 +297,26 @@ public class PictureEditActivityTest {
             //clickOn("Choose");
             colorMatcher(Color.RED);
         }
+    }
+
+    @Test
+    public void backButtonCancelTheActivity() throws InterruptedException {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
+
+        ActivityScenario<PictureEditActivity> scenario = ActivityScenario.launch(intent);
+
+        try {
+            pressBack();
+            fail("Should have thrown NoActivityResumedException");
+        } catch (NoActivityResumedException expected) {
+        }
+
+        assertThat(scenario.getResult(), hasResultCode(Activity.RESULT_CANCELED));
+
+        Thread.sleep(4000);
+
+        scenario.close();
     }
 
     @Test
