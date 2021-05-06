@@ -98,7 +98,8 @@ public class RoomActivityVideoFragmentTest {
             clickOn(R.id.roomActivityParticipantElementVideoButton);
             sleep(2, SECONDS);
 
-            clickOn(R.id.roomActivityParticipantElementVideoButton);
+            //clickOn(R.id.roomActivityParticipantElementVideoButton);
+            //sleep(2, SECONDS);
             clickOn(R.id.roomActivityParticipantElementCallButton);
             sleep(2, SECONDS);
             for(int i = 0; i < cyclicBufferAppender.getLength(); ++i){
