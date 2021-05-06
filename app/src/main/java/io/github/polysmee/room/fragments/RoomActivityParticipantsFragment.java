@@ -318,7 +318,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * @param effectIndex
      */
     private void setAudioEffect(int effectIndex) {
-        call.setVoiceEffect(effectIndex);
+        if(call != null) {
+            call.setVoiceEffect(effectIndex);
+        }
+
     }
 
     /**
