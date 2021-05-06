@@ -13,6 +13,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUserSingleton;
@@ -22,6 +23,7 @@ import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -67,5 +69,6 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         sleep(1, SECONDS);
         assertDisplayed("You");
         assertDisplayed(username2);
+        assertNotDisplayed(R.id.voiceTunerSpinner);
     }
 }

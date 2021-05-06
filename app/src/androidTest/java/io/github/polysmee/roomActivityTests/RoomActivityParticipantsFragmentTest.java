@@ -1,11 +1,13 @@
 package io.github.polysmee.roomActivityTests;
 import android.os.Bundle;
 import androidx.fragment.app.testing.FragmentScenario;
+import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,12 +25,14 @@ import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static com.schibsted.spain.barista.interaction.BaristaSpinnerInteractions.clickSpinnerItem;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
@@ -72,6 +76,7 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         clickOn(R.id.roomActivityParticipantElementCallButton);
+        assertDisplayed(R.id.voiceTunerSpinner);
     }
 
     @Test
@@ -157,6 +162,11 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
         clickOn(R.id.voiceTunerSpinner);
         assertEquals(true,true);
+        pressBack();
+        clickSpinnerItem(R.id.voiceTunerSpinner, 2);
+        int currentVoicePosition = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()).getInt(
+                ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune) ,0);
+        Assert.assertEquals(currentVoicePosition, 2);
     }
 
 
