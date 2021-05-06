@@ -16,6 +16,7 @@ public class LoginCheckActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_check);
+        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
         if(user == null) {
             startActivity(new Intent(this, LoginActivity.class));
