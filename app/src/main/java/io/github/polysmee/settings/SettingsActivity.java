@@ -29,15 +29,6 @@ public class SettingsActivity extends AppCompatActivity implements PreferenceFra
         }
     }
 
-    /**
-     * Called when the user has clicked on a preference that has a fragment class name
-     * associated with it. The implementation should instantiate and switch to an instance
-     * of the given fragment.
-     *
-     * @param caller The fragment requesting navigation
-     * @param pref   The preference requesting the fragment
-     * @return {@code true} if the fragment creation has been handled
-     */
     @Override
     public boolean onPreferenceStartFragment(PreferenceFragmentCompat caller, Preference pref) {
         // Instantiate the new Fragment

@@ -50,14 +50,6 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
         }
     }
 
-
-    /**
-     * Create a notification that remind the user, he/she has a appointment coming with the parameter
-     * specified in the values resources, in appointmentReminderNotification.xml
-     *
-     * @param context The Context in which the receiver is running.
-     * @param intent  The Intent being received.
-     */
     @Override
     public void onReceive(@NonNull Context context,@NonNull Intent intent) {
         Intent fullScreenIntent = new Intent(context, LoginCheckActivity.class);
