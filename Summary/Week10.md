@@ -31,3 +31,6 @@ While my work was supposed to be only investigation, I quickly discovered that f
 I then worked to refactor the app in order to apply the recommendations of the code review, but I found out that Firebase has a very specific way to handle settings strings and lost hours to debug this, only to realise the code was much cleaner beforehand. I then dropped these modifications, which still frustrates me for the amount of work I have put in.
 I will try to be more useful to the codebase during the next weeks, as this was not up to the standard I wish to promote.
 Next time, I will work on the GUI for welcoming new users, assuming the destabilization sprint does not significantly impact the trajectory the app is taking.
+
+# Overall
+The group has done absolutely well and no major problem of communication is to be reported. All good !
