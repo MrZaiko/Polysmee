@@ -30,6 +30,7 @@ public class VoiceTunerActivity extends AppCompatActivity implements AdapterView
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
         //TODO by @Adrien the id, is not useful for you, the position give you the position in the array voices_tune_array (see res/values/voice_tuner.xml) of the chosen tune
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), position).apply();
     }
 
 

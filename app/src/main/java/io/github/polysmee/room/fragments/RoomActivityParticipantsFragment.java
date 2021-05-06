@@ -19,6 +19,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -104,6 +105,13 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
         databaseAppointment.removeInCallListener(listener);
         super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
+        setAudioEffect(preference);
     }
 
 
@@ -279,7 +287,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
             });
         }
         call.joinChannel();
-        System.out.println("yi");
+        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
+        setAudioEffect(preference);
 
     }
 
@@ -292,7 +301,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(call != null) {
             call.leaveChannel();
         }
-
+        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
     }
 
     /**
@@ -305,11 +314,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     /**
-     * Sets the audio effect to the give effect
-     * @param effect
+     * Sets the audio effect to the effect whose index is given
+     * @param effectIndex
      */
-    private void setAudioEffect(int effect) {
-        call.setVoiceEffect(effect);
+    private void setAudioEffect(int effectIndex) {
+        call.setVoiceEffect(effectIndex);
     }
 
     /**

@@ -44,6 +44,7 @@ public class Call {
     public static final int INVALID_TIME_CODE_TIME = 30000;
     private static final int VOLUME_OFF = 0;
     private static final int STANDARD_VOLUME = 100;
+    private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK};
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -59,6 +60,7 @@ public class Call {
     private final Set<Integer> talking;
     private  Command<Boolean, String> command;
 
+
     public Call(String appointmentId, Context context){
         this.appointment = new DatabaseAppointment(appointmentId);
         usersCallId = new HashMap<Integer,String>();
@@ -70,7 +72,7 @@ public class Call {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
             mRtcEngine.enableAudioVolumeIndication(100, 3, true);
-            mRtcEngine.setAudioEffectPreset(Constants.VOICE_CHANGER_EFFECT_HULK);
+            mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         } catch (Exception e) {
             System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
@@ -113,11 +115,11 @@ public class Call {
     }
 
     /**
-     * Sets the audio effect to the give effect
-     * @param effect
+     * Sets the audio effect to the effect whose index is given
+     * @param effectIndex
      */
-    public void setVoiceEffect(int effect) {
-        mRtcEngine.setAudioEffectPreset(effect);
+    public void setVoiceEffect(int effectIndex) {
+        mRtcEngine.setAudioEffectPreset(VOICE_EFFECTS[effectIndex]);
     }
 
     /**
