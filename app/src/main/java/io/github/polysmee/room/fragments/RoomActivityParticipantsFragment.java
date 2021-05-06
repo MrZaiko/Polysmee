@@ -166,7 +166,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 String userId = MainUserSingleton.getInstance().getId();
 
                 if (id.equals(userId)) {
-                    //set the participants layout for the use using the app
+                    //set the participants layout for the user using the app
                     ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
                     audioTune.setVisibility(View.VISIBLE);
                     audioTune.setOnClickListener(v ->{
