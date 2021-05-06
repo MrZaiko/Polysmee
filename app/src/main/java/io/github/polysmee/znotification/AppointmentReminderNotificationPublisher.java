@@ -24,7 +24,7 @@ import io.github.polysmee.login.LoginCheckActivity;
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
  *
  **/
-public class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
+public final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;

@@ -11,7 +11,7 @@ import android.widget.Spinner;
 
 import io.github.polysmee.R;
 
-public class VoiceTunerActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
+public final class VoiceTunerActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
