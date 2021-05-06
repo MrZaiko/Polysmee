@@ -5,10 +5,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
+import android.net.Uri;
 
+import androidx.core.content.FileProvider;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
@@ -23,6 +26,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
@@ -35,6 +44,7 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaRadioButtonInteractions.clickRadioButtonItem;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSeekBarInteractions.setProgressTo;
@@ -137,6 +147,7 @@ public class PictureEditActivityTest {
 
 
     private static Bitmap bigYoshiBitmap;
+    private static Uri bigYoshiUri;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -152,6 +163,24 @@ public class PictureEditActivityTest {
         //Thread.sleep(5000);
 
         bigYoshiBitmap = BitmapFactory.decodeByteArray(bigYoshi, 0, bigYoshi.length);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bigYoshiBitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        File photoFile = null;
+        try {
+            photoFile = FileHelper.createImageFile(ApplicationProvider.getApplicationContext());
+            try (FileOutputStream fileOutputStream = new FileOutputStream(photoFile)) {
+                fileOutputStream.write(byteArray);
+                fileOutputStream.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        bigYoshiUri = FileProvider.getUriForFile(ApplicationProvider.getApplicationContext(),
+                "com.example.android.fileprovider", photoFile);
     }
 
     public void bitmapMatcher(Bitmap bitmap) {
@@ -208,7 +237,7 @@ public class PictureEditActivityTest {
     @Test
     public void bigYoshiIsCorrectlyDisplayed() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             bitmapMatcher(bigYoshiBitmap);
@@ -229,7 +258,7 @@ public class PictureEditActivityTest {
     @Test
     public void filtersAreCorrectlyApplied() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             scrollTo(R.id.pictureEditBinary);
@@ -250,20 +279,23 @@ public class PictureEditActivityTest {
         }
     }
 
-    /*@Test
+    @Test
     public void colorsAreCorrectlyApplied() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
-
+            clickOn(R.id.pictureEditColorPicker);
+            sleep(1, TimeUnit.SECONDS);
+            //clickOn("Choose");
+            colorMatcher(Color.RED);
         }
-    }*/
+    }
 
     @Test
     public void strokeWidthIsCorrectlySet() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             setProgressTo(R.id.pictureEditStrokeWidthBar, 0);
@@ -282,7 +314,7 @@ public class PictureEditActivityTest {
     @Test
     public void resetButtonWorks() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
         try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
@@ -296,7 +328,7 @@ public class PictureEditActivityTest {
     @Test
     public void returnedPictureIsTheAlteredPicture() throws InterruptedException {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
-        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshi);
+        intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
         ActivityScenario<PictureEditActivity> scenario = ActivityScenario.launch(intent);
         clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
@@ -304,7 +336,8 @@ public class PictureEditActivityTest {
 
         assertThat(scenario.getResult(), hasResultCode(Activity.RESULT_OK));
         assertThat(scenario.getResult().getResultData(), IntentMatchers.hasExtraWithKey("data"));
-        assertNotEquals(scenario.getResult().getResultData().getByteArrayExtra("data"), bigYoshi);
+        //The result is not the same file
+        assertNotEquals(scenario.getResult().getResultData().getData(), bigYoshiUri);
         Thread.sleep(4000);
         scenario.close();
     }
