@@ -102,4 +102,7 @@
     <string name="roomEditMessageText">Modifier le message</string>
     <string name="genericEditText">Modifier</string>
     <string name="genericCancelText">Annuler</string>
+    <string name="title_settings_main_user_friends">Gérez vos amis!</string>
+    <string name="friendsActivityEncouragingMessage1">Ajoutez est voyez vos amis ci-dessous!</string>
+    <string name="friendsActivityEncouragingMessage2">Ajoutez vos amis ici!</string>
 </resources>
