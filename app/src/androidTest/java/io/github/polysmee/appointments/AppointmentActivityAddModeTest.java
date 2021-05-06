@@ -21,7 +21,7 @@ import java.util.concurrent.ExecutionException;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -44,9 +44,9 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class AppointmentActivityAddModeTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "bxcwviusergpoza";
+    private static final String id2 = "bxcwviusergpoza";
     private static final String username2 = "Sami L'imposteur";
-    private static String id3 = "sdflkhsfdlkhsfd";
+    private static final String id3 = "sdflkhsfdlkhsfd";
     private static final String username3 = "Léo La fouine";
 
     private static final String course = "SDP";
@@ -60,9 +60,10 @@ public class AppointmentActivityAddModeTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityAddModeTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
     }
 
     @AfterClass
@@ -137,7 +138,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
@@ -156,7 +157,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(18, 2);
 
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationTimeError);
@@ -195,7 +196,7 @@ public class AppointmentActivityAddModeTest {
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnBan);
             clickOn(R.id.appointmentSettingsBtnBan);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
 
             writeTo(R.id.appointmentSettingsSearchBan, username2);
@@ -209,14 +210,14 @@ public class AppointmentActivityAddModeTest {
             closeSoftKeyboard();
             scrollTo(R.id.appointmentSettingsBtnAdd);
             clickOn(R.id.appointmentSettingsBtnAdd);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
 
             scrollTo(R.id.appointmentCreationCourseLayout);
             writeTo(R.id.appointmentCreationEditTxtAppointmentCourseSet, "qwefphqpewufh");
             closeSoftKeyboard();
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
 
             writeTo(R.id.appointmentSettingsSearchAdd, username2);
@@ -225,7 +226,7 @@ public class AppointmentActivityAddModeTest {
             clickOn(R.id.appointmentSettingsBtnAdd);
 
             clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationAddBanError);
@@ -288,7 +289,7 @@ public class AppointmentActivityAddModeTest {
 
         Thread.sleep(2000);
 
-        HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").get()).getValue();
+        HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").get()).getValue();
         assertNotNull(aptId);
         assertEquals(1, aptId.keySet().size());
 

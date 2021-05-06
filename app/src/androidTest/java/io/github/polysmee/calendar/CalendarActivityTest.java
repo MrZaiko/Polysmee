@@ -25,9 +25,10 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
-import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+
+import io.github.polysmee.room.RoomActivity;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -75,8 +76,9 @@ public class CalendarActivityTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("appointments").child(appointmentId).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").child(appointmentId).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(appointmentCourse).setValue(appointmentCourse);
     }
 
 
@@ -113,7 +115,7 @@ public class CalendarActivityTest {
             long startTime = calendar.getTimeInMillis() + 60*1000;
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi" ,
                     startTime ,3600*6*1000,appointmentId+5);
-            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
+            MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3,SECONDS);
             clickOn(info.getTitle());
@@ -136,7 +138,7 @@ public class CalendarActivityTest {
 
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMe" ,
                     calendar.getTimeInMillis() + 60*1000 ,3600*6*1000,appointmentId+5);
-            MainUserSingleton.getInstance().createNewUserAppointment(info.getStartTime(),
+            MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3,SECONDS);
             scrollTo(info.getTitle());
@@ -186,7 +188,7 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            MainUserSingleton.getInstance().createNewUserAppointment(startTime.getTimeInMillis(),
+            MainUser.getMainUser().createNewUserAppointment(startTime.getTimeInMillis(),
                     3600, appointmentCourse, appointmentTitle, false);
             sleep(5,SECONDS);
 
@@ -224,7 +226,7 @@ public class CalendarActivityTest {
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             for(int i = 0; i< number_of_appointments; ++i){
-                MainUserSingleton.getInstance().createNewUserAppointment(infos[i].getStartTime(),
+                MainUser.getMainUser().createNewUserAppointment(infos[i].getStartTime(),
                         infos[i].getDuration(), infos[i].getCourse(), infos[i].getTitle(), i%2==0);
                 sleep(3,SECONDS);
             }

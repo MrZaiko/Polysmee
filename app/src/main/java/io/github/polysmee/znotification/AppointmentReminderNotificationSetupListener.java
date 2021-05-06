@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 
 public final class AppointmentReminderNotificationSetupListener {
@@ -134,7 +134,7 @@ public final class AppointmentReminderNotificationSetupListener {
         //set the variable that would be used in other function more specifically the done function
         mContext = context;
         AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
-        MainUserSingleton.getInstance().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
+        MainUser.getMainUser().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
         isListenerSetup = true;
     }
 

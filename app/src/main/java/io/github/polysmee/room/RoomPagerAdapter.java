@@ -8,6 +8,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
@@ -18,9 +19,9 @@ import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
  */
 public class RoomPagerAdapter extends FragmentStateAdapter {
     private final String appointmentId;
-    public static String[] FRAGMENT_NAME = new String[]{"MESSAGES", "VIDEO","CALL"};
+    public static int[] FRAGMENT_NAME_ID = new int[]{R.string.roomTabMessagesText, R.string.roomTabVideoText, R.string.roomTabCallText};
     private final static int FRAGMENTS_NUMBER = 3;
-    private Call call;
+    private final Call call;
     public RoomPagerAdapter(FragmentActivity fm, String appointmentId) {
         super(fm);
         this.appointmentId = appointmentId;

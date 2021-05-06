@@ -19,7 +19,7 @@ import java.util.Calendar;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.onView;
@@ -65,16 +65,16 @@ public class InvitesManagementActivityTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("InvitesManagementActivityTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("invites").child(appointmentId).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId).setValue(true);
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(title);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(course);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(startTime.getTimeInMillis());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("duration").setValue(duration);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("invites").child(MainUserSingleton.getInstance().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(id2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(false);
@@ -83,7 +83,7 @@ public class InvitesManagementActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("course").setValue(course2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("start").setValue(startTime.getTimeInMillis());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("duration").setValue(duration);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("invites").child(MainUserSingleton.getInstance().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("participants").child(id2).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("owner").setValue(id2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("private").setValue(false);
@@ -92,7 +92,7 @@ public class InvitesManagementActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("course").setValue(course3);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("start").setValue(startTime.getTimeInMillis());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("duration").setValue(duration);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("invites").child(MainUserSingleton.getInstance().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("participants").child(id2).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("owner").setValue(id2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("private").setValue(false);
@@ -120,11 +120,11 @@ public class InvitesManagementActivityTest {
         clickOn("ACCEPT");
         sleep(1, SECONDS);
         onView(withText(title)).check(doesNotExist());
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("invites").child(appointmentId2).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId2).setValue(true);
         sleep(1, SECONDS);
         assertDisplayed(title2);
         clickOn("REFUSE");
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("invites").child(appointmentId3).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId3).setValue(true);
         sleep(1, SECONDS);
         assertDisplayed(title3);
         onView(withText(title2)).check(doesNotExist());

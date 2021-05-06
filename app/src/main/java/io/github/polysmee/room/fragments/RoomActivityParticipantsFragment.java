@@ -31,7 +31,7 @@ import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 
 /**
@@ -149,11 +149,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
                 participantsButtonLayout.setVisibility(View.VISIBLE);
                 callButton.setVisibility(View.GONE);
-                String userId = MainUserSingleton.getInstance().getId();
+                String userId = MainUser.getMainUser().getId();
 
                 if (id.equals(userId)) {
 
-                    participantName.setText("You");
+                    participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
 
                     callButton.setOnClickListener(v ->  {
@@ -214,10 +214,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
         call.shareLocalVideo();
     }
 
-    /**
-     *
-     * @return true if the channel is successfully joined ad false otherwise
-     */
     private void joinChannel() {
 
         if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
@@ -249,10 +245,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
 
-    /**
-     *
-     * @return true if the channel is successfully left and false otherwise
-     */
     private void leaveChannel() {
         if(call != null) {
             call.leaveChannel();
@@ -271,8 +263,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * Make the user whose id is given appear as online (offline) in the room frontend if online is set to true (false)
-     * @param online
-     * @param id
+     * @param online decides how the user will appear in the room frontend
+     * @param id the user's id
      */
     public void setUserOnline(boolean online, @NonNull String id) {
 
@@ -283,7 +275,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
             videoButton.setVisibility(View.VISIBLE);
-            if(id.equals(MainUserSingleton.getInstance().getId())) {
+            if(id.equals(MainUser.getMainUser().getId())) {
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
@@ -294,7 +286,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
             muteButton.setVisibility(View.GONE);
             videoButton.setVisibility(View.GONE);
-            if(id.equals(MainUserSingleton.getInstance().getId())) {
+            if(id.equals(MainUser.getMainUser().getId())) {
                 isInCall = false;
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call);
@@ -305,20 +297,20 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * mute (unmute) the user whose id is given if muted is set to true (false)
-     * @param muted
-     * @param id
+     * @param muted decides to mute or unmuste the user
+     * @param id the user's id
      */
     public void setMutedUser(boolean muted, @NonNull String id) {
         ConstraintLayout participantsLayout = participantsViews.get(id);
         ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
         if(muted) {
             muteButton.setImageResource(R.drawable.baseline_mic_off);
-            if(id.equals(MainUserSingleton.getInstance().getId())) {
+            if(id.equals(MainUser.getMainUser().getId())) {
                 isMuted = true;
             }
         } else {
             muteButton.setImageResource(R.drawable.baseline_mic);
-            if(id.equals(MainUserSingleton.getInstance().getId())) {
+            if(id.equals(MainUser.getMainUser().getId())) {
                 isMuted = false;
             }
         }
@@ -356,9 +348,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     /**
-     * return true if the permission given is granted by the user and false otherwise
-     * @param permission
-     * @return
+     * @param permission the permission we're checking
+     * @return true if the permission given is granted by the user and false otherwise
      */
     private boolean checkPermission(String permission) {
         return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
