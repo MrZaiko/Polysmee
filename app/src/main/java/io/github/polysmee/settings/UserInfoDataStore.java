@@ -15,7 +15,6 @@ public final class UserInfoDataStore extends PreferenceDataStore {
     private final User dataBaseMainUser = MainUserSingleton.getInstance();
     public static final String preferenceKeyMainUserName = "preference_key_main_user_info_name";
     public static final String preferenceKeyMainUserEmail = "preference_key_main_user_info_email";
-    public static String preferenceKeyMainUserEmail = "preference_key_main_user_info_email";
     public static String PREFERENCE_KEY_MAIN_USER_FRIENDS = "preference_key_main_user_info_friends";
 
 
