@@ -31,9 +31,13 @@ public final class AppointmentReminderNotificationSetupListener {
     private static Context mContext;
     private static AlarmManager alarmManager;
 
-    private static String getlocalSharedPreferenceName() {
+    /**
+     *
+     * @return the local SharePreferences used by this class
+     */
+    private static SharedPreferences getlocalSharedPreference() {
         assert (mContext != null);
-        return mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationSetupListener);
+        return  mContext.getSharedPreferences(mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationSetupListener), Context.MODE_PRIVATE);
     }
 
     /*
@@ -79,7 +83,7 @@ public final class AppointmentReminderNotificationSetupListener {
         //read the only public function first to understand more easily
         assert (alarmManager != null);
         assert (mContext != null);
-        SharedPreferences localAppointmentsReminderTime = mContext.getSharedPreferences(getlocalSharedPreferenceName(), Context.MODE_PRIVATE);
+        SharedPreferences localAppointmentsReminderTime = getlocalSharedPreference();
         //remove all the appointments reminder that are setup in the system but that doesn't exist for the main user anymore
         Set<String> localAppointments = localAppointmentsReminderTime.getAll().keySet();
         ArrayList<String> toRemove = new ArrayList<>();

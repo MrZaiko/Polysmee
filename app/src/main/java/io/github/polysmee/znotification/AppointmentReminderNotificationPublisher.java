@@ -31,9 +31,13 @@ public class AppointmentReminderNotificationPublisher extends BroadcastReceiver 
     private final static int NOTIFICATION_LOCKSCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
 
 
-    // From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
-    //"It's safe to call this repeatedly because creating an existing notification channel performs no operation."
-    //Later when doing the notification with ressource file move it to the app launch as suggested
+    /**
+     * Create the notification channel for the reminder notification
+     * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
+     * "It's safe to call this repeatedly because creating an existing notification channel performs no operation."
+     * Later when doing the notification with ressource file move it to the app launch as suggested
+     */
+
     private static void createNotificationChannel(Context context) {
         assert context != null;
         // Create the NotificationChannel, but only on API 26+ because

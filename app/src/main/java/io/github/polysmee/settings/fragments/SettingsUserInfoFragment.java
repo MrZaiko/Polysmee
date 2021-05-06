@@ -58,6 +58,11 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
 
     }
 
+    /**
+     *
+     * @param editTextPreference the preference to update the summary
+     * @return a string value listener that at a event will set the summary of the editTextPreference to the value of the string
+     */
     private static StringValueListener getStringValuetListenerForDefaultValue(EditTextPreference editTextPreference){
         return string -> editTextPreference.setSummary(string);
     }

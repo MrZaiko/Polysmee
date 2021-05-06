@@ -25,6 +25,9 @@ public final class SettingsMainFragment extends PreferenceFragmentCompat {
         });
     }
 
+    /**
+     * Function called when the switch settings for dark mode is clicked on, it set the application theme to the one specified by the value of this switch settings
+     */
     private void onDarkModeClick(){
         boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(getContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
         if (isDarkMode==true){
