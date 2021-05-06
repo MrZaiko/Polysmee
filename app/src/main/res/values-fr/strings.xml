@@ -105,4 +105,10 @@
     <string name="title_settings_main_user_friends">Gérez vos amis!</string>
     <string name="friendsActivityEncouragingMessage1">Ajoutez est voyez vos amis ci-dessous!</string>
     <string name="friendsActivityEncouragingMessage2">Ajoutez vos amis ici!</string>
+    <string name="voice_hulk">Hulk</string>
+    <string name="voice_no_tune">Pas de modification</string>
+    <string name="voice_old_man">Vieillard</string>
+    <string name="voice_penguin">Penguin</string>
+    <string name="voice_high">Voix élevée</string>
+    <string name="voice_alien">Alien</string>
 </resources>
