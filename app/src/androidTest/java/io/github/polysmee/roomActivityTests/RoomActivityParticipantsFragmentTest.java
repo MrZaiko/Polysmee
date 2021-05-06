@@ -148,5 +148,16 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
+    @Test
+    public void testVoiceTuner() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(1, SECONDS);
+        clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
+        clickOn(R.id.voiceTunerSpinner);
+
+    }
+
 
 }
