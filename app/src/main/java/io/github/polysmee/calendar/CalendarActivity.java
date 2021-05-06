@@ -20,11 +20,9 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
-
 import io.github.polysmee.invites.InvitesManagementActivity;
-
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.SettingsActivity;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 public class CalendarActivity extends AppCompatActivity{
 

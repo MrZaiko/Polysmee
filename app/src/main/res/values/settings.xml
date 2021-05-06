@@ -9,4 +9,5 @@
     <string name="title_settings_main_user_name">Username</string>
     <string name="title_settings_main_user_email">Email</string>
     <string name="title_settings_main_user_info">User information</string>
+    <string name="title_settings_main_user_friends">Manage your friends!</string>
 </resources>

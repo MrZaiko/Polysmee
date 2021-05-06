@@ -30,6 +30,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
         <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity"></activity>
+        <activity android:name=".settings.FriendsActivity"></activity>
         <activity android:name=".invites.InvitesManagementActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity

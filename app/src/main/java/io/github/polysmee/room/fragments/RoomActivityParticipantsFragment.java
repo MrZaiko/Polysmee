@@ -160,6 +160,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 videoButton.setTag(R.drawable.baseline_video_off);
 
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
+
+                ImageView friendshipButton = participantsButtonLayout.findViewById(R.id.roomActivityManageParticipantAsFriendButton);
+
                 participantsButtonLayout.setVisibility(View.VISIBLE);
                 callButton.setVisibility(View.GONE);
 
@@ -191,6 +194,16 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
                     speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
                     user.getNameAndThen(participantName::setText);
+                    MainUserSingleton.getInstance().getFriends_Once_And_Then((friendsIds)->{
+                        if(friendsIds.contains(id)){
+                            friendshipButton.setImageResource(R.drawable.baseline_remove);
+                        }
+                        else{
+                            friendshipButton.setImageResource(R.drawable.baseline_add);
+                        }
+                    });
+                    friendshipButton.setVisibility(View.VISIBLE);
+                    friendshipButton.setOnClickListener((v)->{friendshipButtonBehavior(v,id);});
                 }
 
 
@@ -243,8 +256,20 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
 
 
+    private void friendshipButtonBehavior(View friendshipButton, String userId){
+        MainUserSingleton.getInstance().getFriends_Once_And_Then((friendsIds)->{
+            if(friendsIds.contains(userId)){
+                ((ImageView)friendshipButton).setImageResource(R.drawable.baseline_add);
+                MainUserSingleton.getInstance().removeFriend(new DatabaseUser(userId));
+            }
+            else{
+                ((ImageView)friendshipButton).setImageResource(R.drawable.baseline_remove);
+                MainUserSingleton.getInstance().addFriend(new DatabaseUser(userId));
+            }
+        });
+    }
+
     private void shareVideoBehavior(View cameraButton){
-        System.out.println("VIDEO");
         if(call.isVideoEnabled()){
             //disable button
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);
