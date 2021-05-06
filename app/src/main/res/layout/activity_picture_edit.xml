@@ -63,7 +63,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toStartOf="@id/pictureEditStrokeWidthBar"
             app:layout_constraintTop_toBottomOf="@id/pictureEditFiltersScrollView"
-            app:layout_constraintBottom_toTopOf="@id/pictureEditColorsScrollView"/>
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <SeekBar
             android:id="@+id/pictureEditStrokeWidthBar"
@@ -71,62 +71,33 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/pictureEditFiltersScrollView"
             app:layout_constraintStart_toEndOf="@id/pictureEditStrokeWidthText"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toTopOf="@id/pictureEditColorsScrollView"/>
+            app:layout_constraintEnd_toStartOf="@id/pictureEditColorPicker"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
-        <HorizontalScrollView
-            android:id="@+id/pictureEditColorsScrollView"
+        <Button
+            android:id="@+id/pictureEditColorPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/pictureEditStrokeWidthBar"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintStart_toEndOf="@id/pictureEditStrokeWidthBar"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent">
-            <RadioGroup
-                android:id="@+id/pictureEditColors"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/pictureEditFiltersScrollView"
+            android:text="Pick Color"/>
 
-                <RadioButton android:id="@+id/pictureEditBlack"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:checked="true"
-                    android:text="Black"
-                    android:onClick="onColorSelected"/>
-                <RadioButton android:id="@+id/pictureEditRed"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Red"
-                    android:onClick="onColorSelected"/>
-                <RadioButton android:id="@+id/pictureEditBlue"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Blue"
-                    android:onClick="onColorSelected"/>
-                <RadioButton android:id="@+id/pictureEditGreen"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Green"
-                    android:onClick="onColorSelected"/>
-                <RadioButton android:id="@+id/pictureEditYellow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Yellow"
-                    android:onClick="onColorSelected"/>
-            </RadioGroup>
-        </HorizontalScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <io.github.polysmee.photo.editing.DrawableImageView
         android:id="@+id/pictureEditPicture"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toBottomOf="@id/pictureEditButtonsLayout"
         app:layout_constraintBottom_toTopOf="@id/pictureEditControlButtonsLayout"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/pictureEditButtonsLayout" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

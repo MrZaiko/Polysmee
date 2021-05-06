@@ -47,11 +47,18 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
 
-        float aspectRatio = alteredBitmap.getWidth() / (float) alteredBitmap.getHeight();
-        int height = Math.round(w / aspectRatio);
+        if (alteredBitmap.getWidth() >= alteredBitmap.getHeight()) {
+            float aspectRatio = alteredBitmap.getWidth() / (float) alteredBitmap.getHeight();
+            int height = Math.round(w / aspectRatio);
+            alteredBitmap = Bitmap.createScaledBitmap(
+                    alteredBitmap, w, height, false);
+        } else {
+            float aspectRatio = alteredBitmap.getHeight() / (float) alteredBitmap.getWidth();
+            int width = Math.round(h / aspectRatio);
+            alteredBitmap = Bitmap.createScaledBitmap(
+                    alteredBitmap, width, h, false);
+        }
 
-        alteredBitmap = Bitmap.createScaledBitmap(
-                alteredBitmap, w, height, false);
 
         alteredCanvas = new Canvas(alteredBitmap);
     }
@@ -63,12 +70,13 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
 
+        //keep the previous size
         if (alteredBitmap != null) {
             width = alteredBitmap.getWidth();
             height = alteredBitmap.getHeight();
         }
 
-        alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), Bitmap.Config.ARGB_8888);
+        alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         alteredCanvas = new Canvas(alteredBitmap);
         alteredCanvas.drawBitmap(bitmap,0,0,null);
 
@@ -86,7 +94,7 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     public void setColor(int colorId) {
         currentColorId = colorId;
-        paint.setColor(getResources().getColor(colorId));
+        paint.setColor(colorId);
     }
 
     public int getCurrentColorId() {

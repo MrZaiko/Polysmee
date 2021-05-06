@@ -58,9 +58,9 @@ public class Call {
 
     public Call(String appointmentId, Context context){
         this.appointment = new DatabaseAppointment(appointmentId);
-        usersCallId = new HashMap<Integer,String>();
-        usersInCall = new HashSet<Integer>();
-        talking = new HashSet<Integer>();
+        usersCallId = new HashMap<>();
+        usersInCall = new HashSet<>();
+        talking = new HashSet<>();
         initializeHandler();
 
         try {
@@ -74,11 +74,18 @@ public class Call {
         }
     }
 
+    public int getUid(String firebaseId) {
+        for (Map.Entry<Integer, String> uidToId : usersCallId.entrySet()) {
+            if (firebaseId.equals(uidToId.getValue()))
+                return uidToId.getKey();
+        }
 
+        return -1;
+    }
 
     /**
      * Joins the channel of the room
-     * @return 0 if the channel is successfully joined
+     * @return user id if the channel is successfully joined
      */
     public void joinChannel() {
         String userId = AuthenticationFactory.getAdaptedInstance().getUid();
@@ -185,10 +192,9 @@ public class Call {
             public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
                 Set<Integer> newUsersInCall = new HashSet<Integer>();
                 if(speakers != null) {
-                    for(int i = 0; i < speakers.length; ++i) {
-                        AudioVolumeInfo audioVolumeInfo = speakers[i];
+                    for (AudioVolumeInfo audioVolumeInfo : speakers) {
                         int uid = audioVolumeInfo.uid;
-                        if(audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
+                        if (audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
                             String userId = usersCallId.get(uid);
                             command.execute(true, userId);
                             newUsersInCall.add(uid);
@@ -198,10 +204,10 @@ public class Call {
 
                 for(int uid : usersInCall) {
                     if(!newUsersInCall.contains(uid)) {
-
                         if(talking.contains(uid)) {
                             talking.remove(uid);
                         }
+
                         else {
                             command.execute(false, usersCallId.get(uid));
                         }
@@ -209,7 +215,6 @@ public class Call {
                     }
                 }
                 talking.addAll(newUsersInCall);
-
             }
 
             @Override
@@ -300,7 +305,9 @@ public class Call {
         mRtcEngine.addHandler(eventHandler);
 
         mRtcEngine.enableVideo();
-        mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(VideoEncoderConfiguration.VD_1280x720, VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
+        mRtcEngine.setVideoEncoderConfiguration(new VideoEncoderConfiguration(
+                VideoEncoderConfiguration.VD_1280x720,
+                VideoEncoderConfiguration.FRAME_RATE.FRAME_RATE_FPS_30,
                 VideoEncoderConfiguration.STANDARD_BITRATE,
                 VideoEncoderConfiguration.ORIENTATION_MODE.ORIENTATION_MODE_FIXED_PORTRAIT));
         mRtcEngine.enableLocalVideo(false);

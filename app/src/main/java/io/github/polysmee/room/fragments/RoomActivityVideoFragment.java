@@ -1,5 +1,6 @@
 package io.github.polysmee.room.fragments;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -33,27 +34,24 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
     private final HashMap<Integer, FrameLayout> idsToVideoFrames = new HashMap<>();
     private final HashMap<FrameLayout, Integer> videoFramesToIds = new HashMap<>();
     private FrameLayout bigVideoContainer;
-    private Call call;
+    private final Call call;
     private LinearLayout videoLayout;
     private LayoutInflater inflater;
     static final Logger LOGGER = LoggerFactory.getLogger(RoomActivityVideoFragment.class);
 
-    public RoomActivityVideoFragment() {
-        // Required empty public constructor
-    }
-
     public RoomActivityVideoFragment(Call call){
         this.call = call;
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_room_activity_video, container, false);
-        videoLayout = (LinearLayout) rootView.findViewById(R.id.roomActivityVideosLayout);
-        bigVideoContainer = (FrameLayout) rootView.findViewById(R.id.roomActivityFocusedVideoFrame);
-        ((FloatingActionButton)rootView.findViewById(R.id.roomActivitySwitchVideoButton)).setOnClickListener((view)-> call.switchCamera());
+        videoLayout = rootView.findViewById(R.id.roomActivityVideosLayout);
+        bigVideoContainer = rootView.findViewById(R.id.roomActivityFocusedVideoFrame);
+        rootView.findViewById(R.id.roomActivitySwitchVideoButton).setOnClickListener((view)-> call.switchCamera());
         this.inflater = inflater;
         return rootView;
     }
@@ -83,11 +81,11 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
                     idsToVideoFrames.get(uid).getChildAt(0).setVisibility(View.GONE));
             //((FrameLayout)rootView.findViewById(R.id.bg_video_container)).getChildAt(0).setVisibility(View.GONE));
 
-        }
-        else if(state == Constants.REMOTE_VIDEO_STATE_STARTING){
-            System.out.println("Remote started sharing video" + uid);
+        } else if(state == Constants.REMOTE_VIDEO_STATE_STARTING) {
+            System.out.println("Remote started sharing video " + uid);
             runOnUiThread(()->{
                 SurfaceView remoteView = call.createRemoteUI(getActivity().getBaseContext(),uid);
+
                 ConstraintLayout remoteContainer = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_video,null);
                 FrameLayout remoteVideoContainer = remoteContainer.findViewById(R.id.roomActivityVideoElement);
                 remoteVideoContainer.addView(remoteView);
@@ -131,7 +129,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         if(error == Constants.LOCAL_VIDEO_STREAM_ERROR_OK){
             if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_STOPPED){
                 runOnUiThread(()->{
-                    ((FloatingActionButton)rootView.findViewById(R.id.roomActivitySwitchVideoButton)).setVisibility(View.GONE);
+                    rootView.findViewById(R.id.roomActivitySwitchVideoButton).setVisibility(View.GONE);
                     idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.GONE);
                 });
                 LOGGER.info("Local video stopped");
@@ -139,7 +137,7 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
             }
             else if(localVideoState == Constants.LOCAL_VIDEO_STREAM_STATE_CAPTURING){
                 runOnUiThread(()->{
-                    ((FloatingActionButton)rootView.findViewById(R.id.roomActivitySwitchVideoButton)).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.roomActivitySwitchVideoButton).setVisibility(View.VISIBLE);
                     idsToVideoFrames.get(0).getChildAt(0).setVisibility(View.VISIBLE);
                 });
                 LOGGER.info("Local video fired");
@@ -233,6 +231,12 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         getActivity().runOnUiThread(runnable);
     }
 
-
+    public void setTalking(int id, boolean isTalking) {
+        SurfaceView surfaceView = (SurfaceView) idsToVideoFrames.get(id).getChildAt(0);
+        if (isTalking)
+            runOnUiThread(() -> surfaceView.setBackgroundResource(R.drawable.background_participant_talking_video));
+        else
+            runOnUiThread(() -> surfaceView.setBackgroundResource(0));
+    }
 
 }
