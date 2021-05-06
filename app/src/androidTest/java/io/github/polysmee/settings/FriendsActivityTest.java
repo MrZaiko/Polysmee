@@ -101,7 +101,7 @@ public class FriendsActivityTest {
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
             sleep(1,TimeUnit.SECONDS);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickDialogPositiveButton();
         }
     }
