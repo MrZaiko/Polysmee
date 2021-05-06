@@ -79,6 +79,9 @@ public class FriendsActivity extends AppCompatActivity {
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
+    /**
+     * @param ids the ids of the users we want to get the names of
+     */
     protected void nameGetters(Set<String> ids){
         for(String id: ids){
             User user = new DatabaseUser(id);
@@ -89,6 +92,10 @@ public class FriendsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Determines the behavior of the "add" button after typing the name
+     * of a user we want to add as friend
+     */
     protected void addFriendBehavior(){
         String s = searchFriend.getText().toString();
         if(!allUsers.contains(s)){
@@ -119,10 +126,17 @@ public class FriendsActivity extends AppCompatActivity {
         searchFriend.setText("");
     }
 
+    /**
+     * Sets the listener to the friends list
+     */
     protected void showFriendList(){
         user.getFriendsAndThen(friendsValuesListener);
     }
 
+    /**
+     * @param userId the user which we will create a new friend entry for
+     * @param name the user's name
+     */
     protected void createFriendEntry(String userId, String name){
         ConstraintLayout friendEntryLayout = (ConstraintLayout)inflater.inflate(R.layout.element_friends_activity_entry,null);
         ((TextView)friendEntryLayout.findViewById(R.id.friendEntryName)).setText(name);
@@ -138,6 +152,10 @@ public class FriendsActivity extends AppCompatActivity {
         idsToFriendEntries.put(userId,friendViews);
     }
 
+    /**
+     * @return the friend listener we want to show the friend list, and reacts as we delete/add
+     * new friends
+     */
     protected StringSetValueListener friendListener(){
         return idsOfFriends -> {
             Set<String> deletedFriends = new HashSet<>(friendsIds);
