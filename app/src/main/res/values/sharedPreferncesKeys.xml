@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="sharedPreferenceKeyAppointmentReminderNotificationMaster" translatable="false">io.github.polysmeee.notification.AppointmentReminderNotificationMaster></string>
+    <string name="sharedPreferenceKeyAppointmentReminderNotificationSetupListener">io.github.polysmeee.notification.AppointmentReminderNotificationMaster></string>
 
 </resources>

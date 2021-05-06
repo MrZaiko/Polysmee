@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
+
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -24,6 +25,7 @@ import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -69,6 +71,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         sleep(1, SECONDS);
         assertDisplayed("You");
         assertDisplayed(username2);
+        assertNotDisplayed(R.id.roomActivityParticipantElementOwnerVoiceMenu);
     }
 
     @Test

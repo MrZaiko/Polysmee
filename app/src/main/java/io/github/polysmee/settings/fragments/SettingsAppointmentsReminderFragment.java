@@ -9,7 +9,7 @@ import io.github.polysmee.R;
 /*
  * The fragment representing the appointments reminder settings user interface
  */
-public class SettingsAppointmentsReminderFragment extends PreferenceFragmentCompat {
+public final class SettingsAppointmentsReminderFragment extends PreferenceFragmentCompat {
 
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
