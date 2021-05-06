@@ -126,7 +126,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             appointment.getBans_Once_AndThen(p -> {
                 for (String id : p) {
                     User user = new DatabaseUser(id);
-                    user.getNameAndThen(this::addBan);
+                    user.getName_Once_AndThen(this::addBan);
                 }
             });
 

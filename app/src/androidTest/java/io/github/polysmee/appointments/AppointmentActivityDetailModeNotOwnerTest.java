@@ -8,6 +8,7 @@ import androidx.test.core.app.ApplicationProvider;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -79,6 +80,10 @@ public class AppointmentActivityDetailModeNotOwnerTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(true);
     }
 
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+    }
     @Test
     public void dummyTest() {
         Assert.assertEquals(0, 0);

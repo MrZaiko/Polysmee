@@ -19,6 +19,7 @@ import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 
@@ -42,7 +43,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
 
     private AutoCompleteTextView searchInvite;
-    private ImageView btnInvite;
+    private ImageView btnInvite, btnFriendInvite;
     private LinearLayout invitesList;
 
     private Set<String> invites, removedInvites;
@@ -53,6 +54,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
 
     private int mode;
     private Appointment appointment;
+    private List<String> friendUsernames;
 
 
     @Override
@@ -90,6 +92,15 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invites = new HashSet<>();
         removedInvites = new HashSet<>();
         builder = new AlertDialog.Builder(getActivity());
+        btnFriendInvite = rootView.findViewById(R.id.appointmentSettingsBtnAddFriend);
+        friendUsernames = new ArrayList<>();
+        MainUserSingleton.getInstance().getFriends_Once_And_Then((friendsIds) ->{
+            for(String id: friendsIds){
+                (new DatabaseUser(id)).getName_Once_AndThen((name)->{
+                    friendUsernames.add(name);
+                });
+            }
+        });
     }
 
     private void UsersNamesGetter(Set<String> allIds) {
@@ -119,6 +130,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         }
 
         btnInvite.setOnClickListener(this::inviteButtonBehavior);
+        btnFriendInvite.setOnClickListener(this::inviteFriendButtonBehavior);
         searchInvite.setHint("Type names here");
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
@@ -148,6 +160,38 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.removeAllViews();
     }
 
+    private void inviteFriendButtonBehavior(View view){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        if(friendUsernames.size() == 0){
+            createErrorMessage(builder,"Add some friends first :( ");
+            return;
+        }
+        List<Integer> friendsToInvite = new ArrayList<>();
+        boolean[] alreadyInvitedFriends = new boolean[friendUsernames.size()];
+        for(int i = 0; i < alreadyInvitedFriends.length;++i){
+            alreadyInvitedFriends[i] = invites.contains(friendUsernames.get(i));
+        }
+        builder.setTitle("Select which friend(s) to invite");
+        builder.setMultiChoiceItems(friendUsernames.toArray(new CharSequence[0]),alreadyInvitedFriends,(dialog, which, isChecked) -> {
+            if(isChecked){
+                friendsToInvite.add(which);
+            }
+            else if(friendsToInvite.contains(which)){
+                friendsToInvite.remove(which);
+            }
+        });
+        builder.setPositiveButton("OK",(dialog, which) -> {
+           for(int index: friendsToInvite){
+               String s = friendUsernames.get(index);
+               if(!invites.contains(s)){
+                   addNewInvite(s);
+               }
+           }
+        });
+        builder.setNegativeButton("Cancel",null);
+        builder.create().show();
+    }
+
     /**
      * ADD_MODE     =>  Add the user with the specified name to the participants list
      * DETAIL_MODE  =>  Add the user with the specified name to the participants list and remove
@@ -156,26 +200,11 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     private void inviteButtonBehavior(View view) {
         String s = searchInvite.getText().toString();
         if(!users.contains(s)) {
-            builder.setMessage("User not found")
-                    .setCancelable(false)
-                    .setPositiveButton("Ok", null);
-
-            AlertDialog alert = builder.create();
-            alert.setTitle("Error");
-            alert.show();
+            createErrorMessage(builder,"Error");
         }
 
         else if(!invites.contains(s)) {
-            invites.add(s);
-            dataPasser.dataPass(invites, AppointmentActivity.INVITES);
-            searchInvite.setText("");
-
-            if (mode == AppointmentActivity.DETAIL_MODE) {
-                removedInvites.remove(s);
-                dataPasser.dataPass(removedInvites, AppointmentActivity.REMOVED_INVITES);
-            }
-
-            addInvite(s);
+            addNewInvite(s);
         }
         else {
             searchInvite.setText("");
@@ -201,7 +230,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         if (mode == AppointmentActivity.DETAIL_MODE) {
             removeButton.setVisibility(View.GONE);
 
-            appointment.getOwnerIdAndThen(owner -> {
+            appointment.getOwnerId_Once_AndThen(owner -> {
                 if (owner.equals(MainUserSingleton.getInstance().getId()))
                     removeButton.setVisibility(View.VISIBLE);
             });
@@ -222,4 +251,26 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.addView(newBanLayout);
     }
 
+    protected void addNewInvite(String s){
+        invites.add(s);
+        dataPasser.dataPass(invites, AppointmentActivity.INVITES);
+        searchInvite.setText("");
+
+        if (mode == AppointmentActivity.DETAIL_MODE) {
+            removedInvites.remove(s);
+            dataPasser.dataPass(removedInvites, AppointmentActivity.REMOVED_INVITES);
+        }
+
+        addInvite(s);
+    }
+
+    protected void createErrorMessage(AlertDialog.Builder builder,String errorMessage){
+        builder.setMessage(errorMessage)
+                .setCancelable(false)
+                .setPositiveButton("Ok", null);
+
+        AlertDialog alert = builder.create();
+        alert.setTitle("Error");
+        alert.show();
+    }
 }

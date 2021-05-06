@@ -10,15 +10,11 @@ import androidx.fragment.app.Fragment;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
-import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
-import io.github.polysmee.room.RoomActivity;
 
 public class CalendarActivityFragmentsHelpers {
 
