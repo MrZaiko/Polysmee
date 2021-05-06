@@ -35,6 +35,6 @@ public class VoiceTunerActivity extends AppCompatActivity implements AdapterView
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
-        //we do nothing
+        //we do nothingdev/mem
     }
 }
