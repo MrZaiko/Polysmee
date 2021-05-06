@@ -6,7 +6,16 @@
     <string-array name="voices_tune_array">
         <item>@string/no_tune</item>
         <item>@string/hulk_voice</item>
+        <item>@string/old_man</item>
+        <item>@string/penguin</item>
+        <item>@string/high</item>
+        <item>@string/alien</item>
     </string-array>
-    <string name="hulk_voice">hulk</string>
-    <string name="no_tune">no tune</string>
+    <string name="hulk_voice">Hulk</string>
+    <string name="no_tune">No tune</string>
+    <string name="old_man">Old man</string>
+    <string name="penguin">Penguin</string>
+    <string name="high">High voice</string>
+    <string name="alien">Alien</string>
+
 </resources>

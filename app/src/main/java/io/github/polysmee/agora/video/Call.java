@@ -44,7 +44,8 @@ public class Call {
     public static final int INVALID_TIME_CODE_TIME = 30000;
     private static final int VOLUME_OFF = 0;
     private static final int STANDARD_VOLUME = 100;
-    private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK};
+    private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK, Constants.VOICE_CHANGER_EFFECT_OLDMAN,
+                                                Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -88,6 +89,7 @@ public class Call {
     public void joinChannel() {
         String userId = AuthenticationFactory.getAdaptedInstance().getUid();
         String token1 = generateToken(userId);
+        mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
         if (joinStatus == SUCCESS_CODE) {
             appointment.addInCallUser(new DatabaseUser(userId));
@@ -119,7 +121,7 @@ public class Call {
      * @param effectIndex
      */
     public void setVoiceEffect(int effectIndex) {
-        mRtcEngine.setAudioEffectPreset(VOICE_EFFECTS[effectIndex]);
+            mRtcEngine.setAudioEffectPreset(VOICE_EFFECTS[effectIndex]);
     }
 
     /**
