@@ -223,7 +223,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void refreshViews() {
             LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
             layout.removeAllViews();
-            String userId = MainUserSingleton.getInstance().getId();
+            String userId = MainUser.getMainUser().getId();
             //add current user for it to appear first
             layout.addView(participantsViews.get(userId));
             layout.addView(new TextView(rootView.getContext()));
@@ -387,7 +387,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         }
 
-        if(id.equals(MainUserSingleton.getInstance().getId())) {
+        if(id.equals(MainUser.getMainUser().getId())) {
             for(String userId : inCall) {
                 displaySpeakerButton(online, userId);
             }
