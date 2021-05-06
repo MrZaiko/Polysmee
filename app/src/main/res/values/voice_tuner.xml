@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="preference_key_voice_tuner_current_voice_tune">preference_key_voice_tuner_current_voice_tune</string>
+    <!-- WARNING the order of the item in voices_tune_array is important, the implementation of choosing a voice tune depend on this order, if
+    you need to change the order please check the implementation of the choice of voice tune and adapt it, also check that the value set in the preference by default correspond indeed to  no_tune index -->
+    <string-array name="voices_tune_array">
+        <item>@string/voice_no_tune</item>
+        <item>@string/voice_hulk</item>
+        <item>@string/voice_old_man</item>
+        <item>@string/voice_penguin</item>
+        <item>@string/voice_high</item>
+        <item>@string/voice_alien</item>
+    </string-array>
+    <string name="voice_hulk">Hulk</string>
+    <string name="voice_no_tune">No tune</string>
+    <string name="voice_old_man">Old man</string>
+    <string name="voice_penguin">Penguin</string>
+    <string name="voice_high">High voice</string>
+    <string name="voice_alien">Alien</string>
+
+</resources>

@@ -3,6 +3,7 @@ package io.github.polysmee.room;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -50,6 +51,8 @@ public class RoomActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.roomActivityTabs);
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(RoomPagerAdapter.FRAGMENT_NAME[position])).attach();
+        //put the current voice tune to default value 0 which correspond to the index of no tune voice in the array used for the spinner used
+        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
     }
 
     private void checkIfParticipant() {

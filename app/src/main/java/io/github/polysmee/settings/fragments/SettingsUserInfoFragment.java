@@ -23,20 +23,13 @@ import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.settings.FriendsActivity;
 import io.github.polysmee.settings.UserInfoDataStore;
 
+/**
+ * The fragment representing the user info setting user interface
+ */
 public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
     private StringValueListener nameListener;
     private UserInfoDataStore userInfoDataStore;
 
-    /**
-     * Called during {@link #onCreate(Bundle)} to supply the preferences for this fragment.
-     * Subclasses are expected to call {@link #setPreferenceScreen(PreferenceScreen)} either
-     * directly or via helper methods such as {@link #addPreferencesFromResource(int)}.
-     *
-     * @param savedInstanceState If the fragment is being re-created from a previous saved state,
-     *                           this is the state.
-     * @param rootKey            If non-null, this preference fragment should be rooted at the
-     *                           {@link PreferenceScreen} with this key.
-     */
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         Context context = getPreferenceManager().getContext();
@@ -79,6 +72,11 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
 
     }
 
+    /**
+     *
+     * @param editTextPreference the preference to update the summary
+     * @return a string value listener that at a event will set the summary of the editTextPreference to the value of the string
+     */
     private static StringValueListener getStringValuetListenerForDefaultValue(EditTextPreference editTextPreference){
         return string -> editTextPreference.setSummary(string);
     }
