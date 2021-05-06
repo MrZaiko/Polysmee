@@ -19,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
@@ -28,11 +27,12 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
+import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 /**
  * Activity to interact with appointment
@@ -53,8 +53,8 @@ import io.github.polysmee.login.MainUserSingleton;
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
     // Intents related attributes
-    public static String LAUNCH_MODE = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_LAUNCH_MODE";
-    public static String APPOINTMENT_ID = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_APPOINTMENT_ID";
+    public static final String LAUNCH_MODE = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_LAUNCH_MODE";
+    public static final String APPOINTMENT_ID = "io.github.polysmee.appointments.AppointmentActivity.APPOINTMENT_ACTIVITY_APPOINTMENT_ID";
 
     public static final int ADD_MODE = 0;
     public static final int DETAIL_MODE = 1;
@@ -180,14 +180,15 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtAdd = findViewById(R.id.appointmentCreationAddTextView);
         txtBan = findViewById(R.id.appointmentCreationBanTextView);
 
-        //for now the database doesn't support courses so we use a fixed array
-        courses = new ArrayList<>(Arrays.asList("SDP", "Sweng", "ICG", "Quantique", "AI", "Databases", "SHS", "Misc", "Analysis", "IntroProg"));
+        Course.getAllCourses_Once_AndThen(s ->  {
+                    courses = new ArrayList<>(s);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                        android.R.layout.simple_dropdown_item_1line, courses);
+                    editCourse.setAdapter(adapter);
+                }
+        );
 
         builder = new AlertDialog.Builder(this);
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, courses);
-        editCourse.setAdapter(adapter);
     }
 
     /**
@@ -223,7 +224,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         appointment.getCourseAndThen(course -> editCourse.setText(course));
 
         appointment.getOwnerIdAndThen(owner -> {
-            if (owner.equals(MainUserSingleton.getInstance().getId())) {
+            if (owner.equals(MainUser.getMainUser().getId())) {
                 setupClickable(true);
                 isOwner = true;
                 bottomBarSetup(true);
@@ -295,12 +296,12 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         String s = editCourse.getText().toString();
         if(!courses.contains(s)) {
-            builder.setMessage("Course not found")
+            builder.setMessage(getString(R.string.genericCourseNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
             error = true;
         }
@@ -480,7 +481,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         boolean isPrivate = privateSelector.isChecked();
 
         if (mode == ADD_MODE) {
-            String aptID = MainUserSingleton.getInstance().createNewUserAppointment(startTime, duration, course, title, isPrivate);
+            String aptID = MainUser.getMainUser().createNewUserAppointment(startTime, duration, course, title, isPrivate);
             appointment = new DatabaseAppointment(aptID);
         } else {
             //TODO mb a new function to edit everything at once
@@ -553,11 +554,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         }
     }
 
-    /**
-     * Used by the fragments to send data to this activity
-     * @param data sent data
-     * @param id id of this data
-     */
     @Override
     public void dataPass(Set<String> data, String id) {
         //Any changes to the sets may correct the error

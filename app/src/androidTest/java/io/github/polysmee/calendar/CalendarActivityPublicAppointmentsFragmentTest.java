@@ -17,17 +17,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityPublicAppointmentsFragment;
+import io.github.polysmee.calendar.fragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -73,8 +72,10 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityPublicAppointmentsFragmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child("SDP").setValue("SDP");
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child("ICG").setValue("ICG");
     }
 
     @AfterClass
@@ -163,7 +164,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
             closeSoftKeyboard();
             clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickOn("OK");
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "SDP");
             closeSoftKeyboard();

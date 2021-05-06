@@ -4,23 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
-import androidx.preference.PreferenceDataStore;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
 import com.google.firebase.auth.FirebaseUser;
 
 import io.github.polysmee.R;
-import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
 import io.github.polysmee.settings.FriendsActivity;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.settings.UserInfoDataStore;
 
 /**
@@ -39,17 +34,17 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
         userInfoDataStore = new UserInfoDataStore();
         userNameEditTextPreference.setPreferenceDataStore(userInfoDataStore);
         userNameEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserName);
-        userNameEditTextPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_name));
+        userNameEditTextPreference.setTitle(getString(R.string.title_settings_main_user_name));
         nameListener = getStringValuetListenerForDefaultValue(userNameEditTextPreference);
-        MainUserSingleton.getInstance().getNameAndThen(nameListener);
+        MainUser.getMainUser().getNameAndThen(nameListener);
 
 
         EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
         userEmailEditTextPreference.setPreferenceDataStore(userInfoDataStore);
         userEmailEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserEmail);
-        userEmailEditTextPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_email));
+        userEmailEditTextPreference.setTitle(getString(R.string.title_settings_main_user_email));
         userEmailEditTextPreference.setEnabled(false);
-        userEmailEditTextPreference.setDefaultValue("Please wait");
+        userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
         if(user!=null){
             userEmailEditTextPreference.setSummary(user.getEmail());
@@ -78,14 +73,14 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
      * @return a string value listener that at a event will set the summary of the editTextPreference to the value of the string
      */
     private static StringValueListener getStringValuetListenerForDefaultValue(EditTextPreference editTextPreference){
-        return string -> editTextPreference.setSummary(string);
+        return editTextPreference::setSummary;
     }
 
     @Override
     public void onPause() {
         assert nameListener !=null;
         super.onPause();
-        MainUserSingleton.getInstance().removeNameListener(nameListener);
+        MainUser.getMainUser().removeNameListener(nameListener);
     }
 
     @Override
@@ -103,7 +98,7 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
         if(userNameEditTextPreference!=null){
             userNameEditTextPreference.setPreferenceDataStore(userInfoDataStore);
             nameListener = getStringValuetListenerForDefaultValue(userNameEditTextPreference);;
-            MainUserSingleton.getInstance().getNameAndThen(nameListener);
+            MainUser.getMainUser().getNameAndThen(nameListener);
         }
     }
 
@@ -111,7 +106,7 @@ public final class SettingsUserInfoFragment  extends PreferenceFragmentCompat {
     public void onStop() {
         assert nameListener !=null;
         super.onStop();
-        MainUserSingleton.getInstance().removeNameListener(nameListener);
+        MainUser.getMainUser().removeNameListener(nameListener);
     }
 
 

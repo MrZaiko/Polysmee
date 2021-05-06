@@ -1,4 +1,4 @@
-package io.github.polysmee.calendar.calendarActivityFragments;
+package io.github.polysmee.calendar.fragments;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
@@ -18,7 +18,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,14 +31,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
+import io.github.polysmee.database.Course;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.setDayText;
-import static io.github.polysmee.calendar.calendarActivityFragments.CalendarActivityFragmentsHelpers.setTodayDateInDailyCalendar;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
 
 public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
@@ -50,9 +49,10 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
 
     private User user;
-    private Set<String> appointmentSet = new HashSet<>();
-    private Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
-    private Map<String, View> appointmentIdsToView = new HashMap<>();
+
+    private final Set<String> appointmentSet = new HashSet<>();
+    private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
+    private final Map<String, View> appointmentIdsToView = new HashMap<>();
 
     private ArrayList<String> courses;
     private String currentCourse = "";
@@ -68,7 +68,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         this.inflater = inflater;
         setTodayDateInDailyCalendar(true);
         setDayText(rootView,true);
-        user = MainUserSingleton.getInstance();
+        user = MainUser.getMainUser();
         ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setOnRefreshListener(()->{
             getAllPublicAppointmentsForTheDay();
             ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setRefreshing(false);
@@ -77,14 +77,15 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
 
-        //for now the database doesn't support courses so we use a fixed array
-        courses = new ArrayList<>(Arrays.asList("SDP", "Sweng", "ICG", "Quantique", "AI", "Databases", "SHS", "Misc", "Analysis", "IntroProg", ""));
+        Course.getAllCourses_Once_AndThen(s ->  {
+                    courses = new ArrayList<>(s);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, courses);
+                    courseSelector.setAdapter(adapter);
+                }
+        );
 
         builder = new AlertDialog.Builder(getActivity());
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line, courses);
-        courseSelector.setAdapter(adapter);
         rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
 
         getAllPublicAppointmentsForTheDay();
@@ -94,12 +95,12 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     private void filter(){
         String s = courseSelector.getText().toString();
         if(!courses.contains(s)) {
-            builder.setMessage("Course not found")
+            builder.setMessage(getString(R.string.genericCourseNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
         } else {
             currentCourse = s;
@@ -156,7 +157,6 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * Creates an appointment's textual description following a certain format
      * to show in the calendar
      * @param appointment the appointment's whose description is created
-     * @return the textual representation of the appointment in the calendar
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
@@ -174,7 +174,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         Date current = new Date(System.currentTimeMillis());
         calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId(),this,rootView));
 
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.US);
+        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentDate)).setText(appointmentDate);
 

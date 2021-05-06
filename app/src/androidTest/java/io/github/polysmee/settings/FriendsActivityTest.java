@@ -7,6 +7,7 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.android.dx.command.Main;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
@@ -20,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
@@ -48,7 +49,7 @@ public class FriendsActivityTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("FriendsActivityTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
     }
 
@@ -100,7 +101,7 @@ public class FriendsActivityTest {
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
             sleep(1,TimeUnit.SECONDS);
-            assertDisplayed("Error");
+            assertDisplayed("OK");
             clickDialogPositiveButton();
         }
     }

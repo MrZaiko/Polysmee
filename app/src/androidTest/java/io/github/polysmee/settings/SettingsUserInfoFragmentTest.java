@@ -16,7 +16,7 @@ import org.junit.runner.RunWith;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.settings.fragments.SettingsUserInfoFragment;
 
@@ -40,7 +40,7 @@ public class SettingsUserInfoFragmentTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(userName);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(userName);
     }
 
 

@@ -32,7 +32,7 @@ public class CalendarActivity extends AppCompatActivity{
         setContentView(R.layout.activity_calendar);
 
         boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getApplicationContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
-        if (isDarkMode==true){
+        if (isDarkMode){
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         }else{
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
@@ -44,7 +44,7 @@ public class CalendarActivity extends AppCompatActivity{
 
         TabLayout tabs = findViewById(R.id.calendarActivityTabs);
         new TabLayoutMediator(tabs, pager,
-                (tab, position) -> tab.setText(CalendarActivityPagerAdapter.FRAGMENT_NAME[position])).attach();
+                (tab, position) -> tab.setText(getString(CalendarActivityPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
 
         AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(
                 getApplicationContext(),

@@ -22,7 +22,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
@@ -57,13 +57,13 @@ public class RoomActivityParticipantsFragmentTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUserSingleton.getInstance().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUserSingleton.getInstance().getId());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUserSingleton.getInstance().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
     }
 
 
@@ -100,7 +100,7 @@ public class RoomActivityParticipantsFragmentTest {
 
         sleep(1, SECONDS);
         assert (!usersInCall.isEmpty());
-        assertEquals(MainUserSingleton.getInstance().getId(), usersInCall.get(0));
+        assertEquals(MainUser.getMainUser().getId(), usersInCall.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
@@ -125,7 +125,7 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         sleep(1, SECONDS);
         assert(!usersMuted.isEmpty());
-        assertEquals(MainUserSingleton.getInstance().getId(),usersMuted.get(0));
+        assertEquals(MainUser.getMainUser().getId(),usersMuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
     @Test
@@ -151,7 +151,7 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         sleep(1,SECONDS);
         assert(!usersUnmuted.isEmpty());
-        assertEquals(MainUserSingleton.getInstance().getId(),usersUnmuted.get(0));
+        assertEquals(MainUser.getMainUser().getId(),usersUnmuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 

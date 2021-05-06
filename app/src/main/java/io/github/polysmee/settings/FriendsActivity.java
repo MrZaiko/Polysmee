@@ -23,7 +23,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -43,7 +43,7 @@ public class FriendsActivity extends AppCompatActivity {
     private Map<String, List<View>> idsToFriendEntries;
     private final Set<String> friendsIds = new HashSet<>();
     private LinearLayout scrollLayout;
-    private final User user = MainUserSingleton.getInstance();
+    private final User user = MainUser.getMainUser();
     private StringSetValueListener friendsValuesListener;
 
 
@@ -99,12 +99,12 @@ public class FriendsActivity extends AppCompatActivity {
     protected void addFriendBehavior(){
         String s = searchFriend.getText().toString();
         if(!allUsers.contains(s)){
-            builder.setMessage("User not found")
+            builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
         }
         else{
@@ -112,7 +112,7 @@ public class FriendsActivity extends AppCompatActivity {
                 if(s.equals(name)){
                     builder.setMessage("You can't add yourself as friend.")
                             .setCancelable(false)
-                            .setPositiveButton("Ok", null);
+                            .setPositiveButton(getString(R.string.genericOkText), null);
 
                     AlertDialog alert = builder.create();
                     alert.setTitle("Oops");

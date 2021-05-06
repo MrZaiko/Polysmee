@@ -48,7 +48,7 @@ import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 
 import static android.app.Activity.RESULT_OK;
@@ -119,7 +119,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             appointmentId, id -> databaseAppointment.addMessage(
-                                    new Message(MainUserSingleton.getInstance().getId(), id, System.currentTimeMillis(), true)
+                                    new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
                             ), s -> showErrorToast());
 
                     return;
@@ -153,7 +153,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private void showErrorToast() {
         Context context = getContext();
-        CharSequence text = "An error occurred";
+        CharSequence text = getString(R.string.genericErrorText);
         int duration = Toast.LENGTH_SHORT;
 
         Toast toast = Toast.makeText(context, text, duration);
@@ -186,7 +186,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
         String messageToAdd = messageEditText.getText().toString();
-        String userId = MainUserSingleton.getInstance().getId();
+        String userId = MainUser.getMainUser().getId();
 
         databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
         messageEditText.setText("");
@@ -278,7 +278,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
-                mode.setTitle("Choose an option");
+                mode.setTitle(getString(R.string.roomMessageOptionText));
 
                 if (isAPicture)
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
@@ -324,7 +324,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         TextView messageView = messagesDisplayed.get(messageKey).findViewById(R.id.roomActivityMessageElementMessageContent);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle("Edit message");
+        builder.setTitle(getString(R.string.roomEditMessageText));
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_room_activity_edit_and_delete, null);
@@ -332,11 +332,11 @@ public class RoomActivityMessagesFragment extends Fragment {
         EditText editMessage = dialogView.findViewById(R.id.roomActivityEditDialogText);
         editMessage.setHint(messageView.getText());
 
-        builder.setPositiveButton("Edit", (dialog, id) -> {
+        builder.setPositiveButton(getString(R.string.genericEditText), (dialog, id) -> {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
         });
 
-        builder.setNeutralButton("Cancel", (dialog, id) -> {
+        builder.setNeutralButton(getString(R.string.genericCancelText), (dialog, id) -> {
             //Nothing to do
         });
 
@@ -359,7 +359,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void childAdded(String key, Message value) {
 
-                String userId = MainUserSingleton.getInstance().getId();
+                String userId = MainUser.getMainUser().getId();
                 View messageToAddLayout = generateMessageTextView(value.getContent(), userId.equals(value.getSender()), value.getSender(), value.getMessageTime(), value.getIsAPicture(), key);
                 messagesDisplayed.put(key, messageToAddLayout);
                 LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);

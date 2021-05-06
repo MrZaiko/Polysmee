@@ -22,12 +22,13 @@ import java.util.Set;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.appointments.AppointmentsUtility;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.appointments.DataPasser;
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove banned participants to an appointment
@@ -71,7 +72,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      */
     private void attributeSetters(View rootView) {
         users = new ArrayList<>();
-        User.getAllUsersIds_Once_AndThen(this::UsersNamesGetter);
+        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.usersNamesGetter(s, users));
         searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_dropdown_item_1line, users);
@@ -81,17 +82,6 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         bans = new HashSet<>();
         removedBans = new HashSet<>();
         builder = new AlertDialog.Builder(getActivity());
-    }
-
-    private void UsersNamesGetter(Set<String> allIds) {
-        //This function is called at the creation of the fragment
-        //So here we get the names at the beginning of the fragment's life cycle and the listeners should updated them, but not remove the old name
-        //While this may cause small problems if a user changes their name during this time,
-        //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
-        for(String userId : allIds){
-            User user = new DatabaseUser(userId);
-            user.getName_Once_AndThen((name) -> users.add(name));
-        }
     }
 
     /**
@@ -117,7 +107,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         }
 
         btnBan.setOnClickListener(this::banButtonBehavior);
-        searchBan.setHint("Type names here");
+        searchBan.setHint(getString(R.string.genericNamesHintText));
 
         if (mode == AppointmentActivity.DETAIL_MODE) {
             View searchLayout = rootView.findViewById(R.id.appointmentSettingsSearchBanLayout);
@@ -131,7 +121,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             });
 
             appointment.getOwnerId_Once_AndThen(owner -> {
-                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                if (owner.equals(MainUser.getMainUser().getId()))
                     searchLayout.setVisibility(View.VISIBLE);
             });
 
@@ -146,12 +136,12 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private void banButtonBehavior(View view) {
         String s = searchBan.getText().toString();
         if(!users.contains(s)) {
-            builder.setMessage("User not found")
+            builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
         }
 
@@ -192,7 +182,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             removeButton.setVisibility(View.GONE);
 
             appointment.getOwnerIdAndThen(owner -> {
-                if (owner.equals(MainUserSingleton.getInstance().getId()))
+                if (owner.equals(MainUser.getMainUser().getId()))
                     removeButton.setVisibility(View.VISIBLE);
             });
         }

@@ -5,14 +5,14 @@ import androidx.annotation.Nullable;
 import androidx.preference.PreferenceDataStore;
 
 import io.github.polysmee.database.User;
-import io.github.polysmee.login.MainUserSingleton;
+import io.github.polysmee.login.MainUser;
 
 /**
  * This class implement a PreferenceDataStore so that we can save values enter in a EditTextPreference to the database,
  * more precisely only the value corresponding to the main user name in the application
  */
 public final class UserInfoDataStore extends PreferenceDataStore {
-    private final User dataBaseMainUser = MainUserSingleton.getInstance();
+    private final User dataBaseMainUser = MainUser.getMainUser();
     public static final String preferenceKeyMainUserName = "preference_key_main_user_info_name";
     public static final String preferenceKeyMainUserEmail = "preference_key_main_user_info_email";
     public static String PREFERENCE_KEY_MAIN_USER_FRIENDS = "preference_key_main_user_info_friends";

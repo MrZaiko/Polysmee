@@ -3,9 +3,13 @@ package io.github.polysmee.login;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 
-public class MainUserSingleton {
+public class MainUser {
 
-    public static User getInstance() {
+    /**
+     * Method used to get the current user without having to send it between activities
+     * @return the current user
+     */
+    public static User getMainUser() {
         return new DatabaseUser(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid());
     }
 
