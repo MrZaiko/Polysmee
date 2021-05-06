@@ -99,12 +99,12 @@ public class FriendsActivity extends AppCompatActivity {
     protected void addFriendBehavior(){
         String s = searchFriend.getText().toString();
         if(!allUsers.contains(s)){
-            builder.setMessage("User not found")
+            builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
-                    .setPositiveButton("Ok", null);
+                    .setPositiveButton(getString(R.string.genericOkText), null);
 
             AlertDialog alert = builder.create();
-            alert.setTitle("Error");
+            alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
         }
         else{
@@ -112,7 +112,7 @@ public class FriendsActivity extends AppCompatActivity {
                 if(s.equals(name)){
                     builder.setMessage("You can't add yourself as friend.")
                             .setCancelable(false)
-                            .setPositiveButton("Ok", null);
+                            .setPositiveButton(getString(R.string.genericOkText), null);
 
                     AlertDialog alert = builder.create();
                     alert.setTitle("Oops");
