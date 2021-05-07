@@ -143,7 +143,6 @@ public final class AppointmentReminderNotificationService extends Service {
             AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
             alarmManager.setExact(AlarmManager.RTC_WAKEUP, TimeUnit.MINUTES.toMillis(appointmentReminderNotificationTimeMin), getReminderNotificationPendingIntent(appointmentReminderNotificationTimeMin));
         }
-        //TODO check start_sticky is good
         return START_STICKY;
     }
 
