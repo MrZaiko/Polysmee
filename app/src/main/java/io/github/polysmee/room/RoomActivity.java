@@ -22,12 +22,13 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
+import io.github.polysmee.room.fragments.VoiceTunerChoiceDialogFragment;
 
 /**
  * Activity representing all room related operations
  * The appointment related to this room is given in argument
  */
-public class RoomActivity extends AppCompatActivity {
+public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener  {
 
     private Appointment appointment;
     public static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
@@ -51,8 +52,6 @@ public class RoomActivity extends AppCompatActivity {
         TabLayout tabs = findViewById(R.id.roomActivityTabs);
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(getString(RoomPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
-        //put the current voice tune to default value 0 which correspond to the index of no tune voice in the array used for the spinner used
-        PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
     }
 
     private void checkIfParticipant() {
@@ -102,6 +101,8 @@ public class RoomActivity extends AppCompatActivity {
     }
 
 
-
-
+    @Override
+    public void onDialogPositiveClick(int elementIndex) {
+        //TODO ask adrien how to access call from here
+    }
 }
