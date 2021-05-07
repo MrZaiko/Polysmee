@@ -21,8 +21,6 @@ import io.github.polysmee.R;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
-import io.github.polysmee.znotification.AppointmentReminderNotificationPublisher;
-import io.github.polysmee.znotification.AppointmentReminderNotificationService;
 
 public class CalendarActivity extends AppCompatActivity{
 
@@ -45,7 +43,8 @@ public class CalendarActivity extends AppCompatActivity{
         TabLayout tabs = findViewById(R.id.calendarActivityTabs);
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(getString(CalendarActivityPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
-        startService(new Intent(this, AppointmentReminderNotificationService.class));
+
+        AppointmentReminderNotification.appointmentReminderNotificationSetListeners(this);
     }
 
     @Override
@@ -83,10 +82,5 @@ public class CalendarActivity extends AppCompatActivity{
         }
     }
 
-    //TODO
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        stopService(new Intent(this, AppointmentReminderNotificationService.class));
-    }
+
 }

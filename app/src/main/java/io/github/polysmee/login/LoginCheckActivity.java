@@ -5,11 +5,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
+import io.github.polysmee.database.DatabaseFactory;
 
 public class LoginCheckActivity extends AppCompatActivity {
 
@@ -17,7 +19,10 @@ public class LoginCheckActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_check);
-        FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        if (FirebaseApp.getApps(this).size() == 0){
+            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+        }
+
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
         if(user == null) {
             startActivity(new Intent(this, LoginActivity.class));

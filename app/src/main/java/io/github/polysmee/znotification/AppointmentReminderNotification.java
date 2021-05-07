@@ -56,9 +56,4 @@ public final class AppointmentReminderNotification {
         }
     }
 
-    //TODO
-    public static void test(Context context){
-        context.stopService(new Intent(context, AppointmentReminderNotificationService.class));
-        return;
-    }
 }

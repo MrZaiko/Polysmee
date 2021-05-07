@@ -28,14 +28,14 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
-    private final static int NOTIFICATION_LOCKSCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
+    private final static int NOTIFICATION_LOCK_SCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
 
 
     /**
      * Create the notification channel for the reminder notification
      * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
      * "It's safe to call this repeatedly because creating an existing notification channel performs no operation."
-     * Later when doing the notification with ressource file move it to the app launch as suggested
+     * Later when doing the notification with resource file move it to the app launch as suggested
      */
 
     private static void createNotificationChannel(Context context) {
@@ -46,7 +46,7 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
             NotificationChannel channel = new NotificationChannel(context.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
                     , context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
             channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
-            channel.setLockscreenVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY);
+            channel.setLockscreenVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
@@ -67,13 +67,12 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
                 .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text))
 
                 .setPriority(NOTIFICATION_PRIORITY)
-                .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
+                .setVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
                 .setSound(Settings.System.DEFAULT_RINGTONE_URI)
                 .setContentIntent(fullScreenPendingIntent)
                 .setAutoCancel(true);
-        ;
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
     }
