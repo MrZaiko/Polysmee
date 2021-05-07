@@ -22,7 +22,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
@@ -46,7 +46,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

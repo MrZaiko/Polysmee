@@ -39,6 +39,7 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
 
+        <service android:name=".znotification.AppointmentReminderNotificationService"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"

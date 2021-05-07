@@ -65,6 +65,7 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
                 .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text))
+
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCKSCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)

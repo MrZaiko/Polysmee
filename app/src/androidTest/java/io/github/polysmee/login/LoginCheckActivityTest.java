@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -29,7 +29,7 @@ public class LoginCheckActivityTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

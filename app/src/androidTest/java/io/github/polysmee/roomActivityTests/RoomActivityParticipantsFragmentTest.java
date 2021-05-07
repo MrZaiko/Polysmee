@@ -8,7 +8,6 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
 import org.junit.Assert;
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +22,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 import static androidx.test.espresso.Espresso.pressBack;
@@ -51,7 +50,7 @@ public class RoomActivityParticipantsFragmentTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

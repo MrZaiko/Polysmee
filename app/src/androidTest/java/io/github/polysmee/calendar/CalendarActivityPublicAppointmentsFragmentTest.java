@@ -27,7 +27,7 @@ import io.github.polysmee.calendar.fragments.CalendarActivityPublicAppointmentsF
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
@@ -64,7 +64,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
         startTime = Calendar.getInstance();
         startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();

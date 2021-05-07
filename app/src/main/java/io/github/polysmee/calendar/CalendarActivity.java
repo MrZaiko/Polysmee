@@ -1,8 +1,6 @@
 package io.github.polysmee.calendar;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -22,7 +20,9 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import io.github.polysmee.R;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.settings.SettingsActivity;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotificationPublisher;
+import io.github.polysmee.znotification.AppointmentReminderNotificationService;
 
 public class CalendarActivity extends AppCompatActivity{
 
@@ -45,11 +45,7 @@ public class CalendarActivity extends AppCompatActivity{
         TabLayout tabs = findViewById(R.id.calendarActivityTabs);
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(getString(CalendarActivityPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
-
-        AppointmentReminderNotificationSetupListener.appointmentReminderNotificationSetListeners(
-                getApplicationContext(),
-                (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
-
+        startService(new Intent(this, AppointmentReminderNotificationService.class));
     }
 
     @Override
@@ -87,4 +83,10 @@ public class CalendarActivity extends AppCompatActivity{
         }
     }
 
+    //TODO
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        stopService(new Intent(this, AppointmentReminderNotificationService.class));
+    }
 }

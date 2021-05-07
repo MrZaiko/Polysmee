@@ -26,7 +26,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import io.github.polysmee.room.RoomActivity;
 
@@ -70,7 +70,7 @@ public class CalendarActivityTest {
     public static void setUp() throws Exception {
         startTime = Calendar.getInstance();
         startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
