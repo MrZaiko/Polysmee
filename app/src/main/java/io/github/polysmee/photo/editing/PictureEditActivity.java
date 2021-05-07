@@ -21,6 +21,9 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
 
+import com.theartofdev.edmodo.cropper.CropImage;
+import com.theartofdev.edmodo.cropper.CropImageView;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -37,6 +40,7 @@ public class PictureEditActivity extends AppCompatActivity {
 
     private Bitmap pictureBitmap;
     private Button colorPickerButton;
+    private Button cropButton;
     private DrawableImageView displayedPictureView;
     private Uri pictureUri;
     private SeekBar strokeBar;
@@ -68,6 +72,10 @@ public class PictureEditActivity extends AppCompatActivity {
         colorPickerButton.setBackgroundColor(Color.RED);
         colorPickerButton.setOnClickListener(this::colorPickerButtonBehavior);
 
+        cropButton = findViewById(R.id.pictureEditCropButton);
+        cropButton.setBackgroundColor(Color.RED);
+        cropButton.setOnClickListener(this::cropButtonBehavior);
+
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
@@ -77,6 +85,30 @@ public class PictureEditActivity extends AppCompatActivity {
         };
 
         getOnBackPressedDispatcher().addCallback(this, callback);
+    }
+
+    private void cropButtonBehavior(View view){
+        CropImage.activity(pictureUri)
+                .start(this);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
+            CropImage.ActivityResult result = CropImage.getActivityResult(data);
+            if (resultCode == RESULT_OK) {
+                Uri resultUri = result.getUri();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), resultUri);
+                    displayedPictureView.setImageBitmap(bitmap);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
+                Exception error = result.getError();
+            }
+        }
     }
 
     private void colorPickerButtonBehavior(View view) {
@@ -151,7 +183,7 @@ public class PictureEditActivity extends AppCompatActivity {
     }
 
     private void reset() {
-        displayedPictureView.setImageBitmap(pictureBitmap);
+        displayedPictureView.reset(pictureBitmap);
         strokeBar.setProgress(0);
         displayedPictureView.setColor(Color.RED);
         colorPickerButton.setBackgroundColor(Color.RED);

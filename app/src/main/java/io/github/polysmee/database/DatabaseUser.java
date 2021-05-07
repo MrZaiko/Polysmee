@@ -245,6 +245,56 @@ public final class DatabaseUser implements User {
                 .removeEventListener(valueListener);
     }
 
+    @Override
+    public void setProfilePicture(String pictureId) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("picture")
+                .setValue(pictureId);
+    }
+
+    @Override
+    public void removeProfilePicture() {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("picture")
+                .setValue(null);
+    }
+
+    @Override
+    public void getProfilePicture(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("picture")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getProfilePicture_Once_And_Then(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("picture")
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void removeProfilePictureListener(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("picture")
+                .removeEventListener(valueListener);
+    }
+
 
     @Override
     public boolean equals(Object o) {
