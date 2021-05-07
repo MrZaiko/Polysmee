@@ -20,7 +20,7 @@
 
     <string name="title_activity_appointment" translatable="false">AppointmentActivity</string>
     <string name="title_activity_login_check" translatable="false">LoginCheckActivity</string>
-    <string name="user_prompt">Hello user ! You are not connected. Please login !</string>
+    <string name="user_prompt">You are not connected. Please login !</string>
     <string name="login">Login</string>
     <string name="loginActivityNoNetwork">no network is available</string>
     <string name="loginActivityUserCancelled">user canceled login</string>
