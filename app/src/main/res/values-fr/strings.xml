@@ -2,7 +2,7 @@
 <resources>
     <string name="app_name">Polysmee</string>
     <string name="appointment_reminder_notification_chanel_description">Channel de notification utilisé pour rappeler à l\'utilisateur qu\'il/elle a un meeting sous peu</string>
-    <string name="appointment_reminder_notification_notification_text">Rappel de meeting :)</string>
+    <string name="text_appointment_reminder_notification_notification">Rappel de meeting :)</string>
     <string name="title_settings_appointments_reminder">Paramètres de rappel de meeting</string>
     <string name="title_settings_appointments_reminder_notification_time_from_appointment">Me rappeler avant</string>
     <string name="summary_settings_appointments_reminder_notification_time_from_appointment">Sélectionnez combien de temps avant un meeting vous devriez être prévenu (en minutes)</string>
@@ -90,7 +90,7 @@
     <string name="genericYouText">Vous</string>
     <string name="genericWaitText">Veuillez patienter</string>
     <string name="title_settings_main_user_info">Informations utilisateur</string>
-    <string name="appointment_reminder_notification_notification_title">Rappel de meeting :)</string>
+    <string name="title_appointment_reminder_notification_notification">Rappel de meeting :)</string>
     <string name="title_activity_settings">Paramètres</string>
     <string name="appointment_creation_end_txt">Fin :</string>
     <string name="appointment_creation_start_txt">Début :</string>
@@ -111,4 +111,5 @@
     <string name="voice_penguin">Penguin</string>
     <string name="voice_high">Voix élevée</string>
     <string name="voice_alien">Alien</string>
+    <string name="title_voice_tuner_dialog">Choisisez votre filtre de voix</string>
 </resources>
