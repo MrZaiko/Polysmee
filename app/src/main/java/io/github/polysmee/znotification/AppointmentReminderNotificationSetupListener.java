@@ -2,14 +2,18 @@ package io.github.polysmee.znotification;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.IBinder;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -18,25 +22,27 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
 
-public final class AppointmentReminderNotificationSetupListener {
+public final class AppointmentReminderNotificationSetupListener extends Service{
     private final static Map<String, LongValueListener> appointmentStartTimeListeners = new HashMap<>();
+    private static StringSetValueListener mainUserStringSetValueListener;
     private static boolean isListenerSetup = false;
     private static boolean isNotificationSetterEnable = true;
 
     //need to have those variable as we cannot pass Context and CurrentTime to the done function who need to be of a specified form since it will
     // be use as a lambda to have a StringSetValueListener
-    private static Context mContext;
     private static AlarmManager alarmManager;
 
     /**
      *
      * @return the local SharePreferences used by this class
      */
-    private static SharedPreferences getlocalSharedPreference() {
+    private SharedPreferences getlocalSharedPreference() {
         assert (mContext != null);
+
         return  mContext.getSharedPreferences(mContext.getResources().getString(R.string.sharedPreferenceKeyAppointmentReminderNotificationSetupListener), Context.MODE_PRIVATE);
     }
 
@@ -47,7 +53,7 @@ public final class AppointmentReminderNotificationSetupListener {
      * @param appointmentReminderNotificationTimeMin the epoch time in minutes of when the notification should appear
      *
      */
-    private static PendingIntent getReminderNotificationPendingIntent(int appointmentReminderNotificationTimeMin) {
+    private PendingIntent getReminderNotificationPendingIntent(int appointmentReminderNotificationTimeMin) {
         assert mContext!=null;
         Intent notificationIntent = new Intent(mContext, AppointmentReminderNotificationPublisher.class);
         return PendingIntent.getBroadcast(mContext, appointmentReminderNotificationTimeMin, notificationIntent, 0);
@@ -60,7 +66,7 @@ public final class AppointmentReminderNotificationSetupListener {
      * @param appointmentId the appointmentId of the appointment to remove the reminder notification
      * @param localAppointmentsReminderTime the SharedPreference that contain all the reminder notification already setted up
      */
-    private static void removeAppointmentReminderNotification(@NonNull String appointmentId, @NonNull SharedPreferences localAppointmentsReminderTime ){
+    private void removeAppointmentReminderNotification(@NonNull String appointmentId, @NonNull SharedPreferences localAppointmentsReminderTime ){
         assert alarmManager!=null;
         int appointmentNotificationTimeMin = localAppointmentsReminderTime.getInt(appointmentId, -1);
 
@@ -78,6 +84,10 @@ public final class AppointmentReminderNotificationSetupListener {
         alarmManager.cancel(getReminderNotificationPendingIntent( appointmentNotificationTimeMin));
     }
 
+    //TODO comment this function
+    private void mainUserAppointmentsListenerUpdate(){
+
+    }
     //launch at the start so that the reminder set are consistent with the database. i.e remove the reminder that are set but that the user are no longer part of
     private static void onDone(Set<String> o) {
         //read the only public function first to understand more easily
@@ -104,6 +114,7 @@ public final class AppointmentReminderNotificationSetupListener {
         for (String appointmentId : o) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
                 LongValueListener startTimeValueListener = (long startTime) -> {
+                    //TODO do the same as main user appointments listener to pass a correct listener
                     int appointmentReminderNotificationTimeMin = (int) (TimeUnit.MILLISECONDS.toMinutes(startTime) - PreferenceManager.getDefaultSharedPreferences(mContext).getInt(
                             mContext.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
                             mContext.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
@@ -140,8 +151,25 @@ public final class AppointmentReminderNotificationSetupListener {
         //set the variable that would be used in other function more specifically the done function
         mContext = context;
         AppointmentReminderNotificationSetupListener.alarmManager =alarmManager;
-        MainUser.getMainUser().getAppointmentsAndThen(AppointmentReminderNotificationSetupListener::onDone);
+        mainUserStringSetValueListener = AppointmentReminderNotificationSetupListener::onDone;
+        MainUser.getMainUser().getAppointmentsAndThen(mainUserStringSetValueListener);
         isListenerSetup = true;
+    }
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        super.onStartCommand(intent, flags, startId);
+        return START_STICKY;
+    }
+
+    @Override
+    public void onDestroy() {
+        assert mainUserStringSetValueListener!=null;
+        super.onDestroy();
+        MainUser.getMainUser().removeAppointmentsListener(mainUserStringSetValueListener);
+        Set<Map.Entry<String, LongValueListener>> appointmentIdAndStartTimeListeners = appointmentStartTimeListeners.entrySet();
+        for(Map.Entry<String,LongValueListener> appointmentIdAndStartTimeListener : appointmentIdAndStartTimeListeners){
+            new DatabaseAppointment(appointmentIdAndStartTimeListener.getKey()).removeStartListener(appointmentIdAndStartTimeListener.getValue());
+        }
     }
 
     /**
@@ -153,4 +181,12 @@ public final class AppointmentReminderNotificationSetupListener {
     public static void setIsNotificationSetterEnable(boolean value){
         isNotificationSetterEnable = value;
     }
+
+    @Nullable
+    @Override
+    //we don't allow bindings
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
 }
