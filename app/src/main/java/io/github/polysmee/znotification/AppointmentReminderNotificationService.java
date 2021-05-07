@@ -104,10 +104,11 @@ public final class AppointmentReminderNotificationService extends Service {
         for (String appointmentId : o) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
                 LongValueListener startTimeValueListener = (long startTime) -> {
-                    Intent updateNotification = new Intent(this, AppointmentReminderNotification.class);
+                    /**Intent updateNotification = new Intent(this, AppointmentReminderNotification.class);
                     updateNotification.putExtra(intentKeyExtraStartTime, startTime);
                     updateNotification.putExtra(intentKeyExtraAppointmentId, appointmentId);
-                    startService(updateNotification);
+                    startService(updateNotification);**/
+                    this.test2(appointmentId, startTime);
                 };
                 new DatabaseAppointment(appointmentId).getStartTimeAndThen(startTimeValueListener);
                 appointmentStartTimeListeners.put(appointmentId, startTimeValueListener);
@@ -116,6 +117,24 @@ public final class AppointmentReminderNotificationService extends Service {
         }
     }
 
+    private void test2(String appointmentId, long startTime){
+
+        SharedPreferences localAppointmentsReminderTime = getLocalSharedPreference();
+        int appointmentReminderNotificationTimeMin = (int) (TimeUnit.MILLISECONDS.toMinutes(startTime) - PreferenceManager.getDefaultSharedPreferences(this).getInt(
+                this.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                this.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
+        //I don't need to check if the time of reminder is already pass, indeed setExact, which has the same semantic in that point that set (methods of alarmManger),
+        //will trigger directly the alarm if the time passed as argument is greater than the current time
+        if (startTime > System.currentTimeMillis()) {
+            //if the appointment reminder is not setup at the correct time remove it
+            if (localAppointmentsReminderTime.getInt(appointmentId, -1) != appointmentReminderNotificationTimeMin) {
+                removeAppointmentReminderNotification(appointmentId, localAppointmentsReminderTime);
+                localAppointmentsReminderTime.edit().putInt(appointmentId, appointmentReminderNotificationTimeMin).apply();
+            }
+            AlarmManager alarmManager = (AlarmManager) this.getSystemService(Context.ALARM_SERVICE);
+            alarmManager.setExact(AlarmManager.RTC_WAKEUP, TimeUnit.MINUTES.toMillis(appointmentReminderNotificationTimeMin), getReminderNotificationPendingIntent(appointmentReminderNotificationTimeMin));
+        }
+    }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
