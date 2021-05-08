@@ -187,7 +187,7 @@ public class CalendarActivityTest {
             boolean thrown = false;
             try {
                 onView(withText(appointmentTitle)).check(matches(isDisplayed()));
-                } catch (NoMatchingViewException e) {
+            } catch (NoMatchingViewException e) {
                 thrown = true;
             }
             assertTrue(thrown);
@@ -244,11 +244,9 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
     }
-
     @Test
     public void profileButtonShouldOpenProfile(){
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(),CalendarActivity.class);
-
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             Intents.init();
             sleep(2,SECONDS);
@@ -260,11 +258,9 @@ public class CalendarActivityTest {
             Intents.release();
         }
     }
-
     @Test
     public void notificationButtonShouldOpenInvites() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
-
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
             Intents.init();
             sleep(2,SECONDS);
@@ -275,10 +271,6 @@ public class CalendarActivityTest {
             Intents.release();
         }
     }
-
-
-
-
     @Test
     public void clickingSettingsButtonLaunchesSettingsActivity(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
@@ -290,7 +282,5 @@ public class CalendarActivityTest {
             assertDisplayed("Appointments reminder settings");
         }
     }
-
-
 */
 }

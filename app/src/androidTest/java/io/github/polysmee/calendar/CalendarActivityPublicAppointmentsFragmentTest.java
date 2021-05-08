@@ -96,7 +96,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(true));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(3, TimeUnit.SECONDS); 
+            sleep(3, TimeUnit.SECONDS);
             onView(withId(R.id.calendarActivityPager)).perform(swipeLeft());
             //writtenDateIsCorrectPublicAppointments
             assertDisplayed(dayFormatter.format(date));
@@ -147,26 +147,20 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         sleep(3, TimeUnit.SECONDS);
         assertDisplayed(dayFormatter.format(date));
         assertDisplayed(letterDayFormatter.format(date));
-
-
     }*/
 
 
 
    /* @Test
     public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
-
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
         addAppointmentOtherUser(calendarAppointmentInfo);
         FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
         sleep(3,TimeUnit.SECONDS);
-
-
         clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
         setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
         sleep(3,SECONDS);
         assertDisplayed(calendarAppointmentInfo.getTitle());
-
     }*/
 
 /*    @Test
@@ -175,16 +169,12 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG","BonjourBing2",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+3);
         addAppointmentOtherUser(calendarAppointmentInfo);
         addAppointmentOtherUser(calendarAppointmentInfo2);
-
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
-
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
             sleep(1,TimeUnit.SECONDS);
-
             //clickOn("PUBLIC APPOINTMENTS");
             onView(withId(R.id.calendarActivityPager)).perform(swipeLeft());
             sleep(1, SECONDS);
-
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
             closeSoftKeyboard();
             clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
@@ -197,7 +187,6 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             assertDisplayed("BonjourBing1");
             onView(withText("BonjourBing2")).check(doesNotExist());
         }
-
     }*/
 
     private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo){

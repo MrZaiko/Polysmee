@@ -23,9 +23,6 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     private Canvas alteredCanvas;
     private Bitmap alteredBitmap;
 
-    private int originalHeight = -1;
-    private int originalWidth  = -1;
-    private boolean set = false;
     private int currentColorId;
     private float currentStrokeWidth;
 
@@ -64,24 +61,8 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
 
 
         alteredCanvas = new Canvas(alteredBitmap);
-        if(originalHeight <= 0){
-            originalHeight+=1;
-            originalWidth +=1;
-        }
-        if(originalHeight > 0 && !set){
-            originalWidth = alteredBitmap.getWidth();
-            originalHeight = alteredBitmap.getHeight();
-            set = true;
-        }
     }
 
-    public void reset(Bitmap bitmap){
-        super.setImageBitmap(bitmap);
-        alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-        alteredCanvas = new Canvas(alteredBitmap);
-        alteredCanvas.drawBitmap(bitmap,0,0,null);
-        onSizeChanged(originalWidth,originalHeight,bitmap.getWidth(),bitmap.getHeight());
-    }
     @Override
     public void setImageBitmap(Bitmap bitmap) {
         super.setImageBitmap(bitmap);
