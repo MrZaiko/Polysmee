@@ -101,7 +101,6 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
-            Intents.init();
             //modifyingTitleIsSeenOnTheCalendar
             String title = "NewTitle";
             long startTime = calendar.getTimeInMillis() + 60*1000;
@@ -238,10 +237,6 @@ public class CalendarActivityTest {
                 assertDisplayed(username1);
             }
 
-            //Test if take button works correctly
-            clickOn(R.id.profileActivityTakePictureButton);
-
-            Intents.release();
         }
     }
 
