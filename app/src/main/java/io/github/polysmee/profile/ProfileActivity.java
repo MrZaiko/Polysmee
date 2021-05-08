@@ -162,9 +162,9 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                     }
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             MainUser.getMainUser().getId(), pictureId->{
-                        currentPictureId = pictureId;
-                        MainUser.getMainUser().setProfilePicture(currentPictureId);
-                        MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
+                                currentPictureId = pictureId;
+                                MainUser.getMainUser().setProfilePicture(currentPictureId);
+                                MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
                             }, s -> showToast(getString(R.string.genericErrorText)));
                     break;
 

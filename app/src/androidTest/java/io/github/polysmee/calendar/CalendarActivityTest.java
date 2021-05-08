@@ -2,6 +2,7 @@ package io.github.polysmee.calendar;
 
 import android.content.Intent;
 
+import androidx.test.InstrumentationRegistry;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
@@ -33,6 +34,7 @@ import io.github.polysmee.room.RoomActivity;
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -99,7 +101,10 @@ public class CalendarActivityTest {
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
             Intents.init();
-            clickMenu(R.id.calendarMenuNotifications);
+            sleep(2,SECONDS);
+            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            sleep(1,SECONDS);
+            clickOn("Notifications");
             intended(hasComponent(InvitesManagementActivity.class.getName()));
             Intents.release();
         }
@@ -153,7 +158,9 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             sleep(2,SECONDS);
-            clickOn(R.id.calendarMenuSettings);
+            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            sleep(2,SECONDS);
+            clickOn("Settings");
             assertDisplayed("Appointments reminder settings");
         }
     }
