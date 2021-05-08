@@ -34,6 +34,7 @@ import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.openActionBarOverflowOrOptionsMenu;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
@@ -46,6 +47,7 @@ import static com.schibsted.spain.barista.interaction.BaristaEditTextInteraction
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerBack;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
@@ -92,44 +94,15 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
     }
-
     @Test
-    public void profileButtonShouldOpenProfile(){
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(),CalendarActivity.class);
-
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            Intents.init();
-            sleep(2,SECONDS);
-            clickOn(R.id.calendarMenuProfile);
-            intended(hasComponent(ProfileActivity.class.getName()));
-            sleep(2,SECONDS);
-            assertDisplayed(username1);
-            assertDisplayed("calendaractivitytest@gmail.com");
-            Intents.release();
-        }
-    }
-
-    @Test
-    public void notificationButtonShouldOpenInvites() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
-
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            Intents.init();
-            sleep(2,SECONDS);
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
-            sleep(1,SECONDS);
-            clickOn("Notifications");
-            intended(hasComponent(InvitesManagementActivity.class.getName()));
-            Intents.release();
-        }
-    }
-
-    @Test
-    public void modifyingTitleIsSeenOnTheCalendar(){
+    public void allCalendarTest(){
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
+
+            //modifyingTitleIsSeenOnTheCalendar
             String title = "NewTitle";
             long startTime = calendar.getTimeInMillis() + 60*1000;
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi" ,
@@ -145,106 +118,33 @@ public class CalendarActivityTest {
             clickOn(R.id.appointmentCreationbtnDone);
             sleep(2,SECONDS);
             assertDisplayed(title);
-        }
-    }
 
-    @Test
-    public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime(){
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-
-        Calendar calendar = Calendar.getInstance();
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-
-            CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMe" ,
+            //clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime
+            CalendarAppointmentInfo info1 = new CalendarAppointmentInfo("SDP", "ClickMe" ,
                     calendar.getTimeInMillis() + 60*1000 ,3600*6*1000,appointmentId+5);
-            MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
-                    info.getDuration(), info.getCourse(), info.getTitle(), false);
+            MainUser.getMainUser().createNewUserAppointment(info1.getStartTime(),
+                    info1.getDuration(), info1.getCourse(), info1.getTitle(), false);
             sleep(3,SECONDS);
-            scrollTo(info.getTitle());
-            clickOn(info.getTitle());
-            assertDisplayed(withHint(info.getTitle()));
-            assertDisplayed(withText(info.getCourse()));
-        }
-    }
-
-    @Test
-    public void clickingSettingsButtonLaunchesSettingsActivity(){
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            scrollTo(info1.getTitle());
+            clickOn(info1.getTitle());
+            assertDisplayed(withHint(info1.getTitle()));
+            assertDisplayed(withText(info1.getCourse()));
+            pressBack();
             sleep(2,SECONDS);
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
-            sleep(2,SECONDS);
-            clickOn("Settings");
-            assertDisplayed("Appointments reminder settings");
-        }
-    }
-
-    @Test
-    public void writtenDateIsCorrectTest(){
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
-
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            //writtenDateIsCorrectTest
             assertDisplayed(dayFormatter.format(date));
             assertDisplayed(letterDayFormatter.format(date));
-        }
-    }
 
-    @Test
-    public void choosingAnotherDateChangesDisplayedDate(){
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            clickOn(R.id.activityCalendarMonthMyAppointments);
-            setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
-            long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(false);
-            Date date = new Date(epochTimeToday);
-            assertDisplayed(dayFormatter.format(date));
-            assertDisplayed(letterDayFormatter.format(date));
-        }
-    }
+            //scrollViewContentsIsCoherentAfterAddingAppointments
+            int number_of_appointments = 2;
 
-    @Test
-    public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+            CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
+            for(int i = 0; i<number_of_appointments; ++i){
+                infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
+                        DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i);
 
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            MainUser.getMainUser().createNewUserAppointment(startTime.getTimeInMillis(),
-                    3600, appointmentCourse, appointmentTitle, false);
-            sleep(5,SECONDS);
-
-            boolean thrown = false;
-            try {
-                onView(withText(appointmentTitle)).check(matches(isDisplayed()));
-            } catch (NoMatchingViewException e) {
-                thrown = true;
             }
-            assertTrue(thrown);
-
-            clickOn(R.id.activityCalendarMonthMyAppointments);
-            setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
-            sleep(2,SECONDS);
-            assertDisplayed(appointmentTitle);
-        }
-    }
-
-    @Test
-    public void scrollViewContentsIsCoherentAfterAddingAppointments(){
-
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-
-        Calendar todayDate = Calendar.getInstance();
-        todayDate.setTime(new Date(DailyCalendar.getDayEpochTimeAtMidnight(false)));
-        int number_of_appointments = 2;
-
-        CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
-        for(int i = 0; i<number_of_appointments; ++i){
-            infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i*3600*6*1000,3600*6*1000,appointmentId+i);
-
-        }
-
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
 
             for(int i = 0; i< number_of_appointments; ++i){
                 MainUser.getMainUser().createNewUserAppointment(infos[i].getStartTime(),
@@ -274,7 +174,123 @@ public class CalendarActivityTest {
                     assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
                 }
             }
+            swipeViewPagerBack();
+
+            sleep(3,SECONDS);
+
+            //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
+
+            MainUser.getMainUser().createNewUserAppointment(CalendarActivityTest.startTime.getTimeInMillis(),
+                    3600, appointmentCourse, appointmentTitle, false);
+            sleep(5,SECONDS);
+
+            boolean thrown = false;
+            try {
+                onView(withText(appointmentTitle)).check(matches(isDisplayed()));
+                } catch (NoMatchingViewException e) {
+                thrown = true;
+            }
+            assertTrue(thrown);
+
+            clickOn(R.id.activityCalendarMonthMyAppointments);
+            setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
+            sleep(2,SECONDS);
+            assertDisplayed(appointmentTitle);
+            sleep(2,SECONDS);
+            sleep(2,SECONDS);
+            //profileButtonShouldOpenProfile
+            try{
+                clickOn(R.id.calendarMenuProfile);
+                assertDisplayed(username1);
+            }catch(Exception  e){
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2,SECONDS);
+                clickOn(R.id.calendarMenuProfile);
+                assertDisplayed(username1);
+            }
+            sleep(2,SECONDS);
+            assertDisplayed(username1);
+            pressBack();
+            //notificationButtonShouldOpenInvites
+            sleep(2,SECONDS);
+            try{
+                clickOn(R.id.calendarMenuNotifications);
+                sleep(1,SECONDS);
+                assertDisplayed("Current invitations");
+            }catch(Exception  e){
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2,SECONDS);
+                clickOn("Notifications");
+                sleep(1,SECONDS);
+                assertDisplayed("Current invitations");
+            }
+            pressBack();
+            //clickingSettingsButtonLaunchesSettingsActivity
+            sleep(2,SECONDS);
+            try{
+                clickOn(R.id.calendarMenuSettings);
+                assertDisplayed("Appointments reminder settings");
+            }catch(Exception  e){
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2,SECONDS);
+                clickOn("Settings");
+                assertDisplayed("Appointments reminder settings");
+            }
+
+        }
+    }
+   /* @Before
+    public void setTodayDateInDailyCalendar(){
+        Calendar calendar = Calendar.getInstance();
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
+    }
+
+    @Test
+    public void profileButtonShouldOpenProfile(){
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(),CalendarActivity.class);
+
+        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            Intents.init();
+            sleep(2,SECONDS);
+            clickOn(R.id.calendarMenuProfile);
+            intended(hasComponent(ProfileActivity.class.getName()));
+            sleep(2,SECONDS);
+            assertDisplayed(username1);
+            assertDisplayed("calendaractivitytest@gmail.com");
+            Intents.release();
         }
     }
 
+    @Test
+    public void notificationButtonShouldOpenInvites() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
+
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+            Intents.init();
+            sleep(2,SECONDS);
+            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            sleep(1,SECONDS);
+            clickOn(R.id.calendarMenuNotifications);
+            intended(hasComponent(InvitesManagementActivity.class.getName()));
+            Intents.release();
+        }
+    }
+
+
+
+
+    @Test
+    public void clickingSettingsButtonLaunchesSettingsActivity(){
+        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
+            sleep(2,SECONDS);
+            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            sleep(2,SECONDS);
+            clickOn("Settings");
+            assertDisplayed("Appointments reminder settings");
+        }
+    }
+
+
+*/
 }

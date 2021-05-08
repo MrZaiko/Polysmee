@@ -4,25 +4,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import androidx.fragment.app.Fragment;
 import androidx.preference.EditTextPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
 import com.google.firebase.auth.FirebaseUser;
 
 import io.github.polysmee.R;
-import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
-import io.github.polysmee.settings.FriendsActivity;
+import io.github.polysmee.profile.FriendsActivity;
 import io.github.polysmee.settings.UserInfoDataStore;
 
 public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {

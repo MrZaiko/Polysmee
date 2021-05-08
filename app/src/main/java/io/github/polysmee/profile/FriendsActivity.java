@@ -1,4 +1,4 @@
-package io.github.polysmee.settings;
+package io.github.polysmee.profile;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -60,6 +60,12 @@ public class FriendsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        user.removeFriendsListener(friendsValuesListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         user.removeFriendsListener(friendsValuesListener);
     }
 

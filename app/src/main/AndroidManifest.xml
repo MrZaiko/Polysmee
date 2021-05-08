@@ -58,7 +58,7 @@
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".invites.InvitesManagementActivity" />
         <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
-        <activity android:name=".settings.FriendsActivity" />
+        <activity android:name=".profile.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"

@@ -7,11 +7,9 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.android.dx.command.Main;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +20,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.FriendsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
@@ -56,7 +55,7 @@ public class FriendsActivityTest {
 
     @Test
     public void encouragingMessageIsDisplayedTest(){
-        Intent intent = new Intent(getApplicationContext(),FriendsActivity.class);
+        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try(ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)){
             assertDisplayed(getApplicationContext().getResources().getString(R.string.friendsActivityEncouragingMessage1));
         }
