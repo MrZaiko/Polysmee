@@ -102,7 +102,7 @@ public class CalendarActivityTest {
             sleep(2,SECONDS);
             clickOn(R.id.calendarMenuProfile);
             intended(hasComponent(ProfileActivity.class.getName()));
-            Thread.sleep(1000);
+            sleep(2,SECONDS);
             assertDisplayed(username1);
             assertDisplayed("calendaractivitytest@gmail.com");
             Intents.release();
