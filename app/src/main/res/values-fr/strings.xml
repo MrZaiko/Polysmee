@@ -28,6 +28,9 @@
     <string name="login">Se connecter</string>
     <string name="loginActivityNoNetwork">pas de réseau disponible</string>
     <string name="loginActivityUserCancelled">l\'utilisateur a annulé la connection</string>
+    <string name="loginNoConnection">Une connexion est nécessaire pour la première utilisation.</string>
+    <string name="loginNoConnectionRetry">Réessayer</string>
+
     <string name="appointment_creation_appointment_title">Titre</string>
     <string name="appointment_creation_appointment_course">Cours</string>
     <string name="appointment_creation_pick_start_time">Cliquer pour choisir</string>
