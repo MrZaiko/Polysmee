@@ -47,7 +47,8 @@ public class MainUserTest {
     }
 
     @Test
-    public void getEmailWorks() {
+    public void getEmailWorks() throws ExecutionException, InterruptedException {
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
         assertEquals("mainusersingleton@gmail.com", MainUser.getCurrentUserEmail());
     }
 }
