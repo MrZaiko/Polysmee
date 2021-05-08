@@ -2,7 +2,6 @@ package io.github.polysmee.calendar;
 
 import android.content.Intent;
 
-import androidx.test.InstrumentationRegistry;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
@@ -27,9 +26,9 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
-
+import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
@@ -44,7 +43,6 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
-import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -93,6 +91,24 @@ public class CalendarActivityTest {
     public void setTodayDateInDailyCalendar(){
         Calendar calendar = Calendar.getInstance();
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
+    }
+
+    @Test
+    public void profileButtonShouldOpenProfile(){
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(),CalendarActivity.class);
+
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+            Intents.init();
+            sleep(2,SECONDS);
+            clickOn(R.id.calendarMenuProfile);
+            intended(hasComponent(ProfileActivity.class.getName()));
+            Thread.sleep(1000);
+            assertDisplayed(username1);
+            assertDisplayed("calendaractivitytest@gmail.com");
+            Intents.release();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     @Test
