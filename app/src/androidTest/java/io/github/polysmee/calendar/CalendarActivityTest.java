@@ -101,7 +101,7 @@ public class CalendarActivityTest {
         Calendar calendar = Calendar.getInstance();
         try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
             Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
-
+            Intents.init();
             //modifyingTitleIsSeenOnTheCalendar
             String title = "NewTitle";
             long startTime = calendar.getTimeInMillis() + 60*1000;
@@ -197,20 +197,9 @@ public class CalendarActivityTest {
             sleep(2,SECONDS);
             assertDisplayed(appointmentTitle);
             sleep(2,SECONDS);
-            sleep(2,SECONDS);
-            //profileButtonShouldOpenProfile
-            try{
-                clickOn(R.id.calendarMenuProfile);
-                assertDisplayed(username1);
-            }catch(Exception  e){
-                openActionBarOverflowOrOptionsMenu(getApplicationContext());
-                sleep(2,SECONDS);
-                clickOn(R.id.calendarMenuProfile);
-                assertDisplayed(username1);
-            }
-            sleep(2,SECONDS);
-            assertDisplayed(username1);
-            pressBack();
+
+
+
             //notificationButtonShouldOpenInvites
             sleep(2,SECONDS);
             try{
@@ -236,7 +225,23 @@ public class CalendarActivityTest {
                 clickOn("Settings");
                 assertDisplayed("Appointments reminder settings");
             }
+            pressBack();
+            sleep(2,SECONDS);
+            //profileButtonShouldOpenProfile
+            try{
+                clickOn(R.id.calendarMenuProfile);
+                assertDisplayed(username1);
+            }catch(Exception  e){
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2,SECONDS);
+                clickOn(R.id.calendarMenuProfile);
+                assertDisplayed(username1);
+            }
 
+            //Test if take button works correctly
+            clickOn(R.id.profileActivityTakePictureButton);
+
+            Intents.release();
         }
     }
 
