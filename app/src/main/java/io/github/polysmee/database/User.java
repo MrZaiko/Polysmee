@@ -146,7 +146,7 @@ public interface User{
     /**
      * @param valueListener the listener to be added for changes to the user's profile picture.
      */
-    void getProfilePicture(StringValueListener valueListener);
+    void getProfilePictureAndThen(StringValueListener valueListener);
 
     /**
      * @param valueListener the listener to be added for changes to the user's profile picture.

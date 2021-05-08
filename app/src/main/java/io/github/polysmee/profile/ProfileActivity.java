@@ -34,6 +34,7 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.fragments.ProfileActivityInfosFragment;
+import io.github.polysmee.room.fragments.HelperImages;
 
 public class ProfileActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
@@ -176,7 +177,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
 
                     byte[] picturesToByte = new byte[0];
                     try{
-                        picturesToByte = getBytes(this.getContentResolver().openInputStream(currentPictureUri));
+                        picturesToByte = HelperImages.getBytes(this.getContentResolver().openInputStream(currentPictureUri));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -184,14 +185,14 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                         MainUser.getMainUser().removeProfilePicture();
                         UploadServiceFactory.getAdaptedInstance().deleteImage(currentPictureId,(id)->{
                             MainUser.getMainUser().removeProfilePicture();
-                        },s-> showToast(getString(R.string.genericErrorText)));
+                        },s-> HelperImages.showToast(getString(R.string.genericErrorText),this));
                     }
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             MainUser.getMainUser().getId(), pictureId->{
                         currentPictureId = pictureId;
                         MainUser.getMainUser().setProfilePicture(currentPictureId);
                         MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
-                            }, s -> showToast(getString(R.string.genericErrorText)));
+                            }, s-> HelperImages.showToast(getString(R.string.genericErrorText),this));
                     break;
 
                 default:
@@ -212,36 +213,17 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         // Replace the existing Fragment with the new Fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.profileActivityInfoContainer, fragment)
-                //.addToBackStack(null)
+                .addToBackStack(null)
                 .commit();
         return true;
     }
 
-    private byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        return byteBuffer.toByteArray();
-    }
-
-
-    private void showToast(String message) {
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(this, message, duration);
-        toast.show();
-    }
 
     private void downloadPicture(String pictureId){
         UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
             Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-        },s-> showToast(getString(R.string.genericErrorText)));
+        },ss-> HelperImages.showToast(getString(R.string.genericErrorText),this));
     }
 
 }

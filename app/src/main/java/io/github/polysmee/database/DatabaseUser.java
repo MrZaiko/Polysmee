@@ -266,7 +266,7 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void getProfilePicture(StringValueListener valueListener) {
+    public void getProfilePictureAndThen(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference("users")
