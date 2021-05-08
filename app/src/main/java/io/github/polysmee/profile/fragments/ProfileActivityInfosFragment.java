@@ -17,9 +17,11 @@ import android.view.ViewGroup;
 import com.google.firebase.auth.FirebaseUser;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.FriendsActivity;
 import io.github.polysmee.settings.UserInfoDataStore;
 
@@ -27,18 +29,31 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
 
     private StringValueListener nameListener;
     private UserInfoDataStore userInfoDataStore;
+    private String visitingMode;
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         Context context = getPreferenceManager().getContext();
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+        visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
+        FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
+        if(visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE))
+            userInfoDataStore = new UserInfoDataStore(this.getArguments().getString(ProfileActivity.PROFILE_ID_USER));
+        else
+            userInfoDataStore = new UserInfoDataStore();
 
         EditTextPreference userNameEditTextPreference = new EditTextPreference(context);
-        userInfoDataStore = new UserInfoDataStore();
         userNameEditTextPreference.setPreferenceDataStore(userInfoDataStore);
         userNameEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserName);
         userNameEditTextPreference.setTitle(getString(R.string.title_settings_main_user_name));
-        nameListener = getStringValuetListenerForDefaultValue(userNameEditTextPreference);
-        MainUser.getMainUser().getNameAndThen(nameListener);
+        if(visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE)){
+            userNameEditTextPreference.setEnabled(false);
+            userNameEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
+            userInfoDataStore.getName(userNameEditTextPreference::setSummary);
+        }
+        else{
+            nameListener = getStringValueListenerForDefaultValue(userNameEditTextPreference);
+            MainUser.getMainUser().getNameAndThen(nameListener);
+        }
 
 
         EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
@@ -47,7 +62,6 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
         userEmailEditTextPreference.setTitle(getString(R.string.title_settings_main_user_email));
         userEmailEditTextPreference.setEnabled(false);
         userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
-        FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
         if(user!=null){
             userEmailEditTextPreference.setSummary(user.getEmail());
         }
@@ -69,8 +83,10 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
         descriptionPreference.setTitle("Description:");
 
         screen.addPreference(userNameEditTextPreference);
-        screen.addPreference(userEmailEditTextPreference);
-        screen.addPreference(friendManagerPreference);
+        if(visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)){
+            screen.addPreference(userEmailEditTextPreference);
+            screen.addPreference(friendManagerPreference);
+        }
         screen.addPreference(descriptionPreference);
         setPreferenceScreen(screen);
 
@@ -82,40 +98,31 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
      * @param editTextPreference the preference to update the summary
      * @return a string value listener that at a event will set the summary of the editTextPreference to the value of the string
      */
-    private static StringValueListener getStringValuetListenerForDefaultValue(EditTextPreference editTextPreference){
+    private static StringValueListener getStringValueListenerForDefaultValue(EditTextPreference editTextPreference){
         return editTextPreference::setSummary;
+    }
+
+    private void deleteNameListener(){
+        assert nameListener !=null;
+        if(visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE))
+            MainUser.getMainUser().removeNameListener(nameListener);
+    }
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        deleteNameListener();
     }
 
     @Override
     public void onPause() {
-        assert nameListener !=null;
         super.onPause();
-        MainUser.getMainUser().removeNameListener(nameListener);
+        deleteNameListener();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
-        if(user !=null){
-            EditTextPreference userEmailEditTextPreference = findPreference(UserInfoDataStore.preferenceKeyMainUserEmail);
-            if(userEmailEditTextPreference!=null){
-                userEmailEditTextPreference.setPreferenceDataStore(userInfoDataStore);
-                userEmailEditTextPreference.setSummary(user.getEmail());
-            }
-        }
-        EditTextPreference userNameEditTextPreference = findPreference(UserInfoDataStore.preferenceKeyMainUserName);
-        if(userNameEditTextPreference!=null){
-            userNameEditTextPreference.setPreferenceDataStore(userInfoDataStore);
-            nameListener = getStringValuetListenerForDefaultValue(userNameEditTextPreference);;
-            MainUser.getMainUser().getNameAndThen(nameListener);
-        }
-    }
 
     @Override
     public void onStop() {
-        assert nameListener !=null;
         super.onStop();
-        MainUser.getMainUser().removeNameListener(nameListener);
+        deleteNameListener();
     }
 }

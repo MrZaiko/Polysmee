@@ -78,6 +78,7 @@ public class CalendarActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             case R.id.calendarMenuProfile:
                 Intent profileIntent = new Intent(this, ProfileActivity.class);
+                profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_OWNER_MODE);
                 startActivity(profileIntent);
                 return true;
             case R.id.calendarMenuSettings:

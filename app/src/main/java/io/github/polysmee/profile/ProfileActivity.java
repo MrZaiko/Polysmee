@@ -2,23 +2,19 @@ package io.github.polysmee.profile;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.content.res.AppCompatResources;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,14 +27,13 @@ import java.io.InputStream;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
-import io.github.polysmee.database.Message;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.fragments.ProfileActivityInfosFragment;
-import io.github.polysmee.settings.fragments.SettingsMainFragment;
 
 public class ProfileActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
@@ -47,28 +42,59 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
     private ImageView takePhoto  ;
     private Uri currentPictureUri;
     private StringValueListener pictureListener;
+
+    public static final int VISIT_MODE_REQUEST_CODE = 400;
+
     private static final int PICK_IMAGE = 100;
     private static final int TAKE_PICTURE = 200;
     private static final int EDIT_PICTURE = 300;
     private String currentPictureId;
+
     public final static String PROFILE_VISITING_MODE = "io.github.polysmee.profile.visiting_mode";
     public final static String PROFILE_OWNER_MODE = "io.github.polysmee.profile.owner_mode";
+    public final static String PROFILE_VISIT_CODE = "io.github.polysmee.profile.visit_type";
+
+    public final static String PROFILE_ID_USER = "io.github.polysmee.profile.visited_user_id";
+
+    private String visitingMode;
+    private String visitedUserId;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        visitingMode = getIntent().getStringExtra(PROFILE_VISIT_CODE);
         if (savedInstanceState == null) {
+            ProfileActivityInfosFragment profileActivityInfosFragment = new ProfileActivityInfosFragment();
+            Bundle bundle = new Bundle();
+            bundle.putString(PROFILE_VISIT_CODE,visitingMode);
+            if(visitingMode.equals(PROFILE_VISITING_MODE)){
+                bundle.putString(PROFILE_ID_USER,getIntent().getStringExtra(PROFILE_ID_USER));
+            }
+            profileActivityInfosFragment.setArguments(bundle);
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.profileActivityInfoContainer, new ProfileActivityInfosFragment())
+                    .replace(R.id.profileActivityInfoContainer, profileActivityInfosFragment)
                     .commit();
         }
-        attributeSetters();
+
+        if(visitingMode.equals(PROFILE_OWNER_MODE))
+            attributeSettersOwner();
+        else{
+            attributeSettersVisitor();
+        };
     }
 
-    protected void attributeSetters(){
+    protected void attributeSettersVisitor(){
+        profilePicture = ((CircleImageView)((ConstraintLayout)findViewById(R.id.profileActivityProfilePictureContainer))
+                .findViewById(R.id.profileActivityProfilePicture));
+        ((ImageView)findViewById(R.id.profileActivitySendPictureButton)).setVisibility(View.GONE);
+        ((ImageView)findViewById(R.id.profileActivityTakePictureButton)).setVisibility(View.GONE);
+        pictureListener = setPictureListener();
+        (new DatabaseUser(getIntent().getStringExtra(PROFILE_ID_USER))).getProfilePicture_Once_And_Then(pictureListener);
+    }
+    protected void attributeSettersOwner(){
         pickGallery = (ImageView)findViewById(R.id.profileActivitySendPictureButton);
         takePhoto   = (ImageView)findViewById(R.id.profileActivityTakePictureButton);
         profilePicture = ((CircleImageView)((ConstraintLayout)findViewById(R.id.profileActivityProfilePictureContainer))
@@ -162,9 +188,9 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                     }
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             MainUser.getMainUser().getId(), pictureId->{
-                                currentPictureId = pictureId;
-                                MainUser.getMainUser().setProfilePicture(currentPictureId);
-                                MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
+                        currentPictureId = pictureId;
+                        MainUser.getMainUser().setProfilePicture(currentPictureId);
+                        MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
                             }, s -> showToast(getString(R.string.genericErrorText)));
                     break;
 
@@ -181,11 +207,12 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
                 getClassLoader(),
                 pref.getFragment());
+
         fragment.setArguments(args);
         // Replace the existing Fragment with the new Fragment
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.profileActivityInfoContainer, fragment)
-                .addToBackStack(null)
+                //.addToBackStack(null)
                 .commit();
         return true;
     }

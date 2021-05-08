@@ -24,6 +24,7 @@ public final class UserInfoDataStore extends PreferenceDataStore {
 
     }
     public UserInfoDataStore(String uid){
+        System.out.println(uid == null);
         dataBaseMainUser = new DatabaseUser(uid);
     }
     @Override
