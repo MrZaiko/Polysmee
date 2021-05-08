@@ -239,48 +239,5 @@ public class CalendarActivityTest {
 
         }
     }
-   /* @Before
-    public void setTodayDateInDailyCalendar(){
-        Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),false);
-    }
-    @Test
-    public void profileButtonShouldOpenProfile(){
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(),CalendarActivity.class);
-        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            Intents.init();
-            sleep(2,SECONDS);
-            clickOn(R.id.calendarMenuProfile);
-            intended(hasComponent(ProfileActivity.class.getName()));
-            sleep(2,SECONDS);
-            assertDisplayed(username1);
-            assertDisplayed("calendaractivitytest@gmail.com");
-            Intents.release();
-        }
-    }
-    @Test
-    public void notificationButtonShouldOpenInvites() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
-            Intents.init();
-            sleep(2,SECONDS);
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
-            sleep(1,SECONDS);
-            clickOn(R.id.calendarMenuNotifications);
-            intended(hasComponent(InvitesManagementActivity.class.getName()));
-            Intents.release();
-        }
-    }
-    @Test
-    public void clickingSettingsButtonLaunchesSettingsActivity(){
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            sleep(2,SECONDS);
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
-            sleep(2,SECONDS);
-            clickOn("Settings");
-            assertDisplayed("Appointments reminder settings");
-        }
-    }
-*/
+
 }
