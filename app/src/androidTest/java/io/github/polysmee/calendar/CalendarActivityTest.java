@@ -106,8 +106,6 @@ public class CalendarActivityTest {
             assertDisplayed(username1);
             assertDisplayed("calendaractivitytest@gmail.com");
             Intents.release();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
     }
 
