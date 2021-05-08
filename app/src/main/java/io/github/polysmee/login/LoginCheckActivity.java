@@ -17,8 +17,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.jetbrains.annotations.NotNull;
-
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
 
