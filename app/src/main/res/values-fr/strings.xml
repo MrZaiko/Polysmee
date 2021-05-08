@@ -24,6 +24,8 @@
     <string name="calendarEntryDetailsActivityBanButton">Bannir</string>
     <string name="calendarEntryDetailsActivityInviteHint">Qui voulez-vous ajouter?</string>
     <string name="calendarEntryDetailsActivityBanHint">Qui voulez-vous bannir?</string>
+
+    <string name="login_welcome">Bienvenue sur Polysmee !</string>
     <string name="user_prompt">Vous n\'êtes pas connecté. Connectez-vous s\'il vous plait !</string>
     <string name="login">Se connecter</string>
     <string name="loginActivityNoNetwork">pas de réseau disponible</string>
