@@ -20,7 +20,7 @@ import io.github.polysmee.R;
  * This dialog remember the choice made before on the hosting activity lifecycle, if it is the first
  * choice the default choice is the first element of the array R.array_voices_tune_array
  */
-public class VoiceTunerChoiceDialogFragment extends DialogFragment {
+public final class VoiceTunerChoiceDialogFragment extends DialogFragment {
     private int previousChoice=0;
     private VoiceTunerChoiceDialogFragmentListener listener;
 

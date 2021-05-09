@@ -8,11 +8,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
 
     <uses-feature android:name="android.hardware.bluetooth" />
-    <uses-feature android:name="android.hardware.camera"
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="true" />
 
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -39,7 +41,8 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
 
-        <service android:name=".znotification.AppointmentReminderNotificationService"/>
+        <service android:name=".znotification.AppointmentReminderNotificationService" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
@@ -50,9 +53,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
-        <activity android:name=".invites.InvitesManagementActivity"/>
-        <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
+        <activity android:name=".invites.InvitesManagementActivity" />
         <activity android:name=".settings.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity
