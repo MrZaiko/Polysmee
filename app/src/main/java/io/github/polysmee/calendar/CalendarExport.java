@@ -1,27 +1,9 @@
 package io.github.polysmee.calendar;
 
-import android.Manifest;
-import android.content.ContentResolver;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.provider.CalendarContract;
-import android.util.Log;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
-import androidx.core.content.ContextCompat;
-
-import com.google.android.gms.common.internal.AccountType;
-
-import java.util.TimeZone;
-
-import io.github.polysmee.database.Appointment;
-
-import static android.provider.CalendarContract.ACCOUNT_TYPE_LOCAL;
-import static androidx.activity.result.ActivityResultCallerKt.registerForActivityResult;
 
 public class CalendarExport {
 
