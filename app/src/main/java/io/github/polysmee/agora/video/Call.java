@@ -39,7 +39,7 @@ public class Call {
     private static final int VOLUME_OFF = 0;
     private static final int STANDARD_VOLUME = 100;
     private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK, Constants.VOICE_CHANGER_EFFECT_OLDMAN,
-                                                Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
+            Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -54,6 +54,7 @@ public class Call {
     private final Set<Integer> usersInCall;
     private final Set<Integer> talking;
     private  Command<Boolean, String> command;
+    private VideoEngineEventHandler eventHandler;
 
 
     public Call(String appointmentId, Context context){
@@ -122,7 +123,7 @@ public class Call {
      * @param effectIndex
      */
     public void setVoiceEffect(int effectIndex) {
-            mRtcEngine.setAudioEffectPreset(VOICE_EFFECTS[effectIndex]);
+        mRtcEngine.setAudioEffectPreset(VOICE_EFFECTS[effectIndex]);
     }
 
     /**
@@ -234,6 +235,10 @@ public class Call {
     public void destroy() {
         leaveChannel();
         mRtcEngine.removeHandler(handler);
+        if(eventHandler != null){
+            mRtcEngine.removeHandler(eventHandler);
+        }
+        RtcEngine.destroy();
     }
 
 
@@ -300,7 +305,7 @@ public class Call {
 
     public void setVideoFragment(Fragment fragment){
         this.videoRoom = (RoomActivityVideoFragment) fragment;
-        VideoEngineEventHandler eventHandler = new VideoEngineEventHandler();
+        eventHandler = new VideoEngineEventHandler();
         eventHandler.addEventHandler(this.videoRoom);
         mRtcEngine.addHandler(eventHandler);
 
