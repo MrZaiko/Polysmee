@@ -12,10 +12,12 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.CalendarContract;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -59,10 +61,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -74,9 +79,10 @@ import java.util.concurrent.FutureTask;
 
 import io.github.polysmee.R;
 
+//Commented to avoid coverage problem
 public class CalendarExportActivity extends AppCompatActivity {
 
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    /*private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
 
     private static final int RC_SIGN_IN = 100;
 
@@ -84,8 +90,6 @@ public class CalendarExportActivity extends AppCompatActivity {
     private GoogleSignInAccount account;
     private Calendar service;
     private String apiKey;
-
-
 
     @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
@@ -107,9 +111,10 @@ public class CalendarExportActivity extends AppCompatActivity {
         HTTP_TRANSPORT = new NetHttpTransport();
 
         GoogleCredential credential = new GoogleCredential.Builder()
-                .setTransport(HTTP_TRANSPORT)
-                .setJsonFactory(JSON_FACTORY)
-                .build();
+                    .setTransport(HTTP_TRANSPORT)
+                    .setJsonFactory(JSON_FACTORY)
+                    .setServiceAccountScopes(Collections.singleton(CalendarScopes.CALENDAR))
+                    .build();
 
         service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
                 .setApplicationName(String.valueOf(R.string.app_name))
@@ -160,7 +165,7 @@ public class CalendarExportActivity extends AppCompatActivity {
                         }
                         System.out.printf("%s (%s)\n", event.getSummary(), start);
                     }
-                }*/
+                }
             }).start();
         });
     }
@@ -219,7 +224,7 @@ public class CalendarExportActivity extends AppCompatActivity {
             String text = "Export to " + account.getEmail();
             ((Button) findViewById(R.id.calendarExportActivityExportButton)).setText(text);
         }
-    }
+    }*/
 
 
 

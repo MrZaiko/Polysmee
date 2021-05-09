@@ -25,7 +25,7 @@ import static androidx.activity.result.ActivityResultCallerKt.registerForActivit
 
 public class CalendarExport {
 
-    public static void exportAppointment(Context context, CalendarAppointmentInfo appointment) {
+    /*public static void silentExportAppointment(Context context, CalendarAppointmentInfo appointment) {
         ContentResolver cr = context.getContentResolver();
         ContentValues values = new ContentValues();
 
@@ -44,11 +44,11 @@ public class CalendarExport {
         Uri uri = cr.insert(CalendarContract.Events.CONTENT_URI, values);
 
         long eventID = Long.parseLong(uri.getLastPathSegment());
-    }
+    }*/
 
 
 
-    public static void sexportAppointment(Context context, CalendarAppointmentInfo appointment) {
+    public static void exportAppointment(Context context, CalendarAppointmentInfo appointment) {
         String description = "Course: " + appointment.getCourse();
 
         Intent intent = new Intent(Intent.ACTION_INSERT)
