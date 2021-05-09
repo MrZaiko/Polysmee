@@ -71,17 +71,17 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
         });
 
 
-        EditTextPreference descriptionPreference = new EditTextPreference(context);
+        /*EditTextPreference descriptionPreference = new EditTextPreference(context);
         descriptionPreference.setPreferenceDataStore(userInfoDataStore);
         descriptionPreference.setKey(UserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION);
-        descriptionPreference.setTitle("Description:");
+        descriptionPreference.setTitle("Description:");*/
 
         screen.addPreference(userNameEditTextPreference);
         if(visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)){
             screen.addPreference(userEmailEditTextPreference);
             screen.addPreference(friendManagerPreference);
         }
-        screen.addPreference(descriptionPreference);
+        //screen.addPreference(descriptionPreference);
         setPreferenceScreen(screen);
 
 

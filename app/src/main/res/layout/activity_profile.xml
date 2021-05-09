@@ -14,8 +14,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toTopOf="@id/profileActivityInfoContainer"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp">
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="85dp"
+        android:layout_marginEnd="50dp">
             <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/profileActivityProfilePicture"
             app:layout_constraintTop_toTopOf="parent"

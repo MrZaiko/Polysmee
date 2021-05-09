@@ -58,8 +58,6 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
     public final static String PROFILE_ID_USER = "io.github.polysmee.profile.visited_user_id";
 
     private String visitingMode;
-    private String visitedUserId;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +85,9 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         };
     }
 
+    /**
+     * The layout to be shown and behavior to be set in case we're visiting another user's profile
+     */
     protected void attributeSettersVisitor(){
         profilePicture = ((CircleImageView)((ConstraintLayout)findViewById(R.id.profileActivityProfilePictureContainer))
                 .findViewById(R.id.profileActivityProfilePicture));
@@ -95,6 +96,10 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         pictureListener = setPictureListener();
         (new DatabaseUser(getIntent().getStringExtra(PROFILE_ID_USER))).getProfilePicture_Once_And_Then(pictureListener);
     }
+
+    /**
+     * The layout to be shown and behavior to be set in case we're visiting our own profile
+     */
     protected void attributeSettersOwner(){
         pickGallery = (ImageView)findViewById(R.id.profileActivitySendPictureButton);
         takePhoto   = (ImageView)findViewById(R.id.profileActivityTakePictureButton);
@@ -157,21 +162,21 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         super.onActivityResult(requestCode, resultCode, data);
         if(resultCode == RESULT_OK){
             switch (requestCode){
-                case PICK_IMAGE:
+                case PICK_IMAGE: //In case we choose a picture from the gallery
                     currentPictureUri = data.getData();
-                case TAKE_PICTURE:
+                case TAKE_PICTURE: //launches the crop activity, in case we choose or took a picture
                     CropImage.activity(currentPictureUri)
                             //.setMinCropResultSize(200,200)
                             //.setMaxCropResultSize(200,200)
                             .start(this);
                     break;
-                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
+                case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE: //When we're done with cropping: send it to the edit activity
                     currentPictureUri = CropImage.getActivityResult(data).getUri();
                     Intent photoEditIntent = new Intent(this,PictureEditActivity.class);
                     photoEditIntent.putExtra(PictureEditActivity.PICTURE_URI, currentPictureUri);
                     startActivityForResult(photoEditIntent, EDIT_PICTURE);
                     break;
-                case EDIT_PICTURE:
+                case EDIT_PICTURE: //When done editing: set it as profile picture
                     currentPictureUri = (Uri) data.getExtras().get("data");
 
                     byte[] picturesToByte = new byte[0];
