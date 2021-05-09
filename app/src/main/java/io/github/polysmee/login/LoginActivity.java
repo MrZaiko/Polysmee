@@ -81,9 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // Successfully signed in
             FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
-            db.getReference("users")
-                    .child(MainUser.getMainUser().getId())
-                    .child("name")
+            db.getReference("users").child(MainUser.getMainUser().getId()).child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
             //TODO
             //AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());

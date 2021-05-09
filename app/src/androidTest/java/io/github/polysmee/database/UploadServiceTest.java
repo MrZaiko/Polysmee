@@ -16,7 +16,7 @@ import static org.junit.Assert.assertTrue;
 public class UploadServiceTest {
     @Test
     public void uploadDownloadDelete() {
-        UploadServiceFactory.setTest();
+        UploadServiceFactory.setTest(true);
         UploadService us = UploadServiceFactory.getAdaptedInstance();
         us.uploadImage(
                 new byte[]{2,3,4},
@@ -33,6 +33,25 @@ public class UploadServiceTest {
                 "nums",
                 (name) -> assertEquals(name, "nums"),
                 (exc) -> {throw new IllegalStateException("crashed in test lol");}
+        );
+
+        UploadServiceFactory.setTest(false);
+        us = UploadServiceFactory.getAdaptedInstance();
+        us.uploadImage(
+            new byte[]{2,3,4},
+            "nums",
+            (name) -> assertTrue(name.contains("nums")),
+            (exc) -> {throw new IllegalStateException("crashed in test lol");}
+        );
+        us.downloadImage(
+            "nums",
+            (gotten) -> assertArrayEquals(gotten, new byte[]{2,3,4}),
+            (exc) -> {throw new IllegalStateException("failed in test lmao");}
+        );
+        us.deleteImage(
+            "nums",
+            (name) -> assertEquals(name, "nums"),
+            (exc) -> {throw new IllegalStateException("crashed in test lol");}
         );
     }
 }

@@ -86,7 +86,10 @@ public class Message  {
             return false;
         }
         Message otherMessage = (Message) other;
-        return otherMessage.content.equals(content) && otherMessage.messageTime == messageTime && otherMessage.sender.equals(sender) && otherMessage.isAPicture == isAPicture;
+        return otherMessage.content.equals(content)
+            && otherMessage.messageTime == messageTime
+            && otherMessage.sender.equals(sender)
+            && otherMessage.isAPicture == isAPicture;
 
     }
 
