@@ -71,29 +71,18 @@
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@id/pictureEditFiltersScrollView"
             app:layout_constraintStart_toEndOf="@id/pictureEditStrokeWidthText"
-            app:layout_constraintEnd_toStartOf="@id/pictureEditCropButton"
+            app:layout_constraintEnd_toStartOf="@id/pictureEditColorPicker"
             app:layout_constraintBottom_toBottomOf="parent"/>
 
         <Button
             android:id="@+id/pictureEditColorPicker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/pictureEditCropButton"
+            app:layout_constraintStart_toEndOf="@id/pictureEditStrokeWidthBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/pictureEditFiltersScrollView"
             android:text="Pick Color"/>
-
-        <Button
-            android:id="@+id/pictureEditCropButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toEndOf="@id/pictureEditStrokeWidthBar"
-            app:layout_constraintEnd_toStartOf="@id/pictureEditColorPicker"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/pictureEditFiltersScrollView"
-            android:text="Crop"
-            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
