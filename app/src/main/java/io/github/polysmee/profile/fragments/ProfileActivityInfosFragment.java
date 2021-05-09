@@ -108,13 +108,6 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        deleteNameListener();
-    }
-
-
-    @Override
     public void onStop() {
         super.onStop();
         deleteNameListener();
