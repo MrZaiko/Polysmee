@@ -3,6 +3,7 @@ package io.github.polysmee.login;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -43,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
+        getWindow().getDecorView().setBackgroundColor(Color.WHITE);
         Button login_b = findViewById(R.id.login_button);
         login_b.setOnClickListener(
                 v -> createSignInIntent()
@@ -54,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         // [START auth_fui_create_intent]
         // Choose authentication providers
         List<AuthUI.IdpConfig> providers = Collections.singletonList(
-                new AuthUI.IdpConfig.EmailBuilder().build());
+                new AuthUI.IdpConfig.GoogleBuilder().build());
 
 
         // Create and launch sign-in intent
@@ -80,9 +81,7 @@ public class LoginActivity extends AppCompatActivity {
 
             // Successfully signed in
             FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
-            db.getReference("users")
-                    .child(MainUser.getMainUser().getId())
-                    .child("name")
+            db.getReference("users").child(MainUser.getMainUser().getId()).child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
             //TODO
             //AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
@@ -91,11 +90,6 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
             finish();
 
-        } else if(response == null) {
-            Toast.makeText(this, getString(R.string.loginActivityUserCancelled), Toast.LENGTH_LONG).show();
-        } else if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-            Toast.makeText(this, getString(R.string.loginActivityNoNetwork), Toast.LENGTH_LONG).show();
         }
-
     }
 }

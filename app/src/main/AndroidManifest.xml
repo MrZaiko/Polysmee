@@ -56,7 +56,7 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-
+        <activity android:name=".login.NoConnectionActivity" />
         <activity android:name=".invites.InvitesManagementActivity"/>
         <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
         <activity android:name=".settings.FriendsActivity" />

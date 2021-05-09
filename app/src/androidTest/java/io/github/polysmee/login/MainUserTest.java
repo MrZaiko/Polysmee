@@ -26,7 +26,7 @@ public class MainUserTest {
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
     }
 
     @AfterClass
@@ -42,7 +42,13 @@ public class MainUserTest {
 
     @Test
     public void getInstanceWorks() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("MainUserSingletonTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
         assertEquals(MainUser.getMainUser().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
+    }
+
+    @Test
+    public void getEmailWorks() throws ExecutionException, InterruptedException {
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
+        assertEquals("mainusersingleton@gmail.com", MainUser.getCurrentUserEmail());
     }
 }
