@@ -100,7 +100,7 @@ public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceD
     }
 
     @Override
-    public void onDialogPositiveClick(int elementIndex) {
+    public void onDialogChoiceSingleChoiceItems(int elementIndex) {
         assert roomPagerAdapter !=null;
         roomPagerAdapter.setCallAudioEffect(elementIndex);
     }
