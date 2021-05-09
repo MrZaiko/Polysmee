@@ -13,4 +13,9 @@
         android:icon="@drawable/baseline_settings"
         android:title="Settings"
         app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/calendarMenuExport"
+        android:title="Export"
+        app:showAsAction="ifRoom"/>
 </menu>

@@ -180,8 +180,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     callButton.setOnClickListener(v ->  {
                         if(isInCall) {
                             leaveChannel();
-                        }
-                        else {
+                        } else {
                             joinChannel();
                         }
                     });
