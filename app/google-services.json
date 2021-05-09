@@ -23,6 +23,14 @@
           }
         },
         {
+          "client_id": "473213372413-feg8smliv1uv32lg9pba22gbem0hudvh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.polysmee",
+            "certificate_hash": "e204d5cce18fef34e647fb0903d87e68eae9700c"
+          }
+        },
+        {
           "client_id": "473213372413-mltrcpeqlhq3ach5cpjf5epa72mgjkru.apps.googleusercontent.com",
           "client_type": 3
         }
