@@ -15,24 +15,43 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class UploadServiceTest {
     @Test
-    public void uploadDownloadDelete() {
-        UploadServiceFactory.setTest();
+    public void uploadDownloadDelete() throws InterruptedException {
+        UploadServiceFactory.setTest(true);
         UploadService us = UploadServiceFactory.getAdaptedInstance();
         us.uploadImage(
                 new byte[]{2,3,4},
                 "nums",
                 (name) -> assertTrue(name.contains("nums")),
-                (exc) -> {throw new IllegalStateException("crashed in test lol");}
+                (exc) -> {}
         );
         us.downloadImage(
                 "nums",
                 (gotten) -> assertArrayEquals(gotten, new byte[]{2,3,4}),
-                (exc) -> {throw new IllegalStateException("failed in test lmao");}
+                (exc) -> {}
         );
         us.deleteImage(
                 "nums",
                 (name) -> assertEquals(name, "nums"),
-                (exc) -> {throw new IllegalStateException("crashed in test lol");}
+                (exc) -> {}
+        );
+
+        UploadServiceFactory.setTest(false);
+        us = UploadServiceFactory.getAdaptedInstance();
+        us.uploadImage(
+            new byte[]{2,3,4},
+            "nums",
+            (name) -> assertTrue(name.contains("nums")),
+            (exc) -> {}
+        );
+        us.downloadImage(
+            "nums",
+            (gotten) -> assertArrayEquals(gotten, new byte[]{2,3,4}),
+            (exc) -> {}
+        );
+        us.deleteImage(
+            "nums",
+            (name) -> assertEquals(name, "nums"),
+            (exc) -> {}
         );
     }
 }

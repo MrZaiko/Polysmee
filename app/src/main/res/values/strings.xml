@@ -20,10 +20,13 @@
 
     <string name="title_activity_appointment" translatable="false">AppointmentActivity</string>
     <string name="title_activity_login_check" translatable="false">LoginCheckActivity</string>
-    <string name="user_prompt">Hello user ! You are not connected. Please login !</string>
+    <string name="login_welcome">Welcome to Polysmee !</string>
+    <string name="user_prompt">You are not connected. Please login !</string>
     <string name="login">Login</string>
     <string name="loginActivityNoNetwork">no network is available</string>
     <string name="loginActivityUserCancelled">user canceled login</string>
+    <string name="loginNoConnection">No network is available for the first login !</string>
+    <string name="loginNoConnectionRetry">Retry</string>
 
     <string name="appointment_creation_appointment_title">Title</string>
     <string name="appointment_creation_appointment_course">Course</string>

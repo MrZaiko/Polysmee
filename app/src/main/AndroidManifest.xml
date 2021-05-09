@@ -53,10 +53,15 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".invites.InvitesManagementActivity" />
+
+        <activity android:name=".login.NoConnectionActivity" />
+
+
         <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
         <activity android:name=".profile.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
