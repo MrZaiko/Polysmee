@@ -5,6 +5,7 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
@@ -35,8 +36,6 @@ import com.google.android.gms.common.api.Scope;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.api.client.auth.oauth2.Credential;
-import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
-import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
@@ -46,6 +45,7 @@ import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
+import com.google.api.client.util.SecurityUtils;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.CalendarScopes;
 import com.google.api.services.calendar.Calendar;
@@ -64,6 +64,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.PrivateKey;
 import java.util.Collections;
 import java.util.List;
 import java.util.TimeZone;
@@ -79,6 +82,8 @@ public class CalendarExportActivity extends AppCompatActivity {
 
     private GoogleSignInClient mGoogleSignInClient;
     private GoogleSignInAccount account;
+    private Calendar service;
+    private String apiKey;
 
 
 
@@ -98,82 +103,66 @@ public class CalendarExportActivity extends AppCompatActivity {
         findViewById(R.id.sign_in_button).setOnClickListener(this::signIn);
         findViewById(R.id.sign_out_button).setOnClickListener(this::signOut);
 
+        final NetHttpTransport HTTP_TRANSPORT;
+        HTTP_TRANSPORT = new NetHttpTransport();
+
+        GoogleCredential credential = new GoogleCredential.Builder()
+                .setTransport(HTTP_TRANSPORT)
+                .setJsonFactory(JSON_FACTORY)
+                .build();
+
+        service = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
+                .setApplicationName(String.valueOf(R.string.app_name))
+                .build();
+
+        try {
+            ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
+            Bundle bundle = ai.metaData;
+            apiKey = bundle.getString("com.google.android.calendar.v2.API_KEY");
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+
         findViewById(R.id.calendarExportActivityExportButton).setOnClickListener(l -> {
-
-            final NetHttpTransport HTTP_TRANSPORT;
-            HTTP_TRANSPORT = new NetHttpTransport();
-
-            GoogleCredential credential = new GoogleCredential.Builder()
-                    .setTransport(HTTP_TRANSPORT)
-                    .setJsonFactory(JSON_FACTORY)
-                    .build();
-
-            Thread bestThread = new Thread(() -> {
-                String token = null;
+            new Thread( () -> {
                 try {
-                    token = GoogleAuthUtil.getToken(this, account.getAccount(), CalendarScopes.CALENDAR);
+                    CalendarList list = service.calendarList().list().execute();
+                    for (CalendarListEntry entry : list.getItems()) {
+                        Log.d("CALENDAR", entry.toPrettyString());
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
-                } catch (GoogleAuthException e) {
-                    e.printStackTrace();
                 }
-                credential.setAccessToken(token);
 
-                Calendar finalService = new Calendar.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                        .setApplicationName(String.valueOf(R.string.app_name))
-                        .build();
-
-                ApplicationInfo ai = null;
+                /*DateTime now = new DateTime(System.currentTimeMillis());
+                Events events = null;
                 try {
-                    ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
-                } catch (PackageManager.NameNotFoundException e) {
+                    events = service.events().list("primary")
+                            .setMaxResults(10)
+                            .setKey(apiKey)
+                            .setTimeMin(now)
+                            .setOrderBy("startTime")
+                            .setSingleEvents(true)
+                            .execute();
+                } catch (IOException e) {
                     e.printStackTrace();
                 }
-                Bundle bundle = ai.metaData;
-                String myApiKey = bundle.getString("com.google.android.calendar.v2.API_KEY");
-
-                Thread thread = new Thread(() -> {
-                    try {
-                    /*DateTime now = new DateTime(System.currentTimeMillis());
-                    Events events = finalService.events().list("primary")
-                            .setKey(myApiKey)
-                            .execute();
-
-                    List<Event> items = events.getItems();
-                    for (Event entry : items) {
-                        System.out.println(entry.toPrettyString());
-                    }*/
-
-                        Event event = new Event()
-                                .setSummary("TEST")
-                                .setDescription("A test");
-
-                        DateTime startDateTime = new DateTime(System.currentTimeMillis());
-                        EventDateTime start = new EventDateTime().setDateTime(startDateTime);
-                        event.setStart(start);
-
-                        DateTime endDateTime = new DateTime(System.currentTimeMillis() + 3600000);
-                        EventDateTime end = new EventDateTime()
-                                .setDateTime(endDateTime);
-                        event.setEnd(end);
-
-                        String calendarId = "primary";
-                        event = finalService.events().insert(calendarId, event).execute();
-                        System.out.printf("Event created: %s\n", event.getHtmlLink());
-
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                List<Event> items = events.getItems();
+                if (items.isEmpty()) {
+                    System.out.println("No upcoming events found.");
+                } else {
+                    System.out.println("Upcoming events");
+                    for (Event event : items) {
+                        DateTime start = event.getStart().getDateTime();
+                        if (start == null) {
+                            start = event.getStart().getDate();
+                        }
+                        System.out.printf("%s (%s)\n", event.getSummary(), start);
                     }
-                });
-
-                thread.start();
-
-            });
-
-            bestThread.start();
+                }*/
+            }).start();
         });
-
-
     }
 
     private void signOut(View view) {
