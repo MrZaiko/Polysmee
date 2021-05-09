@@ -1,8 +1,6 @@
 plugins {
     id 'com.android.application'
     id 'jacoco'
-    id 'com.google.gms.google-services'
-    id 'com.google.secrets_gradle_plugin' version '0.5'
 }
 
 android {
@@ -54,16 +52,6 @@ dependencies {
 
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'commons-codec:commons-codec:1.14'
-
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation 'com.google.android.gms:play-services-auth:19.0.0'
-    implementation 'pub.devrel:easypermissions:0.3.0'
-    implementation('com.google.api-client:google-api-client-android:1.23.0') {
-        exclude group: 'org.apache.httpcomponents'
-    }
-    implementation('com.google.apis:google-api-services-calendar:v3-rev305-1.23.0') {
-        exclude group: 'org.apache.httpcomponents'
-    }
 
     implementation 'io.agora.rtc:full-sdk:3.3.1'
     implementation "androidx.recyclerview:recyclerview:1.1.0"
