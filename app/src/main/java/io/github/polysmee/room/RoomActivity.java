@@ -3,8 +3,6 @@ package io.github.polysmee.room;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.preference.PreferenceManager;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
@@ -28,10 +26,11 @@ import io.github.polysmee.room.fragments.VoiceTunerChoiceDialogFragment;
  * Activity representing all room related operations
  * The appointment related to this room is given in argument
  */
-public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener  {
+public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener{
 
     private Appointment appointment;
-    public static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
+    private RoomPagerAdapter roomPagerAdapter;
+    public final static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +44,9 @@ public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceD
         checkIfParticipant();
 
         ViewPager2 pager = findViewById(R.id.roomActivityPager);
-        FragmentStateAdapter pagerAdapter = new RoomPagerAdapter(this, appointmentKey);
+        roomPagerAdapter = new RoomPagerAdapter(this, appointmentKey);
 
-        pager.setAdapter(pagerAdapter);
+        pager.setAdapter(roomPagerAdapter);
 
         TabLayout tabs = findViewById(R.id.roomActivityTabs);
         new TabLayoutMediator(tabs, pager,
@@ -100,9 +99,9 @@ public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceD
         }
     }
 
-
     @Override
     public void onDialogPositiveClick(int elementIndex) {
-        //TODO ask adrien how to access call from here
+        assert roomPagerAdapter !=null;
+        roomPagerAdapter.setCallAudioEffect(elementIndex);
     }
 }

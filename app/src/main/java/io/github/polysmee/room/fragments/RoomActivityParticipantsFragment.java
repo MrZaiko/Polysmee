@@ -1,7 +1,7 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
-import android.content.Intent;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -20,7 +20,6 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
@@ -29,29 +28,26 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.polysmee.R;
-import io.github.polysmee.agora.Command;
+
 import io.github.polysmee.agora.video.Call;
-import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
-import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.login.MainUser;
 
 
 /**
  * Fragment that display all participants given in argument
  */
-public class RoomActivityParticipantsFragment extends Fragment {
+public class RoomActivityParticipantsFragment extends Fragment   {
 
     private ViewGroup rootView;
     private Appointment appointment;
     private LayoutInflater inflater;
     public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
-
+    private VoiceTunerChoiceDialogFragment voiceTunerChoiceDialog;
     private boolean isMuted = false;
     private boolean isInCall = false;
 
@@ -62,9 +58,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
     private BooleanChildListener listener;
-    private Set<String> inCall = new HashSet<String>();
-    private Set<String> locallyMuted = new HashSet<String>();
-
+    private Set<String> inCall = new HashSet<>();
+    private Set<String> locallyMuted = new HashSet<>();
     private Call call;
 
     @Nullable
@@ -122,12 +117,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
             for (String id : p) {
                 User user = new DatabaseUser(id);
 
-                appointment.getTimeCodeOnceAndThen(user, new LongValueListener() {
-                    @Override
-                    public void onDone(long o) {
-                        if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
-                            appointment.removeOfCall(user);
-                        }
+                appointment.getTimeCodeOnceAndThen(user, timeCode -> {
+                    if(System.currentTimeMillis() - timeCode > Call.INVALID_TIME_CODE_TIME) {
+                        appointment.removeOfCall(user);
                     }
                 });
 
@@ -164,9 +156,10 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
                     audioTune.setVisibility(View.VISIBLE);
                     audioTune.setOnClickListener(v ->{
-                        DialogFragment dialog = new VoiceTunerChoiceDialogFragment();
-                        dialog.show(this.getParentFragmentManager(),"Voice_tuner_Choice_dialog");
-
+                        if (voiceTunerChoiceDialog==null){
+                            voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment();
+                        }
+                        voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(),"Voice_tuner_Choice_dialog");
                     });
                     participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
@@ -195,7 +188,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                         }
                     });
                     friendshipButton.setVisibility(View.VISIBLE);
-                    friendshipButton.setOnClickListener((v)->{friendshipButtonBehavior(v,id);});
+                    friendshipButton.setOnClickListener((v)-> friendshipButtonBehavior(v,id));
                 }
 
 
@@ -221,8 +214,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
             layout.addView(participantsViews.get(userId));
             layout.addView(new TextView(rootView.getContext()));
 
-            Set<String> nowInCall = new HashSet<String>(inCall);
-            Set<String> notInCall = new HashSet<String>();
+            Set<String> nowInCall = new HashSet<>(inCall);
+            Set<String> notInCall = new HashSet<>();
 
             //make the users that are connected to the call appear on the top of the screen
             for(String id : participantsViews.keySet()) {
@@ -315,16 +308,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
     }
 
-    /**
-     * Sets the audio effect to the effect whose index is given
-     * @param effectIndex
-     */
-    public void setAudioEffect(int effectIndex) {
-        if(call != null) {
-            call.setVoiceEffect(effectIndex);
-        }
-
-    }
 
     /**
      * Make the user whose id is given appear as online (offline) in the room frontend if online is set to true (false)
@@ -407,8 +390,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * Mutes (unmutes) the given user locally if muted is set to true (false)
-     * @param muted
-     * @param id
+     * @param muted if true mute the user otherwise unmute him
+     * @param id the id of the user to be muted(unmuted)
      */
     private void muteUserLocally(boolean muted, @NonNull String id) {
             ConstraintLayout participantsLayout = participantsViews.get(id);
@@ -526,5 +509,4 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         databaseAppointment.addInCallListener(listener);
     }
-
 }

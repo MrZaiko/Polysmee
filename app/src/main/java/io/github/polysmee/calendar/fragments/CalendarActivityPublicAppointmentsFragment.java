@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
+
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
@@ -34,7 +34,7 @@ import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
-import io.github.polysmee.database.DatabaseAppointment;
+
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUser;
 
