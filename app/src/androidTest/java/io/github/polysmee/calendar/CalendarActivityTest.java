@@ -1,6 +1,7 @@
 package io.github.polysmee.calendar;
 
 import android.content.Intent;
+import android.provider.CalendarContract;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
@@ -36,11 +37,15 @@ import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
+import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
@@ -110,23 +115,32 @@ public class CalendarActivityTest {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
         Calendar calendar = Calendar.getInstance();
-        try(ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)){
-            String title = "NewTitle";
-            long startTime = calendar.getTimeInMillis() + 60*1000;
-            CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi" ,
-                    startTime ,3600*6*1000,appointmentId+5);
-            MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
-                    info.getDuration(), info.getCourse(), info.getTitle(), false);
-            sleep(3,SECONDS);
-            clickOn(info.getTitle());
-            sleep(1,SECONDS);
-            scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
-            writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
-            closeSoftKeyboard();
-            clickOn(R.id.appointmentCreationbtnDone);
-            sleep(2,SECONDS);
-            assertDisplayed(title);
-        }
+        ActivityScenario<CalendarActivity> scenario = ActivityScenario.launch(intent);
+        String title = "NewTitle";
+        long startTime = calendar.getTimeInMillis() + 60*1000;
+        CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi" ,
+                startTime ,3600*6*1000,appointmentId+5);
+        MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
+                info.getDuration(), info.getCourse(), info.getTitle(), false);
+        sleep(3,SECONDS);
+        clickOn(info.getTitle());
+        sleep(1,SECONDS);
+        scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+        closeSoftKeyboard();
+        clickOn(R.id.appointmentCreationbtnDone);
+        sleep(2,SECONDS);
+        assertDisplayed(title);
+
+        longClickOn(title);
+        Intents.init();
+        clickDialogPositiveButton();
+        intended(hasData(CalendarContract.Events.CONTENT_URI));
+        intended(hasExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime));
+        intended(hasExtra(CalendarContract.Events.TITLE, title));
+        Intents.release();
+
+        scenario.close();
     }
 
     @Test
