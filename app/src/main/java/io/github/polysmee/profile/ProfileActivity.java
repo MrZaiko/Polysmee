@@ -166,8 +166,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                             .start(this);
                     break;
                 case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE:
-                    CropImage.ActivityResult result = CropImage.getActivityResult(data);
-                    currentPictureUri = result.getUri();
+                    currentPictureUri = CropImage.getActivityResult(data).getUri();
                     Intent photoEditIntent = new Intent(this,PictureEditActivity.class);
                     photoEditIntent.putExtra(PictureEditActivity.PICTURE_URI, currentPictureUri);
                     startActivityForResult(photoEditIntent, EDIT_PICTURE);
