@@ -1,7 +1,6 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
-import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,9 +17,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-import androidx.fragment.app.DialogFragment;
+
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
+
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,15 +40,16 @@ import io.github.polysmee.login.MainUser;
 /**
  * Fragment that display all participants given in argument
  */
-public class RoomActivityParticipantsFragment extends Fragment   {
+public class RoomActivityParticipantsFragment extends Fragment implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener  {
 
     private ViewGroup rootView;
     private Appointment appointment;
     private LayoutInflater inflater;
-    public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
+
     private VoiceTunerChoiceDialogFragment voiceTunerChoiceDialog;
     private boolean isMuted = false;
     private boolean isInCall = false;
+
 
 
     private DatabaseAppointment databaseAppointment;
@@ -61,6 +61,8 @@ public class RoomActivityParticipantsFragment extends Fragment   {
     private Set<String> inCall = new HashSet<>();
     private Set<String> locallyMuted = new HashSet<>();
     private Call call;
+
+    public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
 
     @Nullable
     @Override
@@ -157,7 +159,7 @@ public class RoomActivityParticipantsFragment extends Fragment   {
                     audioTune.setVisibility(View.VISIBLE);
                     audioTune.setOnClickListener(v ->{
                         if (voiceTunerChoiceDialog==null){
-                            voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment();
+                            voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment(this);
                         }
                         voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(),"Voice_tuner_Choice_dialog");
                     });
@@ -295,8 +297,6 @@ public class RoomActivityParticipantsFragment extends Fragment   {
         if(call != null) {
             call.leaveChannel();
         }
-
-        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
     }
 
     /**
@@ -509,4 +509,12 @@ public class RoomActivityParticipantsFragment extends Fragment   {
 
         databaseAppointment.addInCallListener(listener);
     }
+
+
+    @Override
+    public void onDialogChoiceSingleChoiceItems(int elementIndex) {
+        assert call!=null;
+        call.setVoiceEffect(elementIndex);
+    }
+
 }

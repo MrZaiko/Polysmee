@@ -28,14 +28,6 @@ public final class RoomPagerAdapter extends FragmentStateAdapter {
         call = new Call(appointmentId, fm.getApplicationContext());
     }
 
-    /**
-     * Sets the audio effect of the main user to the effect whose index is given
-     * @param effectIndex
-     */
-    public void setCallAudioEffect(int effectIndex) {
-        assert call!=null;
-        call.setVoiceEffect(effectIndex);
-    }
 
     @NonNull
     @Override

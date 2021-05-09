@@ -26,7 +26,7 @@ import io.github.polysmee.room.fragments.VoiceTunerChoiceDialogFragment;
  * Activity representing all room related operations
  * The appointment related to this room is given in argument
  */
-public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener{
+public class RoomActivity extends AppCompatActivity {
 
     private Appointment appointment;
     private RoomPagerAdapter roomPagerAdapter;
@@ -99,9 +99,4 @@ public class RoomActivity extends AppCompatActivity implements VoiceTunerChoiceD
         }
     }
 
-    @Override
-    public void onDialogChoiceSingleChoiceItems(int elementIndex) {
-        assert roomPagerAdapter !=null;
-        roomPagerAdapter.setCallAudioEffect(elementIndex);
-    }
 }

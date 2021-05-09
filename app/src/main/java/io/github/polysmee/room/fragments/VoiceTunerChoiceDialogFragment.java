@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
@@ -25,7 +26,15 @@ public final class VoiceTunerChoiceDialogFragment extends DialogFragment {
     private VoiceTunerChoiceDialogFragmentListener listener;
 
     /**
-     * The interface of a listener of this dialog, for a activity to become a listener it must implements it
+     * Create a instance of the class with the provided argument as a listener
+     * @param voiceTunerChoiceDialogFragmentListener the VoiceTunerChoiceDialogFramgent listener
+     */
+    public VoiceTunerChoiceDialogFragment(@NonNull VoiceTunerChoiceDialogFragmentListener voiceTunerChoiceDialogFragmentListener){
+        listener = voiceTunerChoiceDialogFragmentListener;
+    }
+
+    /**
+     * The interface of a listener of this dialog, for a class to become a listener it must implements it
      */
     public interface VoiceTunerChoiceDialogFragmentListener {
         /**
@@ -41,25 +50,12 @@ public final class VoiceTunerChoiceDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.title_voice_tuner_dialog)
                 .setSingleChoiceItems(R.array.voices_tune_array, previousChoice, (dialog, which) -> {
+                    assert listener!=null;
                     listener.onDialogChoiceSingleChoiceItems(which);
                     previousChoice=which;
                     dismiss();
                     });
         return builder.create();
-    }
-
-    @Override
-    public void onAttach(@NotNull Context context) {
-        super.onAttach(context);
-        // Verify that the host activity implements the callback interface
-        try {
-            // Instantiate the NoticeDialogListener so we can send events to the host
-            listener = (VoiceTunerChoiceDialogFragmentListener) context;
-        } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(context.toString()
-                    + " must implement NoticeDialogListener");
-        }
     }
 
 
