@@ -3,6 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/calendarMenuProfile"
+        android:icon="@drawable/baseline_person"
+        android:title="Settings"
+        app:showAsAction="ifRoom"
+        />
+
+    <item
         android:id="@+id/calendarMenuNotifications"
         android:icon="@drawable/baseline_notifications"
         android:title="Notifications"
@@ -13,4 +20,5 @@
         android:icon="@drawable/baseline_settings"
         android:title="Settings"
         app:showAsAction="ifRoom"/>
+
 </menu>

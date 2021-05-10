@@ -164,7 +164,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                     byte[] picturesToByte = new byte[0];
                     try {
-                        picturesToByte = getBytes(getContext().getContentResolver().openInputStream(currentPhotoUri));
+                        picturesToByte = HelperImages.getBytes(getContext().getContentResolver().openInputStream(currentPhotoUri));
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -172,7 +172,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             appointmentId, id -> databaseAppointment.addMessage(
                                     new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
-                            ), s -> showToast(getString(R.string.genericErrorText)));
+                            ), s -> HelperImages.showToast(getString(R.string.genericErrorText),getContext()));
 
 
                     return;
@@ -189,27 +189,6 @@ public class RoomActivityMessagesFragment extends Fragment {
                 default:
             }
         }
-    }
-
-    private void showToast(String message) {
-        Context context = getContext();
-
-        int duration = Toast.LENGTH_SHORT;
-
-        Toast toast = Toast.makeText(context, message, duration);
-        toast.show();
-    }
-
-    private byte[] getBytes(InputStream inputStream) throws IOException {
-        ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
-
-        int len;
-        while ((len = inputStream.read(buffer)) != -1) {
-            byteBuffer.write(buffer, 0, len);
-        }
-        return byteBuffer.toByteArray();
     }
 
     @Override
@@ -337,7 +316,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 switch (item.getItemId()) {
                     case R.id.roomEditMessageMenuDelete:
                         if (isAPicture)
-                            UploadServiceFactory.getAdaptedInstance().deleteImage(pictureId, l -> showToast("Picture successfully removed") , l -> showToast("An error occurred"));
+                            UploadServiceFactory.getAdaptedInstance().deleteImage(pictureId, l -> HelperImages.showToast("Picture successfully removed",getContext()) , l -> HelperImages.showToast("An error occurred",getContext()));
                         databaseAppointment.removeMessage(messageKey);
                         mode.finish();
                         return true;

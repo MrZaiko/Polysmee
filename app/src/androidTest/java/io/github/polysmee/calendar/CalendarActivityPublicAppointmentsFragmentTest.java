@@ -91,76 +91,40 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     }
 
     @Test
-    public void writtenDateIsCorrectPublicAppointments(){
+    public void multipleTestsAtOnce(){
+
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(true));
-        FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
-        sleep(3, TimeUnit.SECONDS);
-        assertDisplayed(dayFormatter.format(date));
-        assertDisplayed(letterDayFormatter.format(date));
-    }
-
-
-
-    /*@Test
-    public void anotherUsersAppointmentIsVisible(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","amogus",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId);
-        addAppointmentOtherUser(calendarAppointmentInfo);
-        FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
-        sleep(5,TimeUnit.SECONDS);
-        assertDisplayed(calendarAppointmentInfo.getTitle());
-
-        SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-        Date startDate = new Date(calendarAppointmentInfo.getStartTime());
-        Date endDate = new Date((calendarAppointmentInfo.getStartTime()+calendarAppointmentInfo.getDuration()));
-        assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
-        assertDisplayed("Join");
-    }*/
-
-    /*@Test
-    public void choosingAnotherDateInPublicAppointmentsDateChangesDisplayedDate(){
-        FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
-        sleep(3,TimeUnit.SECONDS);
-
-        clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
-        setDateOnPicker(appointmentYear, appointmentMonth, appointmentDay);
-        long epochTimeToday = DailyCalendar.getDayEpochTimeAtMidnight(true);
-        Date date = new Date(epochTimeToday);
-        assertDisplayed(dayFormatter.format(date));
-        assertDisplayed(letterDayFormatter.format(date));
-    }*/
-
-    @Test
-    public void addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay(){
-
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
-        addAppointmentOtherUser(calendarAppointmentInfo);
-        FragmentScenario.launchInContainer(CalendarActivityPublicAppointmentsFragment.class);
-        sleep(3,TimeUnit.SECONDS);
-
-
-        clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
-        setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
-        sleep(3,SECONDS);
-        assertDisplayed(calendarAppointmentInfo.getTitle());
-
-    }
-
-    @Test
-    public void filterButtonLeavesOnlyAppointmentWithCorrespondingCourse(){
-        CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing1",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+2);
-        CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG","BonjourBing2",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+3);
-        addAppointmentOtherUser(calendarAppointmentInfo);
-        addAppointmentOtherUser(calendarAppointmentInfo2);
-
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
-
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(1,TimeUnit.SECONDS);
-
-            //clickOn("PUBLIC APPOINTMENTS");
+            sleep(3, TimeUnit.SECONDS);
             onView(withId(R.id.calendarActivityPager)).perform(swipeLeft());
-            sleep(1, SECONDS);
+            //writtenDateIsCorrectPublicAppointments
+            assertDisplayed(dayFormatter.format(date));
+            assertDisplayed(letterDayFormatter.format(date));
 
+            //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
+            CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
+            CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP","BonjourBing1",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+2);
+            CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG","BonjourBing2",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+3);
+            addAppointmentOtherUser(calendarAppointmentInfo1);
+            addAppointmentOtherUser(calendarAppointmentInfo2);
+            addAppointmentOtherUser(calendarAppointmentInfo);
+
+
+            sleep(3,TimeUnit.SECONDS);
+
+
+            clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
+            setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
+            sleep(2,SECONDS);
+            assertDisplayed(calendarAppointmentInfo.getTitle());
+
+            //filterButtonLeavesOnlyAppointmentWithCorrespondingCourse
+            sleep(2,SECONDS);
+            clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
+            Calendar calendar = Calendar.getInstance();
+            setDateOnPicker(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DATE));
+            sleep(3,TimeUnit.SECONDS);
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
             closeSoftKeyboard();
             clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
@@ -174,8 +138,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             onView(withText("BonjourBing2")).check(doesNotExist());
         }
 
-    }
 
+    }
     private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo){
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("id").setValue(calendarAppointmentInfo.getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("duration").setValue(calendarAppointmentInfo.getDuration());
