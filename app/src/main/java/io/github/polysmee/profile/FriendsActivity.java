@@ -1,8 +1,9 @@
-package io.github.polysmee.settings;
+package io.github.polysmee.profile;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +61,12 @@ public class FriendsActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        user.removeFriendsListener(friendsValuesListener);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
         user.removeFriendsListener(friendsValuesListener);
     }
 
@@ -139,7 +146,14 @@ public class FriendsActivity extends AppCompatActivity {
      */
     protected void createFriendEntry(String userId, String name){
         ConstraintLayout friendEntryLayout = (ConstraintLayout)inflater.inflate(R.layout.element_friends_activity_entry,null);
-        ((TextView)friendEntryLayout.findViewById(R.id.friendEntryName)).setText(name);
+        TextView nameFriend = ((TextView)friendEntryLayout.findViewById(R.id.friendEntryName));
+        nameFriend.setText(name);
+        nameFriend.setOnClickListener((view) ->{
+            Intent profileIntent = new Intent(this,ProfileActivity.class);
+            profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_VISITING_MODE);
+            profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER,userId);
+            startActivityForResult(profileIntent,ProfileActivity.VISIT_MODE_REQUEST_CODE);
+        });
         ((FloatingActionButton)friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton)).setOnClickListener((v)->{
             user.removeFriend(new DatabaseUser(userId));
         });

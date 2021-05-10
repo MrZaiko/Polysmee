@@ -7,11 +7,9 @@ import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.android.dx.command.Main;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,11 +20,13 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.FriendsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -56,7 +56,7 @@ public class FriendsActivityTest {
 
     @Test
     public void encouragingMessageIsDisplayedTest(){
-        Intent intent = new Intent(getApplicationContext(),FriendsActivity.class);
+        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try(ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)){
             assertDisplayed(getApplicationContext().getResources().getString(R.string.friendsActivityEncouragingMessage1));
         }
@@ -72,6 +72,9 @@ public class FriendsActivityTest {
             clickOn(R.id.friendActivityAddButton);
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed(username2);
+            clickOn(username2);
+            sleep(2,TimeUnit.SECONDS);
+            pressBack();
             clickOn(R.id.friendEntryRemoveFriendButton);
             sleep(2, TimeUnit.SECONDS);
             onView(withText(username2)).check(doesNotExist());

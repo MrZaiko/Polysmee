@@ -4,7 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceDataStore;
 
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 
 /**
@@ -12,12 +14,19 @@ import io.github.polysmee.login.MainUser;
  * more precisely only the value corresponding to the main user name in the application
  */
 public final class UserInfoDataStore extends PreferenceDataStore {
-    private final User dataBaseMainUser = MainUser.getMainUser();
+    private User dataBaseMainUser = MainUser.getMainUser();
     public static final String preferenceKeyMainUserName = "preference_key_main_user_info_name";
     public static final String preferenceKeyMainUserEmail = "preference_key_main_user_info_email";
     public static String PREFERENCE_KEY_MAIN_USER_FRIENDS = "preference_key_main_user_info_friends";
+    public static String PREFERENCE_KEY_MAIN_USER_DESCRIPTION = "preference_key_main_user_info_description";
 
+    public UserInfoDataStore(){
 
+    }
+    public UserInfoDataStore(String uid){
+        System.out.println(uid == null);
+        dataBaseMainUser = new DatabaseUser(uid);
+    }
     @Override
     //It only save one map, this map have the key for the main user name. It will save this value on the database
     public void putString(@NonNull String key, @Nullable String value) {
@@ -29,6 +38,9 @@ public final class UserInfoDataStore extends PreferenceDataStore {
         }
     }
 
+    public void getName(StringValueListener valueListener){
+        dataBaseMainUser.getName_Once_AndThen(valueListener);
+    }
 
     @Override
     //always return empty string

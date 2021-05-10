@@ -5,11 +5,6 @@
         app:fragment="io.github.polysmee.settings.fragments.SettingsAppointmentsReminderFragment"
         app:icon="@drawable/settings_reminder"
         app:title="@string/title_settings_appointments_reminder" />
-    <Preference
-        app:fragment="io.github.polysmee.settings.fragments.SettingsUserInfoFragment"
-        app:icon="@drawable/settings_user_info"
-        app:title="@string/title_settings_main_user_info"
-        />
     <SwitchPreference
         app:key="@string/preference_key_is_dark_mode"
         app:title="@string/dark_theme_text"/>

@@ -133,6 +133,33 @@ public interface User{
      */
     void removeFriendsListener(StringSetValueListener valueListener);
 
+    /**
+     * @param pictureId the picture's id to set as profile picture
+     */
+    void setProfilePicture(String pictureId);
+
+    /**
+     * @param pictureId the picture's id to remove from being a profile picture
+     */
+    void removeProfilePicture();
+
+    /**
+     * @param valueListener the listener to be added for changes to the user's profile picture.
+     */
+    void getProfilePictureAndThen(StringValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be added for changes to the user's profile picture.
+     *                      It is scheduled only once.
+     */
+    void getProfilePicture_Once_And_Then(StringValueListener valueListener);
+
+
+    /**
+     * @param valueListener the listener to be removed from listening to changes to the
+     *                      profile picture.
+     */
+    void removeProfilePictureListener(StringValueListener valueListener);
 
 
     /**
