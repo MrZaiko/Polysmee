@@ -26,6 +26,7 @@ import io.github.polysmee.znotification.AppointmentReminderNotificationSetupList
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -71,6 +72,9 @@ public class FriendsActivityTest {
             clickOn(R.id.friendActivityAddButton);
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed(username2);
+            clickOn(username2);
+            sleep(2,TimeUnit.SECONDS);
+            pressBack();
             clickOn(R.id.friendEntryRemoveFriendButton);
             sleep(2, TimeUnit.SECONDS);
             onView(withText(username2)).check(doesNotExist());
