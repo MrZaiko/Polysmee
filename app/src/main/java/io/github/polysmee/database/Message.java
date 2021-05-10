@@ -26,25 +26,6 @@ public class Message  {
         this.isAPicture = isAPicture;
     }
 
-    /**
-     * A default constructor is needed for firebase database
-     */
-    public Message() {
-        this.sender = "";
-        this.content = "";
-        this.messageTime = 0;
-        this.isAPicture = false;
-    }
-
-
-    /**
-     *
-     * @param newContent
-     * Replaces the content of the message by the one given as argument
-     */
-    public void editContent(@NonNull String newContent) {
-        this.content = newContent;
-    }
 
     /**
      *
@@ -59,9 +40,6 @@ public class Message  {
         return isAPicture;
     }
 
-    public void setIsAPicture(boolean isAPicture) {
-        this.isAPicture = isAPicture;
-    }
 
     /**
      *

@@ -22,9 +22,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
 import io.github.polysmee.database.Course;
@@ -32,6 +34,10 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 
 /**
@@ -83,6 +89,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     // Misc
     private boolean isOwner;
     boolean isKeyboardShowing;
+
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
 
     // Layout related attributes
@@ -139,6 +148,18 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             setupClickable(false);
             listenersSetup();
         }
+    }
+
+    @Override
+    public void onDestroy() {
+
+        Object dummyArgument = null;
+
+        for(Command command: commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
     }
 
     /**
@@ -208,30 +229,52 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
      * Used in DETAIL_MODE to display the values of the appointment
      */
     private void listenersSetup() {
-        appointment.getStartTimeAndThen(start -> {
+
+        //Initialize listeners
+        LongValueListener startTimeListener = start -> {
             Date startDate = new Date(start);
             calendarStartTime.setTime(startDate);
             txtStartTime.setText(DateFormat.format(dateFormat, startDate));
-            appointment.getDurationAndThen(duration -> {
+
+            LongValueListener durationListener = duration -> {
                 Date endDate = new Date(start+duration);
                 calendarEndTime.setTime(endDate);
                 txtEndTime.setText(DateFormat.format(dateFormat, endDate));
-            });
-        });
+            };
 
-        appointment.getTitleAndThen(title -> editTitle.setHint(title));
+            appointment.getDurationAndThen(durationListener);
 
-        appointment.getCourseAndThen(course -> editCourse.setText(course));
+            commandsToRemoveListeners.add((x,y) -> appointment.removeDurationListener(durationListener));
+        };
 
-        appointment.getOwnerIdAndThen(owner -> {
+        StringValueListener titleListener = title -> editTitle.setHint(title);
+        StringValueListener courseListener = course -> editCourse.setText(course);
+        StringValueListener ownerListener = owner -> {
             if (owner.equals(MainUser.getMainUser().getId())) {
                 setupClickable(true);
                 isOwner = true;
                 bottomBarSetup(true);
             }
-        });
+        };
 
-        appointment.getPrivateAndThen(val -> privateSelector.setChecked(val));
+        BooleanValueListener privateListener = val -> privateSelector.setChecked(val);
+
+
+
+        //Add listeners to the appointment
+        appointment.getStartTimeAndThen(startTimeListener);
+        appointment.getTitleAndThen(titleListener);
+        appointment.getCourseAndThen(courseListener);
+        appointment.getOwnerIdAndThen(ownerListener);
+        appointment.getPrivateAndThen(privateListener);
+
+
+        //Add listeners to the command list in order to remove them later
+        commandsToRemoveListeners.add((x,y) -> appointment.removeStartListener(startTimeListener));
+        commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
+        commandsToRemoveListeners.add((x,y) -> appointment.removeCourseListener(courseListener));
+        commandsToRemoveListeners.add((x,y) -> appointment.removeOwnerListener(ownerListener));
+        commandsToRemoveListeners.add((x,y) -> appointment.removePrivateListener(privateListener));
     }
 
     /**
@@ -514,8 +557,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
      */
     private void updateAppointmentParticipantsAndBans(Set<String> allIds) {
         for(String userId : allIds){
+
             User user = new DatabaseUser(userId);
-            user.getNameAndThen((name) -> {
+            StringValueListener nameListener = (name) -> {
                 if (mode == DETAIL_MODE) {
                     for (String removedParticipant : removedInvites) {
                         if (name.equals(removedParticipant)) {
@@ -542,15 +586,21 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                     }
                 }
 
-                appointment.getBansAndThen( bannedUsers -> {
+                StringSetValueListener banListener = bannedUsers -> {
                     for(String inviteName : invites) {
                         if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
                             user.addInvite(appointment);
                             appointment.addInvite(user);
                         }
                     }
-                });
-            });
+                };
+
+                appointment.getBansAndThen(banListener);
+                commandsToRemoveListeners.add((x,y) -> appointment.removeBansListener(banListener));
+            };
+
+            user.getNameAndThen(nameListener);
+            commandsToRemoveListeners.add((x,y) -> user.removeNameListener(nameListener));
         }
     }
 

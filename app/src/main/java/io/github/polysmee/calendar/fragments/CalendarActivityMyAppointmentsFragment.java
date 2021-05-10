@@ -15,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,12 +27,14 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
@@ -52,6 +55,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private final Map<String, View> appointmentIdsToView = new HashMap<>();
     private final Set<String> appointmentSet = new HashSet<>();
     private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
+
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
 
     @Nullable
@@ -199,6 +205,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
         userAppointmentsListener = currentDayUserAppointmentsListener();
         user.getAppointmentsAndThen(userAppointmentsListener);
+        commandsToRemoveListeners.add((x,y) -> user.removeAppointmentsListener(userAppointmentsListener));
     }
 
     protected StringSetValueListener currentDayUserAppointmentsListener() {
@@ -233,7 +240,8 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                 for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
                     Appointment appointment = new DatabaseAppointment(id);
                     CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
-                    appointment.getStartTimeAndThen((start) -> {
+
+                    LongValueListener startListener = (start) -> {
                         appointmentInfo.setStartTime(start);
                         appointment.getDurationAndThen((duration) -> {
                             appointmentInfo.setDuration(duration);
@@ -260,7 +268,10 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                             });
                         });
 
-                    });
+                    };
+
+                    appointment.getStartTimeAndThen(startListener);
+                    commandsToRemoveListeners.add((x,y) -> appointment.removeStartListener(startListener));
                 }
             }
         };

@@ -7,7 +7,12 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.net.NetworkRequest;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -30,6 +35,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -80,6 +86,7 @@ public class RoomActivityMessagesFragment extends Fragment {
     private Uri currentPhotoUri;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -97,10 +104,23 @@ public class RoomActivityMessagesFragment extends Fragment {
         ImageView takePicture = rootView.findViewById(R.id.roomActivityTakePictureButton);
         takePicture.setOnClickListener(this::takePicture);
 
-        String appointmentId = requireArguments().getString(MESSAGES_KEY);
-
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
+
+        try {
+            ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkRequest.Builder builder = new NetworkRequest.Builder();
+
+            connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
+                @Override
+                public void onLost(Network network) {
+                    System.out.println("no connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                }
+            });
+
+        }catch (Exception e){
+            System.out.println("exception !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+        }
 
         return rootView;
     }

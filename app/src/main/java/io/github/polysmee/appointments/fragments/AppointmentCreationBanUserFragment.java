@@ -16,8 +16,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import io.github.polysmee.R;
@@ -28,6 +31,7 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.appointments.DataPasser;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 
 /**
@@ -45,6 +49,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private LinearLayout bansList;
     private Set<String> bans, removedBans;
     private ArrayList<String> users;
+    private List<StringValueListener> ownerIdListeners = new ArrayList<StringValueListener>();
     AlertDialog.Builder builder;
 
     DataPasser dataPasser;
@@ -65,6 +70,16 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         rootView = inflater.inflate(R.layout.fragment_appointment_creation_ban_user, container, false);
         attributeSetters(rootView);
         return rootView;
+    }
+
+    @Override
+    public void onDestroy() {
+
+        for(StringValueListener listener : ownerIdListeners) {
+            appointment.removeOwnerListener(listener);
+        }
+
+        super.onDestroy();
     }
 
     /**
@@ -181,10 +196,13 @@ public class AppointmentCreationBanUserFragment extends Fragment {
         if (mode == AppointmentActivity.DETAIL_MODE) {
             removeButton.setVisibility(View.GONE);
 
-            appointment.getOwnerIdAndThen(owner -> {
+            StringValueListener listener = owner -> {
                 if (owner.equals(MainUser.getMainUser().getId()))
                     removeButton.setVisibility(View.VISIBLE);
-            });
+            };
+
+            ownerIdListeners.add(listener);
+            appointment.getOwnerIdAndThen(listener);
         }
 
         removeButton.setOnClickListener(l -> {
