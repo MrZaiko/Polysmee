@@ -123,12 +123,9 @@ public class InvitesManagementActivity extends AppCompatActivity {
     protected void addAppointmentToInviteLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_invitation_entry, null);
         makeInviteEntry(appointment, appointmentEntryLayout);
-        TextView emptySpace = new TextView(this);
 
         scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
         appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
     }
 
     /**
@@ -203,9 +200,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
                                     appointmentInfoMap.remove(id);
                                     if (appointmentIdsToView.containsKey(id)) {
                                         scrollLayout.removeView(appointmentIdsToView.get(id));
-                                        scrollLayout.removeView(appointmentIdsToView.get(id + 1));
                                         appointmentIdsToView.remove(id);
-                                        appointmentIdsToView.remove(id + 1);
                                     }
                                 } else {
                                     appointmentInfoMap.put(appointment.getId(), appointmentInfo);
