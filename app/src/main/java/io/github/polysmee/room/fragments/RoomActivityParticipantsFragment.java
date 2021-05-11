@@ -38,6 +38,7 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.ProfileActivity;
 
 
 /**
@@ -201,6 +202,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     });
                     friendshipButton.setVisibility(View.VISIBLE);
                     friendshipButton.setOnClickListener((v)->{friendshipButtonBehavior(v,id);});
+                    participantName.setOnClickListener((view)->{ //if we click on another user's name, we visit their profile
+                        Intent profileIntent = new Intent(getContext(),ProfileActivity.class);
+                        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_VISITING_MODE);
+                        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER,id);
+                        startActivityForResult(profileIntent,ProfileActivity.VISIT_MODE_REQUEST_CODE);
+                    });
                 }
 
 

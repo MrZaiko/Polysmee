@@ -28,6 +28,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
 import io.github.polysmee.invites.InvitesManagementActivity;
+import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
@@ -121,6 +122,11 @@ public class CalendarActivity extends AppCompatActivity{
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
+            case R.id.calendarMenuProfile:
+                Intent profileIntent = new Intent(this, ProfileActivity.class);
+                profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_OWNER_MODE);
+                startActivity(profileIntent);
+                return true;
             case R.id.calendarMenuSettings:
                 Intent settingsIntent = new Intent(this, SettingsActivity.class);
                 startActivity(settingsIntent);
