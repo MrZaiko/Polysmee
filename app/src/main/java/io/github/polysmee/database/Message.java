@@ -26,6 +26,16 @@ public class Message  {
         this.isAPicture = isAPicture;
     }
 
+    /**
+     * A default constructor is needed for firebase database
+     */
+    public Message() {
+        this.sender = "";
+        this.content = "";
+        this.messageTime = 0;
+        this.isAPicture = false;
+    }
+
 
     /**
      *

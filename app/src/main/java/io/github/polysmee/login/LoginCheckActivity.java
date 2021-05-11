@@ -19,15 +19,20 @@ import com.google.firebase.database.ValueEventListener;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
+import io.github.polysmee.internet.connection.InternetConnection;
 
 public class LoginCheckActivity extends AppCompatActivity {
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_check);
         FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
+
+        InternetConnection.addConnectionListener(getApplicationContext());
+
         if(user == null) {
             if(isOnline()) {
                 startActivity(new Intent(LoginCheckActivity.this, LoginActivity.class));

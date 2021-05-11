@@ -3,20 +3,15 @@ package io.github.polysmee.room.fragments;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
-import android.net.Network;
-import android.net.NetworkInfo;
-import android.net.NetworkRequest;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -31,26 +26,19 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-
-
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
@@ -58,10 +46,10 @@ import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.PictureEditActivity;
-
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -107,20 +95,6 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
 
-        try {
-            ConnectivityManager connectivityManager = (ConnectivityManager) getContext().getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkRequest.Builder builder = new NetworkRequest.Builder();
-
-            connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
-                @Override
-                public void onLost(Network network) {
-                    System.out.println("no connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-                }
-            });
-
-        }catch (Exception e){
-            System.out.println("exception !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-        }
 
         return rootView;
     }
@@ -202,13 +176,29 @@ public class RoomActivityMessagesFragment extends Fragment {
      */
     private void sendMessage(View view) {
         closeKeyboard();
-
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
-        String messageToAdd = messageEditText.getText().toString();
-        String userId = MainUser.getMainUser().getId();
+        //if(InternetConnection.isOn()) {
 
-        databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
-        messageEditText.setText("");
+            String messageToAdd = messageEditText.getText().toString();
+            String userId = MainUser.getMainUser().getId();
+
+            databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
+            messageEditText.setText("");
+
+            if(!InternetConnection.isOn()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Message will be sent when your device connects to internet");
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
+            }
+
+
+
     }
 
 
