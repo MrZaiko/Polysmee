@@ -12,6 +12,7 @@ import com.google.firebase.FirebaseApp;
 
 import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.intent.Intents.intended;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -28,7 +29,6 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.RoomActivity;
 
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.withContentDescription;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;

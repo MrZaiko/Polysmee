@@ -16,10 +16,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 
@@ -31,6 +34,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -46,6 +50,7 @@ import static com.schibsted.spain.barista.interaction.BaristaEditTextInteraction
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -60,6 +65,7 @@ public class RoomActivityMessagesFragmentTest {
 
     private static String secondMessageId = "poisdoufoiq";
     private static final String secondMessage = "I'm a better message";
+    private static String profilePictureId = "bigYOSHI";
 
 
     @BeforeClass
@@ -67,12 +73,17 @@ public class RoomActivityMessagesFragmentTest {
         AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        UploadServiceFactory.setTest(true);
+        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s ->{}, s->{});
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityMessagesFragmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(profilePictureId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(profilePictureId);
+
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
@@ -85,13 +96,18 @@ public class RoomActivityMessagesFragmentTest {
 
 
     @Test
-    public void messagesShouldBeDisplayed() {
+    public void messagesShouldBeDisplayedAndClickOnPictureShouldWork() {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         sleep(1, SECONDS);
         assertDisplayed(firstMessage);
         assertDisplayed(secondMessage);
+        Intents.init();
+        onView(allOf(withId(R.id.roomActivityMessageElementProfilePicture), isDisplayed())).perform(click());
+        intended(hasExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE));
+        intended(hasExtra(ProfileActivity.PROFILE_ID_USER, id2));
+        Intents.release();
     }
 
     @Test
