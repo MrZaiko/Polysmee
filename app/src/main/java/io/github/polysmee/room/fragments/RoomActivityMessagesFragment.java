@@ -150,7 +150,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                     if(!InternetConnection.isOn()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setMessage("The picture will be sent when your device connects to the internet");
+                        builder.setMessage(R.string.offline_picture);
 
                         //add ok button
                         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -200,7 +200,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
             if(!InternetConnection.isOn()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("The message will be sent when your device connects to the internet");
+                builder.setMessage(R.string.offline_send_message);
 
                 //add ok button
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -360,7 +360,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
             if(!InternetConnection.isOn()) {
                 AlertDialog.Builder offlineMsg = new AlertDialog.Builder(getContext());
-                offlineMsg.setMessage("The message will be edited when your device connects to the internet");
+                offlineMsg.setMessage(R.string.offline_edit_message);
 
                 //add ok button
                 offlineMsg.setPositiveButton("OK", new DialogInterface.OnClickListener() {

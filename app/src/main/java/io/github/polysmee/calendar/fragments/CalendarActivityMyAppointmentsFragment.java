@@ -117,8 +117,8 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private void createAppointment() {
         if(!InternetConnection.isOn()) {
             android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-            builder.setTitle("Warning");
-            builder.setMessage("You are currently offline, the appointment you create will go online when your device connects to the internet. The appointment course will be set to the default value 'Others', you will be able to edit it once online.");
+            builder.setTitle(R.string.offline_warning);
+            builder.setMessage(R.string.offline_appointment);
 
             //add ok button
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {

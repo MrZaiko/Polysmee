@@ -315,7 +315,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             setAudioEffect(preference);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("You need to be connected to the internet in order to make calls");
+            builder.setMessage(R.string.offline_call);
 
             //add ok button
             builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
