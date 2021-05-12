@@ -153,7 +153,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                         builder.setMessage(R.string.offline_picture);
 
                         //add ok button
-                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                        builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
 
@@ -203,7 +203,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 builder.setMessage(R.string.offline_send_message);
 
                 //add ok button
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -363,7 +363,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 offlineMsg.setMessage(R.string.offline_edit_message);
 
                 //add ok button
-                offlineMsg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                offlineMsg.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 

@@ -120,5 +120,5 @@
     <string name="appointment_reminder_notification_notification_text">Appointment reminder :)</string>
     <string name="offline_warning">Warning</string>
     <string name="offline_appointment">You are currently offline, the appointment you create will go online when your device connects to the internet. The appointment course will be set to the default value \'Others\', you will be able to edit it once online.</string>
-
+    <string name="offline_ok">OK</string>
 </resources>

@@ -121,7 +121,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
             builder.setMessage(R.string.offline_appointment);
 
             //add ok button
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);

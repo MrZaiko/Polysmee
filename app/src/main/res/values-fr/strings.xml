@@ -122,6 +122,6 @@
     <string name="offline_edit_message">Le message sera modifé dès que l\'appareil se connecte à internet</string>
     <string name="offline_call">Vous devez être connecté à internet pour rejoindre un appel</string>
     <string name="offline_warning">Avertissement</string>
-
+    <string name="offline_ok">OK</string>
     <string name="offline_appointment">Vous êtes actuellement hors-ligne, le meeting que vous créer sera en ligne dès que votre appareil se connecte à internet. Le cours du meeting est fixé à la valeur par défaut "Others", vous pourrez le modifier une fois en ligne.</string>
 </resources>
