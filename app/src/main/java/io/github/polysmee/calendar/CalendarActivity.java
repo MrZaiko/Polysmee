@@ -70,7 +70,6 @@ public class CalendarActivity extends AppCompatActivity{
     private void initializePermissionRequester() {
         requestPermissionLauncher =
                 this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-                    //joins the channel if granted and do nothing otherwise
                     if (isGranted) {
                         checkCalendarPerms();
                     }
