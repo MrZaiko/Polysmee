@@ -1,6 +1,7 @@
 package io.github.polysmee.calendar.fragments;
 
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
 
@@ -113,8 +115,22 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      * Behavior of the create appointment button, depending if the user is real or fake
      */
     private void createAppointment() {
-        Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
-        startActivity(intent);
+        if(!InternetConnection.isOn()) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+            builder.setTitle("Warning");
+            builder.setMessage("You are currently offline, the appointment you create will go online when your device connects to the internet. The appointment course will be set to the default value 'Others', you will be able to edit it once online.");
+
+            //add ok button
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.show();
+        }
+
     }
 
 

@@ -1,6 +1,8 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -37,6 +39,7 @@ import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 
@@ -287,29 +290,43 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
     private void joinChannel() {
+        if(InternetConnection.isOn()) {
+            if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
+                requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
+                return;
+            }
 
-        if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
-            requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
-            return;
+            if(!checkPermission(Manifest.permission.BLUETOOTH)) {
+                requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
+                return;
+            }
+
+
+            if(!checkPermission(Manifest.permission.CAMERA)){
+                requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+            }
+
+            if(call == null){
+                call = new Call(getAppointmentId(), getContext());
+                call.setCommand(this::setTalkingUser);
+            }
+            call.joinChannel();
+            int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
+            setAudioEffect(preference);
+        } else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage("You need to be connected to the internet in order to make calls");
+
+            //add ok button
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+
+                }
+            });
+            builder.show();
         }
 
-        if(!checkPermission(Manifest.permission.BLUETOOTH)) {
-            requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
-            return;
-        }
-
-
-        if(!checkPermission(Manifest.permission.CAMERA)){
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
-        }
-
-        if(call == null){
-            call = new Call(getAppointmentId(), getContext());
-            call.setCommand(this::setTalkingUser);
-        }
-        call.joinChannel();
-        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
-        setAudioEffect(preference);
     }
 
 

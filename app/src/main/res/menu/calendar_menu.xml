@@ -3,10 +3,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/calendarMenuOffline"
+        android:icon="@drawable/outline_wifi_off"
+        android:title="Offline"
+        app:showAsAction="always"
+        />
+
+    <item
         android:id="@+id/calendarMenuProfile"
         android:icon="@drawable/baseline_person"
         android:title="Settings"
-        app:showAsAction="ifRoom"
+        app:showAsAction="always"
         />
 
     <item

@@ -1,16 +1,23 @@
 package io.github.polysmee.internet.connection;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.os.Build;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import androidx.annotation.RequiresApi;
+
+import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 
 public class InternetConnection {
 
     private static boolean connectionOn = false;
-
+    private static MenuItem wifiLogo;
+    public static Command commandToUpdateWifiLogo;
     private InternetConnection() {}
 
     public static boolean isOn() {
@@ -29,20 +36,37 @@ public class InternetConnection {
                 public void onAvailable(Network network) {
                     System.out.println("connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     connectionOn = true;
+                    if(wifiLogo != null) {
+                        //wifiLogo.setVisible(false);
+                    }
+                    if(commandToUpdateWifiLogo != null) {
+                        commandToUpdateWifiLogo.execute(false, false);
+                    }
                 }
 
                 @Override
                 public void onLost(Network network) {
                     System.out.println("no connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     connectionOn = false;
+                    if(wifiLogo != null) {
+
+                        //wifiLogo.setVisible(true);
+                    }
+                    if(commandToUpdateWifiLogo != null) {
+                        commandToUpdateWifiLogo.execute(true, true);
+                    }
                 }
 
 
             });
 
-        }catch (Exception e){
+        } catch (Exception e){
             System.out.println("exception !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         }
+    }
+
+    public static void setCommand(Command<Boolean, Boolean> command) {
+        commandToUpdateWifiLogo = command;
     }
 
 }

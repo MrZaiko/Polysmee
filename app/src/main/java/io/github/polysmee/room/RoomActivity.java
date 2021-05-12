@@ -20,6 +20,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
 
@@ -83,6 +84,11 @@ public class RoomActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.room_menu, menu);
+        MenuItem item = menu.findItem(R.id.roomMenuOffline);
+        if(InternetConnection.isOn()) {
+            item.setVisible(false);
+        }
+        InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> item.setVisible(key))));
         return true;
     }
 

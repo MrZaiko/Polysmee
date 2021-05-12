@@ -148,7 +148,19 @@ public class RoomActivityMessagesFragment extends Fragment {
                                     new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
                             ), s -> HelperImages.showToast(getString(R.string.genericErrorText),getContext()));
 
+                    if(!InternetConnection.isOn()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("The picture will be sent when your device connects to the internet");
 
+                        //add ok button
+                        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        builder.show();
+                    }
                     return;
 
                 case PICK_IMAGE:
@@ -163,6 +175,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 default:
             }
         }
+
     }
 
     @Override
@@ -187,7 +200,9 @@ public class RoomActivityMessagesFragment extends Fragment {
 
             if(!InternetConnection.isOn()) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("Message will be sent when your device connects to internet");
+                builder.setMessage("The message will be sent when your device connects to the internet");
+
+                //add ok button
                 builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -343,6 +358,19 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         builder.setPositiveButton(getString(R.string.genericEditText), (dialog, id) -> {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
+            if(!InternetConnection.isOn()) {
+                AlertDialog.Builder offlineMsg = new AlertDialog.Builder(getContext());
+                offlineMsg.setMessage("The message will be edited when your device connects to the internet");
+
+                //add ok button
+                offlineMsg.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                offlineMsg.show();
+            }
         });
 
         builder.setNeutralButton(getString(R.string.genericCancelText), (dialog, id) -> {

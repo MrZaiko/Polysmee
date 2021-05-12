@@ -6,6 +6,7 @@ import androidx.appcompat.widget.SwitchCompat;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -38,6 +39,7 @@ import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
 
 /**
@@ -148,6 +150,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             setupClickable(false);
             listenersSetup();
         }
+
+
     }
 
     @Override
@@ -336,22 +340,27 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             txtAddBanError.setVisibility(View.VISIBLE);
             error = true;
         }
+        if(InternetConnection.isOn()) {
+            String s = editCourse.getText().toString();
+            if(!courses.contains(s)) {
+                builder.setMessage(getString(R.string.genericCourseNotFoundText))
+                        .setCancelable(false)
+                        .setPositiveButton(getString(R.string.genericOkText), null);
 
-        String s = editCourse.getText().toString();
-        if(!courses.contains(s)) {
-            builder.setMessage(getString(R.string.genericCourseNotFoundText))
-                    .setCancelable(false)
-                    .setPositiveButton(getString(R.string.genericOkText), null);
-
-            AlertDialog alert = builder.create();
-            alert.setTitle(getString(R.string.genericErrorText));
-            alert.show();
-            error = true;
+                AlertDialog alert = builder.create();
+                alert.setTitle(getString(R.string.genericErrorText));
+                alert.show();
+                error = true;
+            }
         }
 
+
         if (!error) {
+
             sendData();
             finish();
+
+
         }
     }
 

@@ -112,6 +112,7 @@
     <string name="genericWaitText">Please wait</string>
     <string name="genericEditText">Edit</string>
     <string name="genericCancelText">Cancel</string>
+    <string name="default_course">Others</string>
 
     <string name="appointment_reminder_notification_notification_text">Appointment reminder :)</string>
 
