@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 
 import java.util.Calendar;
 
+import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -65,6 +66,9 @@ public class InvitesManagementActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course2).setValue(course2);
+        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course3).setValue(course3);
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(title);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(course);
@@ -107,24 +111,22 @@ public class InvitesManagementActivityTest {
 
         sleep(1, SECONDS);
         assertDisplayed("Current invitations");
-        assertDisplayed("OK");
         assertDisplayed(title);
+        assertDisplayed("Course : " + course);
         onView(withText(title2)).check(doesNotExist());
         onView(withText(title3)).check(doesNotExist());
-        assertDisplayed("ACCEPT");
-        assertDisplayed("REFUSE");
-        clickOn("ACCEPT");
+        clickOn(R.id.invitationEntryImgAccept);
         sleep(1, SECONDS);
         onView(withText(title)).check(doesNotExist());
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId2).setValue(true);
         sleep(1, SECONDS);
         assertDisplayed(title2);
-        clickOn("REFUSE");
+        assertDisplayed("Course : " + course2);
+        clickOn(R.id.invitationEntryImgRefuse);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId3).setValue(true);
         sleep(1, SECONDS);
         assertDisplayed(title3);
+        assertDisplayed("Course : " + course3);
         onView(withText(title2)).check(doesNotExist());
-        clickOn("OK");
-        Thread.sleep(1000);
     }
 }

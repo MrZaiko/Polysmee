@@ -39,14 +39,15 @@ public class UserInfoDataStoreTest {
     }
 
 
-    public static void testNameDatabase(String value) throws Exception{
+    public static void testNameDatabase(String value) throws Exception {
         sleep(1, SECONDS);
-        String name  = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+        String name = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
                 .child(MainUser.getMainUser().getId()).child("name").get()).getValue();
         assertEquals(value, name);
     }
+
     @Test
-    public void putString() throws Exception{
+    public void putString() throws Exception {
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
         String stringToPut = "name change test";
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
@@ -64,8 +65,8 @@ public class UserInfoDataStoreTest {
     @Test
     public void getString() {
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
-        assertEquals("",userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserName, "test"));
-        assertEquals( "", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserEmail, "test"));
+        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserName, "test"));
+        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserEmail, "test"));
         assertEquals("", userInfoDataStore.getString("jfnsejfnes", "test"));
 
     }

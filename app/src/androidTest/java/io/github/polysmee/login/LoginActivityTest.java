@@ -21,7 +21,7 @@ public class LoginActivityTest {
     public void goesBackToLoginAfterCancel() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginActivity.class);
         Intents.init();
-        try(ActivityScenario<LoginActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<LoginActivity> ignored = ActivityScenario.launch(intent)) {
             clickOn("LOGIN");
             pressBack();
             assertDisplayed("LOGIN");

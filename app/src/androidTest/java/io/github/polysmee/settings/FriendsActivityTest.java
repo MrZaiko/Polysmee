@@ -34,11 +34,12 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+
 @RunWith(AndroidJUnit4.class)
 public class FriendsActivityTest {
 
     private static final String username1 = "Cortex91DesPyramides";
-    private static String id2 = "yoiqsdaoqreidfoefbcxcc";
+    private static final String id2 = "yoiqsdaoqreidfoefbcxcc";
     private static final String username2 = "Cringe";
 
     @BeforeClass
@@ -55,25 +56,25 @@ public class FriendsActivityTest {
 
 
     @Test
-    public void encouragingMessageIsDisplayedTest(){
+    public void encouragingMessageIsDisplayedTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
-        try(ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
             assertDisplayed(getApplicationContext().getResources().getString(R.string.friendsActivityEncouragingMessage1));
         }
     }
 
     @Test
-    public void addingAndRemovingANewFriendTest(){
-        Intent intent = new Intent(getApplicationContext(),FriendsActivity.class);
-        try(ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)){
-            sleep(1,TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView,username2);
+    public void addingAndRemovingANewFriendTest() {
+        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
+        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(1, TimeUnit.SECONDS);
+            writeTo(R.id.friendAddTextView, username2);
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed(username2);
             clickOn(username2);
-            sleep(2,TimeUnit.SECONDS);
+            sleep(2, TimeUnit.SECONDS);
             pressBack();
             clickOn(R.id.friendEntryRemoveFriendButton);
             sleep(2, TimeUnit.SECONDS);
@@ -82,28 +83,28 @@ public class FriendsActivityTest {
     }
 
     @Test
-    public void errorMessageWhenTryingToAddThemselves(){
-        Intent intent = new Intent(getApplicationContext(),FriendsActivity.class);
-        try(ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)){
-            sleep(1,TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView,username1);
+    public void errorMessageWhenTryingToAddThemselves() {
+        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
+        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(1, TimeUnit.SECONDS);
+            writeTo(R.id.friendAddTextView, username1);
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
-            sleep(1,TimeUnit.SECONDS);
+            sleep(1, TimeUnit.SECONDS);
             assertDisplayed("Oops");
             clickDialogPositiveButton();
         }
     }
 
     @Test
-    public void errorMessageWhenTryingToAddNonexistentUser(){
-        Intent intent = new Intent(getApplicationContext(),FriendsActivity.class);
-        try(ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)){
-            sleep(1,TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView,"PleaseLetMeGoBro");
+    public void errorMessageWhenTryingToAddNonexistentUser() {
+        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
+        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(1, TimeUnit.SECONDS);
+            writeTo(R.id.friendAddTextView, "PleaseLetMeGoBro");
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
-            sleep(1,TimeUnit.SECONDS);
+            sleep(1, TimeUnit.SECONDS);
             assertDisplayed("OK");
             clickDialogPositiveButton();
         }

@@ -69,7 +69,6 @@ public class AppointmentActivityAddModeTest {
     }
 
 
-
     @Test
     public void allTestsAtOnce() throws InterruptedException {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);

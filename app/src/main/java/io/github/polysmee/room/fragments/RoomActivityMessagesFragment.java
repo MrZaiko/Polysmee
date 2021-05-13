@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
@@ -49,6 +50,7 @@ import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
+import io.github.polysmee.profile.ProfileActivity;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -213,7 +215,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         messageLayout.setLayoutParams(params);
 
         if (isAPicture) {
-            downloadPicture(message, messageLayout);
+            downloadMessagePicture(message, messageLayout);
             if (!isSent) {
                 TextView sendText = messageLayout.findViewById(R.id.roomActivityMessageElementPictureSenderText);
                 sendText.setVisibility(View.VISIBLE);
@@ -221,15 +223,20 @@ public class RoomActivityMessagesFragment extends Fragment {
                 sendText.setBackgroundResource(R.drawable.background_received_picture);
             }
         } else {
-            TextView messageView = (TextView) messageLayout.getViewById(R.id.roomActivityMessageElementMessageContent);
+            TextView messageView = messageLayout.findViewById(R.id.roomActivityMessageElementMessageContent);
             messageView.setText(message);
 
             if (isSent) {
                 messageLayout.findViewById(R.id.roomActivityMessageElementSenderText).setVisibility(View.GONE);
-                messageLayout.setBackgroundResource(R.drawable.background_sent_message);
+                messageLayout.findViewById(R.id.roomActivityMessageElementMainLayout).setBackgroundResource(R.drawable.background_sent_message);
             } else {
-                messageLayout.setBackgroundResource(R.drawable.background_received_message);
+                messageLayout.findViewById(R.id.roomActivityMessageElementMainLayout).setBackgroundResource(R.drawable.background_received_message);
                 sender.getName_Once_AndThen(((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementSenderText))::setText);
+
+                CircleImageView profilePicture = messageLayout.findViewById(R.id.roomActivityMessageElementProfilePicture);
+                profilePicture.setVisibility(View.VISIBLE);
+                sender.getProfilePicture_Once_And_Then(pictureId -> downloadProfilePicture(pictureId, profilePicture));
+                profilePicture.setOnClickListener(v -> visitProfile(senderId));
             }
         }
 
@@ -254,12 +261,30 @@ public class RoomActivityMessagesFragment extends Fragment {
         return messageLayout;
     }
 
-    private void downloadPicture(String id, View messageLayout) {
-        UploadServiceFactory.getAdaptedInstance().downloadImage(id, imageBytes -> {
-            Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-            ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
-            image.setImageBitmap(Bitmap.createBitmap(bmp));
-        }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE));
+    private void downloadProfilePicture(String pictureId, CircleImageView profilePicture) {
+        if (pictureId != null && !pictureId.equals("")) {
+            UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
+                Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
+            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
+        }
+    }
+
+    private void visitProfile(String userId) {
+        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
+        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
+        startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
+    }
+
+    private void downloadMessagePicture(String id, View messageLayout) {
+        if (id != null && !id.equals("")) {
+            UploadServiceFactory.getAdaptedInstance().downloadImage(id, imageBytes -> {
+                Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
+                image.setImageBitmap(Bitmap.createBitmap(bmp));
+            }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE));
+        }
     }
 
     private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId) {
@@ -274,7 +299,9 @@ public class RoomActivityMessagesFragment extends Fragment {
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
 
                 if (!isAPicture)
-                    messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_selected_message);
+                    messagesDisplayed.get(messageKey)
+                            .findViewById(R.id.roomActivityMessageElementMainLayout)
+                            .setBackgroundResource(R.drawable.background_selected_message);
                 return true;
             }
 
@@ -306,7 +333,9 @@ public class RoomActivityMessagesFragment extends Fragment {
             public void onDestroyActionMode(ActionMode mode) {
                 actionMode = null;
                 if (!isAPicture)
-                    messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_sent_message);
+                    messagesDisplayed.get(messageKey)
+                            .findViewById(R.id.roomActivityMessageElementMainLayout)
+                            .setBackgroundResource(R.drawable.background_sent_message);
             }
         };
     }

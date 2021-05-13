@@ -31,9 +31,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @RunWith(JUnit4.class)
 public class AppointmentActivityDetailModeNotOwnerTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "pzerotujrtpoiu";
+    private static final String id2 = "pzerotujrtpoiu";
     private static final String username2 = "Sami L'imposteur";
-    private static String id3 = "&éhmhsiogsfdsdgf";
+    private static final String id3 = "&éhmhsiogsfdsdgf";
     private static final String username3 = "Léo La fouine";
 
     private static final String appointmentId = "opkdsfmcvx";
@@ -77,6 +77,7 @@ public class AppointmentActivityDetailModeNotOwnerTest {
     public static void clean() {
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
+
     @Test
     public void dummyTest() {
         Assert.assertEquals(0, 0);

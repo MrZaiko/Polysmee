@@ -20,7 +20,7 @@ public class NoConnectionActivityTest {
     public void goesBackToLoginAfterNetworkFailure() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), NoConnectionActivity.class);
         Intents.init();
-        try(ActivityScenario<NoConnectionActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<NoConnectionActivity> ignored = ActivityScenario.launch(intent)) {
             clickOn("RETRY");
             assertDisplayed("LOGIN");
         }

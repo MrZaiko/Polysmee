@@ -15,8 +15,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
@@ -40,6 +42,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.l
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertTrue;
@@ -47,15 +50,18 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class RoomActivityMessagesFragmentTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "azeeazsqdsq";
+    private static final String id2 = "azeeazsqdsq";
     private static final String username2 = "Sami L'imposteur";
 
-    private static String appointmentId = "lkdfjswxcuyt";
-    private static String firstMessageId = "jkxwcoihjcwxp";
+    private static final String appointmentId = "lkdfjswxcuyt";
+    private static final String firstMessageId = "jkxwcoihjcwxp";
     private static final String firstMessage = "I'm a message";
 
-    private static String secondMessageId = "poisdoufoiq";
+    private static final String secondMessageId = "poisdoufoiq";
     private static final String secondMessage = "I'm a better message";
+
+    private static final String thirdMessageId = "sdflskdfmlsdf";
+    private static final String pictureId = "bigYOSHI";
 
 
     @BeforeClass
@@ -63,15 +69,25 @@ public class RoomActivityMessagesFragmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        UploadServiceFactory.setTest(true);
+        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s -> {
+        }, s -> {
+        });
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityMessagesFragmentTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(pictureId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(pictureId);
+
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("sender").setValue(MainUser.getMainUser().getId());
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("content").setValue(pictureId);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("isAPicture").setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("content").setValue(firstMessage);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("sender").setValue(id2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
@@ -79,13 +95,13 @@ public class RoomActivityMessagesFragmentTest {
     }
 
 
-
     @Test
-    public void messagesShouldBeDisplayed() {
+    public void messagesShouldBeDisplayedAndClickOnPictureShouldWork() {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
         sleep(1, SECONDS);
+        scrollTo(firstMessage);
         assertDisplayed(firstMessage);
         assertDisplayed(secondMessage);
     }

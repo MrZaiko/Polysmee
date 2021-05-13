@@ -26,8 +26,8 @@ import static org.junit.Assert.assertNotNull;
 public class AppointmentReminderNotificationTest {
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-    private static UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-    private static Context context = ApplicationProvider.getApplicationContext();
+    private static final UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+    private static final Context context = ApplicationProvider.getApplicationContext();
     private final static String notification_text = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
     private final static String notification_title = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
 
@@ -56,7 +56,7 @@ public class AppointmentReminderNotificationTest {
     }
 
     //assert that a notification reminder is present in the system at return notification layout will be closed
-    public static void reminderNotificationPresent(){
+    public static void reminderNotificationPresent() {
         String expectedAppName = context.getString(R.string.app_name);
         uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));

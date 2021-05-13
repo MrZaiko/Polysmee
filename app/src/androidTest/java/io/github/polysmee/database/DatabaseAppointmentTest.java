@@ -71,13 +71,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getStartTimeAndThen(ll);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeStartListener(ll);
             assertEquals(start.get(), 0);
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getStartTime_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getStartTime_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -97,13 +98,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getDurationAndThen(ll);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeDurationListener(ll);
             assertEquals(duration.get(), 3600);
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getDuration_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getDuration_Once_AndThen((l) -> {
+            });
 
         }
     }
@@ -124,13 +126,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getCourseAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeCourseListener(sv);
             assertEquals("AU", gotName.get());
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getCourse_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getCourse_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -150,13 +153,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getTitleAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeTitleListener(sv);
             assertEquals("chihiro", gotName.get());
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getTitle_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getTitle_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -176,13 +180,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getOwnerIdAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeOwnerListener(sv);
             assertEquals(MainUser.getMainUser().getId(), gotName.get());
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getOwnerId_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getOwnerId_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -213,13 +218,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getParticipantsIdAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeParticipantsListener(sv);
             assertTrue(listenerRan.get());
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getParticipantsId_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getParticipantsId_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -239,13 +245,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getInvitesIdAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeInvitesListener(sv);
             assertTrue(listenerRan.get());
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getInvitesId_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getInvitesId_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -275,13 +282,14 @@ public class DatabaseAppointmentTest {
         lock.lock();
         try {
             new DatabaseAppointment(apid).getBansAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removeBansListener(sv);
             assertTrue(moreThanOne.get());
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getBans_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getBans_Once_AndThen((l) -> {
+            });
         }
     }
 
@@ -302,14 +310,15 @@ public class DatabaseAppointmentTest {
         try {
             new DatabaseAppointment(apid).setPrivate(false);
             new DatabaseAppointment(apid).getPrivateAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             new DatabaseAppointment(apid).removePrivateListener(sv);
             assertTrue(isPrivate.get());
 
         } finally {
             lock.unlock();
-            new DatabaseAppointment(apid).getPrivate_Once_AndThen((l) -> {});
+            new DatabaseAppointment(apid).getPrivate_Once_AndThen((l) -> {
+            });
         }
     }
 }

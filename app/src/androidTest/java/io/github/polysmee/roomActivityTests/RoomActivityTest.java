@@ -35,11 +35,11 @@ import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractio
 @RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "bxcwviusergpoza";
+    private static final String id2 = "bxcwviusergpoza";
     private static final String username2 = "Sami L'imposteur";
 
     private static final String appointmentTitle = "It's a title";
-    private static String appointmentId = "cwxbihezroijgdf";
+    private static final String appointmentId = "cwxbihezroijgdf";
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
@@ -68,7 +68,7 @@ public class RoomActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
             assertContains(appointmentTitle);
         }
     }
@@ -79,7 +79,7 @@ public class RoomActivityTest {
 
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
             Intents.init();
             clickMenu(R.id.roomMenuInfo);
             intended(hasExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE));
@@ -94,7 +94,7 @@ public class RoomActivityTest {
 
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
             swipeViewPagerForward();
             sleep(1, TimeUnit.SECONDS);
             swipeViewPagerForward();

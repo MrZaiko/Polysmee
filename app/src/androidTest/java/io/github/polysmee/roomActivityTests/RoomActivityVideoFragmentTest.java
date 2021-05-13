@@ -44,7 +44,7 @@ public class RoomActivityVideoFragmentTest {
     private static final String username1 = "Aitta fessjoY";
 
     private static final String appointmentTitle = "Please";
-    private static String appointmentId = "ydbiuyaroijgpm";
+    private static final String appointmentId = "ydbiuyaroijgpm";
     private static final String appointmentCourse = "Shut the door";
     private static final long appointmentStart = 265655445;
 
@@ -67,7 +67,7 @@ public class RoomActivityVideoFragmentTest {
 
 
     @Test
-    public void localVideoCallbacksAreCalledSuccessfully(){
+    public void localVideoCallbacksAreCalledSuccessfully() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
@@ -80,9 +80,9 @@ public class RoomActivityVideoFragmentTest {
             }
         });
 
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
 
-            Logger videoFragmentLogger  = (Logger) LoggerFactory.getLogger(RoomActivityVideoFragment.class);
+            Logger videoFragmentLogger = (Logger) LoggerFactory.getLogger(RoomActivityVideoFragment.class);
             CyclicBufferAppender<ILoggingEvent> cyclicBufferAppender = new CyclicBufferAppender<>();
             cyclicBufferAppender.start();
             videoFragmentLogger.addAppender(cyclicBufferAppender);
@@ -102,7 +102,7 @@ public class RoomActivityVideoFragmentTest {
             //sleep(2, SECONDS);
             clickOn(R.id.roomActivityParticipantElementCallButton);
             sleep(2, SECONDS);
-            for(int i = 0; i < cyclicBufferAppender.getLength(); ++i){
+            for (int i = 0; i < cyclicBufferAppender.getLength(); ++i) {
                 logBackMessages.add(cyclicBufferAppender.get(i).getMessage());
             }
 
