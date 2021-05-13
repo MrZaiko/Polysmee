@@ -301,7 +301,9 @@ public class RoomActivityMessagesFragment extends Fragment {
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
 
                 if (!isAPicture)
-                    messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_selected_message);
+                    messagesDisplayed.get(messageKey)
+                            .findViewById(R.id.roomActivityMessageElementMainLayout)
+                            .setBackgroundResource(R.drawable.background_selected_message);
                 return true;
             }
 
@@ -333,7 +335,9 @@ public class RoomActivityMessagesFragment extends Fragment {
             public void onDestroyActionMode(ActionMode mode) {
                 actionMode = null;
                 if (!isAPicture)
-                    messagesDisplayed.get(messageKey).setBackgroundResource(R.drawable.background_sent_message);
+                    messagesDisplayed.get(messageKey)
+                            .findViewById(R.id.roomActivityMessageElementMainLayout)
+                            .setBackgroundResource(R.drawable.background_sent_message);
             }
         };
     }
