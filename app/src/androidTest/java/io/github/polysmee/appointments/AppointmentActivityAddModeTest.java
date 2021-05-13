@@ -58,6 +58,7 @@ public class AppointmentActivityAddModeTest {
         AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityAddModeTest@gmail.com", "fakePassword"));
@@ -138,8 +139,6 @@ public class AppointmentActivityAddModeTest {
             setDateOnPicker(2022, 3, 23);
             setTimeOnPicker(16, 2);
 
-            assertEquals(true, InternetConnection.isOn());
-            if (InternetConnection.isOn()) {
                 clickOn(R.id.appointmentCreationbtnDone);
                 //assertDisplayed("OK");
                 clickOn("OK");
@@ -236,7 +235,6 @@ public class AppointmentActivityAddModeTest {
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationAddBanError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
-        }
 
             Thread.sleep(1000);
         }

@@ -23,6 +23,7 @@ import java.util.Date;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -75,6 +76,7 @@ public class CalendarActivityTest {
         AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));

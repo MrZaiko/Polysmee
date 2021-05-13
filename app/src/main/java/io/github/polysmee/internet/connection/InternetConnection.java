@@ -16,12 +16,13 @@ import io.github.polysmee.agora.Command;
 public class InternetConnection {
 
     private static boolean connectionOn = false;
-    private static boolean offForTest = false;
+    private static boolean connectionOnTest = false;
+    private static boolean testRunning = false;
     public static Command commandToUpdateWifiLogo;
     private InternetConnection() {}
 
     public static boolean isOn() {
-        return offForTest ? false : connectionOn;
+        return testRunning ? connectionOnTest : connectionOn;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -59,8 +60,9 @@ public class InternetConnection {
         commandToUpdateWifiLogo = command;
     }
 
-    public static void setArtificialNetworkOffForTest(boolean offTest) {
-        offForTest = offTest;
+    public static void setManuallyInternetConnectionForTests(boolean connected) {
+        connectionOnTest = connected;
+        testRunning = true;
     }
 
 }
