@@ -64,7 +64,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_activity_my_appointments, container, false);
-        scrollLayout = (LinearLayout) rootView.findViewById(R.id.calendarActivityMyAppointmentsScrollLayout);
+        scrollLayout = rootView.findViewById(R.id.calendarActivityMyAppointmentsScrollLayout);
         this.inflater = inflater;
         setTodayDateInDailyCalendar(false);
         setDayText(rootView, false);
@@ -196,7 +196,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                 .setPositiveButton("Export", (dialog, id) -> {
                     CalendarExport.exportAppointment(getContext(), appointment);
                 })
-                .setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, id) -> {
+                .setNegativeButton("Cancel", (dialog, id) -> {
                     // User cancelled the dialog
                 });
 

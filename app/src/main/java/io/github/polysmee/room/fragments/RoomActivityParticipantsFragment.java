@@ -30,7 +30,6 @@ import java.util.Set;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
-import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
@@ -108,12 +107,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         super.onDestroy();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
-        setAudioEffect(preference);
-    }
+
 
 
     /*

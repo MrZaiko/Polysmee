@@ -143,7 +143,7 @@ public class FriendsActivity extends AppCompatActivity {
      */
     protected void createFriendEntry(String userId, String name) {
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);
-        TextView nameFriend = ((TextView) friendEntryLayout.findViewById(R.id.friendEntryName));
+        TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
         nameFriend.setOnClickListener((view) -> {
             Intent profileIntent = new Intent(this, ProfileActivity.class);
@@ -151,7 +151,7 @@ public class FriendsActivity extends AppCompatActivity {
             profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
             startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
         });
-        ((FloatingActionButton) friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton)).setOnClickListener((v) -> {
+        friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton).setOnClickListener((v) -> {
             user.removeFriend(new DatabaseUser(userId));
         });
         TextView padding = new TextView(this);
