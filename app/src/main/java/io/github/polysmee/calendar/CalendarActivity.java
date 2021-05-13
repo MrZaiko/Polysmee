@@ -24,6 +24,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
@@ -85,6 +86,20 @@ public class CalendarActivity extends AppCompatActivity{
         }
         InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> wifiLogo.setVisible(key))));
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.calendarMenuNotifications);
+        MainUser.getMainUser().getInvitesAndThen(s -> {
+            if(!s.isEmpty()) {
+                item.setIcon(R.drawable.baseline_notification_active);
+            }
+            else {
+                item.setIcon(R.drawable.baseline_notifications);
+            }
+        });
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @SuppressLint("NonConstantResourceId")

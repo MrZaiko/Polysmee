@@ -124,4 +124,6 @@
     <string name="offline_warning">Avertissement</string>
     <string name="offline_ok">OK</string>
     <string name="offline_appointment">Vous êtes actuellement hors-ligne, le meeting que vous créer sera en ligne dès que votre appareil se connecte à internet. Le cours du meeting est fixé à la valeur par défaut "Others", vous pourrez le modifier une fois en ligne.</string>
+    <string name="genericCourseText">Matière</string>
+    <string name="invitesCourseText">"Matière : "</string>
 </resources>

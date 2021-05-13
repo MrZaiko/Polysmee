@@ -117,6 +117,8 @@
     <string name="offline_picture">The picture will be sent when your device connects to the internet</string>
     <string name="offline_edit_message">The message will be edited when your device connects to the internet</string>
     <string name="offline_call">You need to be connected to the internet in order to make calls</string>
+    <string name="genericCourseText">Course</string>
+    <string name="invitesCourseText">"Course : "</string>
     <string name="appointment_reminder_notification_notification_text">Appointment reminder :)</string>
     <string name="offline_warning">Warning</string>
     <string name="offline_appointment">You are currently offline, the appointment you create will go online when your device connects to the internet. The appointment course will be set to the default value \'Others\', you will be able to edit it once online.</string>

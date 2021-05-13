@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -55,8 +56,6 @@ public class InvitesManagementActivity extends AppCompatActivity {
         inflater = getLayoutInflater();
 
         scrollLayout = findViewById(R.id.InvitesManagementScrollLayout);
-        Button okButton = findViewById(R.id.InvitesManagementButtonOk);
-        okButton.setOnClickListener(v -> finish());
 
         user = MainUser.getMainUser();
 
@@ -83,11 +82,12 @@ public class InvitesManagementActivity extends AppCompatActivity {
      */
     protected void makeInviteEntry(CalendarAppointmentInfo appointment, View InviteEntry) {
         ((TextView) InviteEntry.findViewById(R.id.InvitationEntryAppointmentTitle)).setText(appointment.getTitle());
+        ((TextView) InviteEntry.findViewById(R.id.InvitationEntryAppointmentCourse)).setText(MessageFormat.format("{0}{1}", getString(R.string.invitesCourseText), appointment.getCourse()));
 
-        Button acceptButton = InviteEntry.findViewById(R.id.InvitationEntryButtonAccept);
-        Button refuseButton = InviteEntry.findViewById(R.id.InvitationEntryButtonRefuse);
-        acceptButton.setOnClickListener(v -> acceptRefuseButtonBehavior(appointment, true));
-        refuseButton.setOnClickListener(v -> acceptRefuseButtonBehavior(appointment, false));
+        ImageView acceptImg = InviteEntry.findViewById(R.id.invitationEntryImgAccept);
+        ImageView refuseImg = InviteEntry.findViewById(R.id.invitationEntryImgRefuse);
+        acceptImg.setOnClickListener(v -> acceptRefuseButtonBehavior(appointment, true));
+        refuseImg.setOnClickListener(v -> acceptRefuseButtonBehavior(appointment, false));
 
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime() + appointment.getDuration()));
@@ -141,12 +141,9 @@ public class InvitesManagementActivity extends AppCompatActivity {
     protected void addAppointmentToInviteLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_invitation_entry, null);
         makeInviteEntry(appointment, appointmentEntryLayout);
-        TextView emptySpace = new TextView(this);
 
         scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
         appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
     }
 
     /**
@@ -216,24 +213,24 @@ public class InvitesManagementActivity extends AppCompatActivity {
                         appointmentInfo.setDuration(duration);
                         appointment.getTitle_Once_AndThen((title) -> {
                             appointmentInfo.setTitle((title));
-                            if (!appointmentSet.contains(id)) { //the appointment was removed; we thus have to remove it from the displayed appointments
-                                appointmentInfoMap.remove(id);
-                                if (appointmentIdsToView.containsKey(id)) {
-                                    scrollLayout.removeView(appointmentIdsToView.get(id));
-                                    scrollLayout.removeView(appointmentIdsToView.get(id + 1));
-                                    appointmentIdsToView.remove(id);
-                                    appointmentIdsToView.remove(id + 1);
+                            appointment.getCourse_Once_AndThen((course) -> {
+                                appointmentInfo.setCourse(course);
+                                if (!appointmentSet.contains(id)) { //the appointment was removed; we thus have to remove it from the displayed appointments
+                                    appointmentInfoMap.remove(id);
+                                    if (appointmentIdsToView.containsKey(id)) {
+                                        scrollLayout.removeView(appointmentIdsToView.get(id));
+                                        appointmentIdsToView.remove(id);
+                                    }
+                                } else {
+                                    appointmentInfoMap.put(appointment.getId(), appointmentInfo);
+                                    if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it
+                                        makeInviteEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
+                                    } else { //we add the new appointment and update the layout
+                                        scrollLayout.removeAllViewsInLayout();
+                                        changeCurrentInvitesLayout(new HashSet<>(appointmentInfoMap.values()));
+                                    }
                                 }
-                            } else {
-                                appointmentInfoMap.put(appointment.getId(), appointmentInfo);
-                                if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it
-                                    makeInviteEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
-                                } else { //we add the new appointment and update the layout
-                                    scrollLayout.removeAllViewsInLayout();
-                                    changeCurrentInvitesLayout(new HashSet<>(appointmentInfoMap.values()));
-                                }
-                            }
-
+                            });
                         });
                     });
 
