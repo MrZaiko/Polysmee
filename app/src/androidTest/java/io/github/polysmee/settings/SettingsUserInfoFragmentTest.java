@@ -65,15 +65,6 @@ public class SettingsUserInfoFragmentTest {
     @Test
     public void checkFragmentIsWellDisplayed(){
         checkFragmentIsDisplayed(userName, userEmail);
-        /**
-        clickOn(R.string.title_settings_main_user_name);
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        uiDevice.pressKeyCode(KEYCODE_A);
-        uiDevice.pressKeyCode(KEYCODE_F);
-        uiDevice.pressKeyCode(KEYCODE_U);
-        clickOn("ok");
-        sleep(1, SECONDS);
-        checkFragmentIsDisplayed("AFU", userEmail);**/
     }
 
     @Test

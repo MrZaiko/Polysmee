@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "473213372413",
+    "firebase_url": "https://polysmee-e6a86-default-rtdb.firebaseio.com",
     "project_id": "polysmee-e6a86",
     "storage_bucket": "polysmee-e6a86.appspot.com"
   },
@@ -13,6 +14,22 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "473213372413-ejo7kdithaeksd226jbjot18ugohjuln.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.polysmee",
+            "certificate_hash": "15cfca7ee46dcf5b5630938ef003840959693f5a"
+          }
+        },
+        {
+          "client_id": "473213372413-feg8smliv1uv32lg9pba22gbem0hudvh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.github.polysmee",
+            "certificate_hash": "e204d5cce18fef34e647fb0903d87e68eae9700c"
+          }
+        },
         {
           "client_id": "473213372413-mltrcpeqlhq3ach5cpjf5epa72mgjkru.apps.googleusercontent.com",
           "client_type": 3

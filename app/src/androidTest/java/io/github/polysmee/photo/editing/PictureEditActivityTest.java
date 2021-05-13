@@ -157,7 +157,7 @@ public class PictureEditActivityTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        UploadServiceFactory.setTest();
+        UploadServiceFactory.setTest(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("PictureEditActivityTest@gmail.com", "fakePassword"));

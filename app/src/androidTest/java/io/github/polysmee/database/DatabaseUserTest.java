@@ -44,6 +44,7 @@ public class DatabaseUserTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(username);
         Thread.sleep(1000);
     }
 
@@ -166,6 +167,63 @@ public class DatabaseUserTest {
             Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
+
+    @Test
+    public void getFriendsAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicBoolean oneElem = new AtomicBoolean(false);
+
+
+        StringSetValueListener ssv = (set) -> {
+            lock.lock();
+            oneElem.set(Boolean.TRUE);
+            Log.d("METAAPP", "" + oneElem.get());
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+
+        lock.lock();
+        try {
+            MainUser.getMainUser().getFriendsAndThen(ssv);
+            while(!bool.get())
+                cv.await();
+            MainUser.getMainUser().removeFriendsListener(ssv);
+            assertTrue(oneElem.get());
+        } finally {
+            lock.unlock();
+            MainUser.getMainUser().getFriends_Once_And_Then((e) -> {});
+        }
+    }
+
+    @Test
+    public void getPictureAndThen() throws InterruptedException {
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotName = new AtomicReference<>("wrong name");
+        StringValueListener sv = (picture) -> {
+            lock.lock();
+            gotName.set(picture);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            MainUser.getMainUser().getProfilePictureAndThen(sv);
+            while(!bool.get())
+                cv.await();
+            MainUser.getMainUser().removeProfilePictureListener(sv);
+            assertEquals(gotName.get(), username);
+        } finally {
+            lock.unlock();
+            MainUser.getMainUser().getProfilePicture_Once_And_Then((e) -> {});
+        }
+    }
+
 
     @Test
     public void testEquals() {

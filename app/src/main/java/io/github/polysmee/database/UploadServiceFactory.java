@@ -18,7 +18,7 @@ public final class UploadServiceFactory {
         }
     }
 
-    public static void setTest() {
-        isTest = true;
+    public static void setTest(boolean isTest) {
+        UploadServiceFactory.isTest = isTest;
     }
 }

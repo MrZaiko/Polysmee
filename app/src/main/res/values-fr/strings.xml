@@ -24,10 +24,15 @@
     <string name="calendarEntryDetailsActivityBanButton">Bannir</string>
     <string name="calendarEntryDetailsActivityInviteHint">Qui voulez-vous ajouter?</string>
     <string name="calendarEntryDetailsActivityBanHint">Qui voulez-vous bannir?</string>
-    <string name="user_prompt">Bonjour utilisateur ! Vous n\'êtes pas connecté. Connectez-vous s\'il vous plait !</string>
+
+    <string name="login_welcome">Bienvenue sur Polysmee !</string>
+    <string name="user_prompt">Vous n\'êtes pas connecté. Connectez-vous s\'il vous plait !</string>
     <string name="login">Se connecter</string>
     <string name="loginActivityNoNetwork">pas de réseau disponible</string>
     <string name="loginActivityUserCancelled">l\'utilisateur a annulé la connection</string>
+    <string name="loginNoConnection">Une connexion est nécessaire pour la première utilisation.</string>
+    <string name="loginNoConnectionRetry">Réessayer</string>
+
     <string name="appointment_creation_appointment_title">Titre</string>
     <string name="appointment_creation_appointment_course">Cours</string>
     <string name="appointment_creation_pick_start_time">Cliquer pour choisir</string>
@@ -70,7 +75,7 @@
     <string name="calendarActivityPublicAppointmentsCourse">Cours</string>
     <string name="calendarActivityPublicAppointmentsFilter">Filtrer</string>
     <string name="calendarActivityMyAppointments">Mes meetings</string>
-    <string name="calendarActivityPublicAppointments">Meetings publiques</string>
+    <string name="calendarActivityPublicAppointments">Meetings publics</string>
     <string name="genericTitlePlaceHolder">Titre</string>
     <string name="genericDatePlaceholder">Date</string>
     <string name="genericJoinText">Rejoindre</string>
