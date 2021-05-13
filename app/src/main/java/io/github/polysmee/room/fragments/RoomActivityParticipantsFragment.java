@@ -108,8 +108,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
     }
 
 
-
-
     /*
      * Generate a text view for each participant
      */

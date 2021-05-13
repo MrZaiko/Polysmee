@@ -14,6 +14,8 @@ import java.util.concurrent.ExecutionException;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
+import static org.junit.Assert.assertEquals;
+
 //@RunWith(AndroidJUnit4.class)
 public class MainUserTest {
 
