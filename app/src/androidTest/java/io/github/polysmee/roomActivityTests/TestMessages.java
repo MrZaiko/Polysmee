@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 
 
 import io.github.polysmee.database.Message;
+import io.github.polysmee.internet.connection.InternetConnection;
 
 @RunWith(JUnit4.class)
 public class TestMessages {
@@ -27,6 +28,7 @@ public class TestMessages {
         assertEquals(content, message.getContent());
         assertEquals(userId, message.getSender());
         assertEquals(messageTime, message.getMessageTime());
+        assertEquals(true,InternetConnection.isOn());
     }
 
     @Test
