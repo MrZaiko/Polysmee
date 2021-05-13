@@ -139,14 +139,14 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
 
-            if(InternetConnection.isOn()) {
+            if (InternetConnection.isOn()) {
                 clickOn(R.id.appointmentCreationbtnDone);
                 //assertDisplayed("OK");
                 clickOn("OK");
                 scrollTo(R.id.appointmentCreationTxtWarning);
                 assertDisplayed(R.string.appointmentCreationTimeError);
                 clickOn(R.string.appointment_creation_reset_btn_txt);
-            }
+
 
 
             Thread.sleep(1000);
@@ -236,6 +236,7 @@ public class AppointmentActivityAddModeTest {
             scrollTo(R.id.appointmentCreationTxtWarning);
             assertDisplayed(R.string.appointmentCreationAddBanError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
+        }
 
             Thread.sleep(1000);
         }
