@@ -65,7 +65,7 @@
         <activity android:name=".invites.InvitesManagementActivity" />
 
         <activity android:name=".login.NoConnectionActivity" />
-        
+
         <activity android:name=".profile.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity android:name=".calendar.CalendarExportActivity"/>
