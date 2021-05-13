@@ -15,7 +15,8 @@ public class DailyCalendar {
 
     private static long midnightEpochTimeMyAppointments;
     private static long midnightEpochTimePublicAppointments;
-    private DailyCalendar(){
+
+    private DailyCalendar() {
         //private constructor to prevent creating instances of this class
     }
 
@@ -24,29 +25,31 @@ public class DailyCalendar {
      * Gets the chosen's date time at midnight in milliseconds, and sets the
      * midnightEpochTime attribute to that; this function is used when the user
      * changes the day he wants to see his appointments
-     * @param year the chosen's date year
+     *
+     * @param year  the chosen's date year
      * @param month the chosen's date month
-     * @param day the chosen's date day of the week
+     * @param day   the chosen's date day of the week
      */
-    public static void setDayEpochTimeAtMidnight(int year, int month, int day, boolean publicAppointments){
+    public static void setDayEpochTimeAtMidnight(int year, int month, int day, boolean publicAppointments) {
         Calendar date = Calendar.getInstance();
-        date.set(year,month,day);
-        date.set(Calendar.HOUR_OF_DAY,0);
-        date.set(Calendar.MINUTE,0);
-        date.set(Calendar.SECOND,0);
-        date.set(Calendar.MILLISECOND,0);
-        if(publicAppointments){
+        date.set(year, month, day);
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        if (publicAppointments) {
             midnightEpochTimePublicAppointments = date.getTimeInMillis();
-        }
-        else
+        } else
             midnightEpochTimeMyAppointments = date.getTimeInMillis();
     }
+
     /**
      * Gets the date's time at midnight in milliseconds epoch as chosen by the user
+     *
      * @return the time at midnight in milliseconds
      */
-    public static long getDayEpochTimeAtMidnight(boolean publicAppointments){
-        if(publicAppointments)
+    public static long getDayEpochTimeAtMidnight(boolean publicAppointments) {
+        if (publicAppointments)
             return midnightEpochTimePublicAppointments;
         return midnightEpochTimeMyAppointments; //get the day of interest's time at midnight in seconds epoch
     }
@@ -55,22 +58,23 @@ public class DailyCalendar {
      * For a given set of user appointments, gets the ones that are programmed to happen
      * on the day the user chose on the calendar. The appointments are ordered according
      * to their start time.
+     *
      * @param userAppointments set of appointments of the user.
-     * @throws IllegalArgumentException if the set given as argument is null
      * @return the list of ordered appointments of the user for the chosen day
+     * @throws IllegalArgumentException if the set given as argument is null
      */
-    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments, boolean publicAppointments){
-        if(userAppointments == null)
+    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments, boolean publicAppointments) {
+        if (userAppointments == null)
             throw new IllegalArgumentException();
         long todayMidnightTime = getDayEpochTimeAtMidnight(publicAppointments);
         long nextDayMidnightTime = todayMidnightTime + 24 * 3600 * 1000; //get the epoch time in seconds of next day at midnight
         List<CalendarAppointmentInfo> todayAppointments = new ArrayList<>();
-        for(CalendarAppointmentInfo appointment : userAppointments){
-            if(appointment.getStartTime() >= todayMidnightTime && appointment.getStartTime() < nextDayMidnightTime){
+        for (CalendarAppointmentInfo appointment : userAppointments) {
+            if (appointment.getStartTime() >= todayMidnightTime && appointment.getStartTime() < nextDayMidnightTime) {
                 todayAppointments.add(appointment);
             }
         }
-        Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(),t1.getStartTime()));
+        Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(), t1.getStartTime()));
 
         return Collections.unmodifiableList(todayAppointments);
     }

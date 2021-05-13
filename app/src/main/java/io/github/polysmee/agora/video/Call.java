@@ -44,7 +44,7 @@ public class Call {
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
     private static final int EXPIRATION_TIME = 3600;
-    private RtcEngine mRtcEngine;
+    private final RtcEngine mRtcEngine;
     private IRtcEngineEventHandler handler;
     private RoomActivityParticipantsFragment room;
     private RoomActivityVideoFragment videoRoom;
@@ -53,11 +53,11 @@ public class Call {
     private final Map<Integer, String> usersCallId;
     private final Set<Integer> usersInCall;
     private final Set<Integer> talking;
-    private  Command<Boolean, String> command;
+    private Command<Boolean, String> command;
     private VideoEngineEventHandler eventHandler;
 
 
-    public Call(String appointmentId, Context context){
+    public Call(String appointmentId, Context context) {
         this.appointment = new DatabaseAppointment(appointmentId);
         usersCallId = new HashMap<>();
         usersInCall = new HashSet<>();
@@ -86,6 +86,7 @@ public class Call {
 
     /**
      * Joins the channel of the room
+     *
      * @return user id if the channel is successfully joined
      */
     public void joinChannel() {
@@ -100,6 +101,7 @@ public class Call {
 
     /**
      * Leaves the channel of the room
+     *
      * @return 0 if the channel is successfully left
      */
     public void leaveChannel() {
@@ -109,6 +111,7 @@ public class Call {
 
     /**
      * Mute (unmute) local user if mute arg is set to true (false)
+     *
      * @param mute specifies if the user should be muted or not.
      */
     public int mute(boolean mute) {
@@ -120,6 +123,7 @@ public class Call {
 
     /**
      * Sets the audio effect to the effect whose index is given
+     *
      * @param effectIndex
      */
     public void setVoiceEffect(int effectIndex) {
@@ -128,33 +132,34 @@ public class Call {
 
     /**
      * Mutes (unmutes) the given user locally if muted is set to true (false)
+     *
      * @param muted
      * @param id
      */
     public void muteUserLocally(boolean muted, String id) {
-        for(int uid : usersCallId.keySet()) {
-            if(usersCallId.get(uid).equals(id)) {
+        for (int uid : usersCallId.keySet()) {
+            if (usersCallId.get(uid).equals(id)) {
                 mRtcEngine.adjustUserPlaybackSignalVolume(uid, muted ? VOLUME_OFF : STANDARD_VOLUME);
             }
         }
     }
 
     /**
-     *
      * @param userId
      * @return a token generated using the userId and the appointmentId of the room as channel name
      */
     public String generateToken(@NonNull String userId) {
         RtcTokenBuilder tokenBuilder = new RtcTokenBuilder();
-        int timestamp = (int)(System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
-        return tokenBuilder.buildTokenWithUserAccount(APP_ID,APP_CERTIFICATE,appointment.getId(),userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
+        int timestamp = (int) (System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
+        return tokenBuilder.buildTokenWithUserAccount(APP_ID, APP_CERTIFICATE, appointment.getId(), userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
     /**
      * Sets the command attribute to the value given
+     *
      * @param command the new value of command
      */
-    public void setCommand(@NonNull Command<Boolean,String> command) {
+    public void setCommand(@NonNull Command<Boolean, String> command) {
         this.command = command;
     }
 
@@ -192,7 +197,7 @@ public class Call {
             @Override
             public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
                 Set<Integer> newUsersInCall = new HashSet<Integer>();
-                if(speakers != null) {
+                if (speakers != null) {
                     for (AudioVolumeInfo audioVolumeInfo : speakers) {
                         int uid = audioVolumeInfo.uid;
                         if (audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
@@ -203,13 +208,11 @@ public class Call {
                     }
                 }
 
-                for(int uid : usersInCall) {
-                    if(!newUsersInCall.contains(uid)) {
-                        if(talking.contains(uid)) {
+                for (int uid : usersInCall) {
+                    if (!newUsersInCall.contains(uid)) {
+                        if (talking.contains(uid)) {
                             talking.remove(uid);
-                        }
-
-                        else {
+                        } else {
                             command.execute(false, usersCallId.get(uid));
                         }
 
@@ -220,7 +223,7 @@ public class Call {
 
             @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
-                if(timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
+                if (timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
                     appointment.setTimeCode(new DatabaseUser(MainUser.getMainUser().getId()), System.currentTimeMillis());
                 }
                 timeCodeIndicator += 1;
@@ -235,7 +238,7 @@ public class Call {
     public void destroy() {
         leaveChannel();
         mRtcEngine.removeHandler(handler);
-        if(eventHandler != null){
+        if (eventHandler != null) {
             mRtcEngine.removeHandler(eventHandler);
         }
         RtcEngine.destroy();
@@ -247,9 +250,10 @@ public class Call {
     /**
      * Lets the user decide wherever they want to share their video or not. If they don't,
      * they can still talk using audio.
+     *
      * @return error code: if the operation was successful or not
      */
-    public int shareLocalVideo(){
+    public int shareLocalVideo() {
         videoEnabled = !videoEnabled;
         return mRtcEngine.enableLocalVideo(videoEnabled);
     }
@@ -257,53 +261,56 @@ public class Call {
     /**
      * @return whether the video is enabled or not.
      */
-    public boolean isVideoEnabled(){
+    public boolean isVideoEnabled() {
         return videoEnabled;
     }
 
     /**
      * Lets the user switch their camera if they want to.
+     *
      * @return error code: if the operation was successful or not
      */
-    public int switchCamera(){
+    public int switchCamera() {
         return mRtcEngine.switchCamera();
     }
 
     /**
      * Creates a remote user's video UI when they join the video call
+     *
      * @param context the context in which the video view is created
-     * @param uid the user's id
+     * @param uid     the user's id
      * @return the surface view containing the remote video of specified remote user
      */
-    public SurfaceView createRemoteUI(Context context, final int uid){
+    public SurfaceView createRemoteUI(Context context, final int uid) {
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
-        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN,uid));
-        surfaceV.layout(0,0,20,10);
+        mRtcEngine.setupRemoteVideo(new VideoCanvas(surfaceV, VideoCanvas.RENDER_MODE_HIDDEN, uid));
+        surfaceV.layout(0, 0, 20, 10);
         return surfaceV;
     }
 
     /**
      * Create the local user's video UI
+     *
      * @param context the context in which the video view is created
      * @return the surface view containing the local video
      */
-    public SurfaceView createLocalUI(Context context){
+    public SurfaceView createLocalUI(Context context) {
         SurfaceView surfaceV = RtcEngine.CreateRendererView(context);
         surfaceV.setZOrderOnTop(true);
         surfaceV.setZOrderMediaOverlay(true);
         mRtcEngine.setupLocalVideo(new VideoCanvas(surfaceV));
-        surfaceV.layout(0,0,20,10);
+        surfaceV.layout(0, 0, 20, 10);
         return surfaceV;
     }
 
 
     //========================== Fragment setters ====================//
 
-    public void setParticipantFragment(Fragment fragment){
+    public void setParticipantFragment(Fragment fragment) {
         this.room = (RoomActivityParticipantsFragment) fragment;
     }
 
-    public void setVideoFragment(Fragment fragment){
+    public void setVideoFragment(Fragment fragment) {
         this.videoRoom = (RoomActivityVideoFragment) fragment;
         eventHandler = new VideoEngineEventHandler();
         eventHandler.addEventHandler(this.videoRoom);

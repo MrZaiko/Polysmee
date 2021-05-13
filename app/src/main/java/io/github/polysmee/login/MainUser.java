@@ -9,6 +9,7 @@ public class MainUser {
 
     /**
      * Method used to get the current user without having to send it between activities
+     *
      * @return the current user
      */
     public static User getMainUser() {

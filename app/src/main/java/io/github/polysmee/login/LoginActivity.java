@@ -1,15 +1,13 @@
 package io.github.polysmee.login;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.Button;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -83,8 +81,6 @@ public class LoginActivity extends AppCompatActivity {
             FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
             db.getReference("users").child(MainUser.getMainUser().getId()).child("name")
                     .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
-            //TODO
-            //AppointmentReminderNotificationMaster.appointmentReminderNotificationSetListeners(getApplicationContext());
             Intent intent = new Intent(this, CalendarActivity.class);
 
             startActivity(intent);

@@ -1,7 +1,5 @@
 package io.github.polysmee.agora.video.handlers.settings;
 
-import android.os.Bundle;
-
 import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -16,7 +14,6 @@ import org.junit.runner.RunWith;
 
 import io.github.polysmee.R;
 
-
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaSpinnerInteractions.clickSpinnerItem;
 
@@ -27,7 +24,8 @@ public class VoiceTunerActivityTest {
     @Rule
     public ActivityScenarioRule<VoiceTunerActivity> testRule = new ActivityScenarioRule<>(VoiceTunerActivity.class);
 
-    @Rule public ClearPreferencesRule clearPreferencesRule = new ClearPreferencesRule();
+    @Rule
+    public ClearPreferencesRule clearPreferencesRule = new ClearPreferencesRule();
 
     @Test
     public void onCreate() {
@@ -46,7 +44,7 @@ public class VoiceTunerActivityTest {
         for (int i = 0; i < voicesTune.length; i++) {
             clickSpinnerItem(R.id.voiceTunerSpinner, i);
             int currentVoicePosition = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()).getInt(
-                    ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune) ,0);
+                    ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
             Assert.assertEquals(currentVoicePosition, i);
         }
 

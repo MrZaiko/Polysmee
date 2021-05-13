@@ -7,7 +7,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,9 +15,8 @@ import org.junit.runner.RunWith;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 
 @RunWith(AndroidJUnit4.class)
@@ -35,7 +33,7 @@ public class SettingsActivityTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -44,7 +42,7 @@ public class SettingsActivityTest {
     }
 
     @Test
-    public void appointmentsReminderSettingFragmentsIsLaunchWhenClickOnMain(){
+    public void appointmentsReminderSettingFragmentsIsLaunchWhenClickOnMain() {
         SettingsMainFragmentTest.checkFragmentIsDisplayed();
         clickOn(R.string.title_settings_appointments_reminder);
         SettingsAppointmentsReminderFragmentTest.checkFragmentIsDisplayed();

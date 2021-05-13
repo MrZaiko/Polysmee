@@ -1,9 +1,5 @@
 package io.github.polysmee.appointments;
 
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SwitchCompat;
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -19,6 +15,10 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -30,10 +30,10 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
+import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
@@ -44,19 +44,19 @@ import io.github.polysmee.login.MainUser;
 
 /**
  * Activity to interact with appointment
- *
+ * <p>
  * MODES :
- *      ADD_MODE    ==>  create an appointment for the current user
- *      DETAIL_MODE ==>  display information about an appointment (ID given in Intent). If the
- *                       current user is the owner, they can update the appointment from this
- *                       activity.
- *
+ * ADD_MODE    ==>  create an appointment for the current user
+ * DETAIL_MODE ==>  display information about an appointment (ID given in Intent). If the
+ * current user is the owner, they can update the appointment from this
+ * activity.
+ * <p>
  * INTENTS :
- *      LAUNCH_MODE (NEEDED) :  0 ==> Add
- *                              1 ==> Detail
- *             Note => USE STATIC ATTRIBUTES FOR THE MODE SELECTION
- *
- *      APPOINTMENT_ID (NEEDED in DETAIL_MODE) : the appointment to be displayed
+ * LAUNCH_MODE (NEEDED) :  0 ==> Add
+ * 1 ==> Detail
+ * Note => USE STATIC ATTRIBUTES FOR THE MODE SELECTION
+ * <p>
+ * APPOINTMENT_ID (NEEDED in DETAIL_MODE) : the appointment to be displayed
  */
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
@@ -104,7 +104,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private SwitchCompat privateSelector;
     private ImageView showAdd, showBan;
     private View addFragment, banFragment, bottomBar, startTimeLayout, endTimeLayout;
-
 
 
     @Override
@@ -205,10 +204,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtAdd = findViewById(R.id.appointmentCreationAddTextView);
         txtBan = findViewById(R.id.appointmentCreationBanTextView);
 
-        Course.getAllCourses_Once_AndThen(s ->  {
+        Course.getAllCourses_Once_AndThen(s -> {
                     courses = new ArrayList<>(s);
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                        android.R.layout.simple_dropdown_item_1line, courses);
+                            android.R.layout.simple_dropdown_item_1line, courses);
                     editCourse.setAdapter(adapter);
                 }
         );
@@ -218,6 +217,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
     /**
      * Make the whole activity clickable or not according to isClickable
+     *
      * @param isClickable true if the UI must be clickable
      */
     private void setupClickable(boolean isClickable) {
@@ -242,6 +242,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
             LongValueListener durationListener = duration -> {
                 Date endDate = new Date(start+duration);
+            appointment.getDurationAndThen(duration -> {
+                Date endDate = new Date(start + duration);
                 calendarEndTime.setTime(endDate);
                 txtEndTime.setText(DateFormat.format(dateFormat, endDate));
             };
@@ -292,8 +294,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     /**
      * ADD_MODE => BAR:VISIBLE - RESET:VISIBLE - DONE:VISIBLE
      * DETAIL_MODE =>
-     *      isOwner => BAR:VISIBLE - RESET:GONE - DONE:VISIBLE
-     *      !isOwner => BAR:GONE - RESET:GONE - DONE:GONE
+     * isOwner => BAR:VISIBLE - RESET:GONE - DONE:VISIBLE
+     * !isOwner => BAR:GONE - RESET:GONE - DONE:GONE
      *
      * @param isOwner used in detail mode to show the bottom bar
      */
@@ -314,10 +316,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     }
 
     /**
-     *  Call sendData() and finish the activity if no error.
-     *  Error =>
-     *      TIME ERROR      => start time before current time of end time before start time
-     *      ADD BAN ERROR   => a user is in the participant list and in the ban list
+     * Call sendData() and finish the activity if no error.
+     * Error =>
+     * TIME ERROR      => start time before current time of end time before start time
+     * ADD BAN ERROR   => a user is in the participant list and in the ban list
      */
     private void doneButtonBehavior(View view) {
         boolean error = false;
@@ -365,7 +367,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     }
 
     /**
-     *  Reset all fields to their default value
+     * Reset all fields to their default value
      */
     private void resetButtonBehavior(View view) {
         //reset every input text field and both start and end times
@@ -436,9 +438,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     }
 
     /**
-     *  Detect if the keyboard is shown or not and set the attribute isKeyboardShowing
-     *  accordingly.
-     *  Call the method updateBottomBar() when the keyboard is opened or closed.
+     * Detect if the keyboard is shown or not and set the attribute isKeyboardShowing
+     * accordingly.
+     * Call the method updateBottomBar() when the keyboard is opened or closed.
      */
     private void setupKeyboardDetection() {
         final ViewGroup contentView = (ViewGroup) ((ViewGroup) this
@@ -460,8 +462,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                     isKeyboardShowing = true;
                     updateBottomBar();
                 }
-            }
-            else {
+            } else {
                 // keyboard is closed
                 if (isKeyboardShowing) {
                     isKeyboardShowing = false;
@@ -472,7 +473,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     }
 
     /**
-     *  Display the bottomBar if the keyboard is not shown to the user
+     * Display the bottomBar if the keyboard is not shown to the user
      */
     private void updateBottomBar() {
         if (!isKeyboardShowing && (mode != DETAIL_MODE || isOwner))
@@ -484,8 +485,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     /**
      * Display a date and time picker. Store the value selected in date attribute and set the text
      * of textView accordingly
+     *
      * @param textView View showing the selected date
-     * @param isStart True if the view corresponds to the startDate
+     * @param isStart  True if the view corresponds to the startDate
      */
     private void showDateTimePicker(TextView textView, boolean isStart) {
         final Calendar currentDate = Calendar.getInstance();
@@ -503,7 +505,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     }
 
     /**
-     *  Used in showDateTimePicker to update the textView and the date attribute ( calendarStartTime or calendarEndTime)
+     * Used in showDateTimePicker to update the textView and the date attribute ( calendarStartTime or calendarEndTime)
      */
     private void updateCalendar(TextView textView, boolean isStart) {
         //Update start or end time with user input
@@ -559,14 +561,14 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
      * Add all banned user to the ban list of the appointment.
      * Add the new appointment to all users that are not banned. If a banned user is in the invite list,
      * this user is skipped.
-     *
+     * <p>
      * DETAIL_MODE => also remove participants or banned if needed
      *
      * @param allIds set of all Users
      */
     private void updateAppointmentParticipantsAndBans(Set<String> allIds) {
-        for(String userId : allIds){
 
+        for (String userId : allIds) {
             User user = new DatabaseUser(userId);
             StringValueListener nameListener = (name) -> {
                 if (mode == DETAIL_MODE) {
@@ -576,8 +578,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                             appointment.removeParticipant(user);
                         }
                     }
-                    for( String addedBan : bans) {
-                        if(name.equals(addedBan)) {
+                    for (String addedBan : bans) {
+                        if (name.equals(addedBan)) {
                             user.removeAppointment(appointment);
                             appointment.removeParticipant(user);
                         }

@@ -3,7 +3,6 @@ package io.github.polysmee.calendar;
 
 import android.content.Intent;
 
-import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -23,11 +22,10 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.calendar.fragments.CalendarActivityPublicAppointmentsFragment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static androidx.test.espresso.Espresso.onView;
@@ -45,14 +43,14 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityPublicAppointmentsFragmentTest {
 
-    private static int appointmentYear = 2042;
-    private static int appointmentMonth = 10;
-    private static int appointmentDay = 27;
+    private static final int appointmentYear = 2042;
+    private static final int appointmentMonth = 10;
+    private static final int appointmentDay = 27;
 
 
     private static final String appointmentId = "ukcfjsqmcutn";
     private static final String username1 = "Youssef le gentil";
-    private static String id2 = "uzeyazfedst";
+    private static final String id2 = "uzeyazfedst";
     private static final String username2 = "amogus";
 
     private static final SimpleDateFormat dayFormatter = new SimpleDateFormat("d");
@@ -63,8 +61,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     public static void setUp() throws Exception {
 
         startTime = Calendar.getInstance();
-        startTime.set(appointmentYear,appointmentMonth,appointmentDay,18,3,0);
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        startTime.set(appointmentYear, appointmentMonth, appointmentDay, 18, 3, 0);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
@@ -85,13 +83,13 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
 
     @Before
-    public void setupDailyCalendar(){
+    public void setupDailyCalendar() {
         Calendar calendar = Calendar.getInstance();
-        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DATE),true);
+        DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), true);
     }
 
     @Test
-    public void multipleTestsAtOnce(){
+    public void multipleTestsAtOnce() {
 
         Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(true));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
@@ -103,28 +101,28 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             assertDisplayed(letterDayFormatter.format(date));
 
             //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
-            CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP","BonjourBing",startTime.getTimeInMillis(),60,appointmentId+1);
-            CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP","BonjourBing1",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+2);
-            CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG","BonjourBing2",DailyCalendar.getDayEpochTimeAtMidnight(true),60,appointmentId+3);
+            CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP", "BonjourBing", startTime.getTimeInMillis(), 60, appointmentId + 1);
+            CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP", "BonjourBing1", DailyCalendar.getDayEpochTimeAtMidnight(true), 60, appointmentId + 2);
+            CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG", "BonjourBing2", DailyCalendar.getDayEpochTimeAtMidnight(true), 60, appointmentId + 3);
             addAppointmentOtherUser(calendarAppointmentInfo1);
             addAppointmentOtherUser(calendarAppointmentInfo2);
             addAppointmentOtherUser(calendarAppointmentInfo);
 
 
-            sleep(3,TimeUnit.SECONDS);
+            sleep(3, TimeUnit.SECONDS);
 
 
             clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
-            setDateOnPicker(appointmentYear, appointmentMonth+1, appointmentDay);
-            sleep(2,SECONDS);
+            setDateOnPicker(appointmentYear, appointmentMonth + 1, appointmentDay);
+            sleep(2, SECONDS);
             assertDisplayed(calendarAppointmentInfo.getTitle());
 
             //filterButtonLeavesOnlyAppointmentWithCorrespondingCourse
-            sleep(2,SECONDS);
+            sleep(2, SECONDS);
             clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
             Calendar calendar = Calendar.getInstance();
-            setDateOnPicker(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH)+1, calendar.get(Calendar.DATE));
-            sleep(3,TimeUnit.SECONDS);
+            setDateOnPicker(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE));
+            sleep(3, TimeUnit.SECONDS);
             writeTo(R.id.calendarActivityPublicAppointmentsEditTxtCourse, "apsdijf");
             closeSoftKeyboard();
             clickOn(R.id.calendarActivityPublicAppointmentsFilterBtn);
@@ -140,7 +138,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
 
     }
-    private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo){
+
+    private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo) {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("id").setValue(calendarAppointmentInfo.getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("duration").setValue(calendarAppointmentInfo.getDuration());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("private").setValue(false);

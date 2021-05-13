@@ -7,7 +7,7 @@ import io.github.polysmee.database.databaselisteners.DownloadValueListener;
 import io.github.polysmee.database.databaselisteners.LoadValueListener;
 
 public class LocalUploadService implements UploadService {
-    Map<String, byte[]> hash = new HashMap<>();
+    static Map<String, byte[]> hash = new HashMap<>();
 
     @Override
     public void uploadImage(byte[] data, String fileName, LoadValueListener onSuccess, LoadValueListener onFailure) {
@@ -22,7 +22,7 @@ public class LocalUploadService implements UploadService {
 
     @Override
     public void deleteImage(String id, LoadValueListener onSuccess, LoadValueListener onFailure) {
-        if(hash.remove(id) == null)
+        if (hash.remove(id) == null)
             onFailure.onDone("file not found");
         else
             onSuccess.onDone(id);

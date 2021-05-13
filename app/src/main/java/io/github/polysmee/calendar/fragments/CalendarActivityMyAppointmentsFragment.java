@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar.fragments;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -25,12 +26,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
+import io.github.polysmee.calendar.CalendarExport;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -41,11 +42,13 @@ import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.room.RoomActivity;
 
-import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setDayText;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setTodayDateInDailyCalendar;
 
 public class CalendarActivityMyAppointmentsFragment extends Fragment {
-
 
     private StringSetValueListener userAppointmentsListener;
     private ViewGroup rootView;
@@ -54,6 +57,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private LayoutInflater inflater;
 
     private User user;
+
 
     private final Map<String, View> appointmentIdsToView = new HashMap<>();
     private final Set<String> appointmentSet = new HashSet<>();
@@ -75,11 +79,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         setDayText(rootView, false);
         user = MainUser.getMainUser();
         userAppointmentsListener = null;
-        rootView.findViewById(R.id.calendarActivityCreateAppointmentButton).setOnClickListener((v) -> createAppointment());
 
-        rootView.findViewById(R.id.todayDateMyAppointmentsCalendarActivity).setOnClickListener((v) -> {
-            chooseDate();
-        });
+        rootView.findViewById(R.id.calendarActivityCreateAppointmentButton).setOnClickListener((v) -> createAppointment());
+        rootView.findViewById(R.id.todayDateMyAppointmentsCalendarActivity).setOnClickListener((v) -> chooseDate());
 
         setListenerUserAppointments();
         return rootView;
@@ -214,12 +216,28 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
+        appointmentEntryLayout.setOnLongClickListener(l -> exportToCalendarDialog(appointment));
+
         TextView emptySpace = new TextView(rootView.getContext());
 
         scrollLayout.addView(appointmentEntryLayout);
         scrollLayout.addView(emptySpace);
         appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
         appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
+    }
+
+    private boolean exportToCalendarDialog(CalendarAppointmentInfo appointment) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setMessage("Do you want to export this appointment to your calendar ?")
+                .setPositiveButton("Export", (dialog, id) -> {
+                    CalendarExport.exportAppointment(getContext(), appointment);
+                })
+                .setNegativeButton("Cancel", (DialogInterface.OnClickListener) (dialog, id) -> {
+                    // User cancelled the dialog
+                });
+
+        builder.create().show();
+        return true;
     }
 
     /**
@@ -240,25 +258,23 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
     protected StringSetValueListener currentDayUserAppointmentsListener() {
 
-        StringSetValueListener userAppointmentsListener = new StringSetValueListener() {
-            @Override
-            public void onDone(Set<String> setOfIds) {
-                Set<String> deletedAppointments = new HashSet<>(appointmentSet);
-                Set<String> newAppointments = new HashSet<>(setOfIds);
+        return setOfIds -> {
+            Set<String> deletedAppointments = new HashSet<>(appointmentSet);
+            Set<String> newAppointments = new HashSet<>(setOfIds);
 
-                //two loops: one for the appointments that are gone, and another for the new appointments
+            //two loops: one for the appointments that are gone, and another for the new appointments
 
-                deletedAppointments.removeAll(newAppointments); //keep the deleted appointments
-                newAppointments.removeAll(appointmentSet); //keep the new appointmnets
+            deletedAppointments.removeAll(newAppointments); //keep the deleted appointments
+            newAppointments.removeAll(appointmentSet); //keep the new appointmnets
 
-                for (String oldAppointmentId : deletedAppointments) { //delete all old appointments
-                    appointmentSet.remove(oldAppointmentId);
-                    appointmentInfoMap.remove(oldAppointmentId);
-                    if (appointmentIdsToView.containsKey(oldAppointmentId)) {
-                        scrollLayout.removeView(appointmentIdsToView.get(oldAppointmentId));
-                        scrollLayout.removeView(appointmentIdsToView.get(oldAppointmentId + 1));
-                    }
+            for (String oldAppointmentId : deletedAppointments) { //delete all old appointments
+                appointmentSet.remove(oldAppointmentId);
+                appointmentInfoMap.remove(oldAppointmentId);
+                if (appointmentIdsToView.containsKey(oldAppointmentId)) {
+                    scrollLayout.removeView(appointmentIdsToView.get(oldAppointmentId));
+                    scrollLayout.removeView(appointmentIdsToView.get(oldAppointmentId + 1));
                 }
+            }
 
 
                 appointmentSet.addAll(newAppointments); //add all new appointments
@@ -293,8 +309,6 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                                         scrollLayout.removeAllViewsInLayout();
                                         changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                     }
-                                }
-
                             };
                             appointment.getTitleAndThen(titleListener);
                             commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
@@ -309,7 +323,6 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
             }
         };
 
-        return userAppointmentsListener;
     }
 
 

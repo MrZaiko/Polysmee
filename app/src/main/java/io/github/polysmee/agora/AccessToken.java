@@ -49,7 +49,7 @@ public class AccessToken {
     }
 
     public String build() throws Exception {
-        if (! Utils.isUUID(appId)) {
+        if (!Utils.isUUID(appId)) {
             return "";
         }
 

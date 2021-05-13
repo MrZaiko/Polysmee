@@ -2,11 +2,6 @@ package io.github.polysmee.appointments.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.fragment.app.Fragment;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +12,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.firebase.database.ValueEventListener;
+import androidx.appcompat.app.AlertDialog;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -26,20 +24,20 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.appointments.AppointmentsUtility;
+import io.github.polysmee.appointments.DataPasser;
+import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.Appointment;
-import io.github.polysmee.appointments.DataPasser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove banned participants to an appointment
- *
+ * <p>
  * ADD_MODE     ==> Ban participant
  * DETAIL_MODE  ==> display participants and if the current user is the owner allows them to remove
- *                  them and add more
+ * them and add more
  */
 public class AppointmentCreationBanUserFragment extends Fragment {
     View rootView;
@@ -111,7 +109,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     /**
      * Setup the fragment for a particular mode
      *
-     * @param mode DETAIL_MODE or ADD_MODE (see AppointmentActivity)
+     * @param mode          DETAIL_MODE or ADD_MODE (see AppointmentActivity)
      * @param appointmentID used in DETAIL_MODE, the appointment to display participant from
      */
     public void launchSetup(int mode, String appointmentID) {
@@ -146,11 +144,11 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     /**
      * ADD_MODE     =>  Ban the user with the specified name to the banned participants list
      * DETAIL_MODE  =>  Ban the user with the specified name to the banned participants list and remove
-     *                  it from the removed banned participant list
+     * it from the removed banned participant list
      */
     private void banButtonBehavior(View view) {
         String s = searchBan.getText().toString();
-        if(!users.contains(s)) {
+        if (!users.contains(s)) {
             builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.genericOkText), null);
@@ -158,9 +156,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             AlertDialog alert = builder.create();
             alert.setTitle(getString(R.string.genericErrorText));
             alert.show();
-        }
-
-        else if(!bans.contains(s)) {
+        } else if (!bans.contains(s)) {
             bans.add(s);
             dataPasser.dataPass(bans, AppointmentActivity.BANS);
             searchBan.setText("");
@@ -171,20 +167,20 @@ public class AppointmentCreationBanUserFragment extends Fragment {
             }
 
             addBan(s);
-        }
-        else {
+        } else {
             searchBan.setText("");
         }
     }
 
     /**
      * Used by inviteButtonBehavior() to display the banned user with a remove button
-     *      ADD_MODE    =>  REMOVE_BUTTON removes the user form the participants list
-     *                      REMOVE_BUTTON:VISIBLE
-     *      DETAIL_MODE =>  REMOVE_BUTTON removes the user form the banned participants list and adds it
-     *                      to the removedBannedParticipants list
-     *              isOwner  => REMOVE_BUTTON:VISIBLE
-     *              !isOwner => REMOVE_BUTTON:GONE
+     * ADD_MODE    =>  REMOVE_BUTTON removes the user form the participants list
+     * REMOVE_BUTTON:VISIBLE
+     * DETAIL_MODE =>  REMOVE_BUTTON removes the user form the banned participants list and adds it
+     * to the removedBannedParticipants list
+     * isOwner  => REMOVE_BUTTON:VISIBLE
+     * !isOwner => REMOVE_BUTTON:GONE
+     *
      * @param name name of the banned user
      */
     private void addBan(String name) {

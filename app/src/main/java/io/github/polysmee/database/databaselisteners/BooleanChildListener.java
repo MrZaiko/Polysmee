@@ -8,10 +8,17 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 
 public interface BooleanChildListener extends ChildEventListener {
-    default void childAdded(String key, boolean value) {}
-    default void childChanged(String key, boolean value) {}
-    default void childRemoved(String key, boolean value) {}
-    default void childMoved(String key, boolean value) {}
+    default void childAdded(String key, boolean value) {
+    }
+
+    default void childChanged(String key, boolean value) {
+    }
+
+    default void childRemoved(String key, boolean value) {
+    }
+
+    default void childMoved(String key, boolean value) {
+    }
 
 
     @Override
@@ -25,7 +32,7 @@ public interface BooleanChildListener extends ChildEventListener {
     default void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
         String key = snapshot.getKey();
         boolean data = (boolean) snapshot.getValue();
-        childChanged(key,data);
+        childChanged(key, data);
     }
 
     @Override

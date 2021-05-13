@@ -11,7 +11,6 @@ import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.database.Message;
 
 /**
  * A generic appointment
@@ -24,6 +23,7 @@ public interface Appointment {
     String getId();
 
     //====================== START TIME ===================
+
     /**
      * @param l the listener to be added for changes to the start time.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -50,6 +50,7 @@ public interface Appointment {
 
 
     //===================== DURATION ============================
+
     /**
      * @param l the listener to be added for changes to the duration time.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -101,6 +102,7 @@ public interface Appointment {
     void setCourse(String course);
 
     //=========================== TITLE ==============================
+
     /**
      * @param s the listener to be added for changes to the title of the appointment.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -127,6 +129,7 @@ public interface Appointment {
 
 
     //============================= PARTICIPANTS ====================
+
     /**
      * @param s the listener to be added for changes to the participant list.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -160,6 +163,7 @@ public interface Appointment {
 
 
     //========================= OWNER ===========================
+
     /**
      * @param s the listener to be added for changes to the owner id.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -215,13 +219,13 @@ public interface Appointment {
 
     /**
      * @param bool the listener to be added for changes to the 'private' boolean attribute.
-     *          It is scheduled once when added, even if there is no change at that moment.
+     *             It is scheduled once when added, even if there is no change at that moment.
      */
     void getPrivateAndThen(BooleanValueListener bool);
 
     /**
      * @param bool the listener to be added for changes to the 'private' boolean attribute.
-     *          It is scheduled only once.
+     *             It is scheduled only once.
      */
     void getPrivate_Once_AndThen(BooleanValueListener bool);
 
@@ -236,6 +240,7 @@ public interface Appointment {
     void setPrivate(boolean isPrivate);
 
     //================= INVITES ====================
+
     /**
      * @param s the listener to be added for changes to the participant list.
      *          It is scheduled once when added, even if there is no change at that moment.
@@ -272,12 +277,14 @@ public interface Appointment {
 
     /**
      * Adds the given user to the set of in call users
+     *
      * @param inCall
      */
     void addInCallUser(User inCall);
 
     /**
      * Set the given User as muted (unmuted) if muted is true (false)
+     *
      * @param user
      * @param muted
      */
@@ -285,6 +292,7 @@ public interface Appointment {
 
     /**
      * Removes the given user from in call users
+     *
      * @param outOfCall
      */
     void removeOfCall(User outOfCall);
@@ -304,18 +312,21 @@ public interface Appointment {
 
     /**
      * Adds the given message to the set of Message
+     *
      * @param message
      */
     void addMessage(Message message);
 
     /**
      * Removes the message with given key from the database
+     *
      * @param key
      */
     void removeMessage(String key);
 
     /**
      * replaces the content of the message with given key by the new content given
+     *
      * @param key
      * @param newContent
      */
@@ -323,19 +334,20 @@ public interface Appointment {
 
     /**
      * Adds given listener to the set of messages of the appointment
+     *
      * @param listener
      */
     void addMessageListener(MessageChildListener listener);
 
     /**
      * Removes the given listener from the set of messages of the appointment
+     *
      * @param listener
      */
     void removeMessageListener(MessageChildListener listener);
 
 
     /**
-     *
      * @param user
      * @param listener the listener to be added for changes to the token of the given user.
      *                 It is scheduled only once.
@@ -345,6 +357,7 @@ public interface Appointment {
 
     /**
      * sets the timeCode of the given user to the given value
+     *
      * @param user
      * @param timeCode
      */
@@ -358,14 +371,14 @@ public interface Appointment {
     static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
 
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .get().addOnSuccessListener(dataSnapshot -> {
-            if(dataSnapshot.getValue() != null) {
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .get().addOnSuccessListener(dataSnapshot -> {
+            if (dataSnapshot.getValue() != null) {
                 Set<String> appos = new HashSet<>();
                 HashMap<String, Object> hash = (HashMap<String, Object>) dataSnapshot.getValue();
                 for (Map.Entry<String, Object> entry : hash.entrySet()) {
-                    if(!((Boolean) ((HashMap<String, Object>) entry.getValue()).get("private"))){
+                    if (!((Boolean) ((HashMap<String, Object>) entry.getValue()).get("private"))) {
                         appos.add(entry.getKey());
                     }
                 }
