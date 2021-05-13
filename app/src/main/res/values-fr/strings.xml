@@ -127,4 +127,5 @@
     <string name="title_voice_tuner_dialog">Choisisez votre filtre de voix</string>
     <string name="genericCourseText">Matière</string>
     <string name="invitesCourseText">"Matière : "</string>
+    <string name="appointment_reminder_notification_notification_text">Rappel de meeting :)</string>
 </resources>
