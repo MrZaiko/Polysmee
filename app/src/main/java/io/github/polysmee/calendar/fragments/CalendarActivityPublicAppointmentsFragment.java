@@ -141,6 +141,16 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onDestroy() {
+        Object dummyArgument = null;
+        for(Command command: commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
+    }
+
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
@@ -271,7 +281,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                             changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                         };
                                         appointment.getCourseAndThen(courseListener);
-                                        //commandsToRemoveListeners.add()
+                                        commandsToRemoveListeners.add((x,y) -> appointment.removeCourseListener(courseListener));
                                     };
                                     appointment.getTitleAndThen(titleListener);
                                     commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));

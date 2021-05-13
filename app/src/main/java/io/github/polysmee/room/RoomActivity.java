@@ -16,10 +16,16 @@ import android.view.MenuItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
@@ -33,6 +39,9 @@ public class RoomActivity extends AppCompatActivity {
     private Appointment appointment;
     public static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
 
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,7 +50,9 @@ public class RoomActivity extends AppCompatActivity {
         String appointmentKey = getIntent().getStringExtra(APPOINTMENT_KEY);//"-MXxN7Keu6_hMrtHsTH8";
         this.appointment = new DatabaseAppointment(appointmentKey);
 
-        appointment.getTitleAndThen(this::setTitle);
+        StringValueListener titleListener = this::setTitle;
+        appointment.getTitleAndThen(titleListener);
+        commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
         checkIfParticipant();
 
         ViewPager2 pager = findViewById(R.id.roomActivityPager);
@@ -56,12 +67,25 @@ public class RoomActivity extends AppCompatActivity {
         PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
     }
 
+    public void onDestroy() {
+
+        Object dummyArgument = null;
+
+        for(Command command : commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
+    }
+
     private void checkIfParticipant() {
-        appointment.getParticipantsIdAndThen(p -> {
+        StringSetValueListener participantListener = p -> {
             if (!p.contains(MainUser.getMainUser().getId())) {
                 generateRemovedDialog();
             }
-        });
+        };
+        appointment.getParticipantsIdAndThen(participantListener);
+        commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
     }
 
     private void generateRemovedDialog() {

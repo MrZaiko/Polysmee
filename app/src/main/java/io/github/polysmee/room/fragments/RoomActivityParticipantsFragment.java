@@ -23,8 +23,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.preference.PreferenceManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,6 +41,8 @@ import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
@@ -63,11 +67,13 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
-    private BooleanChildListener listener;
     private Set<String> inCall = new HashSet<String>();
     private Set<String> locallyMuted = new HashSet<String>();
 
     private Call call;
+
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
     @Nullable
     @Override
@@ -106,7 +112,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if(call != null){
             call.destroy();
         }
-        databaseAppointment.removeInCallListener(listener);
+
+        Object dummyArgument = null;
+        for(Command command : commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
         super.onDestroy();
     }
 
@@ -126,8 +137,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 
         participantsViews = new HashMap<String, ConstraintLayout>();
-
-        appointment.getParticipantsIdAndThen(p -> {
+        StringSetValueListener participantListener = p -> {
             layout.removeAllViewsInLayout();
 
             for (String id : p) {
@@ -152,10 +162,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
 
                 TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
-                appointment.getOwnerIdAndThen(owner -> {
+                StringValueListener ownerListener = owner -> {
                     if (owner.equals(id))
                         ownerTag.setVisibility(View.VISIBLE);
-                });
+                };
+                appointment.getOwnerIdAndThen(ownerListener);
+                commandsToRemoveListeners.add((x,y) -> appointment.removeOwnerListener(ownerListener));
 
                 ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
 
@@ -195,7 +207,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 } else {
                     ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
                     speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
-                    user.getNameAndThen(participantName::setText);
+                    StringValueListener nameListener = participantName::setText;
+                    user.getNameAndThen(nameListener);
+                    commandsToRemoveListeners.add((x,y) -> user.removeNameListener(nameListener));
                     MainUser.getMainUser().getFriends_Once_And_Then((friendsIds)->{
                         if(friendsIds.contains(id)){
                             friendshipButton.setImageResource(R.drawable.baseline_remove);
@@ -222,7 +236,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 layout.addView(new TextView(rootView.getContext()));
             }
             refreshViews();
-        });
+        };
+        appointment.getParticipantsIdAndThen(participantListener);
+        commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
 
     }
 
@@ -531,7 +547,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
      * Initializes the inCall listener and adds it to the appointment
      */
     private void initializeAndDisplayDatabase() {
-        listener = new BooleanChildListener() {
+        BooleanChildListener inCallListener = new BooleanChildListener() {
             @Override
             public void childAdded(String key, boolean value) {
 
@@ -556,7 +572,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
             }
         };
 
-        databaseAppointment.addInCallListener(listener);
+        databaseAppointment.addInCallListener(inCallListener);
+        commandsToRemoveListeners.add((x,y) -> databaseAppointment.removeInCallListener(inCallListener));
     }
 
 }
