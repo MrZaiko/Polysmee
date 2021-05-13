@@ -26,14 +26,12 @@ public class InternetConnection {
     @RequiresApi(api = Build.VERSION_CODES.N)
     public static void addConnectionListener(Context context) {
         try {
-            System.out.println("MESAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGE");
             ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
             connectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
 
                 @Override
                 public void onAvailable(Network network) {
-                    System.out.println("connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     connectionOn = true;
                     if(commandToUpdateWifiLogo != null) {
                         commandToUpdateWifiLogo.execute(false, false);
@@ -42,7 +40,6 @@ public class InternetConnection {
 
                 @Override
                 public void onLost(Network network) {
-                    System.out.println("no connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     connectionOn = false;
                     if(commandToUpdateWifiLogo != null) {
                         commandToUpdateWifiLogo.execute(true, true);

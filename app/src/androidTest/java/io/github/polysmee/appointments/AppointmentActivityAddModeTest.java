@@ -141,7 +141,7 @@ public class AppointmentActivityAddModeTest {
 
             if(InternetConnection.isOn()) {
                 clickOn(R.id.appointmentCreationbtnDone);
-                assertDisplayed("OK");
+                //assertDisplayed("OK");
                 clickOn("OK");
                 scrollTo(R.id.appointmentCreationTxtWarning);
                 assertDisplayed(R.string.appointmentCreationTimeError);

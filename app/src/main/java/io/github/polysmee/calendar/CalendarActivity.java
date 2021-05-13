@@ -30,6 +30,8 @@ import io.github.polysmee.znotification.AppointmentReminderNotificationSetupList
 
 public class CalendarActivity extends AppCompatActivity{
 
+    private MenuItem wifiLogo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,6 +65,12 @@ public class CalendarActivity extends AppCompatActivity{
 
     @Override
     protected void onResume() {
+        if(wifiLogo != null) {
+            wifiLogo.setVisible(!InternetConnection.isOn());
+            InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> wifiLogo.setVisible(key))));
+        }
+
+
         super.onResume();
     }
 
@@ -71,11 +79,11 @@ public class CalendarActivity extends AppCompatActivity{
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.calendar_menu, menu);
-        MenuItem item = menu.findItem(R.id.calendarMenuOffline);
+        wifiLogo = menu.findItem(R.id.calendarMenuOffline);
         if(InternetConnection.isOn()) {
-            item.setVisible(false);
+            wifiLogo.setVisible(false);
         }
-        InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> item.setVisible(key))));
+        InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> wifiLogo.setVisible(key))));
         return true;
     }
 
