@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 
 public class ListenerTest {

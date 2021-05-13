@@ -6,6 +6,8 @@ import org.junit.runners.JUnit4;
 
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(JUnit4.class)
 public class CalendarAppointmentInfoTest {
 
