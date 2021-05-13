@@ -56,7 +56,7 @@
     <string name="roomInfoCourseText">Course</string>
     <string name="roomTabMessagesText">Messages</string>
     <string name="roomTabVideoText">Video</string>
-    <string name="roomTabCallText">Call</string>
+    <string name="roomTabCallText">Participants</string>
     <string name="roomMessageOptionText">Choose an option</string>
     <string name="roomEditMessageText">Edit message</string>
 
