@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <View
-            android:id="@+id/view"
+            android:id="@+id/InvitationEntrySeparationBar"
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:layout_marginEnd="8dp"
