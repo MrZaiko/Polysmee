@@ -1,17 +1,24 @@
 package io.github.polysmee.calendar;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
@@ -27,6 +34,8 @@ import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
 
 public class CalendarActivity extends AppCompatActivity{
+
+    private ActivityResultLauncher<String> requestPermissionLauncher;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +61,42 @@ public class CalendarActivity extends AppCompatActivity{
                 getApplicationContext(),
                 (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE));
 
+
+        initializePermissionRequester();
+    }
+
+    /**
+     * Initializes the request permission requester
+     */
+    private void initializePermissionRequester() {
+        requestPermissionLauncher =
+                this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    if (isGranted) {
+                        checkCalendarPerms();
+                    }
+                });
+    }
+
+    /**
+     * @param permission the permission we're checking
+     * @return true if the permission given is granted by the user and false otherwise
+     */
+    private boolean checkPermission(String permission) {
+        return ContextCompat.checkSelfPermission(this, permission) == PackageManager.PERMISSION_GRANTED;
+    }
+
+    public boolean checkCalendarPerms() {
+        if(!checkPermission(Manifest.permission.WRITE_CALENDAR)) {
+            requestPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR);
+            return false;
+        }
+
+        if(!checkPermission(Manifest.permission.READ_CALENDAR)) {
+            requestPermissionLauncher.launch(Manifest.permission.READ_CALENDAR);
+            return false;
+        }
+
+        return true;
     }
 
     @Override
@@ -103,6 +148,11 @@ public class CalendarActivity extends AppCompatActivity{
             case R.id.calendarMenuNotifications:
                 Intent notificationsIntent = new Intent(this, InvitesManagementActivity.class);
                 startActivity(notificationsIntent);
+                return true;
+            /*case R.id.calendarMenuExport:
+                Intent exportIntent = new Intent(this, CalendarExportActivity.class);
+                startActivity(exportIntent);
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
