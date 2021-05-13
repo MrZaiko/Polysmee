@@ -116,4 +116,6 @@
     <string name="voice_penguin">Penguin</string>
     <string name="voice_high">Voix élevée</string>
     <string name="voice_alien">Alien</string>
+    <string name="genericCourseText">Matière</string>
+    <string name="invitesCourseText">"Matière : "</string>
 </resources>

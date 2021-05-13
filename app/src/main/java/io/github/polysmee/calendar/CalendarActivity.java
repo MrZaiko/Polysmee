@@ -28,6 +28,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
 import io.github.polysmee.invites.InvitesManagementActivity;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
@@ -114,6 +115,20 @@ public class CalendarActivity extends AppCompatActivity{
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.calendar_menu, menu);
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.calendarMenuNotifications);
+        MainUser.getMainUser().getInvitesAndThen(s -> {
+            if(!s.isEmpty()) {
+                item.setIcon(R.drawable.baseline_notification_active);
+            }
+            else {
+                item.setIcon(R.drawable.baseline_notifications);
+            }
+        });
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @SuppressLint("NonConstantResourceId")
