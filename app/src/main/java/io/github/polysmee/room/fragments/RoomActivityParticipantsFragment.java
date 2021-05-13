@@ -318,7 +318,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
             builder.setMessage(R.string.offline_call);
 
             //add ok button
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
 

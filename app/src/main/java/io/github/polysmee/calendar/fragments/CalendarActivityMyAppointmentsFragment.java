@@ -129,6 +129,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                 }
             });
             builder.show();
+        } else {
+            Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+            startActivity(intent);
         }
 
     }

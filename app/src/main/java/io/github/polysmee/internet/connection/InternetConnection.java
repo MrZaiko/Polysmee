@@ -16,7 +16,6 @@ import io.github.polysmee.agora.Command;
 public class InternetConnection {
 
     private static boolean connectionOn = false;
-    private static MenuItem wifiLogo;
     public static Command commandToUpdateWifiLogo;
     private InternetConnection() {}
 
@@ -36,9 +35,6 @@ public class InternetConnection {
                 public void onAvailable(Network network) {
                     System.out.println("connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     connectionOn = true;
-                    if(wifiLogo != null) {
-                        //wifiLogo.setVisible(false);
-                    }
                     if(commandToUpdateWifiLogo != null) {
                         commandToUpdateWifiLogo.execute(false, false);
                     }
@@ -48,10 +44,6 @@ public class InternetConnection {
                 public void onLost(Network network) {
                     System.out.println("no connection !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
                     connectionOn = false;
-                    if(wifiLogo != null) {
-
-                        //wifiLogo.setVisible(true);
-                    }
                     if(commandToUpdateWifiLogo != null) {
                         commandToUpdateWifiLogo.execute(true, true);
                     }
