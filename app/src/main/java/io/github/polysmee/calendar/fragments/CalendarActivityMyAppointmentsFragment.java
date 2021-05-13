@@ -2,6 +2,7 @@ package io.github.polysmee.calendar.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -303,11 +304,12 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                                 } else {
                                     appointmentInfoMap.put(appointment.getId(), appointmentInfo);
                                     if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it.
-                                        createAppointmentEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
+                                        createAppointmentEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
                                     } else { //we add the new appointment and update the layout.
                                         scrollLayout.removeAllViewsInLayout();
                                         changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                     }
+                                }
                             };
                             appointment.getTitleAndThen(titleListener);
                             commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
@@ -319,10 +321,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                     appointment.getStartTimeAndThen(startListener);
                     commandsToRemoveListeners.add((x,y) -> appointment.removeStartListener(startListener));
                 }
-            }
-        };
+            };
+        }
 
-    }
 
 
 }

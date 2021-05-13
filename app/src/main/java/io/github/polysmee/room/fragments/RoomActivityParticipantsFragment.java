@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -329,8 +331,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                 call.setCommand(this::setTalkingUser);
             }
             call.joinChannel();
-            int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
-            setAudioEffect(preference);
         } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
             builder.setMessage(R.string.offline_call);

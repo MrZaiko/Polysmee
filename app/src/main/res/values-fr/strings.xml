@@ -115,7 +115,7 @@
     <string name="voice_old_man">Vieillard</string>
     <string name="voice_penguin">Penguin</string>
     <string name="voice_high">Voix élevée</string>
-    <string name="voice_alien">Alien</string><<<<<<< offline_mode_ui
+    <string name="voice_alien">Alien</string>
     <string name="default_course">Others</string>
     <string name="offline_send_message">Le message sera envoyé dès que l\'appareil se connecte à internet</string>
     <string name="offline_picture">L\'image sera envoyée dès que l\'appareil se connecte à internet</string>

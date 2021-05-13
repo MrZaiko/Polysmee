@@ -242,8 +242,6 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
             LongValueListener durationListener = duration -> {
                 Date endDate = new Date(start+duration);
-            appointment.getDurationAndThen(duration -> {
-                Date endDate = new Date(start + duration);
                 calendarEndTime.setTime(endDate);
                 txtEndTime.setText(DateFormat.format(dateFormat, endDate));
             };
