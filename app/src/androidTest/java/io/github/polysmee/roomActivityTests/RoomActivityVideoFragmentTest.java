@@ -94,7 +94,7 @@ public class RoomActivityVideoFragmentTest {
             swipeViewPagerForward();
             sleep(2, TimeUnit.SECONDS);
             clickOn(R.id.roomActivityParticipantElementCallButton);
-            sleep(1, SECONDS);
+            sleep(2, SECONDS);
             clickOn(R.id.roomActivityParticipantElementVideoButton);
             sleep(2, SECONDS);
 

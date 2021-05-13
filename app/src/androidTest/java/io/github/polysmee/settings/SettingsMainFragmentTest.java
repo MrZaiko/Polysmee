@@ -33,7 +33,6 @@ public class SettingsMainFragmentTest {
     //used in tests (this test or any other) to know if the fragment is been displayed
     public static void checkFragmentIsDisplayed(){
         assertDisplayed(R.string.title_settings_appointments_reminder);
-        assertDisplayed(R.string.title_settings_main_user_info);
     }
 
     @Test

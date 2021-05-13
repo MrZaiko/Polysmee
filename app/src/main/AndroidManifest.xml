@@ -11,6 +11,7 @@
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <uses-feature android:name="android.hardware.bluetooth" />
     <uses-feature
@@ -40,6 +41,7 @@
         android:theme="@style/Theme.Polysmee"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
+        <activity android:name=".profile.ProfileActivity"></activity>
 
         <service android:name=".znotification.AppointmentReminderNotificationService" />
 
@@ -53,8 +55,17 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
         <activity android:name=".invites.InvitesManagementActivity" />
-        <activity android:name=".settings.FriendsActivity" />
+
+        <activity android:name=".login.NoConnectionActivity" />
+
+
+        <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
+        <activity android:name=".profile.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity
             android:name=".settings.SettingsActivity"

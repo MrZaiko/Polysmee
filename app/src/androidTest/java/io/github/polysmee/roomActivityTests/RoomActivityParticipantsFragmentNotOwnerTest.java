@@ -89,4 +89,15 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         HashMap usr1 = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").get()).getValue();
         assertNull(usr1);
     }
+
+    @Test
+    public void clickingOnAnotherUserLaunchesProfile(){
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        sleep(2, SECONDS);
+        clickOn(username2);
+        sleep(1, SECONDS);
+        assertDisplayed(username2);
+    }
 }

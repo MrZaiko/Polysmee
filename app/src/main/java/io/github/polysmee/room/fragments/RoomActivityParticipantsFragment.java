@@ -1,6 +1,7 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,9 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
-
 import androidx.fragment.app.Fragment;
-
+import androidx.preference.PreferenceManager;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,29 +27,30 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.polysmee.R;
-
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.ProfileActivity;
 
 
 /**
  * Fragment that display all participants given in argument
  */
-public class RoomActivityParticipantsFragment extends Fragment implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener  {
+public final class RoomActivityParticipantsFragment extends Fragment implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener  {
 
     private ViewGroup rootView;
     private Appointment appointment;
     private LayoutInflater inflater;
+    public final static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
 
     private VoiceTunerChoiceDialogFragment voiceTunerChoiceDialog;
     private boolean isMuted = false;
     private boolean isInCall = false;
-
 
 
     private DatabaseAppointment databaseAppointment;
@@ -61,8 +62,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
     private Set<String> inCall = new HashSet<>();
     private Set<String> locallyMuted = new HashSet<>();
     private Call call;
-
-    public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
 
     @Nullable
     @Override
@@ -119,8 +118,8 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
             for (String id : p) {
                 User user = new DatabaseUser(id);
 
-                appointment.getTimeCodeOnceAndThen(user, timeCode -> {
-                    if(System.currentTimeMillis() - timeCode > Call.INVALID_TIME_CODE_TIME) {
+                appointment.getTimeCodeOnceAndThen(user, o -> {
+                    if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
                         appointment.removeOfCall(user);
                     }
                 });
@@ -191,6 +190,12 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                     });
                     friendshipButton.setVisibility(View.VISIBLE);
                     friendshipButton.setOnClickListener((v)-> friendshipButtonBehavior(v,id));
+                    participantName.setOnClickListener((view)->{ //if we click on another user's name, we visit their profile
+                        Intent profileIntent = new Intent(getContext(),ProfileActivity.class);
+                        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_VISITING_MODE);
+                        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER,id);
+                        startActivityForResult(profileIntent,ProfileActivity.VISIT_MODE_REQUEST_CODE);
+                    });
                 }
 
 
@@ -297,6 +302,8 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         if(call != null) {
             call.leaveChannel();
         }
+
+        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
     }
 
     /**

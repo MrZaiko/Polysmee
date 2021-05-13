@@ -48,10 +48,5 @@ public class SettingsActivityTest {
         clickOn(R.string.title_settings_appointments_reminder);
         SettingsAppointmentsReminderFragmentTest.checkFragmentIsDisplayed();
     }
-    @Test
-    public void settingsUserInfoFragmentIsLaunchWhenClickOnMain(){
-        SettingsMainFragmentTest.checkFragmentIsDisplayed();
-        clickOn(R.string.title_settings_main_user_info);
-        SettingsUserInfoFragmentTest.checkFragmentIsDisplayed();
-    }
+
 }
