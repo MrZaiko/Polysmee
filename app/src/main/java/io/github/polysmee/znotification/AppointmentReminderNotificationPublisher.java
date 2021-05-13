@@ -22,7 +22,6 @@ import io.github.polysmee.login.LoginCheckActivity;
  * It is the broadcast receiver class that will receive broadcasts at certain times (specified in
  * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
  * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
- *
  **/
 public final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
@@ -55,7 +54,7 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
     }
 
     @Override
-    public void onReceive(@NonNull Context context,@NonNull Intent intent) {
+    public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         Intent fullScreenIntent = new Intent(context, LoginCheckActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, 0);

@@ -13,7 +13,7 @@ public interface BooleanValueListener extends ValueEventListener {
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
         Boolean value = (Boolean) snapshot.getValue();
-        if(value != null)
+        if (value != null)
             onDone(value);
     }
 

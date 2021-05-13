@@ -104,15 +104,17 @@ public class PictureEditActivity extends AppCompatActivity {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                float newStroke = i*(MAX_STROKE-MIN_STROKE)/100 + MIN_STROKE;
+                float newStroke = i * (MAX_STROKE - MIN_STROKE) / 100 + MIN_STROKE;
                 displayedPictureView.setStrokeWidth(newStroke);
             }
 
             @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {}
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
 
             @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {}
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
         };
     }
 
@@ -159,12 +161,11 @@ public class PictureEditActivity extends AppCompatActivity {
     }
 
 
-
     @SuppressLint("NonConstantResourceId")
     public void onFilterSelected(View view) {
         boolean checked = ((RadioButton) view).isChecked();
 
-        switch(view.getId()) {
+        switch (view.getId()) {
             case R.id.pictureEditNormal:
                 if (checked)
                     displayedPictureView.setImageBitmap(pictureBitmap);

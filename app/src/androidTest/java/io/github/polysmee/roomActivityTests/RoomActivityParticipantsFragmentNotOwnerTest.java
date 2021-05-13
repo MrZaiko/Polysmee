@@ -16,7 +16,6 @@ import org.junit.runners.JUnit4;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;

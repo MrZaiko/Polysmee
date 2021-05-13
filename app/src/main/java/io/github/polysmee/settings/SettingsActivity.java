@@ -34,8 +34,8 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
         // Instantiate the new Fragment
         final Bundle args = pref.getExtras();
         final Fragment fragment = getSupportFragmentManager().getFragmentFactory().instantiate(
-                    getClassLoader(),
-                    pref.getFragment());
+                getClassLoader(),
+                pref.getFragment());
         fragment.setArguments(args);
         // Replace the existing Fragment with the new Fragment
         getSupportFragmentManager().beginTransaction()

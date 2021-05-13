@@ -1,26 +1,25 @@
 package io.github.polysmee.room;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.viewpager2.widget.ViewPager2;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.viewpager2.widget.ViewPager2;
+
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
-import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
-import io.github.polysmee.room.fragments.VoiceTunerChoiceDialogFragment;
 
 /**
  * Activity representing all room related operations

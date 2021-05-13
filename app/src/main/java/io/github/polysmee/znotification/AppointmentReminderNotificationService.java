@@ -25,7 +25,6 @@ import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
 
-
 /**
  * This class is a subclass of Service and it allow the reminder notification to be consistent
  * with the appointments the user have in the database and the appointment instance in the database.

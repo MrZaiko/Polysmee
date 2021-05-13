@@ -2,17 +2,11 @@ package io.github.polysmee.photo.editing;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapShader;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Shader;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.widget.ImageView;
 
 import io.github.polysmee.R;
 
@@ -78,7 +72,7 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
 
         alteredBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         alteredCanvas = new Canvas(alteredBitmap);
-        alteredCanvas.drawBitmap(bitmap,0,0,null);
+        alteredCanvas.drawBitmap(bitmap, 0, 0, null);
 
         onSizeChanged(width, height, bitmap.getWidth(), bitmap.getHeight());
     }
@@ -107,15 +101,17 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
         previousX = x;
         previousY = y;
     }
+
     private void touchMove(float x, float y) {
         float dx = Math.abs(x - previousX);
         float dy = Math.abs(y - previousX);
         if (dx >= 5 || dy >= 5) {
-            path.quadTo(previousX, previousY, (x + previousX)/2, (y + previousY)/2);
+            path.quadTo(previousX, previousY, (x + previousX) / 2, (y + previousY) / 2);
             previousX = x;
             previousY = y;
         }
     }
+
     private void touchUp() {
         path.lineTo(previousX, previousY);
         // commit the path to our offscreen
@@ -128,21 +124,21 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        switch (event.getAction()){
+        switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                touchStart(x,y);
+                touchStart(x, y);
                 invalidate();
-                break ;
+                break;
             case MotionEvent.ACTION_UP:
                 touchUp();
                 invalidate();
-                break ;
+                break;
             case MotionEvent.ACTION_MOVE:
-                touchMove(x,y);
+                touchMove(x, y);
                 invalidate();
-                break ;
+                break;
         }
-        return true ;
+        return true;
     }
 
     protected void onDraw(Canvas canvas) {

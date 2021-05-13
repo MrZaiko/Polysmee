@@ -23,14 +23,6 @@ import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertNotClickable;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled;
-import static com.schibsted.spain.barista.assertion.BaristaHintAssertions.assertHint;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;

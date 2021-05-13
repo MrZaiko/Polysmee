@@ -1,6 +1,7 @@
 package io.github.polysmee.agora;
 
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 
 public class AccessTokenTest {

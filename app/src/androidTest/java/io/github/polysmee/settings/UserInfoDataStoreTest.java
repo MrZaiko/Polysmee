@@ -3,15 +3,12 @@ package io.github.polysmee.settings;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-
 
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -20,7 +17,7 @@ import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UserInfoDataStoreTest {
     private final static String userEmail = "UserInfoDataStoreTest@gmail.com";

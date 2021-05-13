@@ -6,10 +6,11 @@ import org.junit.runners.JUnit4;
 
 import java.util.ArrayList;
 
-import static org.junit.Assert.*;
-
-
 import io.github.polysmee.database.Message;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class TestMessages {

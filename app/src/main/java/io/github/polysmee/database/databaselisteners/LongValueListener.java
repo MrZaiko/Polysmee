@@ -13,10 +13,11 @@ public interface LongValueListener extends ValueEventListener {
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
         Long value = (Long) snapshot.getValue();
-        if(value != null)
+        if (value != null)
             onDone(value);
     }
 
     @Override
-    default void onCancelled(@NonNull DatabaseError error) {}
+    default void onCancelled(@NonNull DatabaseError error) {
+    }
 }

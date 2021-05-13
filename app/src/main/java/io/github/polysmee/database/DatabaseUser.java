@@ -121,7 +121,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void setName(@NonNull String value) {
-        if (value.isEmpty()){
+        if (value.isEmpty()) {
             return;
         }
         DatabaseFactory

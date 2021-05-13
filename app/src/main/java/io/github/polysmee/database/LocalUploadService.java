@@ -22,7 +22,7 @@ public class LocalUploadService implements UploadService {
 
     @Override
     public void deleteImage(String id, LoadValueListener onSuccess, LoadValueListener onFailure) {
-        if(hash.remove(id) == null)
+        if (hash.remove(id) == null)
             onFailure.onDone("file not found");
         else
             onSuccess.onDone(id);

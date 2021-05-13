@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class AppointmentReminderNotificationTest {

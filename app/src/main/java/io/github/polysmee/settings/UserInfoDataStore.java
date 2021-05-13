@@ -20,25 +20,27 @@ public final class UserInfoDataStore extends PreferenceDataStore {
     public static String PREFERENCE_KEY_MAIN_USER_FRIENDS = "preference_key_main_user_info_friends";
     public static String PREFERENCE_KEY_MAIN_USER_DESCRIPTION = "preference_key_main_user_info_description";
 
-    public UserInfoDataStore(){
+    public UserInfoDataStore() {
 
     }
-    public UserInfoDataStore(String uid){
+
+    public UserInfoDataStore(String uid) {
         System.out.println(uid == null);
         dataBaseMainUser = new DatabaseUser(uid);
     }
+
     @Override
     //It only save one map, this map have the key for the main user name. It will save this value on the database
     public void putString(@NonNull String key, @Nullable String value) {
-        if(value==null){
+        if (value == null) {
             return;
         }
-        if(key.equals(preferenceKeyMainUserName)){
+        if (key.equals(preferenceKeyMainUserName)) {
             dataBaseMainUser.setName(value);
         }
     }
 
-    public void getName(StringValueListener valueListener){
+    public void getName(StringValueListener valueListener) {
         dataBaseMainUser.getName_Once_AndThen(valueListener);
     }
 

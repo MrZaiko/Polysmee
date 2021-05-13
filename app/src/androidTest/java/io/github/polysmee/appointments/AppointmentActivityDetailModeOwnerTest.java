@@ -25,14 +25,6 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
-import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertNotClickable;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled;
-import static com.schibsted.spain.barista.assertion.BaristaHintAssertions.assertHint;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
@@ -42,7 +34,6 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)

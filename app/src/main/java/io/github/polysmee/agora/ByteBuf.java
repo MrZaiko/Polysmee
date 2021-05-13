@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 /**
  * ByteBuffer data structure
- *
  */
 public class ByteBuf {
     private ByteBuffer buffer = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);
@@ -33,7 +32,7 @@ public class ByteBuf {
     }
 
     public ByteBuf put(byte[] v) {
-        put((short)v.length);
+        put((short) v.length);
         buffer.put(v);
         return this;
     }
@@ -46,7 +45,7 @@ public class ByteBuf {
 
 
     public ByteBuf putIntMap(TreeMap<Short, Integer> extra) {
-        put((short)extra.size());
+        put((short) extra.size());
 
         for (Map.Entry<Short, Integer> pair : extra.entrySet()) {
             put(pair.getKey());

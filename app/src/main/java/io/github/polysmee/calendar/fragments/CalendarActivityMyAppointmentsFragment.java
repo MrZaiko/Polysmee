@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
@@ -33,10 +32,12 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.room.RoomActivity;
 
-import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setDayText;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setTodayDateInDailyCalendar;
 
 public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
@@ -250,7 +251,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                                 } else {
                                     appointmentInfoMap.put(appointment.getId(), appointmentInfo);
                                     if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it.
-                                        createAppointmentEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
+                                        createAppointmentEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
                                     } else { //we add the new appointment and update the layout.
                                         scrollLayout.removeAllViewsInLayout();
                                         changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
