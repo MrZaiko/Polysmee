@@ -168,7 +168,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                             voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment(this);
                         }
                         voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(), "Voice_tuner_Choice_dialog");
-
                     });
                     participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
