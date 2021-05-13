@@ -12,7 +12,7 @@ public class AppointmentsUtility {
         //So here we get the names at the beginning of the fragment's life cycle and the listeners should updated them, but not remove the old name
         //While this may cause small problems if a user changes their name during this time,
         //the life cycle is expected to be pretty short and users shouldn't often change their name so it should only very rarely occur.
-        for(String userId : allIds){
+        for (String userId : allIds) {
             User user = new DatabaseUser(userId);
             user.getName_Once_AndThen(users::add);
         }

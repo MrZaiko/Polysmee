@@ -43,9 +43,6 @@ import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.contrib.ActivityResultMatchers.hasResultCode;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaRadioButtonInteractions.clickRadioButtonItem;
@@ -53,10 +50,8 @@ import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaSeekBarInteractions.setProgressTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
@@ -163,7 +158,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             bitmapMatcher(bigYoshiBitmap);
         }
     }
@@ -184,7 +179,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             scrollTo(R.id.pictureEditBinary);
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditBinary);
             bitmapMatcher(applyColorFilter(Filters.binaryFilter()));
@@ -208,7 +203,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             clickOn(R.id.pictureEditColorPicker);
             sleep(1, TimeUnit.SECONDS);
             //clickOn("Choose");
@@ -241,7 +236,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             setProgressTo(R.id.pictureEditStrokeWidthBar, 0);
             strokeWidthMatcher(0);
             setProgressTo(R.id.pictureEditStrokeWidthBar, 5);
@@ -260,7 +255,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
             clickOn(R.id.pictureEditResetButton);
             strokeWidthMatcher(0);
@@ -285,7 +280,6 @@ public class PictureEditActivityTest {
         Thread.sleep(4000);
         scenario.close();
     }
-
 
 
 }

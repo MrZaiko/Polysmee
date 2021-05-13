@@ -17,7 +17,7 @@ public interface StringSetValueListener extends ValueEventListener {
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
         HashMap<String, Object> retrieved = (HashMap<String, Object>) snapshot.getValue();
-        if(retrieved != null)
+        if (retrieved != null)
             onDone(retrieved.keySet());
         else
             onDone(new HashSet<>());

@@ -30,17 +30,14 @@ import java.util.Set;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
-import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
-import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
-import io.github.polysmee.database.databaselisteners.BooleanChildListener;
-import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 
@@ -73,7 +70,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.rootView = (ViewGroup)inflater.inflate(R.layout.fragment_activity_room_participant, container, false);
+        this.rootView = (ViewGroup) inflater.inflate(R.layout.fragment_activity_room_participant, container, false);
 
         String appointmentId = getAppointmentId();
         databaseAppointment = new DatabaseAppointment(appointmentId);
@@ -86,7 +83,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if (getActivity().getSupportFragmentManager().getFragments().size() > 1)
             videoFragment = (RoomActivityVideoFragment) getActivity().getSupportFragmentManager().getFragments().get(1);
 
-        if(call != null) {
+        if (call != null) {
             call.setCommand(this::setTalkingUser);
         }
 
@@ -94,17 +91,17 @@ public class RoomActivityParticipantsFragment extends Fragment {
     }
 
 
-    public RoomActivityParticipantsFragment(){
+    public RoomActivityParticipantsFragment() {
         // Required empty public constructor
     }
 
-    public RoomActivityParticipantsFragment(Call call){
+    public RoomActivityParticipantsFragment(Call call) {
         this.call = call;
     }
 
     @Override
     public void onDestroy() {
-        if(call != null){
+        if (call != null) {
             call.destroy();
         }
         databaseAppointment.removeInCallListener(listener);
@@ -114,10 +111,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
+        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
         setAudioEffect(preference);
     }
-
 
 
     /*
@@ -135,13 +131,13 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 User user = new DatabaseUser(id);
 
                 appointment.getTimeCodeOnceAndThen(user, o -> {
-                    if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
+                    if (System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
                         appointment.removeOfCall(user);
                     }
                 });
 
                 ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
-                participantsViews.put(id,participantsLayout);
+                participantsViews.put(id, participantsLayout);
                 participantsLayout.setBackgroundColor(Color.LTGRAY);
                 participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
 
@@ -175,15 +171,15 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     //set the participants layout for the user using the app
                     ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
                     audioTune.setVisibility(View.VISIBLE);
-                    audioTune.setOnClickListener(v ->{
+                    audioTune.setOnClickListener(v -> {
                         Intent intent = new Intent(getContext(), VoiceTunerActivity.class);
                         startActivity(intent);
                     });
                     participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
 
-                    callButton.setOnClickListener(v ->  {
-                        if(isInCall) {
+                    callButton.setOnClickListener(v -> {
+                        if (isInCall) {
                             leaveChannel();
                         } else {
                             joinChannel();
@@ -194,20 +190,20 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     videoButton.setOnClickListener(this::shareVideoBehavior);
                 } else {
                     ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
-                    speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
+                    speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id), id));
                     user.getNameAndThen(participantName::setText);
-                    MainUser.getMainUser().getFriends_Once_And_Then((friendsIds)->{
-                        if(friendsIds.contains(id)){
+                    MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) -> {
+                        if (friendsIds.contains(id)) {
                             friendshipButton.setImageResource(R.drawable.baseline_remove);
-                        }
-                        else{
+                        } else {
                             friendshipButton.setImageResource(R.drawable.baseline_add);
                         }
                     });
                     friendshipButton.setVisibility(View.VISIBLE);
-                    friendshipButton.setOnClickListener((v)->{friendshipButtonBehavior(v,id);});
+                    friendshipButton.setOnClickListener((v) -> {
+                        friendshipButtonBehavior(v, id);
+                    });
                 }
-
 
 
                 layout.addView(participantsLayout);
@@ -220,7 +216,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     }
 
-    private void downloadPicture(String pictureId, CircleImageView profilePicture){
+    private void downloadPicture(String pictureId, CircleImageView profilePicture) {
         if (pictureId != null && !pictureId.equals("")) {
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
@@ -231,68 +227,66 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private void visitProfile(String userId, boolean isOwner) {
         Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
-        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, isOwner  ? ProfileActivity.PROFILE_OWNER_MODE : ProfileActivity.PROFILE_VISITING_MODE);
+        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, isOwner ? ProfileActivity.PROFILE_OWNER_MODE : ProfileActivity.PROFILE_VISITING_MODE);
         profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
-        startActivityForResult(profileIntent,ProfileActivity.VISIT_MODE_REQUEST_CODE);
+        startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
     }
 
     /**
      * regenerates the participant views in the room
      */
     private void refreshViews() {
-            LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
-            layout.removeAllViews();
-            String userId = MainUser.getMainUser().getId();
-            //add current user for it to appear first
-            layout.addView(participantsViews.get(userId));
-            layout.addView(new TextView(rootView.getContext()));
+        LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
+        layout.removeAllViews();
+        String userId = MainUser.getMainUser().getId();
+        //add current user for it to appear first
+        layout.addView(participantsViews.get(userId));
+        layout.addView(new TextView(rootView.getContext()));
 
-            Set<String> nowInCall = new HashSet<String>(inCall);
-            Set<String> notInCall = new HashSet<String>();
+        Set<String> nowInCall = new HashSet<String>(inCall);
+        Set<String> notInCall = new HashSet<String>();
 
-            //make the users that are connected to the call appear on the top of the screen
-            for(String id : participantsViews.keySet()) {
-                if(!id.equals(userId)) {
-                    if(nowInCall.contains(id)) {
-                        layout.addView(participantsViews.get(id));
-                        //Add a blank textView to add space between participant entries
-                        layout.addView(new TextView(rootView.getContext()));
-                    }
-                    else {
-                        notInCall.add(id);
-                    }
+        //make the users that are connected to the call appear on the top of the screen
+        for (String id : participantsViews.keySet()) {
+            if (!id.equals(userId)) {
+                if (nowInCall.contains(id)) {
+                    layout.addView(participantsViews.get(id));
+                    //Add a blank textView to add space between participant entries
+                    layout.addView(new TextView(rootView.getContext()));
+                } else {
+                    notInCall.add(id);
                 }
-
             }
 
-            for(String id : notInCall) {
-
-                layout.addView(participantsViews.get(id));
-                //Add a blank textView to add space between participant entries
-                layout.addView(new TextView(rootView.getContext()));
-            }
         }
 
+        for (String id : notInCall) {
 
-    private void friendshipButtonBehavior(View friendshipButton, String userId){
-        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds)->{
-            if(friendsIds.contains(userId)){
-                ((ImageView)friendshipButton).setImageResource(R.drawable.baseline_add);
+            layout.addView(participantsViews.get(id));
+            //Add a blank textView to add space between participant entries
+            layout.addView(new TextView(rootView.getContext()));
+        }
+    }
+
+
+    private void friendshipButtonBehavior(View friendshipButton, String userId) {
+        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) -> {
+            if (friendsIds.contains(userId)) {
+                ((ImageView) friendshipButton).setImageResource(R.drawable.baseline_add);
                 MainUser.getMainUser().removeFriend(new DatabaseUser(userId));
-            }
-            else{
-                ((ImageView)friendshipButton).setImageResource(R.drawable.baseline_remove);
+            } else {
+                ((ImageView) friendshipButton).setImageResource(R.drawable.baseline_remove);
                 MainUser.getMainUser().addFriend(new DatabaseUser(userId));
             }
         });
     }
 
-    private void shareVideoBehavior(View cameraButton){
-        if(call.isVideoEnabled()){
+    private void shareVideoBehavior(View cameraButton) {
+        if (call.isVideoEnabled()) {
             //disable button
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video_off);
             cameraButton.setTag(R.drawable.baseline_video_off);
-        }else{
+        } else {
             ((ImageView) cameraButton).setImageResource(R.drawable.baseline_video);
             cameraButton.setTag(R.drawable.baseline_video);
         }
@@ -301,54 +295,55 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     private void joinChannel() {
 
-        if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
+        if (!checkPermission(Manifest.permission.RECORD_AUDIO)) {
             requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
             return;
         }
 
-        if(!checkPermission(Manifest.permission.BLUETOOTH)) {
+        if (!checkPermission(Manifest.permission.BLUETOOTH)) {
             requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
             return;
         }
 
 
-        if(!checkPermission(Manifest.permission.CAMERA)){
+        if (!checkPermission(Manifest.permission.CAMERA)) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
         }
 
-        if(call == null){
+        if (call == null) {
             call = new Call(getAppointmentId(), getContext());
             call.setCommand(this::setTalkingUser);
         }
         call.joinChannel();
-        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0);
+        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
         setAudioEffect(preference);
     }
 
 
     private void leaveChannel() {
-        if(call != null) {
+        if (call != null) {
             call.leaveChannel();
         }
 
-        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune),0).apply();
+        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0).apply();
     }
 
     /**
      * Mutes current user in the call if he is not muted and unmutes him otherwise
      */
     private void muteUser() {
-        if(call != null) {
+        if (call != null) {
             call.mute(!isMuted);
         }
     }
 
     /**
      * Sets the audio effect to the effect whose index is given
+     *
      * @param effectIndex
      */
     private void setAudioEffect(int effectIndex) {
-        if(call != null) {
+        if (call != null) {
             call.setVoiceEffect(effectIndex);
         }
 
@@ -356,8 +351,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * Make the user whose id is given appear as online (offline) in the room frontend if online is set to true (false)
+     *
      * @param online decides how the user will appear in the room frontend
-     * @param id the user's id
+     * @param id     the user's id
      */
     public void setUserOnline(boolean online, @NonNull String id) {
 
@@ -365,30 +361,29 @@ public class RoomActivityParticipantsFragment extends Fragment {
         View muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
         View videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
         View speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
-        if(online) {
+        if (online) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
             videoButton.setVisibility(View.VISIBLE);
-            if(id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(MainUser.getMainUser().getId())) {
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
                 System.out.println("child added");
 
-            } else{
+            } else {
                 inCall.add(id);
-                if(isInCall) {
+                if (isInCall) {
                     speakerButton.setVisibility(View.VISIBLE);
                 }
 
 
             }
-        }
-        else {
+        } else {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
             muteButton.setVisibility(View.GONE);
             videoButton.setVisibility(View.GONE);
-            if(id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(MainUser.getMainUser().getId())) {
                 isInCall = false;
                 locallyMuted.clear();
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
@@ -401,8 +396,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         }
 
-        if(id.equals(MainUser.getMainUser().getId())) {
-            for(String userId : inCall) {
+        if (id.equals(MainUser.getMainUser().getId())) {
+            for (String userId : inCall) {
                 displaySpeakerButton(online, userId);
             }
         }
@@ -411,23 +406,24 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * mute (unmute) the user whose id is given if muted is set to true (false)
+     *
      * @param muted decides to mute or unmuste the user
-     * @param id the user's id
+     * @param id    the user's id
      */
     public void setMutedUser(boolean muted, @NonNull String id) {
         ConstraintLayout participantsLayout = participantsViews.get(id);
         ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
-        if(muted) {
+        if (muted) {
             muteButton.setImageResource(R.drawable.baseline_mic_off);
-            if(id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(MainUser.getMainUser().getId())) {
                 isMuted = true;
             }
         } else {
-            if(!locallyMuted.contains(id)) {
+            if (!locallyMuted.contains(id)) {
                 muteButton.setImageResource(R.drawable.baseline_mic);
             }
 
-            if(id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(MainUser.getMainUser().getId())) {
                 isMuted = false;
             }
         }
@@ -435,29 +431,30 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * Mutes (unmutes) the given user locally if muted is set to true (false)
+     *
      * @param muted
      * @param id
      */
     private void muteUserLocally(boolean muted, @NonNull String id) {
-            ConstraintLayout participantsLayout = participantsViews.get(id);
-            ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
-            call.muteUserLocally(muted, id);
-            if(muted) {
-                locallyMuted.add(id);
-                speakerButton.setImageResource(R.drawable.outline_volume_off);
-            }
-            else {
-                locallyMuted.remove(id);
-                speakerButton.setImageResource(R.drawable.outline_volume_up);
-            }
+        ConstraintLayout participantsLayout = participantsViews.get(id);
+        ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
+        call.muteUserLocally(muted, id);
+        if (muted) {
+            locallyMuted.add(id);
+            speakerButton.setImageResource(R.drawable.outline_volume_off);
+        } else {
+            locallyMuted.remove(id);
+            speakerButton.setImageResource(R.drawable.outline_volume_up);
+        }
 
 
     }
 
     /**
      * Sets the UI so that the given user appears as talking if talking is set to true, is set to normal in call background otherwise
+     *
      * @param talking if the user is talking or not
-     * @param id the id of the user
+     * @param id      the id of the user
      */
     public void setTalkingUser(boolean talking, @NonNull String id) {
         int uid = call.getUid(id);
@@ -466,13 +463,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
 
         ConstraintLayout participantsLayout = participantsViews.get(id);
-        if(talking) {
+        if (talking) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_talking_element);
-        }
-        else if(inCall.contains(id)){
+        } else if (inCall.contains(id)) {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
-        }
-        else {
+        } else {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
         }
 
@@ -480,6 +475,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
     /**
      * Displays the speaker button of the given user in the call if on is set to true and makes it disappear otherwise
+     *
      * @param on
      * @param id
      */
@@ -515,7 +511,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
 
     /**
-     *
      * @return the id of the appointment
      */
     public String getAppointmentId() {

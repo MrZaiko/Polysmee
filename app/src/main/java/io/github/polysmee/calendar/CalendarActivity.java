@@ -5,11 +5,9 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -31,7 +29,7 @@ import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-public class CalendarActivity extends AppCompatActivity{
+public class CalendarActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
 
@@ -41,9 +39,9 @@ public class CalendarActivity extends AppCompatActivity{
         setContentView(R.layout.activity_calendar);
 
         boolean isDarkMode = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean(getApplicationContext().getResources().getString(R.string.preference_key_is_dark_mode), false);
-        if (isDarkMode){
+        if (isDarkMode) {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-        }else{
+        } else {
             AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         }
 
@@ -81,12 +79,12 @@ public class CalendarActivity extends AppCompatActivity{
     }
 
     public boolean checkCalendarPerms() {
-        if(!checkPermission(Manifest.permission.WRITE_CALENDAR)) {
+        if (!checkPermission(Manifest.permission.WRITE_CALENDAR)) {
             requestPermissionLauncher.launch(Manifest.permission.WRITE_CALENDAR);
             return false;
         }
 
-        if(!checkPermission(Manifest.permission.READ_CALENDAR)) {
+        if (!checkPermission(Manifest.permission.READ_CALENDAR)) {
             requestPermissionLauncher.launch(Manifest.permission.READ_CALENDAR);
             return false;
         }
@@ -116,10 +114,9 @@ public class CalendarActivity extends AppCompatActivity{
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem item = menu.findItem(R.id.calendarMenuNotifications);
         MainUser.getMainUser().getInvitesAndThen(s -> {
-            if(!s.isEmpty()) {
+            if (!s.isEmpty()) {
                 item.setIcon(R.drawable.baseline_notification_active);
-            }
-            else {
+            } else {
                 item.setIcon(R.drawable.baseline_notifications);
             }
         });
@@ -133,7 +130,7 @@ public class CalendarActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             case R.id.calendarMenuProfile:
                 Intent profileIntent = new Intent(this, ProfileActivity.class);
-                profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_OWNER_MODE);
+                profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_OWNER_MODE);
                 startActivity(profileIntent);
                 return true;
             case R.id.calendarMenuSettings:

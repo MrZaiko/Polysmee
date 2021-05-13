@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -96,11 +95,11 @@ public class InvitesManagementActivity extends AppCompatActivity {
      * Accepts or refuses the invitations depending on the button pressed
      *
      * @param appointment the appointment to be affected by the action
-     * @param accept true if the user pressed the accept button, false for the refuse button
+     * @param accept      true if the user pressed the accept button, false for the refuse button
      */
     private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
         DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
-        if(accept) {
+        if (accept) {
             user.addAppointment(apt);
             apt.addParticipant(user);
         }
@@ -205,7 +204,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
                                 } else {
                                     appointmentInfoMap.put(appointment.getId(), appointmentInfo);
                                     if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it
-                                        makeInviteEntry(appointmentInfo,appointmentIdsToView.get(appointmentInfo.getId()));
+                                        makeInviteEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
                                     } else { //we add the new appointment and update the layout
                                         scrollLayout.removeAllViewsInLayout();
                                         changeCurrentInvitesLayout(new HashSet<>(appointmentInfoMap.values()));

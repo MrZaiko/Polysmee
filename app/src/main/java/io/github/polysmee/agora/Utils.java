@@ -1,8 +1,5 @@
 package io.github.polysmee.agora;
 
-import javax.crypto.Mac;
-import javax.crypto.spec.SecretKeySpec;
-
 import org.apache.commons.codec.binary.Base64;
 
 import java.security.InvalidKeyException;
@@ -10,6 +7,9 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Date;
 import java.util.zip.CRC32;
+
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * Util class for generating tokens
@@ -44,11 +44,11 @@ public class Utils {
     public static int crc32(byte[] bytes) {
         CRC32 checksum = new CRC32();
         checksum.update(bytes);
-        return (int)checksum.getValue();
+        return (int) checksum.getValue();
     }
 
     public static int getTimestamp() {
-        return (int)((new Date().getTime())/1000);
+        return (int) ((new Date().getTime()) / 1000);
     }
 
     public static int randomInt() {

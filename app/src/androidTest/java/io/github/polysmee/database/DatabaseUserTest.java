@@ -14,7 +14,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -27,7 +26,9 @@ import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class DatabaseUserTest {
@@ -88,13 +89,14 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUser.getMainUser().getNameAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             MainUser.getMainUser().removeNameListener(sv);
             assertEquals(gotName.get(), username);
         } finally {
             lock.unlock();
-            MainUser.getMainUser().getName_Once_AndThen((e) -> {});
+            MainUser.getMainUser().getName_Once_AndThen((e) -> {
+            });
         }
     }
 
@@ -126,13 +128,14 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUser.getMainUser().getAppointmentsAndThen(ssv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             MainUser.getMainUser().removeAppointmentsListener(ssv);
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            MainUser.getMainUser().getAppointments_Once_AndThen((e) -> {});
+            MainUser.getMainUser().getAppointments_Once_AndThen((e) -> {
+            });
             Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
@@ -157,13 +160,14 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUser.getMainUser().getInvitesAndThen(ssv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             MainUser.getMainUser().removeInvitesListener(ssv);
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            MainUser.getMainUser().getInvites_Once_AndThen((e) -> {});
+            MainUser.getMainUser().getInvites_Once_AndThen((e) -> {
+            });
             Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
@@ -188,13 +192,14 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUser.getMainUser().getFriendsAndThen(ssv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             MainUser.getMainUser().removeFriendsListener(ssv);
             assertTrue(oneElem.get());
         } finally {
             lock.unlock();
-            MainUser.getMainUser().getFriends_Once_And_Then((e) -> {});
+            MainUser.getMainUser().getFriends_Once_And_Then((e) -> {
+            });
         }
     }
 
@@ -214,13 +219,14 @@ public class DatabaseUserTest {
         lock.lock();
         try {
             MainUser.getMainUser().getProfilePictureAndThen(sv);
-            while(!bool.get())
+            while (!bool.get())
                 cv.await();
             MainUser.getMainUser().removeProfilePictureListener(sv);
             assertEquals(gotName.get(), username);
         } finally {
             lock.unlock();
-            MainUser.getMainUser().getProfilePicture_Once_And_Then((e) -> {});
+            MainUser.getMainUser().getProfilePicture_Once_And_Then((e) -> {
+            });
         }
     }
 

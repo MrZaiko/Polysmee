@@ -1,16 +1,12 @@
 package io.github.polysmee.database;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
-
-import org.junit.BeforeClass;
+import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import java.util.concurrent.atomic.AtomicReference;
-
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class UploadServiceTest {
@@ -19,39 +15,45 @@ public class UploadServiceTest {
         UploadServiceFactory.setTest(true);
         UploadService us = UploadServiceFactory.getAdaptedInstance();
         us.uploadImage(
-                new byte[]{2,3,4},
+                new byte[]{2, 3, 4},
                 "nums",
                 (name) -> assertTrue(name.contains("nums")),
-                (exc) -> {}
+                (exc) -> {
+                }
         );
         us.downloadImage(
                 "nums",
-                (gotten) -> assertArrayEquals(gotten, new byte[]{2,3,4}),
-                (exc) -> {}
+                (gotten) -> assertArrayEquals(gotten, new byte[]{2, 3, 4}),
+                (exc) -> {
+                }
         );
         us.deleteImage(
                 "nums",
                 (name) -> assertEquals(name, "nums"),
-                (exc) -> {}
+                (exc) -> {
+                }
         );
 
         UploadServiceFactory.setTest(false);
         us = UploadServiceFactory.getAdaptedInstance();
         us.uploadImage(
-            new byte[]{2,3,4},
-            "nums",
-            (name) -> assertTrue(name.contains("nums")),
-            (exc) -> {}
+                new byte[]{2, 3, 4},
+                "nums",
+                (name) -> assertTrue(name.contains("nums")),
+                (exc) -> {
+                }
         );
         us.downloadImage(
-            "nums",
-            (gotten) -> assertArrayEquals(gotten, new byte[]{2,3,4}),
-            (exc) -> {}
+                "nums",
+                (gotten) -> assertArrayEquals(gotten, new byte[]{2, 3, 4}),
+                (exc) -> {
+                }
         );
         us.deleteImage(
-            "nums",
-            (name) -> assertEquals(name, "nums"),
-            (exc) -> {}
+                "nums",
+                (name) -> assertEquals(name, "nums"),
+                (exc) -> {
+                }
         );
     }
 }

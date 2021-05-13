@@ -17,7 +17,6 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 
 @RunWith(AndroidJUnit4.class)
@@ -43,7 +42,7 @@ public class SettingsActivityTest {
     }
 
     @Test
-    public void appointmentsReminderSettingFragmentsIsLaunchWhenClickOnMain(){
+    public void appointmentsReminderSettingFragmentsIsLaunchWhenClickOnMain() {
         SettingsMainFragmentTest.checkFragmentIsDisplayed();
         clickOn(R.string.title_settings_appointments_reminder);
         SettingsAppointmentsReminderFragmentTest.checkFragmentIsDisplayed();

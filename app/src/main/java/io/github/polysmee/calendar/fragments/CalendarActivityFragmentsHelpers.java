@@ -18,9 +18,10 @@ import io.github.polysmee.calendar.DailyCalendar;
 
 public class CalendarActivityFragmentsHelpers {
 
-    private CalendarActivityFragmentsHelpers(){
+    private CalendarActivityFragmentsHelpers() {
 
     }
+
     /**
      * Sets the text view on top of the chosen calendar fragment to the current day's date
      */
@@ -28,12 +29,11 @@ public class CalendarActivityFragmentsHelpers {
         ConstraintLayout dateLayout;
         TextView day;
         TextView month;
-        if(!publicApp){
+        if (!publicApp) {
             dateLayout = rootView.findViewById(R.id.todayDateMyAppointmentsCalendarActivity);
             day = dateLayout.findViewById(R.id.activityCalendarDayMyAppointments);
             month = dateLayout.findViewById(R.id.activityCalendarMonthMyAppointments);
-        }
-        else{
+        } else {
             dateLayout = rootView.findViewById(R.id.todayDatePublicAppointmentsCalendarActivity);
             day = dateLayout.findViewById(R.id.activityCalendarDayPublicAppointments);
             month = dateLayout.findViewById(R.id.activityCalendarMonthPublicAppointments);
@@ -50,6 +50,7 @@ public class CalendarActivityFragmentsHelpers {
 
     /**
      * Sets the date to the day when the user launches the app at startup
+     *
      * @param publicApp boolean that decides which value is set; the one for the public calendar,
      *                  or the one for the personal one
      */
@@ -63,9 +64,9 @@ public class CalendarActivityFragmentsHelpers {
      * It will launch when clicking on the appointment's calendar entry when the appointment
      * hasn't begun yet.
      *
-     * @param id the appointment of interest' id
+     * @param id               the appointment of interest' id
      * @param calendarFragment the calendar fragment this method will be launched from
-     * @param rootView the fragment's rootview; needed to get the context to launch the intent.
+     * @param rootView         the fragment's rootview; needed to get the context to launch the intent.
      */
     public static void goToAppointmentDetails(String id, Fragment calendarFragment, ViewGroup rootView) {
         Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
@@ -75,5 +76,4 @@ public class CalendarActivityFragmentsHelpers {
     }
 
 
-
-    }
+}

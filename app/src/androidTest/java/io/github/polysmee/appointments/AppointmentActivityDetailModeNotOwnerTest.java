@@ -23,14 +23,6 @@ import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertNotClickable;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled;
-import static com.schibsted.spain.barista.assertion.BaristaHintAssertions.assertHint;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -39,9 +31,9 @@ import static java.util.concurrent.TimeUnit.SECONDS;
 @RunWith(JUnit4.class)
 public class AppointmentActivityDetailModeNotOwnerTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "pzerotujrtpoiu";
+    private static final String id2 = "pzerotujrtpoiu";
     private static final String username2 = "Sami L'imposteur";
-    private static String id3 = "&éhmhsiogsfdsdgf";
+    private static final String id3 = "&éhmhsiogsfdsdgf";
     private static final String username3 = "Léo La fouine";
 
     private static final String appointmentId = "opkdsfmcvx";
@@ -85,6 +77,7 @@ public class AppointmentActivityDetailModeNotOwnerTest {
     public static void clean() {
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
+
     @Test
     public void dummyTest() {
         Assert.assertEquals(0, 0);

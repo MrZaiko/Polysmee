@@ -47,7 +47,7 @@ public class LoginCheckActivityTest {
         AuthenticationFactory.getAdaptedInstance().signOut();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginCheckActivity.class);
         Intents.init();
-        try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)) {
             intending(hasComponent(LoginActivity.class.getName()));
         }
         Intents.release();
@@ -58,7 +58,7 @@ public class LoginCheckActivityTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
         Intents.init();
-        try(ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)) {
             intending(hasComponent(CalendarActivity.class.getName()));
         }
         Intents.release();

@@ -21,9 +21,8 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
-import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
@@ -32,16 +31,12 @@ import static androidx.test.espresso.action.ViewActions.typeText;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasAction;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotContains;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
-import static com.schibsted.spain.barista.intents.BaristaIntents.mockAndroidCamera;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
@@ -50,24 +45,23 @@ import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractio
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.hamcrest.Matchers.allOf;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityMessagesFragmentTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "azeeazsqdsq";
+    private static final String id2 = "azeeazsqdsq";
     private static final String username2 = "Sami L'imposteur";
 
-    private static String appointmentId = "lkdfjswxcuyt";
-    private static String firstMessageId = "jkxwcoihjcwxp";
+    private static final String appointmentId = "lkdfjswxcuyt";
+    private static final String firstMessageId = "jkxwcoihjcwxp";
     private static final String firstMessage = "I'm a message";
 
-    private static String secondMessageId = "poisdoufoiq";
+    private static final String secondMessageId = "poisdoufoiq";
     private static final String secondMessage = "I'm a better message";
 
-    private static String thirdMessageId = "sdflskdfmlsdf";
-    private static String pictureId = "bigYOSHI";
+    private static final String thirdMessageId = "sdflskdfmlsdf";
+    private static final String pictureId = "bigYOSHI";
 
 
     @BeforeClass
@@ -76,7 +70,9 @@ public class RoomActivityMessagesFragmentTest {
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         UploadServiceFactory.setTest(true);
-        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s ->{}, s->{});
+        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s -> {
+        }, s -> {
+        });
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
@@ -97,7 +93,6 @@ public class RoomActivityMessagesFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
     }
-
 
 
     @Test

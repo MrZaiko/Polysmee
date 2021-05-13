@@ -1,10 +1,10 @@
 package io.github.polysmee.roomActivityTests;
-import android.content.Intent;
+
 import android.os.Bundle;
+
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.intent.Intents;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -26,39 +26,28 @@ import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
-import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
-import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaSpinnerInteractions.clickSpinnerItem;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-
-import static org.hamcrest.Matchers.allOf;
-import static org.hamcrest.Matchers.not;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "poiqsdhfgreidfgknbcbv";
+    private static final String id2 = "poiqsdhfgreidfgknbcbv";
     private static final String username2 = "Sami L'imposteur";
     private static final String appointmentTitle = "It's a title";
-    private static String appointmentId = "nbcwxuhcjgvwxcuftyqf";
+    private static final String appointmentId = "nbcwxuhcjgvwxcuftyqf";
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
-    private static String profilePictureId = "bigYOSHI";
+    private static final String profilePictureId = "bigYOSHI";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -69,7 +58,9 @@ public class RoomActivityParticipantsFragmentTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));
-        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s ->{}, s->{});
+        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s -> {
+        }, s -> {
+        });
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(profilePictureId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
@@ -126,7 +117,7 @@ public class RoomActivityParticipantsFragmentTest {
         appointment.addInCallListener(new BooleanChildListener() {
             @Override
             public void childChanged(String key, boolean value) {
-                if(value) {
+                if (value) {
                     usersMuted.add(key);
                 }
             }
@@ -139,10 +130,11 @@ public class RoomActivityParticipantsFragmentTest {
         sleep(1, SECONDS);
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         sleep(1, SECONDS);
-        assert(!usersMuted.isEmpty());
-        assertEquals(MainUser.getMainUser().getId(),usersMuted.get(0));
+        assert (!usersMuted.isEmpty());
+        assertEquals(MainUser.getMainUser().getId(), usersMuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
+
     @Test
     public void unMuteWorks() {
         List usersUnmuted = new ArrayList<String>();
@@ -150,7 +142,7 @@ public class RoomActivityParticipantsFragmentTest {
         appointment.addInCallListener(new BooleanChildListener() {
             @Override
             public void childChanged(String key, boolean value) {
-                if(!value) {
+                if (!value) {
                     usersUnmuted.add(key);
                 }
             }
@@ -164,9 +156,9 @@ public class RoomActivityParticipantsFragmentTest {
         clickOn(R.id.roomActivityParticipantElementMuteButton);
         sleep(1, SECONDS);
         clickOn(R.id.roomActivityParticipantElementMuteButton);
-        sleep(1,SECONDS);
-        assert(!usersUnmuted.isEmpty());
-        assertEquals(MainUser.getMainUser().getId(),usersUnmuted.get(0));
+        sleep(1, SECONDS);
+        assert (!usersUnmuted.isEmpty());
+        assertEquals(MainUser.getMainUser().getId(), usersUnmuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
 
@@ -180,8 +172,8 @@ public class RoomActivityParticipantsFragmentTest {
         clickSpinnerItem(R.id.voiceTunerSpinner, 2);
         pressBack();
         int currentVoicePosition = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()).getInt(
-                ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune) ,0);
-        Assert.assertEquals(currentVoicePosition, 2);
+                ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
+        assertEquals(currentVoicePosition, 2);
     }
 
 

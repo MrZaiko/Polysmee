@@ -5,7 +5,7 @@ import androidx.annotation.NonNull;
 /**
  * Class representing the message object
  */
-public class Message  {
+public class Message {
 
     private final String sender;
     private String content;
@@ -13,11 +13,9 @@ public class Message  {
     private boolean isAPicture;
 
     /**
-     *
      * @param sender
      * @param content
-     * @param messageTime
-     * Creates a new Message with given time, senderId and content
+     * @param messageTime Creates a new Message with given time, senderId and content
      */
     public Message(@NonNull String sender, @NonNull String content, long messageTime, boolean isAPicture) {
         this.sender = sender;
@@ -38,20 +36,17 @@ public class Message  {
 
 
     /**
-     *
-     * @param newContent
-     * Replaces the content of the message by the one given as argument
+     * @param newContent Replaces the content of the message by the one given as argument
      */
     public void editContent(@NonNull String newContent) {
         this.content = newContent;
     }
 
     /**
-     *
      * @return the uid of the sender
      */
     public String getSender() {
-        assert(sender != null);
+        assert (sender != null);
         return sender;
     }
 
@@ -64,16 +59,14 @@ public class Message  {
     }
 
     /**
-     *
      * @return the content of the message
      */
     public String getContent() {
-        assert(content != null);
+        assert (content != null);
         return content;
     }
 
     /**
-     *
      * @return the send time of the message
      */
     public long getMessageTime() {
@@ -82,14 +75,14 @@ public class Message  {
 
     @Override
     public boolean equals(Object other) {
-        if(!(other instanceof Message) || other == null) {
+        if (!(other instanceof Message) || other == null) {
             return false;
         }
         Message otherMessage = (Message) other;
         return otherMessage.content.equals(content)
-            && otherMessage.messageTime == messageTime
-            && otherMessage.sender.equals(sender)
-            && otherMessage.isAPicture == isAPicture;
+                && otherMessage.messageTime == messageTime
+                && otherMessage.sender.equals(sender)
+                && otherMessage.isAPicture == isAPicture;
 
     }
 

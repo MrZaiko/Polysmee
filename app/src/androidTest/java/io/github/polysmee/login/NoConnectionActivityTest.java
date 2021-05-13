@@ -10,7 +10,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-import static androidx.test.espresso.Espresso.pressBack;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 
@@ -21,7 +20,7 @@ public class NoConnectionActivityTest {
     public void goesBackToLoginAfterNetworkFailure() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), NoConnectionActivity.class);
         Intents.init();
-        try(ActivityScenario<NoConnectionActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<NoConnectionActivity> ignored = ActivityScenario.launch(intent)) {
             clickOn("RETRY");
             assertDisplayed("LOGIN");
         }

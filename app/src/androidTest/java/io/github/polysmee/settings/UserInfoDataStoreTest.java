@@ -3,15 +3,12 @@ package io.github.polysmee.settings;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
 
-
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
-
 
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
-
 
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -20,7 +17,7 @@ import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class UserInfoDataStoreTest {
     private final static String userEmail = "UserInfoDataStoreTest@gmail.com";
@@ -42,14 +39,15 @@ public class UserInfoDataStoreTest {
     }
 
 
-    public static void testNameDatabase(String value) throws Exception{
+    public static void testNameDatabase(String value) throws Exception {
         sleep(1, SECONDS);
-        String name  = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+        String name = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
                 .child(MainUser.getMainUser().getId()).child("name").get()).getValue();
         assertEquals(value, name);
     }
+
     @Test
-    public void putString() throws Exception{
+    public void putString() throws Exception {
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
         String stringToPut = "name change test";
         userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
@@ -67,8 +65,8 @@ public class UserInfoDataStoreTest {
     @Test
     public void getString() {
         UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
-        assertEquals("",userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserName, "test"));
-        assertEquals( "", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserEmail, "test"));
+        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserName, "test"));
+        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserEmail, "test"));
         assertEquals("", userInfoDataStore.getString("jfnsejfnes", "test"));
 
     }
