@@ -109,11 +109,6 @@ public class RoomActivityMessagesFragmentTest {
         scrollTo(firstMessage);
         assertDisplayed(firstMessage);
         assertDisplayed(secondMessage);
-        Intents.init();
-        onView(allOf(withId(R.id.roomActivityMessageElementProfilePicture), isDisplayed())).perform(click());
-        intended(hasExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE));
-        intended(hasExtra(ProfileActivity.PROFILE_ID_USER, id2));
-        Intents.release();
     }
 
     @Test
