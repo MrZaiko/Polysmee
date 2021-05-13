@@ -102,7 +102,7 @@
     <string name="dark_theme_text">Thème sombre</string>
     <string name="roomTabMessagesText">Messages</string>
     <string name="roomTabVideoText">Vidéo</string>
-    <string name="roomTabCallText">Appel</string>
+    <string name="roomTabCallText">Participants</string>
     <string name="roomMessageOptionText">Choissisez une option</string>
     <string name="roomEditMessageText">Modifier le message</string>
     <string name="genericEditText">Modifier</string>
@@ -116,4 +116,6 @@
     <string name="voice_penguin">Penguin</string>
     <string name="voice_high">Voix élevée</string>
     <string name="voice_alien">Alien</string>
+    <string name="genericCourseText">Matière</string>
+    <string name="invitesCourseText">"Matière : "</string>
 </resources>

@@ -3,6 +3,8 @@ package io.github.polysmee.room.fragments;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -26,6 +28,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.agora.video.Call;
@@ -33,6 +36,7 @@ import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
@@ -61,8 +65,8 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
     private BooleanChildListener listener;
-    private Set<String> inCall = new HashSet<String>();
-    private Set<String> locallyMuted = new HashSet<String>();
+    private final Set<String> inCall = new HashSet<String>();
+    private final Set<String> locallyMuted = new HashSet<String>();
 
     private Call call;
 
@@ -122,7 +126,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private void generateParticipantsView() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 
-        participantsViews = new HashMap<String, ConstraintLayout>();
+        participantsViews = new HashMap<>();
 
         appointment.getParticipantsIdAndThen(p -> {
             layout.removeAllViewsInLayout();
@@ -130,12 +134,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
             for (String id : p) {
                 User user = new DatabaseUser(id);
 
-                appointment.getTimeCodeOnceAndThen(user, new LongValueListener() {
-                    @Override
-                    public void onDone(long o) {
-                        if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
-                            appointment.removeOfCall(user);
-                        }
+                appointment.getTimeCodeOnceAndThen(user, o -> {
+                    if(System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
+                        appointment.removeOfCall(user);
                     }
                 });
 
@@ -147,6 +148,9 @@ public class RoomActivityParticipantsFragment extends Fragment {
                 TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
                 View participantsButtonLayout = participantsLayout.findViewById(R.id.roomActivityParticipantElementButtons);
 
+                CircleImageView profilePicture = participantsLayout.findViewById(R.id.roomActivityParticipantElementProfilePicture);
+                user.getProfilePicture_Once_And_Then(pictureId -> downloadPicture(pictureId, profilePicture));
+                profilePicture.setOnClickListener(v -> visitProfile(id, MainUser.getMainUser().getId().equals(id)));
 
                 TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
                 appointment.getOwnerIdAndThen(owner -> {
@@ -181,8 +185,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     callButton.setOnClickListener(v ->  {
                         if(isInCall) {
                             leaveChannel();
-                        }
-                        else {
+                        } else {
                             joinChannel();
                         }
                     });
@@ -203,12 +206,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     });
                     friendshipButton.setVisibility(View.VISIBLE);
                     friendshipButton.setOnClickListener((v)->{friendshipButtonBehavior(v,id);});
-                    participantName.setOnClickListener((view)->{ //if we click on another user's name, we visit their profile
-                        Intent profileIntent = new Intent(getContext(),ProfileActivity.class);
-                        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE,ProfileActivity.PROFILE_VISITING_MODE);
-                        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER,id);
-                        startActivityForResult(profileIntent,ProfileActivity.VISIT_MODE_REQUEST_CODE);
-                    });
                 }
 
 
@@ -221,6 +218,22 @@ public class RoomActivityParticipantsFragment extends Fragment {
             refreshViews();
         });
 
+    }
+
+    private void downloadPicture(String pictureId, CircleImageView profilePicture){
+        if (pictureId != null && !pictureId.equals("")) {
+            UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
+                Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
+            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
+        }
+    }
+
+    private void visitProfile(String userId, boolean isOwner) {
+        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, isOwner  ? ProfileActivity.PROFILE_OWNER_MODE : ProfileActivity.PROFILE_VISITING_MODE);
+        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
+        startActivityForResult(profileIntent,ProfileActivity.VISIT_MODE_REQUEST_CODE);
     }
 
     /**
@@ -517,20 +530,15 @@ public class RoomActivityParticipantsFragment extends Fragment {
         listener = new BooleanChildListener() {
             @Override
             public void childAdded(String key, boolean value) {
-
                 setUserOnline(true, key);
                 setMutedUser(value, key);
                 refreshViews();
-
-
             }
 
             @Override
             public void childRemoved(String key, boolean value) {
                 setUserOnline(false, key);
                 refreshViews();
-
-
             }
 
             @Override
