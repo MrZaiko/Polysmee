@@ -15,7 +15,6 @@ import androidx.core.content.FileProvider;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoActivityResumedException;
-import androidx.test.espresso.action.ViewActions;
 import androidx.test.espresso.intent.matcher.IntentMatchers;
 
 import com.google.android.gms.tasks.Tasks;
@@ -40,28 +39,19 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.contrib.ActivityResultMatchers.hasResultCode;
-import static androidx.test.espresso.intent.Intents.intended;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
-import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
-import static androidx.test.espresso.matcher.ViewMatchers.isRoot;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
-import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickBack;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
-import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaRadioButtonInteractions.clickRadioButtonItem;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSeekBarInteractions.setProgressTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 @RunWith(JUnit4.class)
@@ -74,7 +64,7 @@ public class PictureEditActivityTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         UploadServiceFactory.setTest(true);
@@ -168,7 +158,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             bitmapMatcher(bigYoshiBitmap);
         }
     }
@@ -189,7 +179,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             scrollTo(R.id.pictureEditBinary);
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditBinary);
             bitmapMatcher(applyColorFilter(Filters.binaryFilter()));
@@ -213,7 +203,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             clickOn(R.id.pictureEditColorPicker);
             sleep(1, TimeUnit.SECONDS);
             //clickOn("Choose");
@@ -246,7 +236,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             setProgressTo(R.id.pictureEditStrokeWidthBar, 0);
             strokeWidthMatcher(0);
             setProgressTo(R.id.pictureEditStrokeWidthBar, 5);
@@ -265,7 +255,7 @@ public class PictureEditActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), PictureEditActivity.class);
         intent.putExtra(PictureEditActivity.PICTURE_URI, bigYoshiUri);
 
-        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)){
+        try (ActivityScenario<PictureEditActivity> ignored = ActivityScenario.launch(intent)) {
             clickRadioButtonItem(R.id.pictureEditFilters, R.id.pictureEditSepia);
             clickOn(R.id.pictureEditResetButton);
             strokeWidthMatcher(0);
@@ -290,7 +280,6 @@ public class PictureEditActivityTest {
         Thread.sleep(4000);
         scenario.close();
     }
-
 
 
 }

@@ -46,6 +46,7 @@
         tools:targetApi="m">
         <activity android:name=".profile.ProfileActivity"></activity>
 
+        <service android:name=".znotification.AppointmentReminderNotificationService"/>
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"

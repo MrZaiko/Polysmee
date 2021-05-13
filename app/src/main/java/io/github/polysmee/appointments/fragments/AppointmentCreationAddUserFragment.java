@@ -22,23 +22,22 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.appointments.AppointmentsUtility;
+import io.github.polysmee.appointments.DataPasser;
+import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.appointments.DataPasser;
 import io.github.polysmee.login.MainUser;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove participants to an appointment
- *
+ * <p>
  * ADD_MODE     ==> ADD participant
  * DETAIL_MODE  ==> display participants and if the current user is the owner allows them to remove
- *                  them and add more
+ * them and add more
  */
 public class AppointmentCreationAddUserFragment extends Fragment {
     private View rootView;
@@ -95,9 +94,9 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         builder = new AlertDialog.Builder(getActivity());
         btnFriendInvite = rootView.findViewById(R.id.appointmentSettingsBtnAddFriend);
         friendUsernames = new ArrayList<>();
-        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) ->{
-            for(String id: friendsIds){
-                (new DatabaseUser(id)).getName_Once_AndThen((name)->{
+        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) -> {
+            for (String id : friendsIds) {
+                (new DatabaseUser(id)).getName_Once_AndThen((name) -> {
                     friendUsernames.add(name);
                 });
             }
@@ -107,7 +106,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     /**
      * Setup the fragment for a particular mode
      *
-     * @param mode DETAIL_MODE or ADD_MODE (see AppointmentActivity)
+     * @param mode          DETAIL_MODE or ADD_MODE (see AppointmentActivity)
      * @param appointmentID used in DETAIL_MODE, the appointment to display participant from
      */
     public void launchSetup(int mode, String appointmentID) {
@@ -148,65 +147,62 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.removeAllViews();
     }
 
-    private void inviteFriendButtonBehavior(View view){
+    private void inviteFriendButtonBehavior(View view) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        if(friendUsernames.size() == 0){
-            createErrorMessage(builder,"Add some friends first :( ");
+        if (friendUsernames.size() == 0) {
+            createErrorMessage(builder, "Add some friends first :( ");
             return;
         }
         List<Integer> friendsToInvite = new ArrayList<>();
         boolean[] alreadyInvitedFriends = new boolean[friendUsernames.size()];
-        for(int i = 0; i < alreadyInvitedFriends.length;++i){
+        for (int i = 0; i < alreadyInvitedFriends.length; ++i) {
             alreadyInvitedFriends[i] = invites.contains(friendUsernames.get(i));
         }
         builder.setTitle("Select which friend(s) to invite");
-        builder.setMultiChoiceItems(friendUsernames.toArray(new CharSequence[0]),alreadyInvitedFriends,(dialog, which, isChecked) -> {
-            if(isChecked){
+        builder.setMultiChoiceItems(friendUsernames.toArray(new CharSequence[0]), alreadyInvitedFriends, (dialog, which, isChecked) -> {
+            if (isChecked) {
                 friendsToInvite.add(which);
-            }
-            else if(friendsToInvite.contains(which)){
+            } else if (friendsToInvite.contains(which)) {
                 friendsToInvite.remove(which);
             }
         });
-        builder.setPositiveButton(getString(R.string.genericOkText),(dialog, which) -> {
-           for(int index: friendsToInvite){
-               String s = friendUsernames.get(index);
-               if(!invites.contains(s)){
-                   addNewInvite(s);
-               }
-           }
+        builder.setPositiveButton(getString(R.string.genericOkText), (dialog, which) -> {
+            for (int index : friendsToInvite) {
+                String s = friendUsernames.get(index);
+                if (!invites.contains(s)) {
+                    addNewInvite(s);
+                }
+            }
         });
-        builder.setNegativeButton(getString(R.string.genericCancelText),null);
+        builder.setNegativeButton(getString(R.string.genericCancelText), null);
         builder.create().show();
     }
 
     /**
      * ADD_MODE     =>  Add the user with the specified name to the participants list
      * DETAIL_MODE  =>  Add the user with the specified name to the participants list and remove
-     *                  it from the removed participant list
+     * it from the removed participant list
      */
     private void inviteButtonBehavior(View view) {
         String s = searchInvite.getText().toString();
-        if(!users.contains(s)) {
-            createErrorMessage(builder,getString(R.string.genericUserNotFoundText));
-        }
-
-        else if(!invites.contains(s)) {
+        if (!users.contains(s)) {
+            createErrorMessage(builder, getString(R.string.genericUserNotFoundText));
+        } else if (!invites.contains(s)) {
             addNewInvite(s);
-        }
-        else {
+        } else {
             searchInvite.setText("");
         }
     }
 
     /**
      * Used by inviteButtonBehavior() to display the user added with a remove button
-     *      ADD_MODE    =>  REMOVE_BUTTON removes the user form the participants list
-     *                      REMOVE_BUTTON:VISIBLE
-     *      DETAIL_MODE =>  REMOVE_BUTTON removes the user form the participants list and adds it
-     *                      to the removedParticipants list
-     *              isOwner  => REMOVE_BUTTON:VISIBLE
-     *              !isOwner => REMOVE_BUTTON:GONE
+     * ADD_MODE    =>  REMOVE_BUTTON removes the user form the participants list
+     * REMOVE_BUTTON:VISIBLE
+     * DETAIL_MODE =>  REMOVE_BUTTON removes the user form the participants list and adds it
+     * to the removedParticipants list
+     * isOwner  => REMOVE_BUTTON:VISIBLE
+     * !isOwner => REMOVE_BUTTON:GONE
+     *
      * @param userName name of the added user
      */
     private void addInvite(String userName) {
@@ -239,7 +235,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.addView(newBanLayout);
     }
 
-    protected void addNewInvite(String s){
+    protected void addNewInvite(String s) {
         invites.add(s);
         dataPasser.dataPass(invites, AppointmentActivity.INVITES);
         searchInvite.setText("");
@@ -252,7 +248,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         addInvite(s);
     }
 
-    protected void createErrorMessage(AlertDialog.Builder builder,String errorMessage){
+    protected void createErrorMessage(AlertDialog.Builder builder, String errorMessage) {
         builder.setMessage(errorMessage)
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.genericOkText), null);

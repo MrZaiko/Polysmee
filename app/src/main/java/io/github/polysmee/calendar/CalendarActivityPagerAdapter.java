@@ -17,11 +17,12 @@ public class CalendarActivityPagerAdapter extends FragmentStateAdapter {
     public CalendarActivityPagerAdapter(FragmentActivity fm) {
         super(fm);
     }
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {
         Fragment fragment;
-        switch (position){
+        switch (position) {
             case 0:
                 fragment = new CalendarActivityMyAppointmentsFragment();
                 return fragment;

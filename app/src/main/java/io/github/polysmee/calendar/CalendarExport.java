@@ -29,14 +29,13 @@ public class CalendarExport {
     }*/
 
 
-
     public static void exportAppointment(Context context, CalendarAppointmentInfo appointment) {
         String description = "Course: " + appointment.getCourse();
 
         Intent intent = new Intent(Intent.ACTION_INSERT)
                 .setData(CalendarContract.Events.CONTENT_URI)
                 .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, appointment.getStartTime())
-                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, appointment.getStartTime()+appointment.getDuration())
+                .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, appointment.getStartTime() + appointment.getDuration())
                 .putExtra(CalendarContract.Events.TITLE, appointment.getTitle())
                 .putExtra(CalendarContract.Events.DESCRIPTION, description);
         context.startActivity(intent);

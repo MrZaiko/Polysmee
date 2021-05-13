@@ -5,7 +5,6 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
-
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import io.github.polysmee.R;
@@ -22,6 +21,7 @@ public class RoomPagerAdapter extends FragmentStateAdapter {
     public static int[] FRAGMENT_NAME_ID = new int[]{R.string.roomTabMessagesText, R.string.roomTabVideoText, R.string.roomTabCallText};
     private final static int FRAGMENTS_NUMBER = 3;
     private final Call call;
+
     public RoomPagerAdapter(FragmentActivity fm, String appointmentId) {
         super(fm);
         this.appointmentId = appointmentId;

@@ -25,13 +25,13 @@ public class SettingsMainFragmentTest {
     public ClearPreferencesRule clearPreferencesRule = new ClearPreferencesRule();
 
     @Before
-    public void createFragment(){
+    public void createFragment() {
         FragmentScenario.launchInContainer(SettingsMainFragment.class);
         sleep(1, SECONDS);
     }
 
     //used in tests (this test or any other) to know if the fragment is been displayed
-    public static void checkFragmentIsDisplayed(){
+    public static void checkFragmentIsDisplayed() {
         assertDisplayed(R.string.title_settings_appointments_reminder);
     }
 

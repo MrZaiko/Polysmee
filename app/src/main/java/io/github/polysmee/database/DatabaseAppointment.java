@@ -1,6 +1,5 @@
 package io.github.polysmee.database;
 
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.ValueEventListener;
 
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
@@ -9,7 +8,6 @@ import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.database.Message;
 
 public class DatabaseAppointment implements Appointment {
 
@@ -21,29 +19,29 @@ public class DatabaseAppointment implements Appointment {
 
     private void getStuffAndThen(String stuff, ValueEventListener l) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child(stuff)
-            .addValueEventListener(l);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child(stuff)
+                .addValueEventListener(l);
     }
 
     private void getStuff_Once_AndThen(String stuff, ValueEventListener l) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child(stuff)
-            .addListenerForSingleValueEvent(l);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child(stuff)
+                .addListenerForSingleValueEvent(l);
     }
 
     private void removeStuffListener(String stuff, ValueEventListener l) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child(stuff)
-            .removeEventListener(l);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child(stuff)
+                .removeEventListener(l);
     }
 
 
@@ -178,11 +176,11 @@ public class DatabaseAppointment implements Appointment {
             return;
 
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("start")
-            .setValue(startTime);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("start")
+                .setValue(startTime);
     }
 
     @Override
@@ -191,270 +189,270 @@ public class DatabaseAppointment implements Appointment {
             return;
 
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("duration")
-            .setValue(duration);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("duration")
+                .setValue(duration);
     }
 
     @Override
     public void setCourse(String course) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("course")
-            .setValue(course);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("course")
+                .setValue(course);
     }
 
     @Override
     public void setTitle(String title) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("title")
-            .setValue(title);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("title")
+                .setValue(title);
     }
 
     @Override
     public void addParticipant(User newParticipant) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("participants")
-            .child(newParticipant.getId())
-            .setValue(true);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("participants")
+                .child(newParticipant.getId())
+                .setValue(true);
     }
 
     @Override
     public void removeParticipant(User participant) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("participants")
-            .child(participant.getId())
-            .setValue(null);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("participants")
+                .child(participant.getId())
+                .setValue(null);
     }
 
     @Override
     public void getBansAndThen(StringSetValueListener s) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("banned")
-            .addValueEventListener(s);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .addValueEventListener(s);
     }
 
     @Override
     public void getBans_Once_AndThen(StringSetValueListener s) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("banned")
-            .addListenerForSingleValueEvent(s);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .addListenerForSingleValueEvent(s);
     }
 
     @Override
     public void removeBansListener(StringSetValueListener s) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("banned")
-            .removeEventListener(s);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .removeEventListener(s);
     }
 
     @Override
     public void setPrivate(boolean isPrivate) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("private")
-            .setValue(isPrivate);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("private")
+                .setValue(isPrivate);
     }
 
     @Override
     public void addInvite(User newParticipant) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("invites")
-            .child(newParticipant.getId())
-            .setValue(true);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .child(newParticipant.getId())
+                .setValue(true);
     }
 
     @Override
     public void removeInvite(User participant) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("invites")
-            .child(participant.getId())
-            .setValue(null);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("invites")
+                .child(participant.getId())
+                .setValue(null);
     }
 
     @Override
     public void addBan(User banned) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("banned")
-            .child(banned.getId())
-            .setValue(true);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .child(banned.getId())
+                .setValue(true);
     }
 
     @Override
     public void removeBan(User unbanned) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("banned")
-            .child(unbanned.getId())
-            .setValue(null);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("banned")
+                .child(unbanned.getId())
+                .setValue(null);
     }
 
     @Override
     public void addInCallUser(User inCall) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("inCall")
-            .child(inCall.getId())
-            .setValue(false);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(inCall.getId())
+                .setValue(false);
     }
 
     @Override
     public void muteUser(User user, boolean muted) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("inCall")
-            .child(user.getId())
-            .setValue(muted);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(user.getId())
+                .setValue(muted);
     }
 
     @Override
     public void removeOfCall(User outOfCall) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("inCall")
-            .child(outOfCall.getId())
-            .setValue(null);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .child(outOfCall.getId())
+                .setValue(null);
     }
 
     @Override
     public void addInCallListener(BooleanChildListener listener) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("inCall")
-            .addChildEventListener(listener);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .addChildEventListener(listener);
     }
 
     @Override
     public void removeInCallListener(BooleanChildListener listener) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("inCall")
-            .removeEventListener(listener);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("inCall")
+                .removeEventListener(listener);
     }
 
     @Override
     public void addMessage(Message message) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("messages")
-            .push()
-            .setValue(message);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .push()
+                .setValue(message);
 
     }
 
     @Override
     public void removeMessage(String key) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("messages")
-            .child(key)
-            .removeValue();
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .removeValue();
     }
 
     @Override
     public void editMessage(String key, String newContent) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("messages")
-            .child(key)
-            .child("content")
-            .setValue(newContent);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .child("content")
+                .setValue(newContent);
     }
 
     @Override
     public void addMessageListener(MessageChildListener listener) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("messages")
-            .addChildEventListener(listener);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .addChildEventListener(listener);
     }
 
     @Override
     public void removeMessageListener(MessageChildListener listener) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("messages")
-            .removeEventListener(listener);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .removeEventListener(listener);
     }
 
 
     @Override
     public void getTimeCodeOnceAndThen(User user, LongValueListener listener) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("callStates")
-            .child(user.getId())
-            .child("timeCode")
-            .addListenerForSingleValueEvent(listener);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("callStates")
+                .child(user.getId())
+                .child("timeCode")
+                .addListenerForSingleValueEvent(listener);
     }
 
 
     @Override
     public void setTimeCode(User user, Long timeCode) {
         DatabaseFactory
-            .getAdaptedInstance()
-            .getReference("appointments")
-            .child(id)
-            .child("callStates")
-            .child(user.getId())
-            .child("timeCode")
-            .setValue(timeCode);
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("callStates")
+                .child(user.getId())
+                .child("timeCode")
+                .setValue(timeCode);
     }
 }

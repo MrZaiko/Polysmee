@@ -4,17 +4,19 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+
 import java.util.Random;
+
 import io.agora.rtc.IRtcEngineEventHandler;
 import io.github.polysmee.agora.video.handlers.DuringCallEventHandler;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(JUnit4.class)
 public class VideoEngineEventHandlerTest {
     private VideoEngineEventHandler engineEventHandler;
-    private DuringCallEventHandler handler = new DuringCallEventHandler() {
+    private final DuringCallEventHandler handler = new DuringCallEventHandler() {
         @Override
         public void onUserJoined(int uid) {
             testingVariable += uid;
@@ -44,59 +46,59 @@ public class VideoEngineEventHandlerTest {
         public void onLeaveChannel(IRtcEngineEventHandler.RtcStats stats) {
             testingVariable += -1;
         }
-    };;
+    };
     private int testingVariable = 0;
 
     @Before
-    public void initTestingVariable(){
+    public void initTestingVariable() {
         engineEventHandler = new VideoEngineEventHandler();
         engineEventHandler.addEventHandler(handler);
         testingVariable = 0;
     }
-    
+
     @Test
-    public void onLocalVideoStateChangedLaunchesTheOtherHandlerMethod(){
+    public void onLocalVideoStateChangedLaunchesTheOtherHandlerMethod() {
         Random rand = new Random();
         int randomState = rand.nextInt();
-        engineEventHandler.onLocalVideoStateChanged(randomState,-1);
-        assertEquals(randomState,testingVariable);
+        engineEventHandler.onLocalVideoStateChanged(randomState, -1);
+        assertEquals(randomState, testingVariable);
     }
 
     @Test
-    public void onRemoteVideoStateChangedLaunchesTheOtherHandlersMethod(){
+    public void onRemoteVideoStateChangedLaunchesTheOtherHandlersMethod() {
         Random rand = new Random();
         int randomUid = rand.nextInt();
-        engineEventHandler.onRemoteVideoStateChanged(randomUid,1,2,3);
-        assertEquals(randomUid,testingVariable);
+        engineEventHandler.onRemoteVideoStateChanged(randomUid, 1, 2, 3);
+        assertEquals(randomUid, testingVariable);
     }
 
     @Test
-    public void addHandlerAddsTheGivenHandlerCorrectly(){
+    public void addHandlerAddsTheGivenHandlerCorrectly() {
         VideoEngineEventHandler engineEventHandler1 = new VideoEngineEventHandler();
         engineEventHandler1.addEventHandler(handler);
-        assertEquals(1,engineEventHandler1.getHandlers().size());
+        assertEquals(1, engineEventHandler1.getHandlers().size());
     }
 
     @Test
-    public void onJoinChannelSuccessLaunchesTheOtherHandlersMethod(){
+    public void onJoinChannelSuccessLaunchesTheOtherHandlersMethod() {
         Random rand = new Random();
         int randomUid = rand.nextInt();
-        engineEventHandler.onJoinChannelSuccess("Bonjour",randomUid,10);
-        assertEquals(randomUid,testingVariable);
+        engineEventHandler.onJoinChannelSuccess("Bonjour", randomUid, 10);
+        assertEquals(randomUid, testingVariable);
     }
 
     @Test
-    public void onLeaveChannelLaunchesTheOtherHandlersMethod(){
+    public void onLeaveChannelLaunchesTheOtherHandlersMethod() {
         engineEventHandler.onLeaveChannel(null);
-        assertEquals(-1,testingVariable);
+        assertEquals(-1, testingVariable);
     }
 
     @Test
-    public void onUserOfflineLaunchesTheOtherHandlersMethod(){
+    public void onUserOfflineLaunchesTheOtherHandlersMethod() {
         Random rand = new Random();
         int randomUid = rand.nextInt();
-        engineEventHandler.onUserOffline(randomUid,0);
-        assertEquals(randomUid,testingVariable);
+        engineEventHandler.onUserOffline(randomUid, 0);
+        assertEquals(randomUid, testingVariable);
     }
 
 }

@@ -12,16 +12,16 @@ import org.junit.Test;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 //@RunWith(AndroidJUnit4.class)
 public class MainUserTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

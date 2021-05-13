@@ -26,26 +26,26 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
-import io.github.polysmee.database.Course;
-import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUser;
 
-import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.*;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setDayText;
+import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setTodayDateInDailyCalendar;
 
 public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
 
     private ViewGroup rootView;
-    private LinearLayout scrollLayout ;
-    private LayoutInflater inflater ;
+    private LinearLayout scrollLayout;
+    private LayoutInflater inflater;
 
 
     private User user;
@@ -64,20 +64,20 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_activity_public_appointments, container, false);
-        scrollLayout = (LinearLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentsScrollLayout);
+        scrollLayout = (LinearLayout) rootView.findViewById(R.id.calendarActivityPublicAppointmentsScrollLayout);
         this.inflater = inflater;
         setTodayDateInDailyCalendar(true);
-        setDayText(rootView,true);
+        setDayText(rootView, true);
         user = MainUser.getMainUser();
-        ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setOnRefreshListener(()->{
+        ((SwipeRefreshLayout) rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setOnRefreshListener(() -> {
             getAllPublicAppointmentsForTheDay();
-            ((SwipeRefreshLayout)rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setRefreshing(false);
+            ((SwipeRefreshLayout) rootView.findViewById(R.id.calendarActivityPublicAppointmentSwipeScroll)).setRefreshing(false);
         });
         rootView.findViewById(R.id.todayDatePublicAppointmentsCalendarActivity).setOnClickListener(v -> chooseDate());
 
         courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
 
-        Course.getAllCourses_Once_AndThen(s ->  {
+        Course.getAllCourses_Once_AndThen(s -> {
                     courses = new ArrayList<>(s);
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
                             android.R.layout.simple_dropdown_item_1line, courses);
@@ -92,9 +92,9 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         return rootView;
     }
 
-    private void filter(){
+    private void filter() {
         String s = courseSelector.getText().toString();
-        if(!courses.contains(s)) {
+        if (!courses.contains(s)) {
             builder.setMessage(getString(R.string.genericCourseNotFoundText))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.genericOkText), null);
@@ -114,21 +114,22 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * choose the date they want, and will add a listener to the user's appointment to show the appointments
      * they have that given day.
      */
-    protected void chooseDate(){
-        long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight(true) ;
+    protected void chooseDate() {
+        long epochTimeChosenDay = DailyCalendar.getDayEpochTimeAtMidnight(true);
         Date chosenDay = new Date(epochTimeChosenDay);
 
         Calendar calendarChosenDay = Calendar.getInstance();
         calendarChosenDay.setTime(chosenDay);
 
         new DatePickerDialog(getContext(), (view, year, monthOfYear, dayOfMonth) -> {
-            DailyCalendar.setDayEpochTimeAtMidnight(year,monthOfYear,dayOfMonth,true);
-            setDayText(rootView,true);
+            DailyCalendar.setDayEpochTimeAtMidnight(year, monthOfYear, dayOfMonth, true);
+            setDayText(rootView, true);
             scrollLayout.removeAllViewsInLayout();
             getAllPublicAppointmentsForTheDay();
         }, calendarChosenDay.get(Calendar.YEAR), calendarChosenDay.get(Calendar.MONTH), calendarChosenDay.get(Calendar.DATE)).show();
 
     }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -138,12 +139,12 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
      */
-    protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos){
-        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos,true);
-        if(!todayAppointments.isEmpty()){
-            for(CalendarAppointmentInfo appointment : todayAppointments){
-                if(!currentCourse.equals("")) {
-                    if(appointment.getCourse().equals(currentCourse)) {
+    protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
+        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true);
+        if (!todayAppointments.isEmpty()) {
+            for (CalendarAppointmentInfo appointment : todayAppointments) {
+                if (!currentCourse.equals("")) {
+                    if (appointment.getCourse().equals(currentCourse)) {
                         addAppointmentToCalendarLayout(appointment);
                     }
                 } else {
@@ -156,23 +157,24 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     /**
      * Creates an appointment's textual description following a certain format
      * to show in the calendar
+     *
      * @param appointment the appointment's whose description is created
      */
-    protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry){
+    protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
         Appointment appointment1 = new DatabaseAppointment(appointment.getId());
-        appointment1.getOwnerIdAndThen((ownerId) ->{
-            if(!ownerId.equals(user.getId())){
+        appointment1.getOwnerIdAndThen((ownerId) -> {
+            if (!ownerId.equals(user.getId())) {
                 calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
                 calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
             }
 
         });
         Date startDate = new Date(appointment.getStartTime());
-        Date endDate = new Date((appointment.getStartTime()+appointment.getDuration()));
+        Date endDate = new Date((appointment.getStartTime() + appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());
-        calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId(),this,rootView));
+        calendarEntry.setOnClickListener(v -> goToAppointmentDetails(appointment.getId(), this, rootView));
 
         SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         String appointmentDate = formatter.format(startDate) + " - " + formatter.format(endDate);
@@ -186,39 +188,43 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         else
             status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
     }
+
     /**
      * Adds an appointment to the calendar layout, as a calendar entry
+     *
      * @param appointment the appointment to add
      */
-    protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment){
+    protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
 
-        ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public,null);
+        ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
         TextView emptySpace = new TextView(rootView.getContext());
 
         scrollLayout.addView(appointmentEntryLayout);
         scrollLayout.addView(emptySpace);
-        appointmentIdsToView.put(appointment.getId(),appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1,emptySpace);
+        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
+        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
     }
 
 
     /**
      * Method called when the user clicks on the "join" button next an appointment description in the public appointments.
      * The user joins the appointment by doing so
+     *
      * @param appointmentId the appointment's id which the user will join .
      */
-    protected void joinPublicAppointmentWhenClickingOnJoin(String appointmentId){
+    protected void joinPublicAppointmentWhenClickingOnJoin(String appointmentId) {
         Appointment appointment = new DatabaseAppointment(appointmentId);
         appointment.addParticipant(user);
         user.addAppointment(appointment);
     }
+
     /**
      * Gets all public appointments once, display only the ones on the selected day; to be called
      * when the fragment is loaded for the first time, when clicking on the refresh button or when filtering.
      */
     protected void getAllPublicAppointmentsForTheDay() {
-        Appointment.getAllPublicAppointmentsOnce((allPublicAppointmentsIds) ->{
+        Appointment.getAllPublicAppointmentsOnce((allPublicAppointmentsIds) -> {
 
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
             Set<String> newAppointments = new HashSet<>(allPublicAppointmentsIds);
@@ -227,37 +233,35 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
             deletedAppointments.removeAll(newAppointments); //keep the deleted appointments
             newAppointments.removeAll(appointmentSet); //keep the new appointmnets
 
-            for(String oldAppointmentId: deletedAppointments){ //delete all old appointments
+            for (String oldAppointmentId : deletedAppointments) { //delete all old appointments
                 appointmentSet.remove(oldAppointmentId);
                 appointmentInfoMap.remove(oldAppointmentId);
 
             }
-            if(newAppointments.isEmpty()){
+            if (newAppointments.isEmpty()) {
                 changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
-            }
-            else{
+            } else {
                 appointmentSet.addAll(newAppointments); //add all new appointments
 
-                for(String id: newAppointments){ //iterate only on the new appointments, to set their listener when they're added, not everytime we delete/add an appointment
+                for (String id : newAppointments) { //iterate only on the new appointments, to set their listener when they're added, not everytime we delete/add an appointment
                     Appointment appointment = new DatabaseAppointment(id);
 
-                    appointment.getPrivateAndThen((isPrivate) ->{
-                        if(!isPrivate){
-                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id);
-                            appointment.getStartTimeAndThen((start)->{
+                    appointment.getPrivateAndThen((isPrivate) -> {
+                        if (!isPrivate) {
+                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
+                            appointment.getStartTimeAndThen((start) -> {
                                 appointmentInfo.setStartTime(start);
                                 appointment.getDurationAndThen((duration) -> {
                                     appointmentInfo.setDuration(duration);
-                                    appointment.getTitleAndThen((title) ->{
+                                    appointment.getTitleAndThen((title) -> {
                                         appointmentInfo.setTitle((title));
-                                        appointment.getCourseAndThen((course) ->{
+                                        appointment.getCourseAndThen((course) -> {
                                             appointmentInfo.setCourse(course);
                                             scrollLayout.removeAllViewsInLayout();
-                                            if(!appointmentSet.contains(appointmentInfo.getId())){
+                                            if (!appointmentSet.contains(appointmentInfo.getId())) {
                                                 appointmentInfoMap.remove(appointmentInfo.getId());
-                                            }
-                                            else{
-                                                appointmentInfoMap.put(appointment.getId(),appointmentInfo);
+                                            } else {
+                                                appointmentInfoMap.put(appointment.getId(), appointmentInfo);
                                             }
                                             changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                         });
@@ -265,12 +269,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                 });
 
                             });
-                        }
-                        else{
+                        } else {
                             appointmentInfoMap.remove(id);
-                            if(appointmentIdsToView.containsKey(id)){
+                            if (appointmentIdsToView.containsKey(id)) {
                                 scrollLayout.removeView(appointmentIdsToView.get(id));
-                                scrollLayout.removeView(appointmentIdsToView.get(id+1));
+                                scrollLayout.removeView(appointmentIdsToView.get(id + 1));
                             }
                         }
                     });

@@ -22,17 +22,9 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
-import static com.schibsted.spain.barista.assertion.BaristaCheckedAssertions.assertChecked;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
-import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertNotClickable;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertDisabled;
-import static com.schibsted.spain.barista.assertion.BaristaEnabledAssertions.assertEnabled;
-import static com.schibsted.spain.barista.assertion.BaristaHintAssertions.assertHint;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
-import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
@@ -42,7 +34,6 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 @RunWith(JUnit4.class)
@@ -68,10 +59,10 @@ public class AppointmentActivityDetailModeOwnerTest {
     @BeforeClass
     public static void setUp() throws Exception {
         startTime = Calendar.getInstance();
-        startTime.set(2022,4,22,18,3,0);
+        startTime.set(2022, 4, 22, 18, 3, 0);
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.MILLISECOND, (int) duration);
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -100,41 +91,41 @@ public class AppointmentActivityDetailModeOwnerTest {
     }
 
     /**
-    @Test
-    public void everyFieldAreCorrectlyDisplayedAndClickable() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
-        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
-
-        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(2, SECONDS);
-            assertEnabled(R.id.appointmentCreationEditTxtAppointmentTitleSet);
-            assertClickable(R.id.appointmentCreationStartTimeLayout);
-            assertClickable(R.id.appointmentCreationEndTimeLayout);
-            assertEnabled(R.id.appointmentCreationEditTxtAppointmentCourseSet);
-            assertClickable(R.id.appointmentCreationPrivateSelector);
-
-            assertHint(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
-            assertHint(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
-            assertDisplayed(DateFormat.format(dateFormat, startTime.getTime()).toString());
-            assertDisplayed(DateFormat.format(dateFormat, endTime.getTime()).toString());
-            assertChecked(R.id.appointmentCreationPrivateSelector);
-            scrollTo(R.id.appointmentCreationTxtWarning);
-            clickOn(R.id.appointmentCreationAddTextView);
-            scrollTo(R.id.appointmentCreationShowBan);
-            sleep(5, SECONDS);
-            assertDisplayed(R.id.appointmentSettingsSearchAddLayout);
-            assertDisplayed(username1);
-            assertDisplayed(username2);
-            scrollTo(R.id.appointmentCreationTxtWarning);
-            clickOn(R.id.appointmentCreationBanTextView);
-            scrollTo(R.id.appointmentCreationTxtWarning);
-            assertDisplayed(R.id.appointmentSettingsSearchBanLayout);
-            assertDisplayed(username3);
-
-            assertDisplayed(R.id.appointmentCreationBottomBar);
-        }
-    }**/
+     * @Test public void everyFieldAreCorrectlyDisplayedAndClickable() {
+     * Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
+     * intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+     * intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
+     * <p>
+     * try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
+     * sleep(2, SECONDS);
+     * assertEnabled(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+     * assertClickable(R.id.appointmentCreationStartTimeLayout);
+     * assertClickable(R.id.appointmentCreationEndTimeLayout);
+     * assertEnabled(R.id.appointmentCreationEditTxtAppointmentCourseSet);
+     * assertClickable(R.id.appointmentCreationPrivateSelector);
+     * <p>
+     * assertHint(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+     * assertHint(R.id.appointmentCreationEditTxtAppointmentCourseSet, course);
+     * assertDisplayed(DateFormat.format(dateFormat, startTime.getTime()).toString());
+     * assertDisplayed(DateFormat.format(dateFormat, endTime.getTime()).toString());
+     * assertChecked(R.id.appointmentCreationPrivateSelector);
+     * scrollTo(R.id.appointmentCreationTxtWarning);
+     * clickOn(R.id.appointmentCreationAddTextView);
+     * scrollTo(R.id.appointmentCreationShowBan);
+     * sleep(5, SECONDS);
+     * assertDisplayed(R.id.appointmentSettingsSearchAddLayout);
+     * assertDisplayed(username1);
+     * assertDisplayed(username2);
+     * scrollTo(R.id.appointmentCreationTxtWarning);
+     * clickOn(R.id.appointmentCreationBanTextView);
+     * scrollTo(R.id.appointmentCreationTxtWarning);
+     * assertDisplayed(R.id.appointmentSettingsSearchBanLayout);
+     * assertDisplayed(username3);
+     * <p>
+     * assertDisplayed(R.id.appointmentCreationBottomBar);
+     * }
+     * }
+     **/
 
     @Test
     public void doneButtonUpdateCorrectlyTheAppointmentInTheDatabase() throws InterruptedException, ExecutionException {

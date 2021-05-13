@@ -115,6 +115,4 @@
     <string name="genericCourseText">Course</string>
     <string name="invitesCourseText">"Course : "</string>
 
-    <string name="appointment_reminder_notification_notification_text">Appointment reminder :)</string>
-
 </resources>

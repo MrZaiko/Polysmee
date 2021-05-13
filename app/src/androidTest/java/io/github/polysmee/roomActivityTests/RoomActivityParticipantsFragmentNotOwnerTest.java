@@ -16,13 +16,12 @@ import org.junit.runners.JUnit4;
 import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
-
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
-import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
@@ -35,18 +34,18 @@ import static org.junit.Assert.assertNull;
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentNotOwnerTest {
     private static final String username1 = "Mathis L'utilisateur";
-    private static String id2 = "oierytuhjdfbsgvcwx";
+    private static final String id2 = "oierytuhjdfbsgvcwx";
     private static final String username2 = "Sami L'imposteur";
 
     private static final String appointmentTitle = "It's a title";
-    private static String appointmentId = "ahvwcxtdfytazazeiu";
+    private static final String appointmentId = "ahvwcxtdfytazazeiu";
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
 
 
     @BeforeClass
     public static void setUp() throws Exception {
-        AppointmentReminderNotificationSetupListener.setIsNotificationSetterEnable(false);
+        AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -91,7 +90,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
     }
 
     @Test
-    public void clickingOnAnotherUserLaunchesProfile(){
+    public void clickingOnAnotherUserLaunchesProfile() {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
