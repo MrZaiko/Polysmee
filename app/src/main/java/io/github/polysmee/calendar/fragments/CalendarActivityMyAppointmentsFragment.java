@@ -37,6 +37,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
@@ -109,6 +110,16 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     public void onResume() {
         super.onResume();
         setListenerUserAppointments();
+    }
+
+    @Override
+    public void onDestroy() {
+        Object dummyArgument = null;
+        for(Command command : commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
     }
 
     /*
@@ -262,9 +273,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
                     LongValueListener startListener = (start) -> {
                         appointmentInfo.setStartTime(start);
-                        appointment.getDurationAndThen((duration) -> {
+                        LongValueListener durationListener = (duration) -> {
                             appointmentInfo.setDuration(duration);
-                            appointment.getTitleAndThen((title) -> {
+                            StringValueListener titleListener = (title) -> {
                                 appointmentInfo.setTitle((title));
                                 if (!appointmentSet.contains(appointmentInfo.getId())) { //the appointment was removed; we thus have to remove it from the displayed appointments
                                     appointmentInfoMap.remove(appointmentInfo.getId());
@@ -284,9 +295,12 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                                     }
                                 }
 
-                            });
-                        });
-
+                            };
+                            appointment.getTitleAndThen(titleListener);
+                            commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
+                        };
+                        appointment.getDurationAndThen(durationListener);
+                        commandsToRemoveListeners.add((x,y) -> appointment.removeDurationListener(durationListener));
                     };
 
                     appointment.getStartTimeAndThen(startListener);

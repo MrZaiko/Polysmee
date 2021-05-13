@@ -20,6 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotificationSetupListener;
@@ -137,12 +138,16 @@ public class AppointmentActivityAddModeTest {
             setDateOnPicker(2022, 3, 23);
             setTimeOnPicker(16, 2);
 
-            clickOn(R.id.appointmentCreationbtnDone);
-            assertDisplayed("OK");
-            clickOn("OK");
-            scrollTo(R.id.appointmentCreationTxtWarning);
-            assertDisplayed(R.string.appointmentCreationTimeError);
-            clickOn(R.string.appointment_creation_reset_btn_txt);
+
+            if(InternetConnection.isOn()) {
+                clickOn(R.id.appointmentCreationbtnDone);
+                assertDisplayed("OK");
+                clickOn("OK");
+                scrollTo(R.id.appointmentCreationTxtWarning);
+                assertDisplayed(R.string.appointmentCreationTimeError);
+                clickOn(R.string.appointment_creation_reset_btn_txt);
+            }
+
 
             Thread.sleep(1000);
 
