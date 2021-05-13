@@ -28,8 +28,8 @@ public class AppointmentReminderNotificationTest {
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
     private static final UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     private static final Context context = ApplicationProvider.getApplicationContext();
-    private final static String notification_text = context.getResources().getString(R.string.appointment_reminder_notification_notification_text);
-    private final static String notification_title = context.getResources().getString(R.string.appointment_reminder_notification_notification_title);
+    private final static String notification_text = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
+    private final static String notification_title = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
 
     @Before
     @After
