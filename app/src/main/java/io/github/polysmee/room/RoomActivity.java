@@ -9,6 +9,8 @@ import android.view.MenuItem;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
 import com.google.android.material.tabs.TabLayout;
@@ -28,7 +30,6 @@ import io.github.polysmee.room.fragments.RemovedDialogFragment;
 public class RoomActivity extends AppCompatActivity {
 
     private Appointment appointment;
-    private RoomPagerAdapter roomPagerAdapter;
     public final static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
 
     @Override
@@ -43,9 +44,9 @@ public class RoomActivity extends AppCompatActivity {
         checkIfParticipant();
 
         ViewPager2 pager = findViewById(R.id.roomActivityPager);
-        roomPagerAdapter = new RoomPagerAdapter(this, appointmentKey);
+        FragmentStateAdapter pagerAdapter = new RoomPagerAdapter(this, appointmentKey);
 
-        pager.setAdapter(roomPagerAdapter);
+        pager.setAdapter(pagerAdapter);
 
         TabLayout tabs = findViewById(R.id.roomActivityTabs);
         new TabLayoutMediator(tabs, pager,
@@ -97,5 +98,6 @@ public class RoomActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
 
 }

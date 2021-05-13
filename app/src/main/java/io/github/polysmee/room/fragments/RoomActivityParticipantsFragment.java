@@ -30,6 +30,7 @@ import java.util.Set;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
+import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
@@ -45,30 +46,26 @@ import io.github.polysmee.profile.ProfileActivity;
  */
 public class RoomActivityParticipantsFragment extends Fragment implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener {
 
-    public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
-    private final Set<String> inCall = new HashSet<String>();
-    private final Set<String> locallyMuted = new HashSet<String>();
     private ViewGroup rootView;
     private Appointment appointment;
     private LayoutInflater inflater;
+    public static String PARTICIPANTS_KEY = "io.github.polysme.room.fragments.roomActivityParticipantsFragment.PARTICIPANTS_KEY";
+
     private boolean isMuted = false;
     private boolean isInCall = false;
+
+
     private DatabaseAppointment databaseAppointment;
     private RoomActivityVideoFragment videoFragment;
+
     private ActivityResultLauncher<String> requestPermissionLauncher;
     private Map<String, ConstraintLayout> participantsViews;
     private BooleanChildListener listener;
+    private final Set<String> inCall = new HashSet<String>();
+    private final Set<String> locallyMuted = new HashSet<String>();
+
     private Call call;
     private VoiceTunerChoiceDialogFragment voiceTunerChoiceDialog;
-
-    public RoomActivityParticipantsFragment() {
-        // Required empty public constructor
-    }
-
-
-    public RoomActivityParticipantsFragment(Call call) {
-        this.call = call;
-    }
 
     @Nullable
     @Override
@@ -93,6 +90,15 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         return rootView;
     }
 
+
+    public RoomActivityParticipantsFragment() {
+        // Required empty public constructor
+    }
+
+    public RoomActivityParticipantsFragment(Call call) {
+        this.call = call;
+    }
+
     @Override
     public void onDestroy() {
         if (call != null) {
@@ -100,6 +106,13 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         }
         databaseAppointment.removeInCallListener(listener);
         super.onDestroy();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
+        setAudioEffect(preference);
     }
 
 

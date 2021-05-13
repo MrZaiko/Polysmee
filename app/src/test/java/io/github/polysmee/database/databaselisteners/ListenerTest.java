@@ -1,21 +1,20 @@
 package io.github.polysmee.database.databaselisteners;
 
-import com.google.firebase.database.DataSnapshot;
-
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.HashSet;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 public class ListenerTest {
 
-    BooleanValueListener bv    = Assert::assertTrue;
-    DownloadValueListener dv   = (b) -> assertEquals(1, b.length);
-    LoadValueListener lvl      = (s) -> assertEquals("1234567890", s);
-    StringValueListener sv     = (s) -> assertEquals("1234567890", s);
-    LongValueListener   lv     = (l) -> assertEquals(1234567890,   l);
+    BooleanValueListener bv = Assert::assertTrue;
+    DownloadValueListener dv = (b) -> assertEquals(1, b.length);
+    LoadValueListener lvl = (s) -> assertEquals("1234567890", s);
+    StringValueListener sv = (s) -> assertEquals("1234567890", s);
+    LongValueListener lv = (l) -> assertEquals(1234567890, l);
     StringSetValueListener ssv = (s) -> assertEquals(0, s.size());
 
     @Test
