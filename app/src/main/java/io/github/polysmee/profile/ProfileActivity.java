@@ -11,7 +11,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
@@ -86,10 +85,10 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
      * The layout to be shown and behavior to be set in case we're visiting another user's profile
      */
     protected void attributeSettersVisitor() {
-        profilePicture = ((CircleImageView) ((ConstraintLayout) findViewById(R.id.profileActivityProfilePictureContainer))
-                .findViewById(R.id.profileActivityProfilePicture));
-        ((ImageView) findViewById(R.id.profileActivitySendPictureButton)).setVisibility(View.GONE);
-        ((ImageView) findViewById(R.id.profileActivityTakePictureButton)).setVisibility(View.GONE);
+        profilePicture = findViewById(R.id.profileActivityProfilePictureContainer)
+                .findViewById(R.id.profileActivityProfilePicture);
+        findViewById(R.id.profileActivitySendPictureButton).setVisibility(View.GONE);
+        findViewById(R.id.profileActivityTakePictureButton).setVisibility(View.GONE);
         pictureListener = setPictureListener();
         (new DatabaseUser(getIntent().getStringExtra(PROFILE_ID_USER))).getProfilePicture_Once_And_Then(pictureListener);
     }
@@ -98,10 +97,10 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
      * The layout to be shown and behavior to be set in case we're visiting our own profile
      */
     protected void attributeSettersOwner() {
-        pickGallery = (ImageView) findViewById(R.id.profileActivitySendPictureButton);
-        takePhoto = (ImageView) findViewById(R.id.profileActivityTakePictureButton);
-        profilePicture = ((CircleImageView) ((ConstraintLayout) findViewById(R.id.profileActivityProfilePictureContainer))
-                .findViewById(R.id.profileActivityProfilePicture));
+        pickGallery = findViewById(R.id.profileActivitySendPictureButton);
+        takePhoto = findViewById(R.id.profileActivityTakePictureButton);
+        profilePicture = findViewById(R.id.profileActivityProfilePictureContainer)
+                .findViewById(R.id.profileActivityProfilePicture);
 
         pickGallery.setOnClickListener(this::chooseFromGallery);
         takePhoto.setOnClickListener(this::takePicture);

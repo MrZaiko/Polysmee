@@ -64,7 +64,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         rootView = (ViewGroup) inflater.inflate(R.layout.fragment_calendar_activity_public_appointments, container, false);
-        scrollLayout = (LinearLayout) rootView.findViewById(R.id.calendarActivityPublicAppointmentsScrollLayout);
+        scrollLayout = rootView.findViewById(R.id.calendarActivityPublicAppointmentsScrollLayout);
         this.inflater = inflater;
         setTodayDateInDailyCalendar(true);
         setDayText(rootView, true);

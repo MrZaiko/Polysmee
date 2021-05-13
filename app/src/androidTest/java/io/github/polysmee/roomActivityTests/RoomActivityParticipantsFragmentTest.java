@@ -2,14 +2,15 @@ package io.github.polysmee.roomActivityTests;
 
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.preference.PreferenceManager;
 import androidx.test.core.app.ApplicationProvider;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +21,7 @@ import java.util.List;
 
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
+import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
@@ -29,13 +31,14 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
-import static androidx.test.espresso.Espresso.pressBack;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
-import static com.schibsted.spain.barista.interaction.BaristaSpinnerInteractions.clickSpinnerItem;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+
 
 @RunWith(JUnit4.class)
 public class RoomActivityParticipantsFragmentTest {
@@ -53,6 +56,7 @@ public class RoomActivityParticipantsFragmentTest {
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         UploadServiceFactory.setTest(true);
+
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -161,20 +165,32 @@ public class RoomActivityParticipantsFragmentTest {
         assertEquals(MainUser.getMainUser().getId(), usersUnmuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
-
+    /**
     @Test
     public void testVoiceTuner() {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
-        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
+        Call mockedCall = mock(Call.class);
+        FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle, new FragmentFactory() {
+            @NonNull
+            @Override
+            public Fragment instantiate(@NonNull ClassLoader classLoader, @NonNull String className) {
+                return new RoomActivityParticipantsFragment(mockedCall);
+            }
+        });
         sleep(1, SECONDS);
+        String[] voicesTune = ApplicationProvider.getApplicationContext().getResources().getStringArray(R.array.voices_tune_array);
         clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
-        clickSpinnerItem(R.id.voiceTunerSpinner, 2);
-        pressBack();
-        int currentVoicePosition = PreferenceManager.getDefaultSharedPreferences(ApplicationProvider.getApplicationContext()).getInt(
-                ApplicationProvider.getApplicationContext().getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
-        assertEquals(currentVoicePosition, 2);
-    }
+        sleep(1, SECONDS);
+        int size = voicesTune.length > 5 ? 5 : voicesTune.length;
+        for (int i = 0; i < size; i++) {
+            clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
+            sleep(1, SECONDS);
+            clickOn(voicesTune[i]);
+            sleep(1, SECONDS);
+            verify(mockedCall).setVoiceEffect(i);
+        }
+    }**/
 
 
 }
