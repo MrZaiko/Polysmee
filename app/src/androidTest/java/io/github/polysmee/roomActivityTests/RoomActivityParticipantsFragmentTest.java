@@ -165,10 +165,10 @@ public class RoomActivityParticipantsFragmentTest {
         assertEquals(MainUser.getMainUser().getId(), usersUnmuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
-
+    /**
     @Test
     public void testVoiceTuner() {
-        /**Bundle bundle = new Bundle();
+        Bundle bundle = new Bundle();
         bundle.putString(RoomActivityParticipantsFragment.PARTICIPANTS_KEY, appointmentId);
         Call mockedCall = mock(Call.class);
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle, new FragmentFactory() {
@@ -189,8 +189,8 @@ public class RoomActivityParticipantsFragmentTest {
             clickOn(voicesTune[i]);
             sleep(1, SECONDS);
             verify(mockedCall).setVoiceEffect(i);
-        }**/
-    }
+        }
+    }**/
 
 
 }
