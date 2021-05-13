@@ -62,8 +62,8 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
         createNotificationChannel(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle(context.getResources().getString(R.string.appointment_reminder_notification_notification_title))
-                .setContentText(context.getResources().getString(R.string.appointment_reminder_notification_notification_text))
+                .setContentTitle(context.getResources().getString(R.string.title_appointment_reminder_notification_notification))
+                .setContentText(context.getResources().getString(R.string.text_appointment_reminder_notification_notification))
 
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY)

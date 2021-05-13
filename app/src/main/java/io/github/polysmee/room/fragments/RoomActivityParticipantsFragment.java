@@ -23,7 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import java.util.Set;
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
-import io.github.polysmee.agora.video.handlers.settings.VoiceTunerActivity;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
@@ -53,7 +51,7 @@ import io.github.polysmee.profile.ProfileActivity;
 /**
  * Fragment that display all participants given in argument
  */
-public class RoomActivityParticipantsFragment extends Fragment {
+public class RoomActivityParticipantsFragment extends Fragment implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener {
 
     private ViewGroup rootView;
     private Appointment appointment;
@@ -73,6 +71,7 @@ public class RoomActivityParticipantsFragment extends Fragment {
     private Set<String> locallyMuted = new HashSet<String>();
 
     private Call call;
+    private VoiceTunerChoiceDialogFragment voiceTunerChoiceDialog;
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -121,13 +120,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
 
         super.onDestroy();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        int preference = PreferenceManager.getDefaultSharedPreferences(getContext()).getInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0);
-        setAudioEffect(preference);
     }
 
 
@@ -188,8 +180,11 @@ public class RoomActivityParticipantsFragment extends Fragment {
                     ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
                     audioTune.setVisibility(View.VISIBLE);
                     audioTune.setOnClickListener(v -> {
-                        Intent intent = new Intent(getContext(), VoiceTunerActivity.class);
-                        startActivity(intent);
+                        if (voiceTunerChoiceDialog == null) {
+                            voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment(this);
+                        }
+                        voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(), "Voice_tuner_Choice_dialog");
+
                     });
                     participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
@@ -349,7 +344,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
             });
             builder.show();
         }
-
     }
 
 
@@ -357,8 +351,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
         if (call != null) {
             call.leaveChannel();
         }
-
-        PreferenceManager.getDefaultSharedPreferences(getContext()).edit().putInt(getResources().getString(R.string.preference_key_voice_tuner_current_voice_tune), 0).apply();
     }
 
     /**
@@ -370,17 +362,6 @@ public class RoomActivityParticipantsFragment extends Fragment {
         }
     }
 
-    /**
-     * Sets the audio effect to the effect whose index is given
-     *
-     * @param effectIndex
-     */
-    private void setAudioEffect(int effectIndex) {
-        if (call != null) {
-            call.setVoiceEffect(effectIndex);
-        }
-
-    }
 
     /**
      * Make the user whose id is given appear as online (offline) in the room frontend if online is set to true (false)
@@ -577,6 +558,12 @@ public class RoomActivityParticipantsFragment extends Fragment {
 
         databaseAppointment.addInCallListener(inCallListener);
         commandsToRemoveListeners.add((x,y) -> databaseAppointment.removeInCallListener(inCallListener));
+    }
+
+    @Override
+    public void onDialogChoiceSingleChoiceItems(int elementIndex) {
+        assert call != null;
+        call.setVoiceEffect(elementIndex);
     }
 
 }

@@ -16,7 +16,7 @@ import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
 /**
  * Pager adapter that handles the room specific fragments
  */
-public class RoomPagerAdapter extends FragmentStateAdapter {
+public final class RoomPagerAdapter extends FragmentStateAdapter {
     private final String appointmentId;
     public static int[] FRAGMENT_NAME_ID = new int[]{R.string.roomTabMessagesText, R.string.roomTabVideoText, R.string.roomTabCallText};
     private final static int FRAGMENTS_NUMBER = 3;

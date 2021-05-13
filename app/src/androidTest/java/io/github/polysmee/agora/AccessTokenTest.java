@@ -31,7 +31,7 @@ public class AccessTokenTest {
         AccessToken key = new AccessToken(appId, appCertificate, channelName, uid);
         key.message.salt = salt;
         key.message.ts = ts;
-        key.message.messages.put((short) AccessToken.Privileges.kJoinChannel.intValue, expireTimestamp);
+        key.message.messages.put(AccessToken.Privileges.kJoinChannel.intValue, expireTimestamp);
         String result = key.build();
         assertEquals(expected, result);
     }

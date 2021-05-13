@@ -47,7 +47,8 @@
         tools:targetApi="m">
         <activity android:name=".profile.ProfileActivity"></activity>
 
-        <service android:name=".znotification.AppointmentReminderNotificationService"/>
+        <service android:name=".znotification.AppointmentReminderNotificationService" />
+
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="com.example.android.fileprovider"
@@ -66,8 +67,6 @@
 
         <activity android:name=".login.NoConnectionActivity" />
 
-
-        <activity android:name=".agora.video.handlers.settings.VoiceTunerActivity" />
         <activity android:name=".profile.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
         <activity android:name=".calendar.CalendarExportActivity"/>
