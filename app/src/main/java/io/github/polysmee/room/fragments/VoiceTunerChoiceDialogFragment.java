@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import org.jetbrains.annotations.NotNull;
 
 import io.github.polysmee.R;
 
@@ -43,7 +42,6 @@ public final class VoiceTunerChoiceDialogFragment extends DialogFragment {
         void onDialogChoiceSingleChoiceItems(int elementIndex);
     }
 
-    @NotNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
