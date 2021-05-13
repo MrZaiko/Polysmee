@@ -138,7 +138,7 @@ public class AppointmentActivityAddModeTest {
             setDateOnPicker(2022, 3, 23);
             setTimeOnPicker(16, 2);
 
-
+            assertEquals(true, InternetConnection.isOn());
             if (InternetConnection.isOn()) {
                 clickOn(R.id.appointmentCreationbtnDone);
                 //assertDisplayed("OK");
