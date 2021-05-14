@@ -2,10 +2,11 @@ package io.github.polysmee.profile;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -22,18 +23,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.room.fragments.HelperImages;
 
 public class FriendsActivity extends AppCompatActivity {
 
 
     private AutoCompleteTextView searchFriend;
     private Map<String, String> namesToIds;
-    private List<String> allUsers;
+    private List<UserItemAutocomplete> allUsers;
+    private List<String> allUsersNames;
     private Button friendAddButton;
     private AlertDialog.Builder builder;
     private LayoutInflater inflater;
@@ -69,14 +74,12 @@ public class FriendsActivity extends AppCompatActivity {
 
     protected void attributeSet() {
         allUsers = new ArrayList<>();
+        allUsersNames = new ArrayList<>();
         namesToIds = new HashMap<>();
         idsToFriendEntries = new HashMap<>();
         scrollLayout = findViewById(R.id.friendsActivityScrollLayout);
-        User.getAllUsersIds_Once_AndThen(this::nameGetters);
         searchFriend = findViewById(R.id.friendAddTextView);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_dropdown_item_1line, allUsers);
-        searchFriend.setAdapter(adapter);
+        User.getAllUsersIds_Once_AndThen(this::fillUserList);
         friendAddButton = findViewById(R.id.friendActivityAddButton);
         friendAddButton.setOnClickListener((v) -> addFriendBehavior());
         builder = new AlertDialog.Builder(this);
@@ -86,13 +89,22 @@ public class FriendsActivity extends AppCompatActivity {
     /**
      * @param ids the ids of the users we want to get the names of
      */
-    protected void nameGetters(Set<String> ids) {
+    protected void fillUserList(Set<String> ids) {
         for (String id : ids) {
             User user = new DatabaseUser(id);
             user.getName_Once_AndThen((name) -> {
-                allUsers.add(name);
-                namesToIds.put(name, id);
+                allUsersNames.add(name);
+                namesToIds.put(name,id);
+                user.getProfilePicture_Once_And_Then((profilePictureId) ->{
+                    allUsers.add(new UserItemAutocomplete(name,profilePictureId));
+                    if(allUsers.size() == ids.size()){
+                        autoCompleteUserAdapater adapter = new autoCompleteUserAdapater(this,
+                                allUsers);
+                        searchFriend.setAdapter(adapter);
+                    }
+                });
             });
+
         }
     }
 
@@ -102,7 +114,7 @@ public class FriendsActivity extends AppCompatActivity {
      */
     protected void addFriendBehavior() {
         String s = searchFriend.getText().toString();
-        if (!allUsers.contains(s)) {
+        if (!allUsersNames.contains(s)) {
             builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.genericOkText), null);
@@ -143,6 +155,7 @@ public class FriendsActivity extends AppCompatActivity {
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);
         TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
+        downloadFriendProfilePicture(userId,friendEntryLayout);
         nameFriend.setOnClickListener((view) -> {
             Intent profileIntent = new Intent(this, ProfileActivity.class);
             profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
@@ -188,5 +201,16 @@ public class FriendsActivity extends AppCompatActivity {
                 });
             }
         };
+    }
+
+    protected void downloadFriendProfilePicture(String id, ConstraintLayout friendEntry){
+        (new DatabaseUser(id)).getProfilePicture_Once_And_Then((profilePictureId) ->{
+            if(!profilePictureId.equals("")){
+                UploadServiceFactory.getAdaptedInstance().downloadImage(profilePictureId, imageBytes -> {
+                            Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+                            ((CircleImageView)friendEntry.findViewById(R.id.friendActivityElementProfilePicture)).setImageBitmap(Bitmap.createBitmap(bmp));
+                        },ss -> HelperImages.showToast(getString(R.string.genericErrorText), this));
+            }
+        });
     }
 }
