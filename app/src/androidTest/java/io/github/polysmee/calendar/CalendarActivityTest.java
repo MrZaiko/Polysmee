@@ -280,6 +280,8 @@ public class CalendarActivityTest {
         MainUser.getMainUser().createNewUserAppointment(info2.getStartTime(),
                 info2.getDuration(), info2.getCourse(), info2.getTitle(), false);
         sleep(3, SECONDS);
+        scrollTo(info2.getTitle());
+        sleep(2, SECONDS);
         clickOn(info2.getTitle());
         sleep(1, SECONDS);
         scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
