@@ -25,6 +25,7 @@ import java.util.Date;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
+import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
@@ -98,7 +99,7 @@ public class CalendarActivityTest {
         DailyCalendar.setDayEpochTimeAtMidnight(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DATE), false);
     }
 
-    /*@Test
+    @Test
     public void allCalendarTest() {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
 
@@ -129,78 +130,66 @@ public class CalendarActivityTest {
         Intents.release();
 
         scenario.close();
-    }*/
+    }
 
     @Test
-    public void allCalendarTest() {
+    public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime() {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        ActivityScenario<CalendarActivity> scenario = ActivityScenario.launch(intent);
-        Calendar calendar = Calendar.getInstance();
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
-        //modifyingTitleIsSeenOnTheCalendar
-        String title = "NewTitle";
-        long startTime = calendar.getTimeInMillis() + 60 * 1000;
-        CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
-                startTime, 3600 * 6 * 1000, appointmentId + 5);
-        MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
-                info.getDuration(), info.getCourse(), info.getTitle(), false);
-        sleep(3, SECONDS);
-        clickOn(info.getTitle());
-        sleep(1, SECONDS);
-        scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
-        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
-        closeSoftKeyboard();
-        clickOn(R.id.appointmentCreationbtnDone);
-        sleep(2, SECONDS);
-        assertDisplayed(title);
-
-        //clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime
-        CalendarAppointmentInfo info1 = new CalendarAppointmentInfo("SDP", "ClickMe",
-                calendar.getTimeInMillis() + 60 * 1000, 3600 * 6 * 1000, appointmentId + 5);
-        MainUser.getMainUser().createNewUserAppointment(info1.getStartTime(),
-                info1.getDuration(), info1.getCourse(), info1.getTitle(), false);
-        sleep(3, SECONDS);
-        scrollTo(info1.getTitle());
-        clickOn(info1.getTitle());
-        assertDisplayed(withHint(info1.getTitle()));
-        assertDisplayed(withText(info1.getCourse()));
-        pressBack();
-        sleep(2, SECONDS);
-        //writtenDateIsCorrectTest
-        assertDisplayed(dayFormatter.format(date));
-        assertDisplayed(letterDayFormatter.format(date));
-
-
-        //scrollViewContentsIsCoherentAfterAddingAppointments
-        int number_of_appointments = 2;
-
-        CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
-        for (int i = 0; i < number_of_appointments; ++i) {
-            infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
-                    DailyCalendar.getDayEpochTimeAtMidnight(false) + i * 3600 * 6 * 1000, 3600 * 6 * 1000, appointmentId + i);
-
-        }
-
-        for (int i = 0; i < number_of_appointments; ++i) {
-            MainUser.getMainUser().createNewUserAppointment(infos[i].getStartTime(),
-                    infos[i].getDuration(), infos[i].getCourse(), infos[i].getTitle(), i % 2 == 0);
+        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
+            Calendar calendar = Calendar.getInstance();
+            Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(false));
+            //modifyingTitleIsSeenOnTheCalendar
+            String title = "NewTitle";
+            long startTime = calendar.getTimeInMillis() + 60 * 1000;
+            CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
+                    startTime, 3600 * 6 * 1000, appointmentId + 5);
+            MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
+                    info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3, SECONDS);
-        }
+            clickOn(info.getTitle());
+            sleep(1, SECONDS);
+            scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
+            writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, title);
+            closeSoftKeyboard();
+            clickOn(R.id.appointmentCreationbtnDone);
+            sleep(2, SECONDS);
+            assertDisplayed(title);
 
-        for (int i = 0; i < number_of_appointments; ++i) {
-            scrollTo(infos[i].getTitle());
-            assertDisplayed(infos[i].getTitle());
-            SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-            Date startDate = new Date(infos[i].getStartTime());
-            Date endDate = new Date((infos[i].getStartTime() + infos[i].getDuration()));
-            scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
-            assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
-        }
+            //clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime
+            CalendarAppointmentInfo info1 = new CalendarAppointmentInfo("SDP", "ClickMe",
+                    calendar.getTimeInMillis() + 60 * 1000, 3600 * 6 * 1000, appointmentId + 5);
+            MainUser.getMainUser().createNewUserAppointment(info1.getStartTime(),
+                    info1.getDuration(), info1.getCourse(), info1.getTitle(), false);
+            sleep(3, SECONDS);
+            scrollTo(info1.getTitle());
+            clickOn(info1.getTitle());
+            assertDisplayed(withHint(info1.getTitle()));
+            assertDisplayed(withText(info1.getCourse()));
+            pressBack();
+            sleep(2, SECONDS);
+            //writtenDateIsCorrectTest
+            assertDisplayed(dayFormatter.format(date));
+            assertDisplayed(letterDayFormatter.format(date));
 
-        swipeViewPagerForward();
-        sleep(3, SECONDS);
-        for (int i = 0; i < number_of_appointments; ++i) {
-            if (i % 2 != 0) {
+
+            //scrollViewContentsIsCoherentAfterAddingAppointments
+            int number_of_appointments = 2;
+
+            CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
+            for (int i = 0; i < number_of_appointments; ++i) {
+                infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
+                        DailyCalendar.getDayEpochTimeAtMidnight(false) + i * 3600 * 6 * 1000, 3600 * 6 * 1000, appointmentId + i);
+
+            }
+
+            for (int i = 0; i < number_of_appointments; ++i) {
+                MainUser.getMainUser().createNewUserAppointment(infos[i].getStartTime(),
+                        infos[i].getDuration(), infos[i].getCourse(), infos[i].getTitle(), i % 2 == 0);
+                sleep(3, SECONDS);
+            }
+
+            for (int i = 0; i < number_of_appointments; ++i) {
+                scrollTo(infos[i].getTitle());
                 assertDisplayed(infos[i].getTitle());
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
                 Date startDate = new Date(infos[i].getStartTime());
@@ -208,99 +197,83 @@ public class CalendarActivityTest {
                 scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
                 assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
             }
-        }
-        swipeViewPagerBack();
 
-        sleep(3, SECONDS);
+            swipeViewPagerForward();
+            sleep(3, SECONDS);
+            for (int i = 0; i < number_of_appointments; ++i) {
+                if (i % 2 != 0) {
+                    assertDisplayed(infos[i].getTitle());
+                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
+                    Date startDate = new Date(infos[i].getStartTime());
+                    Date endDate = new Date((infos[i].getStartTime() + infos[i].getDuration()));
+                    scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
+                    assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
+                }
+            }
+            swipeViewPagerBack();
 
-        //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
+            sleep(3, SECONDS);
 
-        MainUser.getMainUser().createNewUserAppointment(CalendarActivityTest.startTime.getTimeInMillis(),
-                3600, appointmentCourse, appointmentTitle, false);
-        sleep(5, SECONDS);
+            //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
 
-        boolean thrown = false;
-        try {
-            onView(withText(appointmentTitle)).check(matches(isDisplayed()));
-        } catch (NoMatchingViewException e) {
-            thrown = true;
-        }
-        assertTrue(thrown);
+            MainUser.getMainUser().createNewUserAppointment(CalendarActivityTest.startTime.getTimeInMillis(),
+                    3600, appointmentCourse, appointmentTitle, false);
+            sleep(5, SECONDS);
 
-        clickOn(R.id.activityCalendarMonthMyAppointments);
-        setDateOnPicker(appointmentYear, appointmentMonth + 1, appointmentDay);
-        sleep(2, SECONDS);
-        assertDisplayed(appointmentTitle);
-        sleep(2, SECONDS);
-        clickOn(R.id.activityCalendarMonthMyAppointments);
-        setDateOnPicker(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH) + 1, calendar.get(Calendar.DATE));
+            boolean thrown = false;
+            try {
+                onView(withText(appointmentTitle)).check(matches(isDisplayed()));
+            } catch (NoMatchingViewException e) {
+                thrown = true;
+            }
+            assertTrue(thrown);
 
-        //notificationButtonShouldOpenInvites
-        sleep(2, SECONDS);
-        try {
-            clickOn(R.id.calendarMenuNotifications);
-            sleep(1, SECONDS);
-            assertDisplayed("Current invitations");
-        } catch (Exception e) {
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            clickOn(R.id.activityCalendarMonthMyAppointments);
+            setDateOnPicker(appointmentYear, appointmentMonth + 1, appointmentDay);
             sleep(2, SECONDS);
-            clickOn("Notifications");
-            sleep(1, SECONDS);
-            assertDisplayed("Current invitations");
-        }
-        pressBack();
-        //clickingSettingsButtonLaunchesSettingsActivity
-        sleep(2, SECONDS);
-        try {
-            clickOn(R.id.calendarMenuSettings);
-            assertDisplayed("Appointments reminder settings");
-        } catch (Exception e) {
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            assertDisplayed(appointmentTitle);
             sleep(2, SECONDS);
-            clickOn("Settings");
-            assertDisplayed("Appointments reminder settings");
-        }
-        pressBack();
-        sleep(2, SECONDS);
-        //profileButtonShouldOpenProfile
-        try {
-            clickOn(R.id.calendarMenuProfile);
-            assertDisplayed(username1);
-        } catch (Exception e) {
-            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+
+
+            //notificationButtonShouldOpenInvites
             sleep(2, SECONDS);
-            clickOn(R.id.calendarMenuProfile);
-            assertDisplayed(username1);
+            try {
+                clickOn(R.id.calendarMenuNotifications);
+                sleep(1, SECONDS);
+                assertDisplayed("Current invitations");
+            } catch (Exception e) {
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2, SECONDS);
+                clickOn("Notifications");
+                sleep(1, SECONDS);
+                assertDisplayed("Current invitations");
+            }
+            pressBack();
+            //clickingSettingsButtonLaunchesSettingsActivity
+            sleep(2, SECONDS);
+            try {
+                clickOn(R.id.calendarMenuSettings);
+                assertDisplayed("Appointments reminder settings");
+            } catch (Exception e) {
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2, SECONDS);
+                clickOn("Settings");
+                assertDisplayed("Appointments reminder settings");
+            }
+            pressBack();
+            sleep(2, SECONDS);
+            //profileButtonShouldOpenProfile
+            try {
+                clickOn(R.id.calendarMenuProfile);
+                assertDisplayed(username1);
+            } catch (Exception e) {
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2, SECONDS);
+                clickOn(R.id.calendarMenuProfile);
+                assertDisplayed(username1);
+            }
+
         }
-
-        String titlee = "NewTitlee";
-        long startTimme = calendar.getTimeInMillis() + 60 * 1000;
-        CalendarAppointmentInfo info2 = new CalendarAppointmentInfo("SDP", "ClickMeBro",
-                startTime, 3600 * 6 * 1000, appointmentId + 5);
-        MainUser.getMainUser().createNewUserAppointment(info2.getStartTime(),
-                info2.getDuration(), info2.getCourse(), info2.getTitle(), false);
-        sleep(3, SECONDS);
-        scrollTo(info2.getTitle());
-        sleep(2, SECONDS);
-        clickOn(info2.getTitle());
-        sleep(1, SECONDS);
-        scrollTo(R.id.appointmentCreationEditTxtAppointmentTitleSet);
-        writeTo(R.id.appointmentCreationEditTxtAppointmentTitleSet, titlee);
-        closeSoftKeyboard();
-        clickOn(R.id.appointmentCreationbtnDone);
-        sleep(2, SECONDS);
-        assertDisplayed(title);
-
-        longClickOn(title);
-        Intents.init();
-        clickDialogPositiveButton();
-        intended(hasData(CalendarContract.Events.CONTENT_URI));
-        intended(hasExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTimme));
-        intended(hasExtra(CalendarContract.Events.TITLE, title));
-        Intents.release();
-
-        scenario.close();
-
     }
 
 }
