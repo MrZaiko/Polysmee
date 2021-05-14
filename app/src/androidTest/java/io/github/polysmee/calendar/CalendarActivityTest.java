@@ -275,7 +275,7 @@ public class CalendarActivityTest {
 
         String titlee = "NewTitlee";
         long startTimme = calendar.getTimeInMillis() + 60 * 1000;
-        CalendarAppointmentInfo info2 = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
+        CalendarAppointmentInfo info2 = new CalendarAppointmentInfo("SDP", "ClickMeBro",
                 startTime, 3600 * 6 * 1000, appointmentId + 5);
         MainUser.getMainUser().createNewUserAppointment(info2.getStartTime(),
                 info2.getDuration(), info2.getCourse(), info2.getTitle(), false);
