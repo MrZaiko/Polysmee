@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
@@ -14,9 +16,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
+import io.github.polysmee.internet.connection.InternetConnection;
 
 public class LoginCheckActivity extends AppCompatActivity {
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,8 +30,11 @@ public class LoginCheckActivity extends AppCompatActivity {
         }
 
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
-        if (user == null) {
-            if (isOnline()) {
+
+        InternetConnection.addConnectionListener(getApplicationContext());
+
+        if(user == null) {
+            if(isOnline()) {
                 startActivity(new Intent(LoginCheckActivity.this, LoginActivity.class));
             } else {
                 startActivity(new Intent(LoginCheckActivity.this, NoConnectionActivity.class));

@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
@@ -32,6 +35,8 @@ import io.github.polysmee.znotification.AppointmentReminderNotification;
 public class CalendarActivity extends AppCompatActivity {
 
     private ActivityResultLauncher<String> requestPermissionLauncher;
+
+    private MenuItem wifiLogo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,6 +104,12 @@ public class CalendarActivity extends AppCompatActivity {
 
     @Override
     protected void onResume() {
+        if(wifiLogo != null) {
+            wifiLogo.setVisible(!InternetConnection.isOn());
+            InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> wifiLogo.setVisible(key))));
+        }
+
+
         super.onResume();
     }
 
@@ -107,6 +118,11 @@ public class CalendarActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.calendar_menu, menu);
+        wifiLogo = menu.findItem(R.id.calendarMenuOffline);
+        if(InternetConnection.isOn()) {
+            wifiLogo.setVisible(false);
+        }
+        InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> wifiLogo.setVisible(key))));
         return true;
     }
 
