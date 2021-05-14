@@ -2,6 +2,7 @@ package io.github.polysmee.calendar.fragments;
 
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,6 +17,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.CalendarExport;
@@ -33,7 +36,11 @@ import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.internet.connection.InternetConnection;
+import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.RoomActivity;
 
@@ -55,6 +62,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private final Map<String, View> appointmentIdsToView = new HashMap<>();
     private final Set<String> appointmentSet = new HashSet<>();
     private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
+
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
 
     @Nullable
@@ -104,12 +114,39 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         setListenerUserAppointments();
     }
 
+    @Override
+    public void onDestroy() {
+        Object dummyArgument = null;
+        for(Command command : commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
+    }
+
     /*
      * Behavior of the create appointment button, depending if the user is real or fake
      */
     private void createAppointment() {
-        Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
-        startActivity(intent);
+        if(!InternetConnection.isOn()) {
+            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+            builder.setTitle(R.string.offline_warning);
+            builder.setMessage(R.string.offline_appointment);
+
+            //add ok button
+            builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+                    startActivity(intent);
+                }
+            });
+            builder.show();
+        } else {
+            Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+            startActivity(intent);
+        }
+
     }
 
 
@@ -216,6 +253,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
         userAppointmentsListener = currentDayUserAppointmentsListener();
         user.getAppointmentsAndThen(userAppointmentsListener);
+        commandsToRemoveListeners.add((x,y) -> user.removeAppointmentsListener(userAppointmentsListener));
     }
 
     protected StringSetValueListener currentDayUserAppointmentsListener() {
@@ -239,47 +277,53 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
             }
 
 
-            appointmentSet.addAll(newAppointments); //add all new appointments
-            if (newAppointments.isEmpty()) {
-                scrollLayout.removeAllViewsInLayout();
-                changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
-                return;
-            }
-            for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
-                Appointment appointment = new DatabaseAppointment(id);
-                CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
-                appointment.getStartTimeAndThen((start) -> {
-                    appointmentInfo.setStartTime(start);
-                    appointment.getDurationAndThen((duration) -> {
-                        appointmentInfo.setDuration(duration);
-                        appointment.getTitleAndThen((title) -> {
-                            appointmentInfo.setTitle((title));
-                            if (!appointmentSet.contains(appointmentInfo.getId())) { //the appointment was removed; we thus have to remove it from the displayed appointments
-                                appointmentInfoMap.remove(appointmentInfo.getId());
-                                if (appointmentIdsToView.containsKey(id)) {
-                                    scrollLayout.removeView(appointmentIdsToView.get(id));
-                                    scrollLayout.removeView(appointmentIdsToView.get(id + 1));
-                                    appointmentIdsToView.remove(id);
-                                    appointmentIdsToView.remove(id + 1);
+                appointmentSet.addAll(newAppointments); //add all new appointments
+                if (newAppointments.isEmpty()) {
+                    scrollLayout.removeAllViewsInLayout();
+                    changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                    return;
+                }
+                for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
+                    Appointment appointment = new DatabaseAppointment(id);
+                    CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
+
+                    LongValueListener startListener = (start) -> {
+                        appointmentInfo.setStartTime(start);
+                        LongValueListener durationListener = (duration) -> {
+                            appointmentInfo.setDuration(duration);
+                            StringValueListener titleListener = (title) -> {
+                                appointmentInfo.setTitle((title));
+                                if (!appointmentSet.contains(appointmentInfo.getId())) { //the appointment was removed; we thus have to remove it from the displayed appointments
+                                    appointmentInfoMap.remove(appointmentInfo.getId());
+                                    if (appointmentIdsToView.containsKey(id)) {
+                                        scrollLayout.removeView(appointmentIdsToView.get(id));
+                                        scrollLayout.removeView(appointmentIdsToView.get(id + 1));
+                                        appointmentIdsToView.remove(id);
+                                        appointmentIdsToView.remove(id + 1);
+                                    }
+                                } else {
+                                    appointmentInfoMap.put(appointment.getId(), appointmentInfo);
+                                    if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it.
+                                        createAppointmentEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
+                                    } else { //we add the new appointment and update the layout.
+                                        scrollLayout.removeAllViewsInLayout();
+                                        changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                    }
                                 }
-                            } else {
-                                appointmentInfoMap.put(appointment.getId(), appointmentInfo);
-                                if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it.
-                                    createAppointmentEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
-                                } else { //we add the new appointment and update the layout.
-                                    scrollLayout.removeAllViewsInLayout();
-                                    changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
-                                }
-                            }
+                            };
+                            appointment.getTitleAndThen(titleListener);
+                            commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
+                        };
+                        appointment.getDurationAndThen(durationListener);
+                        commandsToRemoveListeners.add((x,y) -> appointment.removeDurationListener(durationListener));
+                    };
 
-                        });
-                    });
+                    appointment.getStartTimeAndThen(startListener);
+                    commandsToRemoveListeners.add((x,y) -> appointment.removeStartListener(startListener));
+                }
+            };
+        }
 
-                });
-            }
-        };
-
-    }
 
 
 }

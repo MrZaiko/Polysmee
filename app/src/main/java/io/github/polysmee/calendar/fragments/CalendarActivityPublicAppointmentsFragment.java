@@ -28,12 +28,16 @@ import java.util.Map;
 import java.util.Set;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
+import io.github.polysmee.database.databaselisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
@@ -58,6 +62,9 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     private String currentCourse = "";
     AlertDialog.Builder builder;
     AutoCompleteTextView courseSelector;
+
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -135,6 +142,16 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         super.onResume();
     }
 
+    @Override
+    public void onDestroy() {
+        Object dummyArgument = null;
+        for(Command command: commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
+    }
+
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
@@ -164,13 +181,15 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
         Appointment appointment1 = new DatabaseAppointment(appointment.getId());
-        appointment1.getOwnerIdAndThen((ownerId) -> {
-            if (!ownerId.equals(user.getId())) {
+        StringValueListener ownerListener = (ownerId) ->{
+            if(!ownerId.equals(user.getId())){
                 calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
                 calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
             }
 
-        });
+        };
+        appointment1.getOwnerIdAndThen(ownerListener);
+        commandsToRemoveListeners.add((x,y) -> appointment1.removeOwnerListener(ownerListener));
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime() + appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());
@@ -246,16 +265,18 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                 for (String id : newAppointments) { //iterate only on the new appointments, to set their listener when they're added, not everytime we delete/add an appointment
                     Appointment appointment = new DatabaseAppointment(id);
 
-                    appointment.getPrivateAndThen((isPrivate) -> {
-                        if (!isPrivate) {
-                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
-                            appointment.getStartTimeAndThen((start) -> {
+                    BooleanValueListener privateListener = (isPrivate) ->{
+                        if(!isPrivate){
+                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id);
+                            LongValueListener startListener = (start)->{
+
                                 appointmentInfo.setStartTime(start);
-                                appointment.getDurationAndThen((duration) -> {
+                                LongValueListener durationListener = (duration) -> {
                                     appointmentInfo.setDuration(duration);
-                                    appointment.getTitleAndThen((title) -> {
+                                  
+                                    StringValueListener titleListener = (title) ->{
                                         appointmentInfo.setTitle((title));
-                                        appointment.getCourseAndThen((course) -> {
+                                        StringValueListener courseListener = (course) ->{
                                             appointmentInfo.setCourse(course);
                                             scrollLayout.removeAllViewsInLayout();
                                             if (!appointmentSet.contains(appointmentInfo.getId())) {
@@ -264,19 +285,30 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                                 appointmentInfoMap.put(appointment.getId(), appointmentInfo);
                                             }
                                             changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
-                                        });
-                                    });
-                                });
+                                        };
+                                        appointment.getCourseAndThen(courseListener);
+                                        commandsToRemoveListeners.add((x,y) -> appointment.removeCourseListener(courseListener));
+                                    };
+                                    appointment.getTitleAndThen(titleListener);
+                                    commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
+                                };
+                                appointment.getDurationAndThen(durationListener);
+                                commandsToRemoveListeners.add((x,y) -> appointment.removeDurationListener(durationListener));
 
-                            });
-                        } else {
+                            };
+                            appointment.getStartTimeAndThen(startListener);
+                            commandsToRemoveListeners.add((x,y) -> appointment.removeStartListener(startListener));
+                        }
+                        else{
                             appointmentInfoMap.remove(id);
                             if (appointmentIdsToView.containsKey(id)) {
                                 scrollLayout.removeView(appointmentIdsToView.get(id));
                                 scrollLayout.removeView(appointmentIdsToView.get(id + 1));
                             }
                         }
-                    });
+                    };
+                    appointment.getPrivateAndThen(privateListener);
+                    commandsToRemoveListeners.add((x,y) -> appointment.removePrivateListener(privateListener));
                 }
             }
 
