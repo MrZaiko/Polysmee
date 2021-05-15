@@ -100,7 +100,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
     private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
         DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
         if (accept) {
-            user.addAppointment(apt);
+            user.addAppointment(apt, "");
             apt.addParticipant(user);
         }
         user.removeInvite(apt);

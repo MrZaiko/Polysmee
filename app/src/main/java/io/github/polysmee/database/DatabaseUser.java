@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -25,13 +26,13 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void addAppointment(Appointment appointment) {
+    public void addAppointment(Appointment appointment, String eventId) {
         DatabaseFactory.getAdaptedInstance()
                 .getReference("users")
                 .child(self_id)
                 .child("appointments")
                 .child(appointment.getId())
-                .setValue(true);
+                .setValue(eventId);
     }
 
     @Override
@@ -153,6 +154,48 @@ public final class DatabaseUser implements User {
     }
 
     @Override
+    public void getAppointmentsAndEventIdsAndThen(MapStringStringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getAppointmentsAndEventIds_Once_AndThen(MapStringStringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void getAppointmentEventId_Once_AndThen(Appointment appointment, StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void setAppointmentEventId(Appointment appointment, String eventId) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("appointments")
+                .child(appointment.getId())
+                .setValue(eventId);
+    }
+
+    @Override
     public void getAppointments_Once_AndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
@@ -188,7 +231,7 @@ public final class DatabaseUser implements User {
         ref.setValue(newAppo);
 
         Appointment appointment = new DatabaseAppointment(ref.getKey());
-        this.addAppointment(appointment);
+        this.addAppointment(appointment, "");
         appointment.addParticipant(new DatabaseUser(self_id));
         return ref.getKey();
     }
@@ -293,6 +336,26 @@ public final class DatabaseUser implements User {
                 .child(self_id)
                 .child("picture")
                 .removeEventListener(valueListener);
+    }
+
+    @Override
+    public void getCalendarId_Once_AndThen(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("calendarId")
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void setCalendarId(String calendarId) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("users")
+                .child(self_id)
+                .child("calendarId")
+                .setValue(calendarId);
     }
 
 

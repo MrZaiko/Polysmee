@@ -216,7 +216,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     protected void joinPublicAppointmentWhenClickingOnJoin(String appointmentId) {
         Appointment appointment = new DatabaseAppointment(appointmentId);
         appointment.addParticipant(user);
-        user.addAppointment(appointment);
+        user.addAppointment(appointment, "");
     }
 
     /**

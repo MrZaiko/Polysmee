@@ -61,7 +61,7 @@ public class DatabaseUserTest {
 
     @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
-        MainUser.getMainUser().addAppointment(new DatabaseAppointment("AZERTY"));
+        MainUser.getMainUser().addAppointment(new DatabaseAppointment("AZERTY"), "");
         FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
         String id = Tasks.await(db.getReference()
                 .child("users")

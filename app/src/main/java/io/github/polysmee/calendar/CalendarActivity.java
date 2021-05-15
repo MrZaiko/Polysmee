@@ -23,6 +23,7 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarSyncActivity;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
@@ -142,7 +143,7 @@ public class CalendarActivity extends AppCompatActivity {
                 startActivity(notificationsIntent);
                 return true;
             case R.id.calendarMenuExport:
-                Intent exportIntent = new Intent(this, CalendarExportActivity.class);
+                Intent exportIntent = new Intent(this, GoogleCalendarSyncActivity.class);
                 startActivity(exportIntent);
                 return true;
             default:

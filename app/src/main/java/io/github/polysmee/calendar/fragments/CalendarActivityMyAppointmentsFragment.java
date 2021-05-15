@@ -28,7 +28,7 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
-import io.github.polysmee.calendar.CalendarUtilities;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;

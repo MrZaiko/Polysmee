@@ -13,11 +13,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
+import com.google.api.services.calendar.model.Event;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +31,7 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -82,7 +87,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
     // Misc
     private boolean isOwner;
-    boolean isKeyboardShowing;
+    private boolean isKeyboardShowing;
+    private String calendarId;
 
 
     // Layout related attributes
@@ -186,6 +192,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                     editCourse.setAdapter(adapter);
                 }
         );
+
+        MainUser.getMainUser().getCalendarId_Once_AndThen(id -> calendarId = id);
 
         builder = new AlertDialog.Builder(this);
     }
@@ -483,6 +491,20 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         if (mode == ADD_MODE) {
             String aptID = MainUser.getMainUser().createNewUserAppointment(startTime, duration, course, title, isPrivate);
             appointment = new DatabaseAppointment(aptID);
+
+            if (calendarId != null && !calendarId.equals("")) {
+                new Thread(() -> {
+                    Event newApt = CalendarUtilities.createEvent(title, course, startTime, duration);
+                    try {
+                        String eventId = CalendarUtilities.addEventToCalendar(this, calendarId, newApt);
+                        MainUser.getMainUser().setAppointmentEventId(appointment, eventId);
+                    } catch (IOException e) {
+                        Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                        toast.show();
+                    }
+                }).start();
+            }
+
         } else {
             //TODO mb a new function to edit everything at once
             if (!title.equals(""))
@@ -496,6 +518,23 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
             if (startTimeUpdated || endTimeUpdated)
                 appointment.setDuration(duration);
+
+            if (calendarId != null && !calendarId.equals("")) {
+                MainUser.getMainUser().getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                    if (eventId != null && !eventId.equals(""))
+                        new Thread(() -> {
+                            try {
+                                CalendarUtilities.updateEvent(this, calendarId, eventId,
+                                        title, course,
+                                        startTimeUpdated ? startTime : null,
+                                        startTimeUpdated || endTimeUpdated ? duration : null);
+                            } catch (IOException e) {
+                                Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                toast.show();
+                            }
+                        }).start();
+                });
+            }
 
             appointment.setPrivate(isPrivate);
         }
