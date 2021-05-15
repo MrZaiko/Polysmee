@@ -56,14 +56,6 @@ public class FriendsActivityTest {
 
 
     @Test
-    public void encouragingMessageIsDisplayedTest() {
-        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
-        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            assertDisplayed(getApplicationContext().getResources().getString(R.string.friendsActivityEncouragingMessage1));
-        }
-    }
-
-    @Test
     public void addingAndRemovingANewFriendTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
