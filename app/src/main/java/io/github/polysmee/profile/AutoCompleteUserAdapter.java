@@ -21,11 +21,11 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.room.fragments.HelperImages;
 
-public class autoCompleteUserAdapater extends ArrayAdapter<UserItemAutocomplete> {
+public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> {
 
     private final List<UserItemAutocomplete> userListFull;
     private final Context context;
-    public autoCompleteUserAdapater(@NonNull Context context, @NonNull List userList) {
+    public AutoCompleteUserAdapter(@NonNull Context context, @NonNull List userList) {
         super(context,0,userList);
         this.userListFull = new ArrayList(userList);
         this.context = context;

@@ -98,7 +98,7 @@ public class FriendsActivity extends AppCompatActivity {
                 user.getProfilePicture_Once_And_Then((profilePictureId) ->{
                     allUsers.add(new UserItemAutocomplete(name,profilePictureId));
                     if(allUsers.size() == ids.size()){
-                        autoCompleteUserAdapater adapter = new autoCompleteUserAdapater(this,
+                        AutoCompleteUserAdapter adapter = new AutoCompleteUserAdapter(this,
                                 allUsers);
                         searchFriend.setAdapter(adapter);
                     }
