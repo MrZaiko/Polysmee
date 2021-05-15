@@ -3,6 +3,7 @@ package io.github.polysmee.calendar;
 import android.content.Intent;
 import android.provider.CalendarContract;
 
+import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
@@ -128,7 +129,7 @@ public class CalendarActivityTest {
         intended(hasExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, startTime));
         intended(hasExtra(CalendarContract.Events.TITLE, title));
         Intents.release();
-
+        scenario.moveToState(Lifecycle.State.DESTROYED);
         scenario.close();
     }
 
@@ -272,7 +273,7 @@ public class CalendarActivityTest {
                 clickOn(R.id.calendarMenuProfile);
                 assertDisplayed(username1);
             }
-
+            ignored.moveToState(Lifecycle.State.DESTROYED);
         }
     }
 

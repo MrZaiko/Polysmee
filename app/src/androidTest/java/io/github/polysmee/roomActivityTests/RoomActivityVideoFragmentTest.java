@@ -3,6 +3,7 @@ package io.github.polysmee.roomActivityTests;
 
 import android.content.Intent;
 
+import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -108,6 +109,7 @@ public class RoomActivityVideoFragmentTest {
 
             assertTrue(logBackMessages.contains("I successfully joined the call"));
             assertTrue(logBackMessages.contains("I left the channel"));
+            ignored.moveToState(Lifecycle.State.DESTROYED);
         }
     }
 }
