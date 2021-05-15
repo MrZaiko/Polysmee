@@ -92,15 +92,16 @@ public class FriendsActivity extends AppCompatActivity {
     protected void fillUserList(Set<String> ids) {
         for (String id : ids) {
             User user = new DatabaseUser(id);
+            UserItemAutocomplete userItemAutocomplete = new UserItemAutocomplete();
             user.getName_Once_AndThen((name) -> {
                 allUsersNames.add(name);
                 namesToIds.put(name,id);
+                userItemAutocomplete.setUsername(name);
                 user.getProfilePicture_Once_And_Then((profilePictureId) ->{
-                    allUsers.add(new UserItemAutocomplete(name,profilePictureId));
+                    userItemAutocomplete.setPictureId(profilePictureId);
+                    allUsers.add(userItemAutocomplete);
                     if(allUsers.size() == ids.size()){
-                        AutoCompleteUserAdapter adapter = new AutoCompleteUserAdapter(this,
-                                allUsers);
-                        searchFriend.setAdapter(adapter);
+                        searchFriend.setAdapter(new AutoCompleteUserAdapter(this,allUsers));
                     }
                 });
             });
