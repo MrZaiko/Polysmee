@@ -8,7 +8,7 @@ check_android_task:
   container:
     image: reactivecircus/android-emulator-$API_LEVEL:latest
     kvm: true
-    cpu: 4
+    cpu: 8
     memory: 16G
   environment:
     FIREBASE_PROJECT: ENCRYPTED[bc6620afb409572960c61f926317a3b87fa7d409fff320107e8931264eb228ab8f1f7fe93992a0a1399ff34590c8f182]
