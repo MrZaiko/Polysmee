@@ -84,7 +84,7 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
         }
     };
 
-    protected void downloadUserProfilePicture(String pictureId, CircleImageView picture){
+    private void downloadUserProfilePicture(String pictureId, CircleImageView picture){
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 picture.setImageBitmap(Bitmap.createBitmap(bmp));
