@@ -1,35 +1,53 @@
-package io.github.polysmee.calendar;
+package io.github.polysmee.calendar.googlecalendarsync;
 
 import android.content.Context;
 import android.content.Intent;
 import android.provider.CalendarContract;
+import android.util.Log;
 
 import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.model.AclRule;
+import com.google.api.services.calendar.model.CalendarList;
+import com.google.api.services.calendar.model.CalendarListEntry;
 import com.google.api.services.calendar.model.Event;
 import com.google.api.services.calendar.model.EventDateTime;
 
 import java.io.IOException;
 
+import io.github.polysmee.calendar.CalendarAppointmentInfo;
 
-public class CalendarUtilities {
 
-    public static void addUserToCalendar(Calendar service, String calendarId, String userEmail) throws IOException {
+public class GoogleCalendarUtilities {
+
+    public static void printAllCalendar(Context context) throws IOException {
+        CalendarList list = GoogleCalendarService.getService(context).calendarList().list().execute();
+        for (CalendarListEntry entry : list.getItems())
+            Log.d("Calendar", entry.toPrettyString());
+    }
+
+    public static void deleteCalendar(Context context, String calendarId) throws IOException {
+        GoogleCalendarService.getService(context).calendars().delete(calendarId).execute();
+    }
+
+    public static void deleteEvent(Context context, String calendarId, String eventId) throws IOException {
+        GoogleCalendarService.getService(context).events().delete(calendarId, eventId).execute();
+    }
+
+    public static void addUserToCalendar(Context context, String calendarId, String userEmail) throws IOException {
         AclRule rule = new AclRule();
         com.google.api.services.calendar.model.AclRule.Scope scope = new com.google.api.services.calendar.model.AclRule.Scope();
         scope.setType("user").setValue(userEmail);
         rule.setScope(scope).setRole("reader");
 
         // Insert new access rule
-        service.acl().insert(calendarId, rule).execute();
+        GoogleCalendarService.getService(context).acl().insert(calendarId, rule).execute();
     }
 
-    public static String createCalendar(Calendar service, String userEmail) throws IOException {
+    public static String createCalendar(Context context, String userEmail) throws IOException {
         com.google.api.services.calendar.model.Calendar newCalendar = new com.google.api.services.calendar.model.Calendar();
         String calendarName = "Polysmee appointments - " + userEmail;
         newCalendar.setSummary(calendarName);
-        com.google.api.services.calendar.model.Calendar createdCalendar = service.calendars().insert(newCalendar).execute();
+        com.google.api.services.calendar.model.Calendar createdCalendar = GoogleCalendarService.getService(context).calendars().insert(newCalendar).execute();
 
         return createdCalendar.getId();
     }
@@ -51,19 +69,19 @@ public class CalendarUtilities {
         return event;
     }
 
-    public static String addEventToCalendar(Calendar service, String calendarId, Event event) throws IOException {
-        Event addedEvent = service.events().insert(calendarId, event).execute();
+    public static String addEventToCalendar(Context context, String calendarId, Event event) throws IOException {
+        Event addedEvent = GoogleCalendarService.getService(context).events().insert(calendarId, event).execute();
         return addedEvent.getId();
     }
 
-    public static void updateEvent(Calendar service, String calendarId, String eventId,
+    public static void updateEvent(Context context, String calendarId, String eventId,
                                    String title, String course, Long startTime, Long duration) throws IOException {
-        Event event = service.events().get(calendarId, eventId).execute();
+        Event event = GoogleCalendarService.getService(context).events().get(calendarId, eventId).execute();
 
-        if (title != null)
+        if (title != null && !title.equals(""))
             event.setSummary(title);
 
-        if (course != null) {
+        if (course != null && !course.equals("")) {
             String description = "Course : " + course;
             event.setDescription(description);
         }
@@ -80,7 +98,7 @@ public class CalendarUtilities {
             event.setEnd(end);
         }
 
-        service.events().update(calendarId, event.getId(), event).execute();
+        GoogleCalendarService.getService(context).events().update(calendarId, event.getId(), event).execute();
     }
 
     public static void exportAppointment(Context context, CalendarAppointmentInfo appointment) {

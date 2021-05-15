@@ -3,6 +3,7 @@ package io.github.polysmee.appointments;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -15,6 +16,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
@@ -32,6 +34,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
+import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -55,6 +58,8 @@ import io.github.polysmee.login.MainUser;
  * <p>
  * APPOINTMENT_ID (NEEDED in DETAIL_MODE) : the appointment to be displayed
  */
+@RequiresApi(api = Build.VERSION_CODES.N)
+
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
     // Intents related attributes
@@ -493,16 +498,12 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             appointment = new DatabaseAppointment(aptID);
 
             if (calendarId != null && !calendarId.equals("")) {
-                new Thread(() -> {
-                    Event newApt = CalendarUtilities.createEvent(title, course, startTime, duration);
-                    try {
-                        String eventId = CalendarUtilities.addEventToCalendar(this, calendarId, newApt);
-                        MainUser.getMainUser().setAppointmentEventId(appointment, eventId);
-                    } catch (IOException e) {
-                        Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
-                        toast.show();
-                    }
-                }).start();
+                CalendarUtilities.addAppointmentToCalendar(this, appointment, calendarId,
+                        title, course, startTime, duration,
+                        e-> runOnUiThread( () ->{
+                            Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                            toast.show();
+                        }));
             }
 
         } else {
@@ -522,17 +523,14 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             if (calendarId != null && !calendarId.equals("")) {
                 MainUser.getMainUser().getAppointmentEventId_Once_AndThen(appointment, eventId -> {
                     if (eventId != null && !eventId.equals(""))
-                        new Thread(() -> {
-                            try {
-                                CalendarUtilities.updateEvent(this, calendarId, eventId,
-                                        title, course,
-                                        startTimeUpdated ? startTime : null,
-                                        startTimeUpdated || endTimeUpdated ? duration : null);
-                            } catch (IOException e) {
-                                Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
-                                toast.show();
-                            }
-                        }).start();
+                        CalendarUtilities.updateAppointmentOnCalendar(this, calendarId, eventId,
+                                title, course,
+                                startTimeUpdated ? startTime : null,
+                                startTimeUpdated || endTimeUpdated ? duration : null,
+                                e -> runOnUiThread(() -> {
+                                    Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }));
                 });
             }
 
@@ -554,43 +552,67 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private void updateAppointmentParticipantsAndBans(Set<String> allIds) {
         for (String userId : allIds) {
             User user = new DatabaseUser(userId);
-            user.getNameAndThen((name) -> {
+            user.getName_Once_AndThen((name) -> {
                 if (mode == DETAIL_MODE) {
-                    for (String removedParticipant : removedInvites) {
-                        if (name.equals(removedParticipant)) {
-                            user.removeAppointment(appointment);
-                            appointment.removeParticipant(user);
+                    user.getCalendarId_Once_AndThen(userCalendarId -> {
+                        if (userCalendarId != null && !userCalendarId.equals("")) {
+                            user.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                                updateParticipants(name, eventId, userCalendarId, user);
+                            });
+                        } else {
+                            updateParticipants(name, null, null, user);
                         }
-                    }
-                    for (String addedBan : bans) {
-                        if (name.equals(addedBan)) {
-                            user.removeAppointment(appointment);
-                            appointment.removeParticipant(user);
-                        }
-                    }
-                    for (String removedBan : removedBans) {
-                        if (name.equals(removedBan)) {
-                            appointment.removeBan(user);
-                        }
-                    }
-                }
 
-                for (String banName : bans) {
-                    if (name.equals(banName)) {
-                        appointment.addBan(user);
-                    }
+                    });
+                } else {
+                   banAndInvite(name, user);
                 }
-
-                appointment.getBansAndThen(bannedUsers -> {
-                    for (String inviteName : invites) {
-                        if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
-                            user.addInvite(appointment);
-                            appointment.addInvite(user);
-                        }
-                    }
-                });
             });
+
         }
+    }
+
+    private void updateParticipants(String name, String eventId, String userCalendarId, User user) {
+        for (String removedParticipant : removedInvites) {
+            if (name.equals(removedParticipant)) {
+                if (eventId != null && !eventId.equals(""))
+                    CalendarUtilities.deleteAppointmentFromCalendar(this, appointment, userCalendarId, eventId, e->{});
+                user.removeAppointment(appointment);
+                appointment.removeParticipant(user);
+            }
+        }
+        for (String addedBan : bans) {
+            if (name.equals(addedBan)) {
+                if (eventId != null && !eventId.equals(""))
+                    CalendarUtilities.deleteAppointmentFromCalendar(this, appointment, userCalendarId, eventId, e->{});
+                user.removeAppointment(appointment);
+                appointment.removeParticipant(user);
+            }
+        }
+        for (String removedBan : removedBans) {
+            if (name.equals(removedBan)) {
+                appointment.removeBan(user);
+            }
+        }
+
+        banAndInvite(name, user);
+    }
+
+    private void banAndInvite(String name, User user) {
+        for (String banName : bans) {
+            if (name.equals(banName)) {
+                appointment.addBan(user);
+            }
+        }
+
+        appointment.getBansAndThen(bannedUsers -> {
+            for (String inviteName : invites) {
+                if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
+                    user.addInvite(appointment);
+                    appointment.addInvite(user);
+                }
+            }
+        });
     }
 
     @Override

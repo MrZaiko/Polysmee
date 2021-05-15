@@ -28,7 +28,7 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
-import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
+import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarUtilities;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -193,7 +193,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Do you want to export this appointment to your calendar ?")
                 .setPositiveButton("Export", (dialog, id) -> {
-                    CalendarUtilities.exportAppointment(getContext(), appointment);
+                    GoogleCalendarUtilities.exportAppointment(getContext(), appointment);
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> {
                     // User cancelled the dialog

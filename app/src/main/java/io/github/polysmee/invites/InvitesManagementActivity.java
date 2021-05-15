@@ -1,6 +1,7 @@
 package io.github.polysmee.invites;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,9 +9,13 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.google.api.services.calendar.model.Event;
+
+import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,12 +28,15 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
+import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
+@RequiresApi(api = Build.VERSION_CODES.N)
 public class InvitesManagementActivity extends AppCompatActivity {
 
     private StringSetValueListener userInvitesListener;
@@ -100,8 +108,15 @@ public class InvitesManagementActivity extends AppCompatActivity {
     private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
         DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
         if (accept) {
-            user.addAppointment(apt, "");
-            apt.addParticipant(user);
+            user.getCalendarId_Once_AndThen(calendarId -> {
+                if (calendarId != null && !calendarId.equals("")) {
+                    apt.addParticipant(user);
+                    CalendarUtilities.addAppointmentToCalendar(this, calendarId, apt, user, e -> {});
+                } else {
+                    user.addAppointment(apt, "");
+                    apt.addParticipant(user);
+                }
+            });
         }
         user.removeInvite(apt);
         apt.removeInvite(user);

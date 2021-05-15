@@ -14,7 +14,7 @@ import java.util.List;
 
 import io.github.polysmee.R;
 
-public class CalendarService {
+public class GoogleCalendarService {
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static Calendar service;
 
