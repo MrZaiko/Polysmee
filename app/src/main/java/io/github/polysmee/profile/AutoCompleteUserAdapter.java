@@ -40,13 +40,9 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if(convertView == null){
-            convertView = LayoutInflater.from(context).inflate(
-                    R.layout.element_autocomplete_user, parent,false
-            );
-        }
-        TextView textView = convertView.findViewById(R.id.autoCompleteEntryName);
-        CircleImageView imageView = convertView.findViewById(R.id.autoCompleteProfilePicture);
+        View view = LayoutInflater.from(context).inflate(R.layout.element_autocomplete_user, parent,false);
+        TextView textView = view.findViewById(R.id.autoCompleteEntryName);
+        CircleImageView imageView = view.findViewById(R.id.autoCompleteProfilePicture);
         UserItemAutocomplete userItemAutocomplete = (UserItemAutocomplete) getItem(position);
         if(userItemAutocomplete != null){
             textView.setText(userItemAutocomplete.getUsername());
@@ -54,7 +50,7 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
                 downloadUserProfilePicture(userItemAutocomplete.getPictureId(),imageView);
             }
         };
-        return convertView;
+        return view;
     }
 
     private final Filter userFilter = new Filter() {
