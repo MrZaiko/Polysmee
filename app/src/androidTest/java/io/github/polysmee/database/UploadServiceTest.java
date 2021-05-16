@@ -41,13 +41,6 @@ public class UploadServiceTest {
         UploadServiceFactory.setTest(false);
         us = UploadServiceFactory.getAdaptedInstance();
 
-        us.downloadImage(
-            "non-existent image",
-            Assert::assertNull,
-            (exc) -> {throw new IllegalStateException("crashed in test");},
-            getApplicationContext()
-        );
-
         UploadService finalUs = us;
         UploadService finalUs1 = us;
 
@@ -68,7 +61,18 @@ public class UploadServiceTest {
                 (exc) -> {throw new IllegalStateException("crashed in test 4");
                 }, getApplicationContext()
         );
+    }
 
+    @Test
+    public void exceptionOnDataNotFound(){
+        UploadServiceFactory.setTest(false);
+        UploadService us = UploadServiceFactory.getAdaptedInstance();
 
+        us.downloadImage(
+            "non-existent image",
+            (data) -> {throw new IllegalStateException("should not be able to find data");},
+            (exc) -> {},
+            getApplicationContext()
+        );
     }
 }
