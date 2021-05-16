@@ -45,21 +45,23 @@ public class UploadServiceTest {
         UploadService finalUs1 = us;
 
         us.uploadImage(
-                new byte[]{2, 3, 4},
-                "nums",
-                (name) -> finalUs.downloadImage(
-                    name,
-                    (gotten) -> finalUs1.deleteImage(
-                        "nums",
-                        (nam) -> assertEquals(name, nam),
-                        (exc) -> {throw new IllegalStateException("crashed in test 2");
-                        }, getApplicationContext()
-                    ),
-                    (exc) -> {throw new IllegalStateException("crashed in test 3");
-                    }, getApplicationContext()
-                ),
-                (e) -> {},
-            getApplicationContext()
+            new byte[]{2, 3, 4},
+            "nums",
+            (name) -> assertTrue(name.contains("nums")),
+            (exc) -> {
+            }, getApplicationContext()
+        );
+        us.downloadImage(
+            "nums",
+            (gotten) -> assertArrayEquals(gotten, new byte[]{2, 3, 4}),
+            (exc) -> {
+            }, getApplicationContext()
+        );
+        us.deleteImage(
+            "nums",
+            (name) -> assertEquals(name, "nums"),
+            (exc) -> {
+            }, getApplicationContext()
         );
     }
 
