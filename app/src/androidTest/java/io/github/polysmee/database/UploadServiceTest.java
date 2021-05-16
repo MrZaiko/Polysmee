@@ -58,8 +58,8 @@ public class UploadServiceTest {
                     (exc) -> {throw new IllegalStateException("crashed in test 3");
                     }, getApplicationContext()
                 ),
-                (exc) -> {throw new IllegalStateException("crashed in test 4");
-                }, getApplicationContext()
+                (e) -> {},
+            getApplicationContext()
         );
     }
 
