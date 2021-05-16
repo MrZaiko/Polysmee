@@ -5,6 +5,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,19 +21,19 @@ public class UploadServiceTest {
                 "nums",
                 (name) -> assertTrue(name.contains("nums")),
                 (exc) -> {
-                }
+                }, getApplicationContext()
         );
         us.downloadImage(
                 "nums",
                 (gotten) -> assertArrayEquals(gotten, new byte[]{2, 3, 4}),
                 (exc) -> {
-                }
+                }, getApplicationContext()
         );
         us.deleteImage(
                 "nums",
                 (name) -> assertEquals(name, "nums"),
                 (exc) -> {
-                }
+                }, getApplicationContext()
         );
 
         UploadServiceFactory.setTest(false);
@@ -42,19 +43,19 @@ public class UploadServiceTest {
                 "nums",
                 (name) -> assertTrue(name.contains("nums")),
                 (exc) -> {
-                }
+                }, getApplicationContext()
         );
         us.downloadImage(
                 "nums",
                 (gotten) -> assertArrayEquals(gotten, new byte[]{2, 3, 4}),
                 (exc) -> {
-                }
+                }, getApplicationContext()
         );
         us.deleteImage(
                 "nums",
                 (name) -> assertEquals(name, "nums"),
                 (exc) -> {
-                }
+                }, getApplicationContext()
         );
     }
 }

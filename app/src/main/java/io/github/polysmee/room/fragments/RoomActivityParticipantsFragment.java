@@ -238,7 +238,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
+            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
         }
     }
 
