@@ -41,9 +41,6 @@ public class UploadServiceTest {
         UploadServiceFactory.setTest(false);
         us = UploadServiceFactory.getAdaptedInstance();
 
-        UploadService finalUs = us;
-        UploadService finalUs1 = us;
-
         us.uploadImage(
             new byte[]{2, 3, 4},
             "nums",
