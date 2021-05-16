@@ -24,11 +24,11 @@ import io.github.polysmee.room.fragments.HelperImages;
 public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> {
 
     private final List<UserItemAutocomplete> userListFull;
-    private final Context context;
+
+
     public AutoCompleteUserAdapter(@NonNull Context context, @NonNull List userList) {
         super(context,0,userList);
         this.userListFull = new ArrayList(userList);
-        this.context = context;
     }
 
     @NonNull
@@ -41,19 +41,21 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         if(convertView == null){
-            convertView = LayoutInflater.from(context).inflate(
+            convertView = LayoutInflater.from(getContext()).inflate(
                     R.layout.element_autocomplete_user, parent,false
             );
+            TextView textView = convertView.findViewById(R.id.autoCompleteEntryName);
+            CircleImageView imageView = convertView.findViewById(R.id.autoCompleteProfilePicture);
+            UserItemAutocomplete userItemAutocomplete = (UserItemAutocomplete) getItem(position);
+            if(userItemAutocomplete != null){
+                convertView.setTag(userItemAutocomplete);
+                textView.setText(userItemAutocomplete.getUsername());
+                if(!userItemAutocomplete.getPictureId().equals("")){
+                    downloadUserProfilePicture(userItemAutocomplete.getPictureId(),imageView);
+                }
+            };
         }
-        TextView textView = convertView.findViewById(R.id.autoCompleteEntryName);
-        CircleImageView imageView = convertView.findViewById(R.id.autoCompleteProfilePicture);
-        UserItemAutocomplete userItemAutocomplete = (UserItemAutocomplete) getItem(position);
-        if(userItemAutocomplete != null){
-            textView.setText(userItemAutocomplete.getUsername());
-            if(!userItemAutocomplete.getPictureId().equals("")){
-                downloadUserProfilePicture(userItemAutocomplete.getPictureId(),imageView);
-            }
-        };
+
         return convertView;
     }
 
@@ -67,6 +69,7 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
                 for(UserItemAutocomplete item: userListFull){
                     if(item.getUsername().toLowerCase().trim().startsWith(filterPattern)){
                         suggestions.add(item);
+
                     }
                 }
             }
@@ -92,6 +95,6 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 picture.setImageBitmap(Bitmap.createBitmap(bmp));
-            },ss -> HelperImages.showToast(context.getString(R.string.genericErrorText), context));
+            },ss -> HelperImages.showToast(getContext().getString(R.string.genericErrorText), getContext()));
     }
 }

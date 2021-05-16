@@ -12,7 +12,7 @@
         android:layout_width="33dp"
         android:layout_height="33dp"
         app:civ_border_width="0dp"
-        tools:src="@drawable/baseline_person" />
+        android:src="@drawable/baseline_person" />
 
     <TextView
         android:id="@+id/autoCompleteEntryName"

@@ -1,5 +1,7 @@
 package io.github.polysmee.profile;
 
+import org.jetbrains.annotations.NotNull;
+
 public class UserItemAutocomplete {
     private String username;
     private String pictureId;
@@ -24,5 +26,11 @@ public class UserItemAutocomplete {
     }
     public  void setUsername(String username){
         this.username = username;
+    }
+
+    @NotNull
+    @Override
+    public String toString() {
+        return this.username;
     }
 }
