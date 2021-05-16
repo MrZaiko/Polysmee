@@ -25,11 +25,7 @@ public final class FirebaseUploadService implements UploadService {
     @Override
     public void uploadImage(@NonNull byte[] data, String fileName, LoadValueListener onSuccess, LoadValueListener onFailure, Context ctx) {
         String imageName = "" + System.currentTimeMillis() + fileName;
-
-        try {
-            addNewFileToCache(imageName, data, ctx);
-        } catch (IOException ignored) {} //on cache failure, just keep uploading as the cache is just a nice to have
-
+        addNewFileToCache(imageName, data, ctx);
         StorageReference ref = FirebaseStorage.getInstance().getReference().child(imageName);
         ref
             .putBytes(data)
@@ -60,11 +56,11 @@ public final class FirebaseUploadService implements UploadService {
             .addOnFailureListener(exc -> onFailure.onDone(exc.getMessage()));
     }
 
-    private void addNewFileToCache(String name, byte[] data, Context ctx) throws IOException {
+    private void addNewFileToCache(String name, byte[] data, Context ctx) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) //cache does not work for api below 26, it will cache miss at 100%
-            try(OutputStream os = new FileOutputStream(new File(ctx.getFilesDir(), name))){
+            try(OutputStream os = new FileOutputStream(new File(ctx.getFilesDir(), name))) {
                 os.write(data);
-            }
+            } catch (IOException ignored) {}
     }
 
     private byte[] getNewFileFromCache(String name, Context ctx) {
@@ -72,11 +68,9 @@ public final class FirebaseUploadService implements UploadService {
             File fi = new File(ctx.getFilesDir(), name);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && fi.exists())
                 return readAllBytes(Paths.get(fi.getPath()));
-            return null;
-        } catch (FileNotFoundException e) {
-            return null;
-        } catch (IOException e) {
-            throw new IllegalStateException("disk is unreachable or beyond permission");
-        }
+        } catch (IOException ignored) {}
+
+        return null;
+
     }
 }
