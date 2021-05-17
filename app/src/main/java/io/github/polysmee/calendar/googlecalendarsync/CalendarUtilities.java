@@ -18,7 +18,6 @@ import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUser;
 
 
-@RequiresApi(api = Build.VERSION_CODES.N)
 public class CalendarUtilities {
 
     public static void deleteAppointmentFromCalendar(Context context, Appointment appointment, String calendarId, String eventId, Consumer<IOException> onError) {
@@ -56,7 +55,6 @@ public class CalendarUtilities {
                             try {
                                 Event createdEvent = GoogleCalendarUtilities.createEvent(title, course, startTime, duration);
                                 String eventId = GoogleCalendarUtilities.addEventToCalendar(context, calendarId, createdEvent);
-                                Log.d("CALENDAR", "HERE");
                                 user.setAppointmentEventId(apt, eventId);
                             } catch (IOException e) {
                                 onError.accept(e);

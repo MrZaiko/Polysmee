@@ -66,8 +66,6 @@ import io.github.polysmee.login.MainUser;
  * <p>
  * APPOINTMENT_ID (NEEDED in DETAIL_MODE) : the appointment to be displayed
  */
-@RequiresApi(api = Build.VERSION_CODES.N)
-
 public class AppointmentActivity extends AppCompatActivity implements DataPasser {
 
     // Intents related attributes

@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "io.github.polysmee"
-        minSdkVersion 22
+        minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
