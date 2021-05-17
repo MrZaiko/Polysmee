@@ -89,6 +89,8 @@ public class RoomActivityProfilePictureTests {
             sleep(1, SECONDS);
             clickOn(R.id.roomActivityParticipantElementCallButton);
             sleep(2, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementVideoButton);
+            sleep(2, SECONDS);
             clickOn(R.id.roomActivityParticipantElementCallButton);
             sleep(2, SECONDS);
             Intents.init();
