@@ -1,4 +1,4 @@
-package io.github.polysmee.roomActivityTests;
+package io.github.polysmee.zroomActivityTests;
 
 import android.app.Activity;
 import android.content.Intent;

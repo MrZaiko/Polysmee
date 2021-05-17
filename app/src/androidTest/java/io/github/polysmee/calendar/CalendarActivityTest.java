@@ -137,17 +137,6 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void clickOnExportMenuLaunchCorrectIntent() {
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
-        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
-            Intents.init();
-            clickMenu(R.id.calendarMenuExport);
-            intended(toPackage("io.github.polysmee"));
-            Intents.release();
-        }
-    }
-
-    @Test
     public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime() {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
@@ -264,6 +253,23 @@ public class CalendarActivityTest {
                 assertDisplayed("Current invitations");
             }
             pressBack();
+
+            //exportCalendar
+            sleep(2, SECONDS);
+            Intents.init();
+            try {
+                clickOn(R.id.calendarMenuExport);
+                sleep(1, SECONDS);
+            } catch (Exception e) {
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2, SECONDS);
+                clickOn("Export");
+                sleep(1, SECONDS);
+            }
+            intended(toPackage("io.github.polysmee"));
+            Intents.release();
+            pressBack();
+
             //clickingSettingsButtonLaunchesSettingsActivity
             sleep(2, SECONDS);
             try {

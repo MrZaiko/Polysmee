@@ -1,10 +1,7 @@
-package io.github.polysmee.roomActivityTests;
+package io.github.polysmee.zroomActivityTests;
 
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentFactory;
 import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ApplicationProvider;
 
@@ -21,7 +18,6 @@ import java.util.List;
 
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
-import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
