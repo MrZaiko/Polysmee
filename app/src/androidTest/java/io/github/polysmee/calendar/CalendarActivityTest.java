@@ -273,7 +273,6 @@ public class CalendarActivityTest {
                 clickOn(R.id.calendarMenuProfile);
                 assertDisplayed(username1);
             }
-            ignored.moveToState(Lifecycle.State.DESTROYED);
         }
     }
 

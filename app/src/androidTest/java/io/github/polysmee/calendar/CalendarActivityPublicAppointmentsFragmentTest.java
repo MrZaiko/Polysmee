@@ -136,7 +136,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             assertDisplayed("BonjourBing1");
             onView(withText("BonjourBing2")).check(doesNotExist());
 
-            ignored.moveToState(Lifecycle.State.DESTROYED);
+
         }
 
 
