@@ -42,7 +42,10 @@ public final class FirebaseUploadService implements UploadService {
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(id);
             ref
                 .getBytes(1024L * 1024L * 20L)
-                .addOnSuccessListener(dvl::onDone)
+                .addOnSuccessListener(s -> {
+                    addNewFileToCache(id, s, ctx);
+                    dvl.onDone(s);
+                })
                 .addOnFailureListener(exc -> fl.onDone(exc.getMessage()));
         }
     }
