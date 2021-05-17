@@ -455,4 +455,18 @@ public class DatabaseAppointment implements Appointment {
                 .child("timeCode")
                 .setValue(timeCode);
     }
+
+    @Override
+    public void selfDestroy() {
+        getParticipantsId_Once_AndThen(participants -> {
+            for(String userId : participants) {
+                User user = new DatabaseUser(userId);
+                user.removeAppointment(this);
+            }
+        });
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id).removeValue();
+    }
 }

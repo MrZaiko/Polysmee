@@ -131,9 +131,9 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
     private void generateParticipantsView() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 
-        participantsViews = new HashMap<String, ConstraintLayout>();
         StringSetValueListener participantListener = p -> {
             layout.removeAllViewsInLayout();
+            participantsViews = new HashMap<String, ConstraintLayout>();
 
             for (String id : p) {
                 User user = new DatabaseUser(id);

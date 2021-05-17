@@ -74,6 +74,11 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_appointment_creation_add_user, container, false);
         attributeSetters(rootView);
+        try {
+            ((AppointmentActivity) getActivity()).setContext(getContext());
+        } catch (ClassCastException e) {
+
+        }
         return rootView;
     }
 
