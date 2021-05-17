@@ -1,5 +1,6 @@
 package io.github.polysmee.room;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -37,6 +38,8 @@ public class RoomActivity extends AppCompatActivity {
 
     private Appointment appointment;
     public final static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
+    private Context context;
+    private boolean paused = false;
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -64,6 +67,7 @@ public class RoomActivity extends AppCompatActivity {
                 (tab, position) -> tab.setText(getString(RoomPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
     }
 
+    @Override
     public void onDestroy() {
 
         Object dummyArgument = null;
@@ -74,6 +78,23 @@ public class RoomActivity extends AppCompatActivity {
 
         super.onDestroy();
     }
+
+    /*@Override
+    public void onPause() {
+        super.onPause();
+        paused = true;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("RESUME");
+        appointment.getParticipantsId_Once_AndThen(participants -> {
+            if(!participants.contains(MainUser.getMainUser().getId())) {
+                //generateRemovedDialog();
+            }
+        });
+        paused = false;
+    }*/
 
     private void checkIfParticipant() {
         StringSetValueListener participantListener = p -> {
@@ -100,6 +121,10 @@ public class RoomActivity extends AppCompatActivity {
 
     }
 
+    public void setContext(Context context) {
+        this.context = context;
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,6 +148,33 @@ public class RoomActivity extends AppCompatActivity {
                 intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
                 startActivity(intent);
                 return true;
+                /*case R.id.roomMenuLeave:
+                System.out.println("ouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut");
+                if(context != null) {
+                    System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiin");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Are you sure you want to leave the appointment ?");
+                    builder.setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            appointment.getParticipantsId_Once_AndThen(participants -> {
+                                if(participants.size() <= 1) {
+                                    appointment.selfDestroy();
+                                } else {
+                                    appointment.removeParticipant(MainUser.getMainUser());
+                                    MainUser.getMainUser().removeAppointment(appointment);
+                                }
+                            });
+                        }
+                    });
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                        }
+                    });
+                    builder.show();
+                }
+                return true;*/
             default:
                 return super.onOptionsItemSelected(item);
         }
