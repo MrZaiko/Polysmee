@@ -1,6 +1,5 @@
 package io.github.polysmee.room;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -38,8 +37,6 @@ public class RoomActivity extends AppCompatActivity {
 
     private Appointment appointment;
     public final static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
-    private Context context;
-
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -67,7 +64,6 @@ public class RoomActivity extends AppCompatActivity {
                 (tab, position) -> tab.setText(getString(RoomPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
     }
 
-    @Override
     public void onDestroy() {
 
         Object dummyArgument = null;
@@ -104,9 +100,6 @@ public class RoomActivity extends AppCompatActivity {
 
     }
 
-    public void setContext(Context context) {
-        this.context = context;
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

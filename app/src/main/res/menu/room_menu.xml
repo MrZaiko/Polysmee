@@ -2,11 +2,13 @@
 <menu xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <item
         android:id="@+id/roomMenuOffline"
         android:icon="@drawable/outline_wifi_off"
         android:title="Offline"
         app:showAsAction="ifRoom"/>
+
     <item
         android:id="@+id/roomMenuLeave"
         android:icon="@drawable/outline_logout"
