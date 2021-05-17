@@ -63,8 +63,10 @@ public class FriendsActivityTest {
     public void addingAndRemovingANewFriendTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(1, TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView, username2);
+            sleep(5, TimeUnit.SECONDS);
+            clickOn(R.id.friendAddTextView);
+            writeTo(R.id.friendAddTextView, "Cringe");
+            sleep(3, TimeUnit.SECONDS);
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
             sleep(2, TimeUnit.SECONDS);
