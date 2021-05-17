@@ -87,6 +87,10 @@ public class RoomActivityProfilePictureTests {
             swipeViewPagerForward();
             swipeViewPagerForward();
             sleep(1, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementCallButton);
+            sleep(2, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementCallButton);
+            sleep(2, SECONDS);
             Intents.init();
             clickOn(R.id.roomActivityParticipantElementProfilePicture);
             intended(hasExtra(ProfileActivity.PROFILE_ID_USER, MainUser.getMainUser().getId()));
