@@ -18,14 +18,17 @@ import com.google.api.services.calendar.model.Event;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import io.github.polysmee.R;
+import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
@@ -50,6 +53,9 @@ public class InvitesManagementActivity extends AppCompatActivity {
     private final Set<String> appointmentSet = new HashSet<>();
     private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
 
+    //Commands to remove listeners
+    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -61,6 +67,18 @@ public class InvitesManagementActivity extends AppCompatActivity {
         user = MainUser.getMainUser();
 
         setListenerUserAppointments();
+    }
+
+    @Override
+    public void onDestroy() {
+
+        Object dummyArgument = null;
+
+        for(Command command: commandsToRemoveListeners) {
+            command.execute(dummyArgument,dummyArgument);
+        }
+
+        super.onDestroy();
     }
 
     /**
@@ -155,6 +173,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
 
         userInvitesListener = currentUserInvitesListener();
         user.getInvitesAndThen(userInvitesListener);
+        commandsToRemoveListeners.add((x,y) -> user.removeInvitesListener(userInvitesListener));
     }
 
     /**

@@ -3,11 +3,13 @@ package io.github.polysmee.room.fragments;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.ActionMode;
@@ -27,6 +29,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -39,6 +42,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -47,11 +51,14 @@ import io.github.polysmee.database.Message;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
+import io.github.polysmee.database.Message;
+import io.github.polysmee.R;
+import io.github.polysmee.internet.connection.InternetConnection;
+import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.ProfileActivity;
-
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -76,6 +83,7 @@ public class RoomActivityMessagesFragment extends Fragment {
     private Uri currentPhotoUri;
 
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -93,10 +101,9 @@ public class RoomActivityMessagesFragment extends Fragment {
         ImageView takePicture = rootView.findViewById(R.id.roomActivityTakePictureButton);
         takePicture.setOnClickListener(this::takePicture);
 
-        String appointmentId = requireArguments().getString(MESSAGES_KEY);
-
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
+
 
         return rootView;
     }
@@ -149,7 +156,19 @@ public class RoomActivityMessagesFragment extends Fragment {
                                     new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
                             ), s -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
 
+                    if(!InternetConnection.isOn()) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage(R.string.offline_picture);
 
+                        //add ok button
+                        builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        });
+                        builder.show();
+                    }
                     return;
 
                 case PICK_IMAGE:
@@ -164,6 +183,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 default:
             }
         }
+
     }
 
     @Override
@@ -177,13 +197,31 @@ public class RoomActivityMessagesFragment extends Fragment {
      */
     private void sendMessage(View view) {
         closeKeyboard();
-
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
-        String messageToAdd = messageEditText.getText().toString();
-        String userId = MainUser.getMainUser().getId();
+        //if(InternetConnection.isOn()) {
 
-        databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
-        messageEditText.setText("");
+            String messageToAdd = messageEditText.getText().toString();
+            String userId = MainUser.getMainUser().getId();
+
+            databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
+            messageEditText.setText("");
+
+            if(!InternetConnection.isOn()) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage(R.string.offline_send_message);
+
+                //add ok button
+                builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                builder.show();
+            }
+
+
+
     }
 
 
@@ -355,6 +393,19 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         builder.setPositiveButton(getString(R.string.genericEditText), (dialog, id) -> {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
+            if(!InternetConnection.isOn()) {
+                AlertDialog.Builder offlineMsg = new AlertDialog.Builder(getContext());
+                offlineMsg.setMessage(R.string.offline_edit_message);
+
+                //add ok button
+                offlineMsg.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                });
+                offlineMsg.show();
+            }
         });
 
         builder.setNeutralButton(getString(R.string.genericCancelText), (dialog, id) -> {

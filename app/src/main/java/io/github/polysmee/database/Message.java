@@ -35,12 +35,6 @@ public class Message {
     }
 
 
-    /**
-     * @param newContent Replaces the content of the message by the one given as argument
-     */
-    public void editContent(@NonNull String newContent) {
-        this.content = newContent;
-    }
 
     /**
      * @return the uid of the sender
@@ -54,9 +48,6 @@ public class Message {
         return isAPicture;
     }
 
-    public void setIsAPicture(boolean isAPicture) {
-        this.isAPicture = isAPicture;
-    }
 
     /**
      * @return the content of the message

@@ -1,6 +1,8 @@
 package io.github.polysmee.photo.editing;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -27,6 +29,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.github.polysmee.R;
+import io.github.polysmee.internet.connection.InternetConnection;
 import top.defaults.colorpicker.ColorPickerPopup;
 
 public class PictureEditActivity extends AppCompatActivity {
@@ -149,6 +152,9 @@ public class PictureEditActivity extends AppCompatActivity {
         data.putExtra("data", FileProvider.getUriForFile(this,
                 "com.example.android.fileprovider", photoFile));
         setResult(RESULT_OK, data);
+
+
+
         finish();
     }
 

@@ -116,7 +116,16 @@
     <string name="voice_penguin">Penguin</string>
     <string name="voice_high">Voix élevée</string>
     <string name="voice_alien">Alien</string>
+    <string name="default_course">Others</string>
+    <string name="offline_send_message">Le message sera envoyé dès que l\'appareil se connecte à internet</string>
+    <string name="offline_picture">L\'image sera envoyée dès que l\'appareil se connecte à internet</string>
+    <string name="offline_edit_message">Le message sera modifé dès que l\'appareil se connecte à internet</string>
+    <string name="offline_call">Vous devez être connecté à internet pour rejoindre un appel</string>
+    <string name="offline_warning">Avertissement</string>
+    <string name="offline_ok">OK</string>
+    <string name="offline_appointment">Vous êtes actuellement hors-ligne, le meeting que vous créer sera en ligne dès que votre appareil se connecte à internet. Le cours du meeting est fixé à la valeur par défaut "Others", vous pourrez le modifier une fois en ligne.</string>
     <string name="title_voice_tuner_dialog">Choisisez votre filtre de voix</string>
     <string name="genericCourseText">Matière</string>
     <string name="invitesCourseText">"Matière : "</string>
+    <string name="appointment_reminder_notification_notification_text">Rappel de meeting :)</string>
 </resources>

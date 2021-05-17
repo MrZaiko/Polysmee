@@ -18,6 +18,7 @@ import org.junit.runners.JUnit4;
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -69,6 +70,7 @@ public class RoomActivityMessagesFragmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        InternetConnection.setManuallyInternetConnectionForTests(true);
         UploadServiceFactory.setTest(true);
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s -> {
         }, s -> {
