@@ -8,6 +8,11 @@
         android:title="Offline"
         app:showAsAction="ifRoom"/>
     <item
+        android:id="@+id/roomMenuLeave"
+        android:icon="@drawable/outline_logout"
+        android:title="Offline"
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/roomMenuInfo"
         android:icon="@drawable/baseline_info"
         android:title="Info"
