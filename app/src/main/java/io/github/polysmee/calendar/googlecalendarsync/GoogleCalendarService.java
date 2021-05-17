@@ -10,6 +10,7 @@ import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import io.github.polysmee.R;
@@ -25,7 +26,7 @@ public class GoogleCalendarService {
 
             GoogleCredential credential = null;
             try {
-                credential = GoogleCredential.fromStream(context.getResources().openRawResource(R.raw.credentials)).createScoped(List.of(CalendarScopes.CALENDAR));
+                credential = GoogleCredential.fromStream(context.getResources().openRawResource(R.raw.credentials)).createScoped(Collections.singleton(CalendarScopes.CALENDAR));
             } catch (IOException e) {
                 e.printStackTrace();
             }
