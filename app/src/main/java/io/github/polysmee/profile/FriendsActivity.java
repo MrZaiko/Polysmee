@@ -210,7 +210,7 @@ public class FriendsActivity extends AppCompatActivity {
                 UploadServiceFactory.getAdaptedInstance().downloadImage(profilePictureId, imageBytes -> {
                             Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                             ((CircleImageView)friendEntry.findViewById(R.id.friendActivityElementProfilePicture)).setImageBitmap(Bitmap.createBitmap(bmp));
-                        },ss -> HelperImages.showToast(getString(R.string.genericErrorText), this));
+                        },ss -> HelperImages.showToast(getString(R.string.genericErrorText), this),this);
             }
         });
     }

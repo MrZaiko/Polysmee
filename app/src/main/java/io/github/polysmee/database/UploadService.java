@@ -1,5 +1,7 @@
 package io.github.polysmee.database;
 
+import android.content.Context;
+
 import io.github.polysmee.database.databaselisteners.DownloadValueListener;
 import io.github.polysmee.database.databaselisteners.LoadValueListener;
 
@@ -14,7 +16,7 @@ public interface UploadService {
      * @param onFailure a listener that will be triggered if the transfer fails. It
      *                  will be given the message of the error as an argument
      */
-    void uploadImage(byte[] data, String fileName, LoadValueListener onSuccess, LoadValueListener onFailure);
+    void uploadImage(byte[] data, String fileName, LoadValueListener onSuccess, LoadValueListener onFailure, Context ctx);
 
     /**
      * @param id        the id of the file to retrieve
@@ -22,7 +24,7 @@ public interface UploadService {
      * @param onFailure a listener that will be triggered if the transfer fails. It
      *                  will be given the message of the error as an argument
      */
-    void downloadImage(String id, DownloadValueListener onSuccess, LoadValueListener onFailure);
+    void downloadImage(String id, DownloadValueListener onSuccess, LoadValueListener onFailure, Context ctx);
 
     /**
      * @param id        the id of the file to delete
@@ -31,5 +33,5 @@ public interface UploadService {
      * @param onFailure a listener that will be triggered if the deletion fails (who knows, right).
      *                  It will be given the message of the error as an argument
      */
-    void deleteImage(String id, LoadValueListener onSuccess, LoadValueListener onFailure);
+    void deleteImage(String id, LoadValueListener onSuccess, LoadValueListener onFailure, Context ctx);
 }

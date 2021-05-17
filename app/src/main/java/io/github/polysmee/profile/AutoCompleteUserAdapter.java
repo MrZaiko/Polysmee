@@ -98,6 +98,6 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 picture.setImageBitmap(Bitmap.createBitmap(bmp));
-            },ss -> HelperImages.showToast(getContext().getString(R.string.genericErrorText), getContext()));
+            },ss -> HelperImages.showToast(getContext().getString(R.string.genericErrorText), getContext()),getContext());
     }
 }
