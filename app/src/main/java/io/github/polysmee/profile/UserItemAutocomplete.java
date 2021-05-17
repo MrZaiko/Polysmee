@@ -1,7 +1,5 @@
 package io.github.polysmee.profile;
 
-import org.jetbrains.annotations.NotNull;
-
 public class UserItemAutocomplete {
     private String username;
     private String pictureId;
