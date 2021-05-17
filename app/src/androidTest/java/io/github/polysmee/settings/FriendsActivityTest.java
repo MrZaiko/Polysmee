@@ -17,10 +17,8 @@ import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
-import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.FriendsActivity;
@@ -44,7 +42,6 @@ public class FriendsActivityTest {
     private static final String username1 = "Cortex91DesPyramides";
     private static final String id2 = "yoiqsdaoqreidfoefbcxcc";
     private static final String username2 = "Cringe";
-    private static final String profilePictureIdFriend = "bigyoshifriend";
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -54,12 +51,8 @@ public class FriendsActivityTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("FriendsActivityTest@gmail.com", "fakePassword"));
-        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureIdFriend, s -> {
-        }, s -> {
-        }, getApplicationContext());
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(profilePictureIdFriend);
     }
     @AfterClass
     public static void clean() {
@@ -70,9 +63,8 @@ public class FriendsActivityTest {
     public void addingAndRemovingANewFriendTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(2, TimeUnit.SECONDS);
+            sleep(1, TimeUnit.SECONDS);
             writeTo(R.id.friendAddTextView, username2);
-            sleep(2, TimeUnit.SECONDS);
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
             sleep(2, TimeUnit.SECONDS);
