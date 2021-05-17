@@ -35,17 +35,20 @@ public final class FirebaseUploadService implements UploadService {
 
     @Override
     public void downloadImage(String id, DownloadValueListener dvl, LoadValueListener fl, Context ctx) {
-        byte[] data = getNewFileFromCache(id, ctx);
+        byte[] data = null;
+        try {
+            File fi = new File(ctx.getFilesDir(), id);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && fi.exists())
+                data = readAllBytes(Paths.get(fi.getPath()));
+        } catch (IOException ignored) {}
+
         if(data != null)
             dvl.onDone(data);
         else {
             StorageReference ref = FirebaseStorage.getInstance().getReference().child(id);
             ref
                 .getBytes(1024L * 1024L * 20L)
-                .addOnSuccessListener(s -> {
-                    addNewFileToCache(id, s, ctx);
-                    dvl.onDone(s);
-                })
+                .addOnSuccessListener(s -> { addNewFileToCache(id, s, ctx); dvl.onDone(s); })
                 .addOnFailureListener(exc -> fl.onDone(exc.getMessage()));
         }
     }
@@ -64,16 +67,5 @@ public final class FirebaseUploadService implements UploadService {
             try(OutputStream os = new FileOutputStream(new File(ctx.getFilesDir(), name))) {
                 os.write(data);
             } catch (IOException ignored) {}
-    }
-
-    private byte[] getNewFileFromCache(String name, Context ctx) {
-        try {
-            File fi = new File(ctx.getFilesDir(), name);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && fi.exists())
-                return readAllBytes(Paths.get(fi.getPath()));
-        } catch (IOException ignored) {}
-
-        return null;
-
     }
 }
