@@ -28,7 +28,6 @@ public class UserItemAutocomplete {
         this.username = username;
     }
 
-    @NotNull
     @Override
     public String toString() {
         return this.username;
