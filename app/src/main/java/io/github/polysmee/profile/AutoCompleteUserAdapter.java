@@ -21,6 +21,9 @@ import io.github.polysmee.R;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.room.fragments.HelperImages;
 
+/**
+ * Custom array adapter to show pictures of users when searching for them
+ */
 public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> {
 
     private final List<UserItemAutocomplete> userListFull;
