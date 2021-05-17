@@ -47,14 +47,12 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
             convertView = LayoutInflater.from(getContext()).inflate(
                     R.layout.element_autocomplete_user, parent,false
             );
-            TextView textView = convertView.findViewById(R.id.autoCompleteEntryName);
-            CircleImageView imageView = convertView.findViewById(R.id.autoCompleteProfilePicture);
             UserItemAutocomplete userItemAutocomplete = (UserItemAutocomplete) getItem(position);
             if(userItemAutocomplete != null){
                 convertView.setTag(userItemAutocomplete);
-                textView.setText(userItemAutocomplete.getUsername());
+                ((TextView)convertView.findViewById(R.id.autoCompleteEntryName)).setText(userItemAutocomplete.getUsername());
                 if(!userItemAutocomplete.getPictureId().equals("")){
-                    downloadUserProfilePicture(userItemAutocomplete.getPictureId(),imageView);
+                    downloadUserProfilePicture(userItemAutocomplete.getPictureId(),(CircleImageView) convertView.findViewById(R.id.autoCompleteProfilePicture));
                 }
             };
         }
@@ -72,7 +70,6 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
                 for(UserItemAutocomplete item: userListFull){
                     if(item.getUsername().toLowerCase().trim().startsWith(filterPattern)){
                         suggestions.add(item);
-
                     }
                 }
             }
@@ -96,8 +93,7 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
 
     private void downloadUserProfilePicture(String pictureId, CircleImageView picture){
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
-                Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                picture.setImageBitmap(Bitmap.createBitmap(bmp));
+                picture.setImageBitmap(Bitmap.createBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)));
             },ss -> HelperImages.showToast(getContext().getString(R.string.genericErrorText), getContext()),getContext());
     }
 }

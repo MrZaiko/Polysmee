@@ -26,6 +26,7 @@ public class UserItemAutocompleteTest {
         userItemAutocomplete.setUsername(string);
         assertEquals(string,userItemAutocomplete.getUsername());
         assertEquals(string,userItemAutocomplete.getPictureId());
+        assertEquals(string,userItemAutocomplete.toString());
     }
 
 }
