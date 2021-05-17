@@ -4,13 +4,14 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 
 
-@RunWith(AndroidJUnit4.class)
+@RunWith(JUnit4.class)
 public class ByteBufTest {
 
 
@@ -47,12 +48,15 @@ public class ByteBufTest {
 
     @Test
     public void readIntMapTestSize(){
-        byte[] input = new byte[1024];
-        for (int i = 0; i < input.length; ++i) {
-            input[i] = (byte) (i);
-        }
+        byte[] input = new byte[8];
+        input[0] = 1;
+        input[1] = 0;
+        input[2] = 3;
+        input[3] = 1;
+        input[4] = 3;
+        input[5] = 4;
         ByteBuf byteBuf = new ByteBuf(input);
         Map<Short, Integer> result = byteBuf.readIntMap();
-        assertEquals(256,result.size());
+        assertEquals(1,result.size());
     }
 }
