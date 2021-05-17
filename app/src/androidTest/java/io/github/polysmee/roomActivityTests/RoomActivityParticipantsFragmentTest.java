@@ -22,6 +22,7 @@ import java.util.List;
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
@@ -59,6 +60,7 @@ public class RoomActivityParticipantsFragmentTest {
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));

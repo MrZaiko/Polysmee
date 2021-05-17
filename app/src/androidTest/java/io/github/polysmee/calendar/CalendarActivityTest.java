@@ -23,6 +23,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
@@ -78,6 +79,7 @@ public class CalendarActivityTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true);
         InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());

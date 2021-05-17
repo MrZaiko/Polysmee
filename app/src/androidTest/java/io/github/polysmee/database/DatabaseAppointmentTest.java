@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
@@ -39,6 +40,7 @@ public class DatabaseAppointmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true);
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());

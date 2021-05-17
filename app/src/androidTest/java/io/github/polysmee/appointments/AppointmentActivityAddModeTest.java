@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -53,6 +54,7 @@ public class AppointmentActivityAddModeTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
+        CalendarUtilities.setTest(true);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         InternetConnection.setManuallyInternetConnectionForTests(true);

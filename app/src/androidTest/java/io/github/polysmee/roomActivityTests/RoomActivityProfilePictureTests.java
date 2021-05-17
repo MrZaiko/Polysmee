@@ -16,6 +16,7 @@ import org.junit.runners.JUnit4;
 
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -55,6 +56,7 @@ public class RoomActivityProfilePictureTests {
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
+        CalendarUtilities.setTest(true);
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityProfilePictureTests@gmail.com", "fakePassword"));
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s -> {}, s -> {});

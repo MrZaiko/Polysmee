@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -46,6 +47,7 @@ public class FriendsActivityTest {
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
+        CalendarUtilities.setTest(true);
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());

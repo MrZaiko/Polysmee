@@ -23,6 +23,7 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.CyclicBufferAppender;
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
@@ -53,6 +54,7 @@ public class RoomActivityVideoFragmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityVideoFragmentTest@gmail.com", "fakePassword"));

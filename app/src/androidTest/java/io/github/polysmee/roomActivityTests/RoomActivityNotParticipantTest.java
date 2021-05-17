@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -46,6 +47,7 @@ public class RoomActivityNotParticipantTest {
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
+        CalendarUtilities.setTest(true);
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityNotParticipantTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
