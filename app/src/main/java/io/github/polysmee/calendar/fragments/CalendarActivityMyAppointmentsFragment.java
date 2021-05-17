@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.CalendarContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +32,6 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
-import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarUtilities;
 import io.github.polysmee.calendar.DailyCalendar;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -42,7 +42,6 @@ import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.room.RoomActivity;
 
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setDayText;
@@ -230,7 +229,15 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setMessage("Do you want to export this appointment to your calendar ?")
                 .setPositiveButton("Export", (dialog, id) -> {
-                    GoogleCalendarUtilities.exportAppointment(getContext(), appointment);
+                    String description = "Course: " + appointment.getCourse();
+
+                    Intent intent = new Intent(Intent.ACTION_INSERT)
+                            .setData(CalendarContract.Events.CONTENT_URI)
+                            .putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME, appointment.getStartTime())
+                            .putExtra(CalendarContract.EXTRA_EVENT_END_TIME, appointment.getStartTime() + appointment.getDuration())
+                            .putExtra(CalendarContract.Events.TITLE, appointment.getTitle())
+                            .putExtra(CalendarContract.Events.DESCRIPTION, description);
+                    getContext().startActivity(intent);
                 })
                 .setNegativeButton("Cancel", (dialog, id) -> {
                     // User cancelled the dialog

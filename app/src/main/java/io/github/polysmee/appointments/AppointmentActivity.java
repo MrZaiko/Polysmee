@@ -2,9 +2,7 @@ package io.github.polysmee.appointments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.view.View;
@@ -17,14 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SwitchCompat;
 
-import com.google.api.services.calendar.model.Event;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -37,7 +31,6 @@ import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -45,7 +38,6 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
@@ -548,9 +540,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             appointment = new DatabaseAppointment(aptID);
 
             if (calendarId != null && !calendarId.equals("")) {
-                CalendarUtilities.addAppointmentToCalendar(this, appointment, calendarId,
-                        title, course, startTime, duration,
-                        e-> runOnUiThread( () ->{
+                CalendarUtilities.addAppointmentToCalendar(this,
+                        calendarId, title, course, startTime, duration,
+                        eventId -> MainUser.getMainUser().setAppointmentEventId(appointment, eventId),
+                        () -> runOnUiThread( () ->{
                             Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
                             toast.show();
                         }));
@@ -577,7 +570,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                                 title, course,
                                 startTimeUpdated ? startTime : null,
                                 startTimeUpdated || endTimeUpdated ? duration : null,
-                                e -> runOnUiThread(() -> {
+                                () -> {},
+                                () -> runOnUiThread(() -> {
                                     Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
                                     toast.show();
                                 }));
@@ -626,7 +620,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         for (String removedParticipant : removedInvites) {
             if (name.equals(removedParticipant)) {
                 if (eventId != null && !eventId.equals(""))
-                    CalendarUtilities.deleteAppointmentFromCalendar(this, appointment, userCalendarId, eventId, e->{});
+                    CalendarUtilities.deleteAppointmentFromCalendar(this, userCalendarId, eventId,
+                            () -> MainUser.getMainUser().setAppointmentEventId(appointment, ""), () -> {});
                 user.removeAppointment(appointment);
                 appointment.removeParticipant(user);
             }
@@ -634,7 +629,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         for (String addedBan : bans) {
             if (name.equals(addedBan)) {
                 if (eventId != null && !eventId.equals(""))
-                    CalendarUtilities.deleteAppointmentFromCalendar(this, appointment, userCalendarId, eventId, e->{});
+                    CalendarUtilities.deleteAppointmentFromCalendar(this, userCalendarId, eventId,
+                            () -> MainUser.getMainUser().setAppointmentEventId(appointment, ""), () -> {});
                 user.removeAppointment(appointment);
                 appointment.removeParticipant(user);
             }

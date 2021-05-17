@@ -1,5 +1,6 @@
 package io.github.polysmee.invites;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -12,8 +13,6 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
-import com.google.api.services.calendar.model.Event;
 
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -32,7 +31,6 @@ import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
@@ -129,7 +127,16 @@ public class InvitesManagementActivity extends AppCompatActivity {
             user.getCalendarId_Once_AndThen(calendarId -> {
                 if (calendarId != null && !calendarId.equals("")) {
                     apt.addParticipant(user);
-                    CalendarUtilities.addAppointmentToCalendar(this, calendarId, apt, user, e -> {});
+                    apt.getTitle_Once_AndThen(title ->
+                        apt.getCourse_Once_AndThen( course ->
+                            apt.getStartTime_Once_AndThen( startTime ->
+                                apt.getDuration_Once_AndThen( duration ->
+                                    CalendarUtilities.addAppointmentToCalendar(this, calendarId, title, course,
+                                            startTime, duration, eventId -> user.setAppointmentEventId(apt, eventId), () -> {})
+                                )
+                            )
+                        )
+                    );
                 } else {
                     user.addAppointment(apt, "");
                     apt.addParticipant(user);

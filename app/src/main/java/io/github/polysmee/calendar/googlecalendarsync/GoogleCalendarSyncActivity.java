@@ -4,17 +4,16 @@ package io.github.polysmee.calendar.googlecalendarsync;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import java.io.IOException;
+import java.util.function.Consumer;
 
 import io.github.polysmee.R;
 import io.github.polysmee.login.MainUser;
@@ -27,7 +26,6 @@ public class GoogleCalendarSyncActivity extends AppCompatActivity {
 
     private ClipboardManager clipboard;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,23 +58,19 @@ public class GoogleCalendarSyncActivity extends AppCompatActivity {
     }
 
     private void createCalendar(View view) {
-        new Thread(() -> {
-            view.setClickable(false);
+        view.setClickable(false);
+        Runnable onError = () -> runOnUiThread(() -> {
+            showToast(getString(R.string.genericErrorText));
+            view.setClickable(true);
+        });
+        Consumer<String> onCalendarIdCreated = newCalendarId -> CalendarUtilities.addUserToCalendar(this, newCalendarId,
+                MainUser.getCurrentUserEmail(), () -> {
+                    calendarId = newCalendarId;
+                    MainUser.getMainUser().setCalendarId(calendarId);
+                    runOnUiThread(this::showCalendarId);
+                }, onError);
 
-            try {
-                calendarId = GoogleCalendarUtilities.createCalendar(this, MainUser.getCurrentUserEmail());
-                GoogleCalendarUtilities.addUserToCalendar(this, calendarId, MainUser.getCurrentUserEmail());
-            } catch (IOException e) {
-                runOnUiThread(() -> {
-                    showToast(getString(R.string.genericErrorText));
-                    view.setClickable(true);
-                });
-                return;
-            }
-
-            MainUser.getMainUser().setCalendarId(calendarId);
-            runOnUiThread(this::showCalendarId);
-        }).start();
+        CalendarUtilities.createCalendar(this, MainUser.getCurrentUserEmail(), onCalendarIdCreated, onError);
     }
 
     private void copyCalendarIdToClipboard(View view) {
@@ -113,21 +107,15 @@ public class GoogleCalendarSyncActivity extends AppCompatActivity {
 
     private void deleteCalendarBehavior(View view) {
         view.setClickable(false);
-        new Thread(() -> {
-            try {
-                GoogleCalendarUtilities.deleteCalendar(this, calendarId);
-            } catch (IOException e) {
-                runOnUiThread(() -> {
-                    showToast(getString(R.string.genericErrorText));
-                    view.setClickable(true);
-                });
-                return;
-            }
 
+        CalendarUtilities.deleteCalendar(this, calendarId, () -> {
             calendarId = "";
             MainUser.getMainUser().setCalendarId(calendarId);
             runOnUiThread(this::showCreateCalendar);
-        }).start();
+        }, () -> runOnUiThread(() -> {
+            showToast(getString(R.string.genericErrorText));
+            view.setClickable(true);
+        }));
     }
 
     private void showToast(String message) {
