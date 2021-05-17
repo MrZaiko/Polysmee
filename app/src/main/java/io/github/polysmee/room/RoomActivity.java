@@ -1,6 +1,8 @@
 package io.github.polysmee.room;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -128,6 +130,37 @@ public class RoomActivity extends AppCompatActivity {
                 intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
                 intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
                 startActivity(intent);
+                return true;
+            case R.id.roomMenuLeave:
+                System.out.println("ouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut");
+                if(context != null) {
+                    System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiin");
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setMessage("Are you sure you want to leave the appointment ?");
+                    builder.setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            appointment.getParticipantsId_Once_AndThen(participants -> {
+                                if(participants.size() <= 1) {
+                                    appointment.selfDestroy();
+                                } else {
+                                    appointment.removeParticipant(MainUser.getMainUser());
+                                    MainUser.getMainUser().removeAppointment(appointment);
+                                }
+                            });
+
+                        }
+                    });
+
+                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.show();
+                }
+
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
