@@ -44,7 +44,8 @@ public final class VoiceTunerChoiceDialogFragment extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        getContext().setTheme(R.style.Theme_Polysmee);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle(R.string.title_voice_tuner_dialog)
                 .setSingleChoiceItems(R.array.voices_tune_array, previousChoice, (dialog, which) -> {
                     assert listener != null;
