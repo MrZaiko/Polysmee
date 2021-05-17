@@ -185,14 +185,14 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                         MainUser.getMainUser().removeProfilePicture();
                         UploadServiceFactory.getAdaptedInstance().deleteImage(currentPictureId, (id) -> {
                             MainUser.getMainUser().removeProfilePicture();
-                        }, s -> HelperImages.showToast(getString(R.string.genericErrorText), this));
+                        }, s -> HelperImages.showToast(getString(R.string.genericErrorText), this), this);
                     }
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             MainUser.getMainUser().getId(), pictureId -> {
                                 currentPictureId = pictureId;
                                 MainUser.getMainUser().setProfilePicture(currentPictureId);
                                 MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
-                            }, s -> HelperImages.showToast(getString(R.string.genericErrorText), this));
+                            }, s -> HelperImages.showToast(getString(R.string.genericErrorText), this), this);
                     break;
 
                 default:
@@ -223,7 +223,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
             Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-        }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), this));
+        }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), this), this);
     }
 
 }

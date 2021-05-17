@@ -154,7 +154,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             appointmentId, id -> databaseAppointment.addMessage(
                                     new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
-                            ), s -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
+                            ), s -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
 
                     if(!InternetConnection.isOn()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -304,7 +304,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
+            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
         }
     }
 
@@ -321,7 +321,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
                 image.setImageBitmap(Bitmap.createBitmap(bmp));
-            }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE));
+            }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE), getContext());
         }
     }
 
@@ -354,7 +354,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 switch (item.getItemId()) {
                     case R.id.roomEditMessageMenuDelete:
                         if (isAPicture)
-                            UploadServiceFactory.getAdaptedInstance().deleteImage(pictureId, l -> HelperImages.showToast("Picture successfully removed", getContext()), l -> HelperImages.showToast("An error occurred", getContext()));
+                            UploadServiceFactory.getAdaptedInstance().deleteImage(pictureId, l -> HelperImages.showToast("Picture successfully removed", getContext()), l -> HelperImages.showToast("An error occurred", getContext()), getContext());
                         databaseAppointment.removeMessage(messageKey);
                         mode.finish();
                         return true;
