@@ -28,6 +28,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
@@ -93,7 +94,6 @@ public class RoomActivityTest {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
 
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
-
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
             swipeViewPagerForward();
             sleep(1, TimeUnit.SECONDS);
@@ -101,6 +101,22 @@ public class RoomActivityTest {
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed("You");
             assertDisplayed(username2);
+        }
+    }
+
+    @Test
+    public void leaveAppointmentLaunchTheLeaveDialog() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
+            clickMenu(R.id.roomMenuLeave);
+            sleep(1, TimeUnit.SECONDS);
+            assertDisplayed("Leave");
+            clickOn("Leave");
+            sleep(2, TimeUnit.SECONDS);
+            assertDisplayed(R.id.roomActivityRemovedDialogText);
+            assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
         }
     }
 }
