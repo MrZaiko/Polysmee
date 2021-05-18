@@ -122,7 +122,7 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
     }
 
-    @Test
+    /*@Test
     public void deleteAppointmentLaunchTheLeaveDialog() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
 
@@ -143,5 +143,5 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-    }
+    }*/
 }
