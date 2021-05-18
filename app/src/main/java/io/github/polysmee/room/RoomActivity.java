@@ -25,6 +25,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.database.Appointment;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
@@ -41,7 +42,8 @@ public class RoomActivity extends AppCompatActivity {
     private Appointment appointment;
     public final static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
     private Context context;
-    private boolean paused = false;
+    private boolean paused;
+    private boolean left;
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -57,6 +59,10 @@ public class RoomActivity extends AppCompatActivity {
         StringValueListener titleListener = this::setTitle;
         appointment.getTitleAndThen(titleListener);
         commandsToRemoveListeners.add((x,y) -> appointment.removeTitleListener(titleListener));
+
+        left = false;
+        paused = false;
+
         checkIfParticipant();
 
         ViewPager2 pager = findViewById(R.id.roomActivityPager);
@@ -86,12 +92,14 @@ public class RoomActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         System.out.println("RESUME");
+        if(paused) {
+            appointment.getParticipantsId_Once_AndThen(participants -> {
+                if(!participants.contains(MainUser.getMainUser().getId())) {
+                    generateRemovedDialog();
+                }
+            });
+        }
 
-        appointment.getParticipantsId_Once_AndThen(participants -> {
-            if(!participants.contains(MainUser.getMainUser().getId())) {
-                //generateRemovedDialog();
-            }
-        });
 
         paused = false;
     }
@@ -107,6 +115,8 @@ public class RoomActivity extends AppCompatActivity {
     }
 
     private void generateRemovedDialog() {
+
+        left = true;
         FragmentManager fragmentManager = getSupportFragmentManager();
         RemovedDialogFragment newFragment = new RemovedDialogFragment();
 
@@ -150,7 +160,7 @@ public class RoomActivity extends AppCompatActivity {
                 return true;
             case R.id.roomMenuLeave:
                 System.out.println("ouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut");
-                if(context != null) {
+                if(!left && context != null) {
                     System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiin");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage("Are you sure you want to leave the appointment ?");
@@ -163,6 +173,17 @@ public class RoomActivity extends AppCompatActivity {
                                 } else {
                                     appointment.removeParticipant(MainUser.getMainUser());
                                     MainUser.getMainUser().removeAppointment(appointment);
+                                    appointment.getOwnerId_Once_AndThen(owner -> {
+                                        if(owner.equals(MainUser.getMainUser().getId())) {
+                                            for(String uid : participants) {
+                                                if(!uid.equals(owner)) {
+                                                    appointment.setOwner(new DatabaseUser(uid));
+                                                    break;
+                                                }
+                                            }
+
+                                        }
+                                    });
                                 }
                             });
 

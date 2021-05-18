@@ -132,100 +132,102 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 
         StringSetValueListener participantListener = p -> {
-            layout.removeAllViewsInLayout();
-            participantsViews = new HashMap<String, ConstraintLayout>();
+            if(p.contains(MainUser.getMainUser().getId())) {
+                layout.removeAllViewsInLayout();
+                participantsViews = new HashMap<String, ConstraintLayout>();
 
-            for (String id : p) {
-                User user = new DatabaseUser(id);
+                for (String id : p) {
+                    User user = new DatabaseUser(id);
 
-                appointment.getTimeCodeOnceAndThen(user, o -> {
-                    if (System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
-                        appointment.removeOfCall(user);
+                    appointment.getTimeCodeOnceAndThen(user, o -> {
+                        if (System.currentTimeMillis() - o > Call.INVALID_TIME_CODE_TIME) {
+                            appointment.removeOfCall(user);
+                        }
+                    });
+
+                    ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
+                    participantsViews.put(id, participantsLayout);
+                    participantsLayout.setBackgroundColor(Color.LTGRAY);
+                    participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
+
+                    TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
+                    View participantsButtonLayout = participantsLayout.findViewById(R.id.roomActivityParticipantElementButtons);
+
+                    CircleImageView profilePicture = participantsLayout.findViewById(R.id.roomActivityParticipantElementProfilePicture);
+                    user.getProfilePicture_Once_And_Then(pictureId -> downloadPicture(pictureId, profilePicture));
+                    profilePicture.setOnClickListener(v -> visitProfile(id, MainUser.getMainUser().getId().equals(id)));
+
+                    TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
+                    StringValueListener ownerListener = owner -> {
+                        if (owner.equals(id))
+                            ownerTag.setVisibility(View.VISIBLE);
+                    };
+                    appointment.getOwnerIdAndThen(ownerListener);
+                    commandsToRemoveListeners.add((x, y) -> appointment.removeOwnerListener(ownerListener));
+
+                    ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
+
+                    ImageView videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
+                    videoButton.setTag(R.drawable.baseline_video_off);
+
+                    ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
+
+                    ImageView friendshipButton = participantsButtonLayout.findViewById(R.id.roomActivityManageParticipantAsFriendButton);
+
+                    participantsButtonLayout.setVisibility(View.VISIBLE);
+                    callButton.setVisibility(View.GONE);
+                    String userId = MainUser.getMainUser().getId();
+
+                    if (id.equals(userId)) {
+                        //set the participants layout for the user using the app
+                        ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
+                        audioTune.setVisibility(View.VISIBLE);
+                        audioTune.setOnClickListener(v -> {
+                            if (voiceTunerChoiceDialog == null) {
+                                voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment(this);
+                            }
+                            voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(), "Voice_tuner_Choice_dialog");
+                        });
+                        participantName.setText(getString(R.string.genericYouText));
+                        callButton.setVisibility(View.VISIBLE);
+
+                        callButton.setOnClickListener(v -> {
+                            if (isInCall) {
+                                leaveChannel();
+                            } else {
+                                joinChannel();
+                            }
+                        });
+
+                        muteButton.setOnClickListener(v -> muteUser());
+                        videoButton.setOnClickListener(this::shareVideoBehavior);
+                    } else {
+                        ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
+                        speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id), id));
+                        StringValueListener nameListener = participantName::setText;
+                        user.getNameAndThen(nameListener);
+                        commandsToRemoveListeners.add((x, y) -> user.removeNameListener(nameListener));
+                        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) -> {
+                            if (friendsIds.contains(id)) {
+                                friendshipButton.setImageResource(R.drawable.baseline_remove);
+                            } else {
+                                friendshipButton.setImageResource(R.drawable.baseline_add);
+                            }
+                        });
+                        friendshipButton.setVisibility(View.VISIBLE);
+                        friendshipButton.setOnClickListener((v) -> {
+                            friendshipButtonBehavior(v, id);
+                        });
                     }
-                });
 
-                ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
-                participantsViews.put(id, participantsLayout);
-                participantsLayout.setBackgroundColor(Color.LTGRAY);
-                participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
 
-                TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
-                View participantsButtonLayout = participantsLayout.findViewById(R.id.roomActivityParticipantElementButtons);
+                    layout.addView(participantsLayout);
 
-                CircleImageView profilePicture = participantsLayout.findViewById(R.id.roomActivityParticipantElementProfilePicture);
-                user.getProfilePicture_Once_And_Then(pictureId -> downloadPicture(pictureId, profilePicture));
-                profilePicture.setOnClickListener(v -> visitProfile(id, MainUser.getMainUser().getId().equals(id)));
-
-                TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
-                StringValueListener ownerListener = owner -> {
-                    if (owner.equals(id))
-                        ownerTag.setVisibility(View.VISIBLE);
-                };
-                appointment.getOwnerIdAndThen(ownerListener);
-                commandsToRemoveListeners.add((x,y) -> appointment.removeOwnerListener(ownerListener));
-
-                ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
-
-                ImageView videoButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementVideoButton);
-                videoButton.setTag(R.drawable.baseline_video_off);
-
-                ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
-
-                ImageView friendshipButton = participantsButtonLayout.findViewById(R.id.roomActivityManageParticipantAsFriendButton);
-
-                participantsButtonLayout.setVisibility(View.VISIBLE);
-                callButton.setVisibility(View.GONE);
-                String userId = MainUser.getMainUser().getId();
-
-                if (id.equals(userId)) {
-                    //set the participants layout for the user using the app
-                    ImageView audioTune = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerVoiceMenu);
-                    audioTune.setVisibility(View.VISIBLE);
-                    audioTune.setOnClickListener(v -> {
-                        if (voiceTunerChoiceDialog == null) {
-                            voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment(this);
-                        }
-                        voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(), "Voice_tuner_Choice_dialog");
-                    });
-                    participantName.setText(getString(R.string.genericYouText));
-                    callButton.setVisibility(View.VISIBLE);
-
-                    callButton.setOnClickListener(v -> {
-                        if (isInCall) {
-                            leaveChannel();
-                        } else {
-                            joinChannel();
-                        }
-                    });
-
-                    muteButton.setOnClickListener(v -> muteUser());
-                    videoButton.setOnClickListener(this::shareVideoBehavior);
-                } else {
-                    ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
-                    speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id),id));
-                    StringValueListener nameListener = participantName::setText;
-                    user.getNameAndThen(nameListener);
-                    commandsToRemoveListeners.add((x,y) -> user.removeNameListener(nameListener));
-                    MainUser.getMainUser().getFriends_Once_And_Then((friendsIds)->{
-                        if(friendsIds.contains(id)){
-                            friendshipButton.setImageResource(R.drawable.baseline_remove);
-                        } else {
-                            friendshipButton.setImageResource(R.drawable.baseline_add);
-                        }
-                    });
-                    friendshipButton.setVisibility(View.VISIBLE);
-                    friendshipButton.setOnClickListener((v) -> {
-                        friendshipButtonBehavior(v, id);
-                    });
+                    //Add a blank textView to add space between participant entries
+                    layout.addView(new TextView(rootView.getContext()));
                 }
-
-
-                layout.addView(participantsLayout);
-
-                //Add a blank textView to add space between participant entries
-                layout.addView(new TextView(rootView.getContext()));
+                refreshViews();
             }
-            refreshViews();
         };
         appointment.getParticipantsIdAndThen(participantListener);
         commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));

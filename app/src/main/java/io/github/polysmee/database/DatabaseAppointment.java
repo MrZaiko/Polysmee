@@ -469,4 +469,14 @@ public class DatabaseAppointment implements Appointment {
                 .getReference("appointments")
                 .child(id).removeValue();
     }
+
+    @Override
+    public void setOwner(User user) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("owner")
+                .setValue(user.getId());
+    }
 }
