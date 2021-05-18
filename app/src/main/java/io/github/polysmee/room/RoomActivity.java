@@ -69,6 +69,7 @@ public class RoomActivity extends AppCompatActivity {
                 (tab, position) -> tab.setText(getString(RoomPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
     }
 
+
     public void onDestroy() {
 
         Object dummyArgument = null;
@@ -78,6 +79,26 @@ public class RoomActivity extends AppCompatActivity {
         }
 
         super.onDestroy();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        paused = true;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("RESUME");
+
+        appointment.getParticipantsId_Once_AndThen(participants -> {
+            if(!participants.contains(MainUser.getMainUser().getId())) {
+                //generateRemovedDialog();
+            }
+        });
+
+        paused = false;
     }
 
     private void checkIfParticipant() {
