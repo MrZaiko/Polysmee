@@ -11,6 +11,8 @@ import androidx.preference.PreferenceScreen;
 
 import com.google.firebase.auth.FirebaseUser;
 
+import org.jetbrains.annotations.NotNull;
+
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
@@ -52,6 +54,52 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         }
 
         //user name
+        Preference userNameEditTextPreference = getUserNamePreference(context, visitedUser);
+
+        //user email
+        Preference userEmailEditTextPreference = getUserMailPreference(context, mainUser);
+
+        //user description
+        Preference userDescriptionEditTextPreference = getUserDescriptionPreference(context, visitedUser);
+
+        //user friends
+        Preference friendManagerPreference = getFiendManagerPreference(context);
+
+        screen.addPreference(userNameEditTextPreference);
+        if (visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)) {
+            screen.addPreference(userEmailEditTextPreference);
+            screen.addPreference(friendManagerPreference);
+        }
+        screen.addPreference(userDescriptionEditTextPreference);
+        setPreferenceScreen(screen);
+    }
+
+    @NotNull
+    private Preference getFiendManagerPreference(Context context) {
+        Preference friendManagerPreference = new Preference(context);
+        friendManagerPreference.setTitle(getContext().getResources().getString(R.string.title_profile_main_user_friends));
+        friendManagerPreference.setOnPreferenceClickListener((v) -> {
+            Intent intent = new Intent(getContext(), FriendsActivity.class);
+            startActivity(intent);
+            return false;
+        });
+        return friendManagerPreference;
+    }
+
+    @NotNull
+    private Preference getUserMailPreference(Context context, FirebaseUser mainUser) {
+        EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
+        userEmailEditTextPreference.setTitle(getString(R.string.title_profile_user_email));
+        userEmailEditTextPreference.setEnabled(false);
+        userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
+        if (mainUser != null) {
+            userEmailEditTextPreference.setSummary(mainUser.getEmail());
+        }
+        return userEmailEditTextPreference;
+    }
+
+    @NotNull
+    private Preference getUserNamePreference(Context context, User visitedUser) {
         EditTextPreference userNameEditTextPreference = new EditTextPreference(context);
         userNameEditTextPreference.setTitle(getString(R.string.title_profile_user_name));
         userNameEditTextPreference.setSummary(getString(R.string.genericWaitText));
@@ -63,17 +111,11 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
             userNameEditTextPreference.setKey(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME);
             nameListener = userNameEditTextPreference::setSummary;
         }
+        return userNameEditTextPreference;
+    }
 
-        //user email
-        EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
-        userEmailEditTextPreference.setTitle(getString(R.string.title_profile_user_email));
-        userEmailEditTextPreference.setEnabled(false);
-        userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
-        if (mainUser != null) {
-            userEmailEditTextPreference.setSummary(mainUser.getEmail());
-        }
-
-        //user description
+    @NotNull
+    private Preference getUserDescriptionPreference(Context context, User visitedUser) {
         EditTextPreference userDescriptionEditTextPreference = new EditTextPreference(context);
         userDescriptionEditTextPreference.setTitle(getString(R.string.title_profile_user_description));
         userDescriptionEditTextPreference.setSummary(getString(R.string.genericWaitText));
@@ -85,23 +127,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
             userDescriptionEditTextPreference.setKey(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION);
             descriptionListener = userDescriptionEditTextPreference::setSummary;
         }
-
-        //user friends
-        Preference friendManagerPreference = new Preference(context);
-        friendManagerPreference.setTitle(getContext().getResources().getString(R.string.title_profile_main_user_friends));
-        friendManagerPreference.setOnPreferenceClickListener((v) -> {
-            Intent intent = new Intent(getContext(), FriendsActivity.class);
-            startActivity(intent);
-            return false;
-        });
-
-        screen.addPreference(userNameEditTextPreference);
-        if (visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)) {
-            screen.addPreference(userEmailEditTextPreference);
-            screen.addPreference(friendManagerPreference);
-        }
-        screen.addPreference(userDescriptionEditTextPreference);
-        setPreferenceScreen(screen);
+        return userDescriptionEditTextPreference;
     }
 
     private void addNameListener(){
