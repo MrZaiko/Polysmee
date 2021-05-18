@@ -28,6 +28,7 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -58,11 +59,11 @@ public class RoomActivityParticipantsFragmentTest {
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true);
         FirebaseApp.clearInstancesForTest();
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        FirebaseApp.initializeApp(getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s -> {
         }, s -> {
-        });
+        }, getApplicationContext());
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(profilePictureId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
@@ -163,7 +164,7 @@ public class RoomActivityParticipantsFragmentTest {
         assertEquals(MainUser.getMainUser().getId(), usersUnmuted.get(0));
         clickOn(R.id.roomActivityParticipantElementCallButton);
     }
-    /**
+
     @Test
     public void testVoiceTuner() {
         Bundle bundle = new Bundle();
@@ -178,17 +179,13 @@ public class RoomActivityParticipantsFragmentTest {
         });
         sleep(1, SECONDS);
         String[] voicesTune = ApplicationProvider.getApplicationContext().getResources().getStringArray(R.array.voices_tune_array);
-        clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
-        sleep(1, SECONDS);
         int size = voicesTune.length > 5 ? 5 : voicesTune.length;
         for (int i = 0; i < size; i++) {
             clickOn(R.id.roomActivityParticipantElementOwnerVoiceMenu);
-            sleep(1, SECONDS);
             clickOn(voicesTune[i]);
-            sleep(1, SECONDS);
             verify(mockedCall).setVoiceEffect(i);
         }
-    }**/
+    }
 
 
 }

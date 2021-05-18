@@ -186,7 +186,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                             voiceTunerChoiceDialog = new VoiceTunerChoiceDialogFragment(this);
                         }
                         voiceTunerChoiceDialog.show(getActivity().getSupportFragmentManager(), "Voice_tuner_Choice_dialog");
-
                     });
                     participantName.setText(getString(R.string.genericYouText));
                     callButton.setVisibility(View.VISIBLE);
@@ -238,7 +237,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()));
+            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
         }
     }
 

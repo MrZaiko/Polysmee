@@ -1,6 +1,5 @@
 package io.github.polysmee.zroomActivityTests;
 
-
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;

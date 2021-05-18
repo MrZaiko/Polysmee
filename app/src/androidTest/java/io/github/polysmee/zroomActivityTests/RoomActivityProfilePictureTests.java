@@ -25,6 +25,7 @@ import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.RoomActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
+import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -55,11 +56,13 @@ public class RoomActivityProfilePictureTests {
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        FirebaseApp.clearInstancesForTest();
         CalendarUtilities.setTest(true);
-        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        FirebaseApp.clearInstancesForTest();
+        FirebaseApp.initializeApp(getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityProfilePictureTests@gmail.com", "fakePassword"));
-        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s -> {}, s -> {});
+        UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s -> {
+        }, s -> {
+        }, getApplicationContext());
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(profilePictureId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
@@ -78,7 +81,7 @@ public class RoomActivityProfilePictureTests {
 
     @Test
     public void participantsProfilePicturesAreClickable() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
@@ -86,6 +89,12 @@ public class RoomActivityProfilePictureTests {
             swipeViewPagerForward();
             swipeViewPagerForward();
             sleep(1, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementCallButton);
+            sleep(2, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementVideoButton);
+            sleep(2, SECONDS);
+            clickOn(R.id.roomActivityParticipantElementCallButton);
+            sleep(2, SECONDS);
             Intents.init();
             clickOn(R.id.roomActivityParticipantElementProfilePicture);
             intended(hasExtra(ProfileActivity.PROFILE_ID_USER, MainUser.getMainUser().getId()));
@@ -96,7 +105,7 @@ public class RoomActivityProfilePictureTests {
 
     @Test
     public void messagesProfilePicturesAreClickable() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        Intent intent = new Intent(getApplicationContext(), RoomActivity.class);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
 
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {

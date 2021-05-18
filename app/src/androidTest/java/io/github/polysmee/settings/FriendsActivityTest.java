@@ -10,6 +10,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,22 +56,19 @@ public class FriendsActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
     }
-
-
-    @Test
-    public void encouragingMessageIsDisplayedTest() {
-        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
-        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            assertDisplayed(getApplicationContext().getResources().getString(R.string.friendsActivityEncouragingMessage1));
-        }
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
     public void addingAndRemovingANewFriendTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(1, TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView, username2);
+            sleep(5, TimeUnit.SECONDS);
+            clickOn(R.id.friendAddTextView);
+            writeTo(R.id.friendAddTextView, "Cringe");
+            sleep(3, TimeUnit.SECONDS);
             closeSoftKeyboard();
             clickOn(R.id.friendActivityAddButton);
             sleep(2, TimeUnit.SECONDS);

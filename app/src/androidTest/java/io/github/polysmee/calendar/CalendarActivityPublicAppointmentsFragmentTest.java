@@ -3,6 +3,7 @@ package io.github.polysmee.calendar;
 
 import android.content.Intent;
 
+import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
@@ -136,6 +137,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             sleep(1, SECONDS);
             assertDisplayed("BonjourBing1");
             onView(withText("BonjourBing2")).check(doesNotExist());
+
+
         }
 
 
