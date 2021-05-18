@@ -6,8 +6,8 @@
     <string name="title_settings_appointments_reminder">Paramètres de rappel de meeting</string>
     <string name="title_settings_appointments_reminder_notification_time_from_appointment">Me rappeler avant</string>
     <string name="summary_settings_appointments_reminder_notification_time_from_appointment">Sélectionnez combien de temps avant un meeting vous devriez être prévenu (en minutes)</string>
-    <string name="title_settings_main_user_name">Nom d\'utilisateur</string>
-    <string name="title_settings_main_user_email">Email</string>
+    <string name="title_profile_user_name">Nom d\'utilisateur</string>
+    <string name="title_profile_user_email">Email</string>
     <string name="roomActivityReceiveButton">Recevoir</string>
     <string name="roomActivitySendButton">Envoyer</string>
     <string name="roomActivityMessagesTab">Messages</string>
@@ -94,7 +94,6 @@
     <string name="genericNamesHintText">Entrez les noms ici</string>
     <string name="genericYouText">Vous</string>
     <string name="genericWaitText">Veuillez patienter</string>
-    <string name="title_settings_main_user_info">Informations utilisateur</string>
     <string name="title_appointment_reminder_notification_notification">Rappel de meeting :)</string>
     <string name="title_activity_settings">Paramètres</string>
     <string name="appointment_creation_end_txt">Fin :</string>
@@ -107,7 +106,8 @@
     <string name="roomEditMessageText">Modifier le message</string>
     <string name="genericEditText">Modifier</string>
     <string name="genericCancelText">Annuler</string>
-    <string name="title_settings_main_user_friends">Gérez vos amis!</string>
+    <string name="title_profile_main_user_friends">Gérez vos amis!</string>
+    <string name="title_profile_user_description">Description</string>
     <string name="friendsActivityEncouragingMessage1">Ajoutez est voyez vos amis ci-dessous!</string>
     <string name="friendsActivityEncouragingMessage2">Ajoutez vos amis ici!</string>
     <string name="voice_hulk">Hulk</string>

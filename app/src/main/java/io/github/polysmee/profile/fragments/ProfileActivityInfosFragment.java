@@ -12,17 +12,17 @@ import androidx.preference.PreferenceScreen;
 import com.google.firebase.auth.FirebaseUser;
 
 import io.github.polysmee.R;
+import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.FriendsActivity;
 import io.github.polysmee.profile.ProfileActivity;
-import io.github.polysmee.settings.UserInfoDataStore;
+import io.github.polysmee.settings.MainUserInfoDataStore;
 
 public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
 
     private StringValueListener nameListener;
-    private UserInfoDataStore userInfoDataStore;
     private String visitingMode;
 
     @Override
@@ -31,39 +31,43 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
         visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
-        if (visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE))
-            userInfoDataStore = new UserInfoDataStore(this.getArguments().getString(ProfileActivity.PROFILE_ID_USER));
-        else
-            userInfoDataStore = new UserInfoDataStore();
+        String userId = this.getArguments().getString(ProfileActivity.PROFILE_ID_USER);
 
         EditTextPreference userNameEditTextPreference = new EditTextPreference(context);
-        userNameEditTextPreference.setPreferenceDataStore(userInfoDataStore);
-        userNameEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserName);
-        userNameEditTextPreference.setTitle(getString(R.string.title_settings_main_user_name));
+        userNameEditTextPreference.setTitle(getString(R.string.title_profile_user_name));
+        userNameEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
         if (visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE)) {
             userNameEditTextPreference.setEnabled(false);
-            userNameEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
-            userInfoDataStore.getName(userNameEditTextPreference::setSummary);
+            new DatabaseUser(userId).getName_Once_AndThen(userNameEditTextPreference::setSummary);
         } else {
+            userNameEditTextPreference.setPreferenceDataStore(new MainUserInfoDataStore());
+            userNameEditTextPreference.setKey(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME);
             nameListener = getStringValueListenerForDefaultValue(userNameEditTextPreference);
             MainUser.getMainUser().getNameAndThen(nameListener);
         }
 
 
         EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
-        userEmailEditTextPreference.setPreferenceDataStore(userInfoDataStore);
-        userEmailEditTextPreference.setKey(UserInfoDataStore.preferenceKeyMainUserEmail);
-        userEmailEditTextPreference.setTitle(getString(R.string.title_settings_main_user_email));
+        userEmailEditTextPreference.setTitle(getString(R.string.title_profile_user_email));
         userEmailEditTextPreference.setEnabled(false);
         userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
         if (user != null) {
             userEmailEditTextPreference.setSummary(user.getEmail());
         }
 
+        EditTextPreference userDescriptionEditTextPreference = new EditTextPreference(context);
+        userDescriptionEditTextPreference.setTitle(getString(R.string.title_profile_user_description));
+        userDescriptionEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
+        if (visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE)){
+            userDescriptionEditTextPreference.setEnabled(false);
+            //TODO get the description of the profile visited
+        }else{
+            //TODO set the preference to MainUserInfoData
+            //TODO set the listeners for change in description
+        }
+
         Preference friendManagerPreference = new Preference(context);
-        friendManagerPreference.setPreferenceDataStore(userInfoDataStore);
-        friendManagerPreference.setTitle(getContext().getResources().getString(R.string.title_settings_main_user_friends));
-        friendManagerPreference.setKey(UserInfoDataStore.PREFERENCE_KEY_MAIN_USER_FRIENDS);
+        friendManagerPreference.setTitle(getContext().getResources().getString(R.string.title_profile_main_user_friends));
         friendManagerPreference.setOnPreferenceClickListener((v) -> {
             Intent intent = new Intent(getContext(), FriendsActivity.class);
             startActivity(intent);
@@ -72,8 +76,8 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
 
 
         /*EditTextPreference descriptionPreference = new EditTextPreference(context);
-        descriptionPreference.setPreferenceDataStore(userInfoDataStore);
-        descriptionPreference.setKey(UserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION);
+        descriptionPreference.setPreferenceDataStore(mainUserInfoDataStore);
+        descriptionPreference.setKey(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION);
         descriptionPreference.setTitle("Description:");*/
 
         screen.addPreference(userNameEditTextPreference);
@@ -81,10 +85,9 @@ public class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
             screen.addPreference(userEmailEditTextPreference);
             screen.addPreference(friendManagerPreference);
         }
+        screen.addPreference(userDescriptionEditTextPreference);
         //screen.addPreference(descriptionPreference);
         setPreferenceScreen(screen);
-
-
     }
 
     /**

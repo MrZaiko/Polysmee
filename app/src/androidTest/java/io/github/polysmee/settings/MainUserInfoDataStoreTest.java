@@ -19,9 +19,9 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-public class UserInfoDataStoreTest {
-    private final static String userEmail = "UserInfoDataStoreTest@gmail.com";
-    private final static String userName = "UserInfoDataStoreTest";
+public class MainUserInfoDataStoreTest {
+    private final static String userEmail = "MainUserInfoDataStoreTest@gmail.com";
+    private final static String userName = "MainUserInfoDataStoreTest";
     private final static String userPassword = "fakePassword";
 
     @Rule
@@ -48,26 +48,26 @@ public class UserInfoDataStoreTest {
 
     @Test
     public void putString() throws Exception {
-        UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
+        MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
         String stringToPut = "name change test";
-        userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, stringToPut);
         testNameDatabase(stringToPut);
-        userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, userName);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, userName);
         testNameDatabase(userName);
-        userInfoDataStore.putString("efse", stringToPut);
+        mainUserInfoDataStore.putString("efse", stringToPut);
         testNameDatabase(userName);
-        userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserEmail, stringToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, stringToPut);
         testNameDatabase(userName);
-        userInfoDataStore.putString("fkesjnfejsf", stringToPut);
+        mainUserInfoDataStore.putString("fkesjnfejsf", stringToPut);
         testNameDatabase(userName);
     }
 
     @Test
     public void getString() {
-        UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
-        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserName, "test"));
-        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserEmail, "test"));
-        assertEquals("", userInfoDataStore.getString("jfnsejfnes", "test"));
+        MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
+        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, "test"));
+        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, "test"));
+        assertEquals("", mainUserInfoDataStore.getString("jfnsejfnes", "test"));
 
     }
 }
