@@ -1,5 +1,6 @@
 package io.github.polysmee.yroomActivityTests;
 
+import android.app.Activity;
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
@@ -32,6 +33,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
@@ -122,17 +124,25 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
     }
 
-    /*@Test
+    @Test
     public void deleteAppointmentLaunchTheLeaveDialog() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
+        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
 
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
-            clickMenu(R.id.roomMenuInfo);
-            sleep(1, TimeUnit.SECONDS);
+        try (ActivityScenario<AppointmentActivity> ignored = ActivityScenario.launch(intent)) {
             clickMenu(R.id.appointmentMenuDelete);
             assertDisplayed("Delete");
             clickOn("Delete");
+            sleep(2, TimeUnit.SECONDS);
+        }
+
+        Intent intent2 = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+        try (ActivityScenario<RoomActivity> ignored2 = ActivityScenario.launch(intent2)) {
+            sleep(1, TimeUnit.SECONDS);
+            clickOn(R.id.roomActivityRemovedDialogQuitButton);
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed(R.id.roomActivityRemovedDialogText);
             assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
@@ -143,5 +153,5 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-    }*/
+    }
 }
