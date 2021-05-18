@@ -7,6 +7,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 public class LocalCalendarService implements CalendarService {
     private static final Map<String, Map<String, Event>> calendarList = new HashMap<>();
@@ -36,6 +37,8 @@ public class LocalCalendarService implements CalendarService {
     public Event createEvent(String title, String course, long startTime, long duration) {
         Event event = new Event().setSummary(title);
 
+        event.setId(String.valueOf(new Random().nextInt()));
+
         String description = "Course : " + course;
         event.setDescription(description);
 
@@ -52,6 +55,9 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public String addEventToCalendar(String calendarId, Event event) throws IOException {
+        if (!calendarList.containsKey(calendarId)) {
+            calendarList.put(calendarId, new HashMap<>());
+        }
         calendarList.get(calendarId).put(event.getId(), event);
         return event.getId();
     }
