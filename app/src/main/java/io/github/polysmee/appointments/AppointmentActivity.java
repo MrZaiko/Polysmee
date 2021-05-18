@@ -671,12 +671,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.appointmentMenuDelete:
-                System.out.println("ouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut");
                 if(fragmentContext != null) {
-                    System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiin");
                     android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(fragmentContext);
-                    builder.setMessage("Are you sure you want to delete the appointment ?");
-                    builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                    builder.setMessage(R.string.delete_message);
+                    builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
@@ -684,7 +682,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                         }
                     });
 
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(R.string.genericCancelText, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 

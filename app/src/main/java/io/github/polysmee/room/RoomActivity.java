@@ -159,12 +159,10 @@ public class RoomActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
             case R.id.roomMenuLeave:
-                System.out.println("ouuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuut");
                 if(!left && context != null) {
-                    System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiin");
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setMessage("Are you sure you want to leave the appointment ?");
-                    builder.setPositiveButton("Leave", new DialogInterface.OnClickListener() {
+                    builder.setMessage(R.string.leave_message);
+                    builder.setPositiveButton(R.string.leave, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             appointment.getParticipantsId_Once_AndThen(participants -> {
@@ -190,7 +188,7 @@ public class RoomActivity extends AppCompatActivity {
                         }
                     });
 
-                    builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(R.string.genericCancelText, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 

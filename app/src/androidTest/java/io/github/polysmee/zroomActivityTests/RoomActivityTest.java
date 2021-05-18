@@ -118,5 +118,28 @@ public class RoomActivityTest {
             assertDisplayed(R.id.roomActivityRemovedDialogText);
             assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
         }
+
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
+    }
+
+    @Test
+    public void deleteAppointmentLaunchTheLeaveDialog() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
+            clickMenu(R.id.roomMenuLeave);
+            sleep(1, TimeUnit.SECONDS);
+            intended(hasExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE));
+            intended(hasExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId));
+            clickMenu(R.id.appointmentMenuDelete);
+            assertDisplayed("Delete");
+            clickOn("Delete");
+            sleep(2, TimeUnit.SECONDS);
+            assertDisplayed(R.id.roomActivityRemovedDialogText);
+            assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
+        }
+
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
     }
 }
