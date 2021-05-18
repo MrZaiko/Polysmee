@@ -1,9 +1,8 @@
-package io.github.polysmee.zroomActivityTests;
+package io.github.polysmee.yroomActivityTests;
 
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 
 import com.google.android.gms.tasks.Tasks;

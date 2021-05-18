@@ -1,9 +1,8 @@
-package io.github.polysmee.zroomActivityTests;
+package io.github.polysmee.yroomActivityTests;
 
 import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.intent.Intents;
 
