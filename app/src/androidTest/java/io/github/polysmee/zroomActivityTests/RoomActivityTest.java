@@ -110,6 +110,7 @@ public class RoomActivityTest {
 
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
+            Intents.init();
             clickMenu(R.id.roomMenuLeave);
             sleep(1, TimeUnit.SECONDS);
             assertDisplayed("Leave");
@@ -117,6 +118,7 @@ public class RoomActivityTest {
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed(R.id.roomActivityRemovedDialogText);
             assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
+            Intents.release();
         }
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
@@ -128,7 +130,8 @@ public class RoomActivityTest {
 
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
-            clickMenu(R.id.roomMenuLeave);
+            Intents.init();
+            clickMenu(R.id.roomMenuInfo);
             sleep(1, TimeUnit.SECONDS);
             intended(hasExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE));
             intended(hasExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId));
@@ -138,8 +141,10 @@ public class RoomActivityTest {
             sleep(2, TimeUnit.SECONDS);
             assertDisplayed(R.id.roomActivityRemovedDialogText);
             assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
+            Intents.release();
         }
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 }
