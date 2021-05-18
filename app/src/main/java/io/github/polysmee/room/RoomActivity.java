@@ -94,7 +94,7 @@ public class RoomActivity extends AppCompatActivity {
 
         appointment.getParticipantsId_Once_AndThen(participants -> {
             if(!participants.contains(MainUser.getMainUser().getId())) {
-                //generateRemovedDialog();
+                generateRemovedDialog();
             }
         });
 
@@ -103,7 +103,7 @@ public class RoomActivity extends AppCompatActivity {
 
     private void checkIfParticipant() {
         StringSetValueListener participantListener = p -> {
-            if (!p.contains(MainUser.getMainUser().getId())) {
+            if (!paused && !p.contains(MainUser.getMainUser().getId())) {
                 generateRemovedDialog();
             }
         };
