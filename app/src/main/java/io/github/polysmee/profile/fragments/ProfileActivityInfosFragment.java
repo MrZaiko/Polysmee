@@ -74,7 +74,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         setPreferenceScreen(screen);
     }
 
-    @NotNull
+
     private Preference getFiendManagerPreference(Context context) {
         Preference friendManagerPreference = new Preference(context);
         friendManagerPreference.setTitle(getContext().getResources().getString(R.string.title_profile_main_user_friends));
@@ -86,7 +86,6 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         return friendManagerPreference;
     }
 
-    @NotNull
     private Preference getUserMailPreference(Context context, FirebaseUser mainUser) {
         EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
         userEmailEditTextPreference.setTitle(getString(R.string.title_profile_user_email));
@@ -98,7 +97,6 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         return userEmailEditTextPreference;
     }
 
-    @NotNull
     private Preference getUserNamePreference(Context context, User visitedUser) {
         EditTextPreference userNameEditTextPreference = new EditTextPreference(context);
         userNameEditTextPreference.setTitle(getString(R.string.title_profile_user_name));
@@ -113,8 +111,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         }
         return userNameEditTextPreference;
     }
-
-    @NotNull
+    
     private Preference getUserDescriptionPreference(Context context, User visitedUser) {
         EditTextPreference userDescriptionEditTextPreference = new EditTextPreference(context);
         userDescriptionEditTextPreference.setTitle(getString(R.string.title_profile_user_description));
@@ -145,9 +142,10 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
     }
 
     private void deleteNameListener() {
-        if (visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE))
+        if (visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)){
             assert nameListener!=null;
             MainUser.getMainUser().removeNameListener(nameListener);
+        }
     }
 
     private void deleteDescriptionListener(){
