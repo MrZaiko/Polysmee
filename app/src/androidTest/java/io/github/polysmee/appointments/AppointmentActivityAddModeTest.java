@@ -175,6 +175,7 @@ public class AppointmentActivityAddModeTest {
             assertDisplayed("Select which friend(s) to invite");
             clickOn(username2);
             clickOn("OK");
+            scrollTo(R.id.appointmentCreationTxtWarning);
             clickOn(R.string.appointment_creation_reset_btn_txt);
             Thread.sleep(1000);
 
