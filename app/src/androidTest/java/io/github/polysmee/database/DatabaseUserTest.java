@@ -58,26 +58,27 @@ public class DatabaseUserTest {
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
-    @Test void getDescriptionAndThen() throws InterruptedException{
+    @Test
+    public void getDescriptionAndThen() throws InterruptedException{
         DatabaseUser databaseUser= new DatabaseUser(MainUser.getMainUser().getId());
         ReentrantLock lock = new ReentrantLock();
         Condition cv = lock.newCondition();
         AtomicBoolean bool = new AtomicBoolean(false);
-        AtomicReference<String> gotName = new AtomicReference<>("wrong description");
+        AtomicReference<String> gotDescription = new AtomicReference<>("wrong description");
         StringValueListener sv = (description) -> {
             lock.lock();
-            gotName.set(description);
+            gotDescription.set(description);
             bool.set(Boolean.TRUE);
             cv.signal();
             lock.unlock();
         };
         lock.lock();
         try {
-            databaseUser.getNameAndThen(sv);
+            databaseUser.getDescriptionAndThen(sv);
             while (!bool.get())
                 cv.await();
             databaseUser.removeNameListener(sv);
-            assertEquals(gotName.get(), userDescription);
+            assertEquals(userDescription,gotDescription.get());
         } finally {
             lock.unlock();
             databaseUser.getDescription_Once_AndThen((e) -> {
