@@ -25,6 +25,8 @@ public final class MainUserInfoDataStore extends PreferenceDataStore {
         }
         if (key.equals(PREFERENCE_KEY_MAIN_USER_NAME)) {
             MainUser.getMainUser().setName(value);
+        }else if(key.equals(PREFERENCE_KEY_MAIN_USER_DESCRIPTION)){
+            MainUser.getMainUser().setDescription(value);
         }
     }
 

@@ -13,6 +13,13 @@ import io.github.polysmee.database.databaselisteners.StringValueListener;
 
 public final class DatabaseUser implements User {
 
+    private static final String DESCRIPTION_RELATIVE_PATH = "description";
+    private static final String USERS_RELATIVE_PATH = "users";
+    private static final String APPOINTMENTS_RELATIVE_PATH = "appointments";
+    private static final String INVITES_RELATIVE_PATH = "invites";
+    private static final String NAME_RELATIVE_PATH = "name";
+    private static final String FRIENDS_RELATIVE_PATH = "friends";
+    private static final String PICTURE_RELATIVE_PATH = "picture";
     private final String self_id;
 
     public DatabaseUser(String id) {
@@ -27,9 +34,9 @@ public final class DatabaseUser implements User {
     @Override
     public void addAppointment(Appointment appointment) {
         DatabaseFactory.getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("appointments")
+                .child(APPOINTMENTS_RELATIVE_PATH)
                 .child(appointment.getId())
                 .setValue(true);
     }
@@ -38,9 +45,9 @@ public final class DatabaseUser implements User {
     public void removeAppointment(Appointment appointment) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("appointments")
+                .child(APPOINTMENTS_RELATIVE_PATH)
                 .child(appointment.getId())
                 .setValue(null);
     }
@@ -49,9 +56,9 @@ public final class DatabaseUser implements User {
     public void getInvitesAndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("invites")
+                .child(INVITES_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
 
@@ -59,9 +66,9 @@ public final class DatabaseUser implements User {
     public void getInvites_Once_AndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("invites")
+                .child(INVITES_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
     }
 
@@ -69,9 +76,9 @@ public final class DatabaseUser implements User {
     public void removeInvitesListener(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("invites")
+                .child(INVITES_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
 
@@ -79,9 +86,9 @@ public final class DatabaseUser implements User {
     public void addInvite(Appointment newAppointment) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("invites")
+                .child(INVITES_RELATIVE_PATH)
                 .child(newAppointment.getId())
                 .setValue(true);
     }
@@ -90,9 +97,9 @@ public final class DatabaseUser implements User {
     public void removeInvite(Appointment appointment) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("invites")
+                .child(INVITES_RELATIVE_PATH)
                 .child(appointment.getId())
                 .setValue(null);
     }
@@ -102,9 +109,9 @@ public final class DatabaseUser implements User {
     public void getNameAndThen(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("name")
+                .child(NAME_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
 
@@ -112,9 +119,9 @@ public final class DatabaseUser implements User {
     public void getName_Once_AndThen(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("name")
+                .child(NAME_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
     }
 
@@ -126,9 +133,9 @@ public final class DatabaseUser implements User {
         }
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("name")
+                .child(NAME_RELATIVE_PATH)
                 .setValue(value);
     }
 
@@ -136,9 +143,9 @@ public final class DatabaseUser implements User {
     public void removeNameListener(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("name")
+                .child(NAME_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
 
@@ -146,9 +153,9 @@ public final class DatabaseUser implements User {
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("appointments")
+                .child(APPOINTMENTS_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
 
@@ -156,9 +163,9 @@ public final class DatabaseUser implements User {
     public void getAppointments_Once_AndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("appointments")
+                .child(APPOINTMENTS_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
     }
 
@@ -166,9 +173,9 @@ public final class DatabaseUser implements User {
     public void removeAppointmentsListener(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("appointments")
+                .child(APPOINTMENTS_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
 
@@ -197,9 +204,9 @@ public final class DatabaseUser implements User {
     public void addFriend(User user) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("friends")
+                .child(FRIENDS_RELATIVE_PATH)
                 .child(user.getId())
                 .setValue(true);
     }
@@ -208,9 +215,9 @@ public final class DatabaseUser implements User {
     public void removeFriend(User user) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("friends")
+                .child(FRIENDS_RELATIVE_PATH)
                 .child(user.getId())
                 .setValue(null);
     }
@@ -219,9 +226,9 @@ public final class DatabaseUser implements User {
     public void getFriendsAndThen(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("friends")
+                .child(FRIENDS_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
 
@@ -229,9 +236,9 @@ public final class DatabaseUser implements User {
     public void getFriends_Once_And_Then(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("friends")
+                .child(FRIENDS_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
     }
 
@@ -239,9 +246,9 @@ public final class DatabaseUser implements User {
     public void removeFriendsListener(StringSetValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("friends")
+                .child(FRIENDS_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
 
@@ -249,9 +256,9 @@ public final class DatabaseUser implements User {
     public void setProfilePicture(String pictureId) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("picture")
+                .child(PICTURE_RELATIVE_PATH)
                 .setValue(pictureId);
     }
 
@@ -259,9 +266,9 @@ public final class DatabaseUser implements User {
     public void removeProfilePicture() {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("picture")
+                .child(PICTURE_RELATIVE_PATH)
                 .setValue(null);
     }
 
@@ -269,9 +276,9 @@ public final class DatabaseUser implements User {
     public void getProfilePictureAndThen(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("picture")
+                .child(PICTURE_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
 
@@ -279,9 +286,9 @@ public final class DatabaseUser implements User {
     public void getProfilePicture_Once_And_Then(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("picture")
+                .child(PICTURE_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
     }
 
@@ -289,12 +296,53 @@ public final class DatabaseUser implements User {
     public void removeProfilePictureListener(StringValueListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
-                .getReference("users")
+                .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("picture")
+                .child(PICTURE_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
 
+    @Override
+    public void setDescription(String description) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(DESCRIPTION_RELATIVE_PATH)
+                .setValue(description);
+    }
+
+
+    @Override
+    public void getDescriptionAndThen(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(DESCRIPTION_RELATIVE_PATH)
+                .addValueEventListener(valueListener);
+    }
+
+
+    @Override
+    public void getDescription_Once_AndThen(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(DESCRIPTION_RELATIVE_PATH)
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void removeDescriptionListener(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(DESCRIPTION_RELATIVE_PATH)
+                .removeEventListener(valueListener);
+    }
 
     @Override
     public boolean equals(Object o) {

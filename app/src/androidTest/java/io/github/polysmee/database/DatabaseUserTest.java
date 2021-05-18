@@ -1,10 +1,12 @@
 package io.github.polysmee.database;
 
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
+import com.android.dx.command.Main;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
@@ -34,6 +36,7 @@ import static org.junit.Assert.assertTrue;
 public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";
+    private static final String userDescription = "DatabaseUserTest description";
 
 
     @BeforeClass
@@ -46,12 +49,40 @@ public class DatabaseUserTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(username);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription);
         Thread.sleep(1000);
     }
 
     @AfterClass
     public static void clean() {
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+    }
+
+    @Test void getDescriptionAndThen() throws InterruptedException{
+        DatabaseUser databaseUser= new DatabaseUser(MainUser.getMainUser().getId());
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotName = new AtomicReference<>("wrong description");
+        StringValueListener sv = (description) -> {
+            lock.lock();
+            gotName.set(description);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            databaseUser.getNameAndThen(sv);
+            while (!bool.get())
+                cv.await();
+            databaseUser.removeNameListener(sv);
+            assertEquals(gotName.get(), userDescription);
+        } finally {
+            lock.unlock();
+            databaseUser.getDescription_Once_AndThen((e) -> {
+            });
+        }
     }
 
     @Test

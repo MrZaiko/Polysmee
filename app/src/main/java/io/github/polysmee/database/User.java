@@ -175,4 +175,33 @@ public interface User {
     static void getAllUsersIds_Once_AndThen(StringSetValueListener valueListener) {
         DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
     }
+
+    /**
+     * Set the description of the user.
+     * The description of a user, is a text that describe the user e.g. I'm a EPFL student
+     *
+     * @param description the description to set for the user
+     */
+    void setDescription(String description);
+
+    /**
+     * Put the passed listener as a listener of the description of the user
+     * @param  valueListener listener to be added for changes to the user's description.
+     */
+    void getDescriptionAndThen(StringValueListener valueListener);
+
+    /**
+     *
+     * @param valueListener the listener to be added for changes to the user's description.
+     *                      It is scheduled only once.
+     */
+    void getDescription_Once_AndThen(StringValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be removed from listening to changes to the
+     *                      profile picture.
+     */
+    void removeDescriptionListener(StringValueListener valueListener);
+
+
 }

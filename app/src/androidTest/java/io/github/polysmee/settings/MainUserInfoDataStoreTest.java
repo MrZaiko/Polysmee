@@ -6,6 +6,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -22,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 public class MainUserInfoDataStoreTest {
     private final static String userEmail = "MainUserInfoDataStoreTest@gmail.com";
     private final static String userName = "MainUserInfoDataStoreTest";
+    private final static String userDescription = "MainUserInfoDataStoreTest description";
     private final static String userPassword = "fakePassword";
 
     @Rule
@@ -35,30 +37,49 @@ public class MainUserInfoDataStoreTest {
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(userName);
+    }
+
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
 
-    public static void testNameDatabase(String value) throws Exception {
+
+    private static void testNameDatabase(String value) throws Exception {
+        //TODO necessary otherwise not enough time to set the value
         sleep(1, SECONDS);
         String name = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
                 .child(MainUser.getMainUser().getId()).child("name").get()).getValue();
         assertEquals(value, name);
     }
 
+    private static void testDescriptionDatabase(String value) throws Exception{
+        sleep(1, SECONDS);
+        String description = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+                .child(MainUser.getMainUser().getId()).child("description").get()).getValue();
+        assertEquals(value, description);
+    }
+
+
     @Test
     public void putString() throws Exception {
         MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
-        String stringToPut = "name change test";
-        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, stringToPut);
-        testNameDatabase(stringToPut);
+        String nameToPut = "name change test";
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, nameToPut);
+        testNameDatabase(nameToPut);
         mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, userName);
         testNameDatabase(userName);
-        mainUserInfoDataStore.putString("efse", stringToPut);
+        String descriptionToPut = "description change test";
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION, descriptionToPut);
+        testDescriptionDatabase(descriptionToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION,userDescription);
+        testDescriptionDatabase(userDescription);
+        mainUserInfoDataStore.putString("efse", nameToPut);
         testNameDatabase(userName);
-        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, stringToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, nameToPut);
         testNameDatabase(userName);
-        mainUserInfoDataStore.putString("fkesjnfejsf", stringToPut);
+        mainUserInfoDataStore.putString("fkesjnfejsf", nameToPut);
         testNameDatabase(userName);
     }
 
