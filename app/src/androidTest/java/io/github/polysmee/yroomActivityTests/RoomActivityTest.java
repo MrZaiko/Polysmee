@@ -14,10 +14,15 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -32,6 +37,8 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertEquals;
 
 @RunWith(AndroidJUnit4.class)
 public class RoomActivityTest {
@@ -124,6 +131,17 @@ public class RoomActivityTest {
     }
 
     @Test
+    public void destroyAppointmentWorks() {
+        Set<String> participantsUser = new HashSet<String>();
+        DatabaseAppointment databaseAppointment = new DatabaseAppointment(appointmentId);
+        databaseAppointment.getParticipantsIdAndThen(participants -> participantsUser.addAll(participants));
+        databaseAppointment.selfDestroy();
+
+        sleep(2, SECONDS);
+        assertEquals(true, participantsUser.isEmpty());
+    }
+
+    /*@Test
     public void deleteAppointmentLaunchTheLeaveDialog() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
@@ -147,5 +165,5 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-    }
+    }*/
 }
