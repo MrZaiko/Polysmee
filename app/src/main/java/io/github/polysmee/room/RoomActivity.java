@@ -84,7 +84,7 @@ public class RoomActivity extends AppCompatActivity {
     @Override
     public void onPause() {
         super.onPause();
-        paused = true;
+        //paused = true;
     }
 
     @Override
