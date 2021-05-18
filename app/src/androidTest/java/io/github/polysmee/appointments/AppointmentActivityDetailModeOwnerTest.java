@@ -40,6 +40,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class AppointmentActivityDetailModeOwnerTest {
     private static final String username1 = "Mathis L'utilisateur";
+    private static final String calendarId = "appointmentactivitydetailmodeownertest@gmail.com";
     private static final String id2 = "ppppppsdfkjhsfdlkisdfhl";
     private static final String username2 = "Sami L'imposteur";
     private static final String id3 = "eeeeeeefdisjpdfjsp";
@@ -71,6 +72,7 @@ public class AppointmentActivityDetailModeOwnerTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityDetailModeOwnerTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
 

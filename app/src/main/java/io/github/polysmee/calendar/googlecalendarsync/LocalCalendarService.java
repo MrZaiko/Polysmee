@@ -14,11 +14,20 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public void deleteCalendar(String calendarId) throws IOException {
+        if (!calendarList.containsKey(calendarId)) {
+            calendarList.put(calendarId, new HashMap<>());
+        }
+
         calendarList.remove(calendarId);
     }
 
     @Override
     public void deleteEvent(String calendarId, String eventId) throws IOException {
+        if (!calendarList.containsKey(calendarId)) {
+            calendarList.put(calendarId, new HashMap<>());
+            calendarList.get(calendarId).put(eventId, new Event());
+        }
+
         calendarList.get(calendarId).remove(eventId);
     }
 
@@ -64,6 +73,11 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public void updateEvent(String calendarId, String eventId, String title, String course, Long startTime, Long duration) throws IOException {
+        if (!calendarList.containsKey(calendarId)) {
+            calendarList.put(calendarId, new HashMap<>());
+            calendarList.get(calendarId).put(eventId, new Event());
+        }
+
         Event event = calendarList.get(calendarId).get(eventId);
 
         if (title != null && !title.equals(""))
