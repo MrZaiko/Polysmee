@@ -81,11 +81,6 @@ public class RoomActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        //paused = true;
-    }
 
     @Override
     public void onResume() {
@@ -94,7 +89,7 @@ public class RoomActivity extends AppCompatActivity {
 
         appointment.getParticipantsId_Once_AndThen(participants -> {
             if(!participants.contains(MainUser.getMainUser().getId())) {
-                generateRemovedDialog();
+                //generateRemovedDialog();
             }
         });
 
@@ -147,6 +142,7 @@ public class RoomActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.roomMenuInfo:
+                paused = true;
                 Intent intent = new Intent(this, AppointmentActivity.class);
                 intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
                 intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
