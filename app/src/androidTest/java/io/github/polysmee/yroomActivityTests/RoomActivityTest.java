@@ -130,8 +130,6 @@ public class RoomActivityTest {
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
             clickMenu(R.id.roomMenuInfo);
             sleep(1, TimeUnit.SECONDS);
-            intended(hasExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE));
-            intended(hasExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId));
             clickMenu(R.id.appointmentMenuDelete);
             assertDisplayed("Delete");
             clickOn("Delete");
