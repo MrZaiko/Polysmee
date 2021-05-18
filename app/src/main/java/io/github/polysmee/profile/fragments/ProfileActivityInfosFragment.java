@@ -11,8 +11,6 @@ import androidx.preference.PreferenceScreen;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import org.jetbrains.annotations.NotNull;
-
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
@@ -111,7 +109,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         }
         return userNameEditTextPreference;
     }
-    
+
     private Preference getUserDescriptionPreference(Context context, User visitedUser) {
         EditTextPreference userDescriptionEditTextPreference = new EditTextPreference(context);
         userDescriptionEditTextPreference.setTitle(getString(R.string.title_profile_user_description));
