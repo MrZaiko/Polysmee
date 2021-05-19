@@ -25,6 +25,7 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
@@ -192,4 +193,19 @@ public class AppointmentActivityDetailModeOwnerTest {
 
         Thread.sleep(2000);
     }
+
+    @Test
+    public void appointmentBinDisplaysDelete() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
+        intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+        intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointmentId);
+
+        ActivityScenario<AppointmentActivity> scenario = ActivityScenario.launch(intent);
+
+        sleep(2, SECONDS);
+        clickOn(R.id.appointmentMenuDelete);
+        sleep(2, SECONDS);
+        assertDisplayed("Leave");
+    }
+
 }
