@@ -205,7 +205,7 @@ public class AppointmentActivityDetailModeOwnerTest {
         sleep(2, SECONDS);
         clickOn(R.id.appointmentMenuDelete);
         sleep(2, SECONDS);
-        assertDisplayed("Leave");
+        assertDisplayed("Delete");
     }
 
 }
