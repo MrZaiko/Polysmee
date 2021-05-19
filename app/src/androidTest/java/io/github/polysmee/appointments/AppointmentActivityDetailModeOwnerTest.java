@@ -25,6 +25,7 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
@@ -192,4 +193,6 @@ public class AppointmentActivityDetailModeOwnerTest {
 
         Thread.sleep(2000);
     }
+
+
 }
