@@ -232,7 +232,6 @@ public class InvitesManagementActivity extends AppCompatActivity {
                             });
                         });
                     });
-
                 });
             }
         };
