@@ -111,30 +111,5 @@ public class RoomActivityTest {
         }
     }
 
-    @Test
-    public void leaveAppointmentLaunchTheLeaveDialog() {
-        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
-        new DatabaseAppointment(appointmentId).selfDestroy();
-        sleep(3, TimeUnit.SECONDS);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-        sleep(3, TimeUnit.SECONDS);
-        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
-        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
-            clickMenu(R.id.roomMenuLeave);
-            sleep(1, TimeUnit.SECONDS);
-            assertDisplayed("Leave");
-            clickOn("Leave");
-            sleep(2, TimeUnit.SECONDS);
-            assertDisplayed(R.id.roomActivityRemovedDialogText);
-            assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
-        }
-
-    }
-
 
 }
