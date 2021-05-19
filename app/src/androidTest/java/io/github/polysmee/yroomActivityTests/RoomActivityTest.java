@@ -130,7 +130,7 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
     }
 
-    @Test
+    /*@Test
     public void destroyAppointmentWorks() {
         Set<String> participantsUser = new HashSet<String>();
         DatabaseAppointment databaseAppointment = new DatabaseAppointment(appointmentId);
@@ -139,7 +139,7 @@ public class RoomActivityTest {
 
         sleep(2, SECONDS);
         assertEquals(true, participantsUser.isEmpty());
-    }
+    }*/
 
     /*@Test
     public void deleteAppointmentLaunchTheLeaveDialog() {
