@@ -115,12 +115,14 @@ public class RoomActivityTest {
     public void leaveAppointmentLaunchTheLeaveDialog() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
         new DatabaseAppointment(appointmentId).selfDestroy();
+        sleep(3, TimeUnit.SECONDS);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        sleep(3, TimeUnit.SECONDS);
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
             clickMenu(R.id.roomMenuLeave);
@@ -131,13 +133,8 @@ public class RoomActivityTest {
             assertDisplayed(R.id.roomActivityRemovedDialogText);
             assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
         }
-        new DatabaseAppointment(appointmentId).selfDestroy();
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+
     }
+
 
 }
