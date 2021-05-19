@@ -111,5 +111,22 @@ public class RoomActivityTest {
         }
     }
 
+    @Test
+    public void leaveAppointmentDisplaysDialogFragment() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(2, TimeUnit.SECONDS);
+            clickMenu(R.id.roomMenuLeave);
+            sleep(2, TimeUnit.SECONDS);
+            assertDisplayed("Leave");
+            clickOn("Leave");
+            sleep(2, TimeUnit.SECONDS);
+            assertDisplayed(R.id.roomActivityRemovedDialogText);
+            assertDisplayed(R.id.roomActivityRemovedDialogQuitButton);
+        }
+    }
+
 
 }
