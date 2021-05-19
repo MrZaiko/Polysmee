@@ -63,6 +63,7 @@ public class AppointmentActivityAddModeTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
         DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").child(id2).setValue(true);
     }
 
     @AfterClass
@@ -136,7 +137,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
                 clickOn(R.id.appointmentCreationbtnDone);
-                //assertDisplayed("OK");
+                assertDisplayed("OK");
                 clickOn("OK");
                 scrollTo(R.id.appointmentCreationTxtWarning);
                 assertDisplayed(R.string.appointmentCreationTimeError);
@@ -163,6 +164,19 @@ public class AppointmentActivityAddModeTest {
             assertDisplayed(R.string.appointmentCreationTimeError);
             clickOn(R.string.appointment_creation_reset_btn_txt);
 
+            Thread.sleep(1000);
+
+            scrollTo(R.id.appointmentCreationTxtWarning);
+            clickOn(R.id.appointmentCreationShowAdd);
+            scrollTo(R.id.appointmentCreationTxtWarning);
+            clickOn(R.id.appointmentSettingsBtnAddFriend);
+            Thread.sleep(1000);
+            assertDisplayed(username2);
+            assertDisplayed("Select which friend(s) to invite");
+            clickOn(username2);
+            clickOn("OK");
+            scrollTo(R.id.appointmentCreationTxtWarning);
+            clickOn(R.string.appointment_creation_reset_btn_txt);
             Thread.sleep(1000);
 
             scrollTo(R.id.appointmentCreationTxtWarning);

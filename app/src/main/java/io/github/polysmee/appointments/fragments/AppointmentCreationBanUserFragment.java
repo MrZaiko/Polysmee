@@ -11,7 +11,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.google.firebase.database.ValueEventListener;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -31,6 +30,7 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.UserItemAutocomplete;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove banned participants to an appointment
@@ -46,8 +46,9 @@ public class AppointmentCreationBanUserFragment extends Fragment {
     private ImageView btnBan;
     private LinearLayout bansList;
     private Set<String> bans, removedBans;
-    private ArrayList<String> users;
+    private ArrayList<String> usersNames;
     private List<StringValueListener> ownerIdListeners = new ArrayList<StringValueListener>();
+    private List<UserItemAutocomplete> users;
     AlertDialog.Builder builder;
 
     DataPasser dataPasser;
@@ -84,12 +85,10 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      * store all objects on the activity (buttons, textViews...) in variables
      */
     private void attributeSetters(View rootView) {
+        usersNames = new ArrayList<>();
         users = new ArrayList<>();
-        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.usersNamesGetter(s, users));
         searchBan = rootView.findViewById(R.id.appointmentSettingsSearchBan);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line, users);
-        searchBan.setAdapter(adapter);
+        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.fillUserList(s, usersNames,users,searchBan,getContext()));
         btnBan = rootView.findViewById(R.id.appointmentSettingsBtnBan);
         bansList = rootView.findViewById(R.id.appointmentCreationBansList);
         bans = new HashSet<>();
@@ -148,7 +147,7 @@ public class AppointmentCreationBanUserFragment extends Fragment {
      */
     private void banButtonBehavior(View view) {
         String s = searchBan.getText().toString();
-        if (!users.contains(s)) {
+        if (!usersNames.contains(s)) {
             builder.setMessage(getString(R.string.genericUserNotFoundText))
                     .setCancelable(false)
                     .setPositiveButton(getString(R.string.genericOkText), null);

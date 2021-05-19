@@ -31,6 +31,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.UserItemAutocomplete;
 
 /**
  * Fragment used by AppointmentActivity to display, add and remove participants to an appointment
@@ -47,7 +48,8 @@ public class AppointmentCreationAddUserFragment extends Fragment {
     private LinearLayout invitesList;
 
     private Set<String> invites, removedInvites;
-    private ArrayList<String> users;
+    private ArrayList<String> usersNames;
+    private List<UserItemAutocomplete> users;
     AlertDialog.Builder builder;
 
     DataPasser dataPasser;
@@ -74,6 +76,11 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         // Inflate the layout for this fragment
         rootView = inflater.inflate(R.layout.fragment_appointment_creation_add_user, container, false);
         attributeSetters(rootView);
+        try {
+            ((AppointmentActivity) getActivity()).setContext(getContext());
+        } catch (ClassCastException e) {
+
+        }
         return rootView;
     }
 
@@ -81,12 +88,10 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      * store all objects on the activity (buttons, textViews...) in variables
      */
     private void attributeSetters(View rootView) {
+        usersNames = new ArrayList<>();
         users = new ArrayList<>();
-        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.usersNamesGetter(s, users));
         searchInvite = rootView.findViewById(R.id.appointmentSettingsSearchAdd);
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                android.R.layout.simple_dropdown_item_1line, users);
-        searchInvite.setAdapter(adapter);
+        User.getAllUsersIds_Once_AndThen(s -> AppointmentsUtility.fillUserList(s, usersNames,users,searchInvite,getContext()));
         btnInvite = rootView.findViewById(R.id.appointmentSettingsBtnAdd);
         invitesList = rootView.findViewById(R.id.appointmentCreationAddsList);
         invites = new HashSet<>();
@@ -185,7 +190,7 @@ public class AppointmentCreationAddUserFragment extends Fragment {
      */
     private void inviteButtonBehavior(View view) {
         String s = searchInvite.getText().toString();
-        if (!users.contains(s)) {
+        if (!usersNames.contains(s)) {
             createErrorMessage(builder, getString(R.string.genericUserNotFoundText));
         } else if (!invites.contains(s)) {
             addNewInvite(s);

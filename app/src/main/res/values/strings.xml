@@ -123,5 +123,9 @@
     <string name="offline_warning">Warning</string>
     <string name="offline_appointment">You are currently offline, the appointment you create will go online when your device connects to the internet. The appointment course will be set to the default value \'Others\', you will be able to edit it once online.</string>
     <string name="offline_ok">OK</string>
+    <string name="delete">Delete</string>
+    <string name="delete_message">Are you sure you want to delete the appointment ?</string>
+    <string name="leave_message">Are you sure you want to leave the appointment ?</string>
+    <string name="leave">Leave</string>
 
 </resources>

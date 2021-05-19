@@ -1,4 +1,4 @@
-package io.github.polysmee.roomActivityTests;
+package io.github.polysmee.yroomActivityTests;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;

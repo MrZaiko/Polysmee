@@ -2,10 +2,14 @@ package io.github.polysmee.appointments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -104,6 +108,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private SwitchCompat privateSelector;
     private ImageView showAdd, showBan;
     private View addFragment, banFragment, bottomBar, startTimeLayout, endTimeLayout;
+
+    //Manage appointment deletion
+    private MenuItem bin;
+    private Context fragmentContext;
 
 
     @Override
@@ -258,6 +266,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 setupClickable(true);
                 isOwner = true;
                 bottomBarSetup(true);
+                if(bin != null) {
+                    bin.setVisible(true);
+                }
             }
         };
 
@@ -631,6 +642,68 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 bans = new HashSet<>(data);
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.appointment_menu, menu);
+        MenuItem item = menu.findItem(R.id.appointmentMenuOffline);
+        bin = menu.findItem(R.id.appointmentMenuDelete);
+        bin.setVisible(false);
+
+        if(appointment != null) {
+            appointment.getOwnerId_Once_AndThen(owner -> {
+                if(owner.equals(MainUser.getMainUser().getId())) {
+                    bin.setVisible(true);
+                }
+            });
+        }
+
+        if(InternetConnection.isOn()) {
+            item.setVisible(false);
+        }
+        InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> item.setVisible(key))));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.appointmentMenuDelete:
+                if(fragmentContext != null) {
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(fragmentContext);
+                    builder.setMessage(R.string.delete_message);
+                    builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            appointment.selfDestroy();
+                        }
+                    });
+
+                    builder.setNegativeButton(R.string.genericCancelText, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.show();
+
+                    return true;
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Sets the value of the attribute fragmentContext to the one given
+     * @param context
+     */
+    public void setContext(Context context) {
+        this.fragmentContext = context;
     }
 
 }
