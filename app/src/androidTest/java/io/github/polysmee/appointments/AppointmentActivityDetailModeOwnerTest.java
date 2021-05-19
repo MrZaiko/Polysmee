@@ -194,7 +194,7 @@ public class AppointmentActivityDetailModeOwnerTest {
         Thread.sleep(2000);
     }
 
-    /*@Test
+    @Test
     public void appointmentBinDisplaysDelete() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), AppointmentActivity.class);
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
@@ -206,6 +206,6 @@ public class AppointmentActivityDetailModeOwnerTest {
         clickOn(R.id.appointmentMenuDelete);
         sleep(2, SECONDS);
         assertDisplayed("Delete");
-    }*/
+    }
 
 }
