@@ -152,6 +152,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
                     TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
                     View participantsButtonLayout = participantsLayout.findViewById(R.id.roomActivityParticipantElementButtons);
+                    participantName.setOnClickListener(v -> visitProfile(id, MainUser.getMainUser().getId().equals(id)));
 
                     CircleImageView profilePicture = participantsLayout.findViewById(R.id.roomActivityParticipantElementProfilePicture);
                     user.getProfilePicture_Once_And_Then(pictureId -> downloadPicture(pictureId, profilePicture));
