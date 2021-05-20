@@ -31,10 +31,10 @@ import io.github.polysmee.login.MainUser;
  * For it to work correctly it need to be call with no extra in the intent, as all the necessary sub call to the service would be setted up by the first call to the service
  */
 public final class AppointmentReminderNotificationService extends Service {
-    private final Map<String, LongValueListener> appointmentStartTimeListeners = new HashMap<>();
     private final static String intentKeyExtraStartTime = "intentKeyExtraStartTime";
     private final static String intentKeyExtraAppointmentId = "IntentKeyExtraAppointmentId";
-    private StringSetValueListener mainUserStringSetValueListener = null;
+    private final Map<String, LongValueListener> appointmentStartTimeListeners = new HashMap<>();
+    private final StringSetValueListener mainUserStringSetValueListener = this::mainUserAppointmentsListenerUpdate;
 
 
     /**
@@ -148,7 +148,6 @@ public final class AppointmentReminderNotificationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mainUserStringSetValueListener = this::mainUserAppointmentsListenerUpdate;
         MainUser.getMainUser().getAppointmentsAndThen(mainUserStringSetValueListener);
     }
 

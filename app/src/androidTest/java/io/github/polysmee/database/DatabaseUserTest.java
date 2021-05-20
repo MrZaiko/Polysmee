@@ -35,6 +35,7 @@ import static org.junit.Assert.assertTrue;
 public class DatabaseUserTest {
 
     private static final String username = "Mathis L'utilisateur";
+    private static final String userDescription = "DatabaseUserTest description";
 
 
     @BeforeClass
@@ -48,12 +49,41 @@ public class DatabaseUserTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(username);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription);
         Thread.sleep(1000);
     }
 
     @AfterClass
     public static void clean() {
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+    }
+
+    @Test
+    public void getDescriptionAndThen() throws InterruptedException{
+        DatabaseUser databaseUser= new DatabaseUser(MainUser.getMainUser().getId());
+        ReentrantLock lock = new ReentrantLock();
+        Condition cv = lock.newCondition();
+        AtomicBoolean bool = new AtomicBoolean(false);
+        AtomicReference<String> gotDescription = new AtomicReference<>("wrong description");
+        StringValueListener sv = (description) -> {
+            lock.lock();
+            gotDescription.set(description);
+            bool.set(Boolean.TRUE);
+            cv.signal();
+            lock.unlock();
+        };
+        lock.lock();
+        try {
+            databaseUser.getDescriptionAndThen(sv);
+            while (!bool.get())
+                cv.await();
+            databaseUser.removeNameListener(sv);
+            assertEquals(userDescription,gotDescription.get());
+        } finally {
+            lock.unlock();
+            databaseUser.getDescription_Once_AndThen((e) -> {
+            });
+        }
     }
 
     @Test
