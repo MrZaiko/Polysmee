@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity {
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
-                        .setIsSmartLockEnabled(false) //disabled smart lock
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
         // [END auth_fui_create_intent]
