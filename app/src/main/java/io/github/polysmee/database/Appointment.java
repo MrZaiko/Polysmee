@@ -364,6 +364,17 @@ public interface Appointment {
     void setTimeCode(User user, Long timeCode);
 
     /**
+     * Deletes the appointment
+     */
+    void selfDestroy();
+
+    /**
+     * Sets the owner of the appointment to the given user
+     * @param user
+     */
+    void setOwner(User user);
+
+    /**
      * @param ssv a listener that will be run once and will receive the list of all appointments declared as
      *            public
      */
