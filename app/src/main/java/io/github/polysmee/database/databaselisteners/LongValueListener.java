@@ -6,6 +6,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.IOException;
+
 public interface LongValueListener extends ValueEventListener {
 
     void onDone(long o);

@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -35,6 +36,8 @@ import static com.schibsted.spain.barista.interaction.BaristaEditTextInteraction
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -42,6 +45,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class AppointmentActivityAddModeTest {
     private static final String username1 = "Mathis L'utilisateur";
+    private static final String calendarId = "appointmentactivityaddmodetest@gmail.com";
     private static final String id2 = "bxcwviusergpoza";
     private static final String username2 = "Sami L'imposteur";
     private static final String id3 = "sdflkhsfdlkhsfd";
@@ -53,6 +57,7 @@ public class AppointmentActivityAddModeTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
+        CalendarUtilities.setTest(true, false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         InternetConnection.setManuallyInternetConnectionForTests(true);
@@ -60,6 +65,7 @@ public class AppointmentActivityAddModeTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityAddModeTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
         DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
@@ -301,7 +307,7 @@ public class AppointmentActivityAddModeTest {
 
         clickOn(R.id.appointmentCreationbtnDone);
 
-        Thread.sleep(2000);
+        Thread.sleep(30000);
 
         HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").get()).getValue();
         assertNotNull(aptId);

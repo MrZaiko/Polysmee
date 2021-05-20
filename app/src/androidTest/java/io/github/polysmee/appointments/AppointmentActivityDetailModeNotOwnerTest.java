@@ -18,6 +18,7 @@ import org.junit.runners.JUnit4;
 import java.util.Calendar;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -52,6 +53,7 @@ public class AppointmentActivityDetailModeNotOwnerTest {
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.MILLISECOND, (int) duration);
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
+        CalendarUtilities.setTest(true, false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();

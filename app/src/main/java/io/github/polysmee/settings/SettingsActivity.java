@@ -38,7 +38,8 @@ public final class SettingsActivity extends AppCompatActivity implements Prefere
                 pref.getFragment());
         fragment.setArguments(args);
         // Replace the existing Fragment with the new Fragment
-        getSupportFragmentManager().beginTransaction()
+        getSupportFragmentManager()
+                .beginTransaction()
                 .replace(R.id.container_settings, fragment)
                 .addToBackStack(null)
                 .commit();
