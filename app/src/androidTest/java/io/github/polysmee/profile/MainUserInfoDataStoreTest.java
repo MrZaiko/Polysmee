@@ -15,7 +15,6 @@ import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.profile.MainUserInfoDataStore;
 import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
