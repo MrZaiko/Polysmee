@@ -101,7 +101,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
         sleep(2, SECONDS);
         clickOn(username2);
-        sleep(5, SECONDS);
+        sleep(2, SECONDS);
         assertDisplayed(R.string.title_profile_user_name);
         assertDisplayed(username2);
         assertDisplayed(R.string.title_profile_user_description);
