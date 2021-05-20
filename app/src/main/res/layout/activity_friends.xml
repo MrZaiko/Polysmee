@@ -11,6 +11,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:hint="@string/friendsActivityEncouragingMessage2"
+        android:imeOptions="flagNoExtractUi"
         app:layout_constraintBottom_toTopOf="@id/friendsActivityGuidelineAt20pourcent"
         app:layout_constraintEnd_toStartOf="@id/friendActivityAddButton"
         app:layout_constraintStart_toStartOf="parent"
