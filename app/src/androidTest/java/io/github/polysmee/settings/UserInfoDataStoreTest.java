@@ -6,6 +6,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 
+import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,11 +21,11 @@ import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.s
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
-public class UserInfoDataStoreTest {
-    private final static String userEmail = "UserInfoDataStoreTest@gmail.com";
-    private final static String userName = "UserInfoDataStoreTest";
+public class MainUserInfoDataStoreTest {
+    private final static String userEmail = "MainUserInfoDataStoreTest@gmail.com";
+    private final static String userName = "MainUserInfoDataStoreTest";
+    private final static String userDescription = "MainUserInfoDataStoreTest description";
     private final static String userPassword = "fakePassword";
-
     @Rule
     public ActivityScenarioRule<SettingsActivity> testRule = new ActivityScenarioRule<SettingsActivity>(SettingsActivity.class);
 
@@ -40,6 +41,10 @@ public class UserInfoDataStoreTest {
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(userName);
     }
 
+    @AfterClass
+    public static void clean() {
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+    }
 
     public static void testNameDatabase(String value) throws Exception {
         sleep(1, SECONDS);
@@ -48,28 +53,42 @@ public class UserInfoDataStoreTest {
         assertEquals(value, name);
     }
 
+
+    private static void testDescriptionDatabase(String value) throws Exception{
+        sleep(1, SECONDS);
+        String description = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+                .child(MainUser.getMainUser().getId()).child("description").get()).getValue();
+        assertEquals(value, description);
+    }
+
     @Test
     public void putString() throws Exception {
-        UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
-        String stringToPut = "name change test";
-        userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, stringToPut);
-        testNameDatabase(stringToPut);
-        userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserName, userName);
+        MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
+        String nameToPut = "name change test";
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, nameToPut);
+        testNameDatabase(nameToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, userName);
         testNameDatabase(userName);
-        userInfoDataStore.putString("efse", stringToPut);
+        String descriptionToPut = "description change test";
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION, descriptionToPut);
+        testDescriptionDatabase(descriptionToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION,userDescription);
+        testDescriptionDatabase(userDescription);
+        mainUserInfoDataStore.putString("efse", nameToPut);
         testNameDatabase(userName);
-        userInfoDataStore.putString(UserInfoDataStore.preferenceKeyMainUserEmail, stringToPut);
+        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, nameToPut);
         testNameDatabase(userName);
-        userInfoDataStore.putString("fkesjnfejsf", stringToPut);
-        testNameDatabase(userName);
+        mainUserInfoDataStore.putString("fkesjnfejsf", nameToPut);
+        testNameDatabase(userName);;
     }
 
     @Test
     public void getString() {
-        UserInfoDataStore userInfoDataStore = new UserInfoDataStore();
-        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserName, "test"));
-        assertEquals("", userInfoDataStore.getString(UserInfoDataStore.preferenceKeyMainUserEmail, "test"));
-        assertEquals("", userInfoDataStore.getString("jfnsejfnes", "test"));
+        MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
+        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, "test"));
+        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, "test"));
+        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION, "test"));
+        assertEquals("", mainUserInfoDataStore.getString("jfnsejfnes", "test"));
 
     }
 }

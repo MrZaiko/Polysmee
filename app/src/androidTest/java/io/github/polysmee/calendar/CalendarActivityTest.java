@@ -63,6 +63,7 @@ import static org.junit.Assert.assertTrue;
 public class CalendarActivityTest {
 
     private static final String username1 = "Youssef le dindon";
+    private static final String userDescription1 = "Bonjour tout le monde !";
     private static final String appointmentTitle = "J'adore le surf";
     private static final String appointmentCourse = "SDP";
     private static final String appointmentId = "-lsdqrhrrdtisjhmf";
@@ -89,6 +90,7 @@ public class CalendarActivityTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").child(appointmentId).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription1);
         DatabaseFactory.getAdaptedInstance().getReference("courses").child(appointmentCourse).setValue(appointmentCourse);
     }
 
@@ -288,6 +290,7 @@ public class CalendarActivityTest {
             try {
                 clickOn(R.id.calendarMenuProfile);
                 assertDisplayed(username1);
+                assertDisplayed(userDescription1);
             } catch (Exception e) {
                 openActionBarOverflowOrOptionsMenu(getApplicationContext());
                 sleep(2, SECONDS);

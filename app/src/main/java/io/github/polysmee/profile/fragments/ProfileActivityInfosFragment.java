@@ -33,7 +33,6 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         Context context = getPreferenceManager().getContext();
         PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
         visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
-        FirebaseUser mainUser = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
         String visitedUserId = this.getArguments().getString(ProfileActivity.PROFILE_ID_USER);
         if (!visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE) && !visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)){
             //argument passed are not good
@@ -55,7 +54,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         Preference userNameEditTextPreference = getUserNamePreference(context, visitedUser);
 
         //user email
-        Preference userEmailEditTextPreference = getUserMailPreference(context, mainUser);
+        Preference userEmailEditTextPreference = getUserMailPreference(context);
 
         //user description
         Preference userDescriptionEditTextPreference = getUserDescriptionPreference(context, visitedUser);
@@ -84,14 +83,12 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         return friendManagerPreference;
     }
 
-    private Preference getUserMailPreference(Context context, FirebaseUser mainUser) {
+    private Preference getUserMailPreference(Context context) {
         EditTextPreference userEmailEditTextPreference = new EditTextPreference(context);
         userEmailEditTextPreference.setTitle(getString(R.string.title_profile_user_email));
         userEmailEditTextPreference.setEnabled(false);
         userEmailEditTextPreference.setDefaultValue(getString(R.string.genericWaitText));
-        if (mainUser != null) {
-            userEmailEditTextPreference.setSummary(mainUser.getEmail());
-        }
+        userEmailEditTextPreference.setSummary(MainUser.getCurrentUserEmail());
         return userEmailEditTextPreference;
     }
 
