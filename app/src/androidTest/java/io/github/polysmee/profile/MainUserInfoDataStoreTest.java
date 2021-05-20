@@ -84,6 +84,8 @@ public class MainUserInfoDataStoreTest {
         testNameDatabase(userName);
         mainUserInfoDataStore.putString("fkesjnfejsf", nameToPut);
         testNameDatabase(userName);
+        mainUserInfoDataStore.putString("fkesjnfejsf", null);
+        testNameDatabase(userName);
     }
 
     @Test
