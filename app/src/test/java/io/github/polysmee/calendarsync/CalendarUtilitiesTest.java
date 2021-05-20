@@ -13,9 +13,7 @@ import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 public class CalendarUtilitiesTest {
     @BeforeClass
     public static void init() {
-        CalendarUtilities.setTest(true);
-        CalendarUtilities.setFaulty(true);
-        CalendarUtilities.resetService();
+        CalendarUtilities.setTest(true, true);
     }
 
     @Test
