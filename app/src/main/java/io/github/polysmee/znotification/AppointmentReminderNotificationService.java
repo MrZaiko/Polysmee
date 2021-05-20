@@ -34,7 +34,7 @@ public final class AppointmentReminderNotificationService extends Service {
     private final static String intentKeyExtraStartTime = "intentKeyExtraStartTime";
     private final static String intentKeyExtraAppointmentId = "IntentKeyExtraAppointmentId";
     private final Map<String, LongValueListener> appointmentStartTimeListeners = new HashMap<>();
-    private StringSetValueListener mainUserStringSetValueListener = this::mainUserAppointmentsListenerUpdate;
+    private final StringSetValueListener mainUserStringSetValueListener = this::mainUserAppointmentsListenerUpdate;
 
 
     /**
