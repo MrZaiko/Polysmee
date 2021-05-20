@@ -27,13 +27,13 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
     @Override
     // There is 1 argument to pass by the Bundle, and 1 optional argument if the value of PROFILE_VISIT_CODE needed argument is PROFILE_VISITING_MODE
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+        Context context = getPreferenceManager().getContext();
+        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+        visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
         if (!visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE) && !visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)){
             //argument passed are not good
             throw new IllegalArgumentException("The bundle passed should have as PROFILE_VISIT_CODE value {PROFILE_VISITING_MODE, PROFILE_OWNER_MODE}");
         }
-        Context context = getPreferenceManager().getContext();
-        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
-        visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
         String visitedUserId = this.getArguments().getString(ProfileActivity.PROFILE_ID_USER);
         if(visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE) && visitedUserId == null ){
             //argument passed are not good
