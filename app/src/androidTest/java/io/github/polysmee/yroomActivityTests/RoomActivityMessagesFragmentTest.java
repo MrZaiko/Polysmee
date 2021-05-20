@@ -71,7 +71,7 @@ public class RoomActivityMessagesFragmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
         InternetConnection.setManuallyInternetConnectionForTests(true);
         UploadServiceFactory.setTest(true);
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s -> {

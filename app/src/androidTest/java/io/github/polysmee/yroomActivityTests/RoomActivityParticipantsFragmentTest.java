@@ -61,7 +61,7 @@ public class RoomActivityParticipantsFragmentTest {
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));

@@ -20,10 +20,11 @@ public class CalendarUtilities {
     private static boolean faulty = false;
     private static CalendarService service = null;
 
-    public static void setTest(boolean test) {
+    public static void setTest(boolean test, boolean faulty) {
         CalendarUtilities.test = test;
+        CalendarUtilities.faulty = faulty;
+        resetService();
     }
-    public static void setFaulty(boolean faulty) { CalendarUtilities.faulty = faulty; }
 
     public static void resetService() {
         service = null;

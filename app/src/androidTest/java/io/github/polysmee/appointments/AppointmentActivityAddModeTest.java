@@ -57,7 +57,7 @@ public class AppointmentActivityAddModeTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         InternetConnection.setManuallyInternetConnectionForTests(true);

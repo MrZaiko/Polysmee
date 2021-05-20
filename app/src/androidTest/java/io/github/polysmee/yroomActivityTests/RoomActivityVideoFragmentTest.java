@@ -53,7 +53,7 @@ public class RoomActivityVideoFragmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityVideoFragmentTest@gmail.com", "fakePassword"));

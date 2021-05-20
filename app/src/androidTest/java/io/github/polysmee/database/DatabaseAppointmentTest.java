@@ -40,7 +40,7 @@ public class DatabaseAppointmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());

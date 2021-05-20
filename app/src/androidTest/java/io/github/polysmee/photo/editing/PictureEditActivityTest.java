@@ -68,7 +68,7 @@ public class PictureEditActivityTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
         UploadServiceFactory.setTest(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());

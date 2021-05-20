@@ -53,7 +53,7 @@ public class AppointmentActivityDetailModeNotOwnerTest {
         endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.MILLISECOND, (int) duration);
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        CalendarUtilities.setTest(true);
+        CalendarUtilities.setTest(true, false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
