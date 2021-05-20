@@ -59,6 +59,8 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.ProfileActivity;
+import io.github.polysmee.room.RoomActivity;
+
 import static android.app.Activity.RESULT_OK;
 
 /**
@@ -104,6 +106,11 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
 
+        try {
+            ((RoomActivity) getActivity()).setContext(getContext());
+        } catch (ClassCastException e) {
+            //tests might launch exceptions
+        }
 
         return rootView;
     }

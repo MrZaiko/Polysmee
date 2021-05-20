@@ -137,7 +137,7 @@ public class AppointmentActivityAddModeTest {
             setTimeOnPicker(16, 2);
 
                 clickOn(R.id.appointmentCreationbtnDone);
-                //assertDisplayed("OK");
+                assertDisplayed("OK");
                 clickOn("OK");
                 scrollTo(R.id.appointmentCreationTxtWarning);
                 assertDisplayed(R.string.appointmentCreationTimeError);
