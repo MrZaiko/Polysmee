@@ -6,8 +6,4 @@
     <string name="title_settings_appointments_reminder_notification_time_from_appointment">Remind me before</string>
     <integer name="default_appointment_reminder_notification__time_from_appointment_min">10</integer>
     <string name="summary_settings_appointments_reminder_notification_time_from_appointment">Set how much time before a appointment you should be reminded (in minutes)</string>
-    <string name="title_settings_main_user_name">Username</string>
-    <string name="title_settings_main_user_email">Email</string>
-    <string name="title_settings_main_user_info">User information</string>
-    <string name="title_settings_main_user_friends">Manage your friends!</string>
 </resources>
