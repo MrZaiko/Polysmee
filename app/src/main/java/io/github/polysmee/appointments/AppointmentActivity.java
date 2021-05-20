@@ -727,7 +727,24 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             finish();
-                            appointment.selfDestroy();
+                            appointment.getParticipantsId_Once_AndThen(participants -> {
+                                appointment.selfDestroy();
+
+                                for (String partId : participants) {
+                                    User part = new DatabaseUser(partId);
+                                    part.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                                        if (eventId != null && !eventId.equals(""))
+                                            part.getCalendarId_Once_AndThen(calendarId ->
+                                                    CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId,
+                                                            eventId, () -> {}, () -> runOnUiThread( () ->{
+                                                                Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                                                toast.show();
+                                                            })
+                                                    )
+                                            );
+                                    });
+                                }
+                            });
                         }
                     });
 

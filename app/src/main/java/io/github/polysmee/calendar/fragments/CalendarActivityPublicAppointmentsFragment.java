@@ -10,6 +10,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -31,6 +32,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -234,8 +236,31 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      */
     protected void joinPublicAppointmentWhenClickingOnJoin(String appointmentId) {
         Appointment appointment = new DatabaseAppointment(appointmentId);
-        appointment.addParticipant(user);
-        user.addAppointment(appointment, "");
+
+        user.getCalendarId_Once_AndThen(calendarId -> {
+            if (calendarId != null && !calendarId.equals("")) {
+                appointment.addParticipant(user);
+                appointment.getTitle_Once_AndThen(title ->
+                        appointment.getCourse_Once_AndThen( course ->
+                                appointment.getStartTime_Once_AndThen( startTime ->
+                                        appointment.getDuration_Once_AndThen( duration ->
+                                            CalendarUtilities.addAppointmentToCalendar(getContext(),
+                                                    calendarId, title, course, startTime, duration,
+                                                    eventId -> MainUser.getMainUser().addAppointment(appointment, eventId),
+                                                    () -> getActivity().runOnUiThread( () ->{
+                                                        Toast toast = Toast.makeText(getContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                                        toast.show();
+                                                    })
+                                            )
+                                        )
+                                )
+                        )
+                );
+            } else {
+                user.addAppointment(appointment, "");
+                appointment.addParticipant(user);
+            }
+        });
     }
 
     /**

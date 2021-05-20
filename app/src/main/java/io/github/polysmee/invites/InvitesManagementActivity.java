@@ -132,7 +132,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
                             apt.getStartTime_Once_AndThen( startTime ->
                                 apt.getDuration_Once_AndThen( duration ->
                                     CalendarUtilities.addAppointmentToCalendar(this, calendarId, title, course,
-                                            startTime, duration, eventId -> user.setAppointmentEventId(apt, eventId), () -> {})
+                                            startTime, duration, eventId -> user.addAppointment(apt, eventId), () -> {})
                                 )
                             )
                         )
