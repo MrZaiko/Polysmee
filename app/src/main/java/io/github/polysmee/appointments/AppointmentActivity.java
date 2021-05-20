@@ -611,11 +611,11 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
             User user = new DatabaseUser(userId);
             user.getName_Once_AndThen((name) -> {   
                 if (mode == DETAIL_MODE) {
-                    user.getCalendarId_Once_AndThen(userCalendarId -> {
-                        if (userCalendarId != null && !userCalendarId.equals("")) {
-                            user.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
-                                updateParticipants(name, eventId, userCalendarId, user);
-                            });
+                    user.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                        if (eventId != null && !eventId.equals("")) {
+                            user.getCalendarId_Once_AndThen(userCalendarId ->
+                                    updateParticipants(name, eventId, userCalendarId, user)
+                            );
                         } else {
                             updateParticipants(name, null, null, user);
                         }
