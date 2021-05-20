@@ -9,17 +9,14 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 import androidx.preference.PreferenceScreen;
 
-import com.google.firebase.auth.FirebaseUser;
-
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.FriendsActivity;
 import io.github.polysmee.profile.ProfileActivity;
-import io.github.polysmee.settings.MainUserInfoDataStore;
+import io.github.polysmee.profile.MainUserInfoDataStore;
 
 public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat {
 
@@ -30,36 +27,29 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
     @Override
     // There is 1 argument to pass by the Bundle, and 1 optional argument if the value of PROFILE_VISIT_CODE needed argument is PROFILE_VISITING_MODE
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
-        Context context = getPreferenceManager().getContext();
-        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
-        visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
-        String visitedUserId = this.getArguments().getString(ProfileActivity.PROFILE_ID_USER);
         if (!visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE) && !visitingMode.equals(ProfileActivity.PROFILE_OWNER_MODE)){
             //argument passed are not good
             throw new IllegalArgumentException("The bundle passed should have as PROFILE_VISIT_CODE value {PROFILE_VISITING_MODE, PROFILE_OWNER_MODE}");
         }
+        Context context = getPreferenceManager().getContext();
+        PreferenceScreen screen = getPreferenceManager().createPreferenceScreen(context);
+        visitingMode = this.getArguments().getString(ProfileActivity.PROFILE_VISIT_CODE);
+        String visitedUserId = this.getArguments().getString(ProfileActivity.PROFILE_ID_USER);
         if(visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE) && visitedUserId == null ){
             //argument passed are not good
             throw new IllegalArgumentException("The bundle passed should have a PROFILE_ID_USER argument");
         }
-
         User visitedUser = null;
         if (visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE)){
             visitedUser = new DatabaseUser(visitedUserId);
-        }else{
-            visitedUser = MainUser.getMainUser();
         }
 
-        //user name
         Preference userNameEditTextPreference = getUserNamePreference(context, visitedUser);
 
-        //user email
         Preference userEmailEditTextPreference = getUserMailPreference(context);
 
-        //user description
         Preference userDescriptionEditTextPreference = getUserDescriptionPreference(context, visitedUser);
 
-        //user friends
         Preference friendManagerPreference = getFiendManagerPreference(context);
 
         screen.addPreference(userNameEditTextPreference);
@@ -97,6 +87,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         userNameEditTextPreference.setTitle(getString(R.string.title_profile_user_name));
         userNameEditTextPreference.setSummary(getString(R.string.genericWaitText));
         if (visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE)) {
+            assert visitedUser!=null;
             userNameEditTextPreference.setEnabled(false);
             visitedUser.getName_Once_AndThen(userNameEditTextPreference::setSummary);
         } else {
@@ -112,6 +103,7 @@ public final class ProfileActivityInfosFragment extends PreferenceFragmentCompat
         userDescriptionEditTextPreference.setTitle(getString(R.string.title_profile_user_description));
         userDescriptionEditTextPreference.setSummary(getString(R.string.genericWaitText));
         if (visitingMode.equals(ProfileActivity.PROFILE_VISITING_MODE)){
+            assert visitedUser!=null;
             userDescriptionEditTextPreference.setEnabled(false);
             visitedUser.getDescription_Once_AndThen(userDescriptionEditTextPreference::setSummary);
         }else{

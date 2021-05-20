@@ -1,4 +1,4 @@
-package io.github.polysmee.settings;
+package io.github.polysmee.profile;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;

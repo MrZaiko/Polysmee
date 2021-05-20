@@ -1,4 +1,4 @@
-package io.github.polysmee.settings;
+package io.github.polysmee.profile;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.rules.ActivityScenarioRule;
@@ -11,9 +11,12 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.MainUserInfoDataStore;
+import io.github.polysmee.settings.SettingsActivity;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -34,6 +37,7 @@ public class MainUserInfoDataStoreTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
@@ -47,7 +51,7 @@ public class MainUserInfoDataStoreTest {
 
 
     private static void testNameDatabase(String value) throws Exception {
-        //TODO necessary otherwise not enough time to set the value
+        // necessary otherwise not enough time to set the value
         sleep(1, SECONDS);
         String name = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
                 .child(MainUser.getMainUser().getId()).child("name").get()).getValue();
@@ -88,6 +92,7 @@ public class MainUserInfoDataStoreTest {
         MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
         assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, "test"));
         assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, "test"));
+        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION, "test"));
         assertEquals("", mainUserInfoDataStore.getString("jfnsejfnes", "test"));
 
     }
