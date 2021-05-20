@@ -74,7 +74,7 @@ public class AppointmentActivityAddModeTest {
 
     @AfterClass
     public static void clean() {
-        //DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
 
