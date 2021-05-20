@@ -3,7 +3,6 @@ package io.github.polysmee.yroomActivityTests;
 import android.os.Bundle;
 
 import androidx.fragment.app.testing.FragmentScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.NoMatchingViewException;
 import androidx.test.espresso.intent.Intents;
 
@@ -17,6 +16,7 @@ import org.junit.runners.JUnit4;
 
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.UploadServiceFactory;
@@ -71,6 +71,7 @@ public class RoomActivityMessagesFragmentTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true, false);
         InternetConnection.setManuallyInternetConnectionForTests(true);
         UploadServiceFactory.setTest(true);
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s -> {

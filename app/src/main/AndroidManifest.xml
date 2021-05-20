@@ -69,7 +69,7 @@
 
         <activity android:name=".profile.FriendsActivity" />
         <activity android:name=".appointments.AppointmentActivity" />
-        <activity android:name=".calendar.CalendarExportActivity"/>
+        <activity android:name=".calendar.googlecalendarsync.GoogleCalendarSyncActivity"/>
         <activity
             android:name=".settings.SettingsActivity"
             android:label="@string/title_activity_settings" />

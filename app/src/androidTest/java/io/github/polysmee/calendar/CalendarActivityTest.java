@@ -24,6 +24,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
@@ -40,6 +41,7 @@ import static androidx.test.espresso.assertion.ViewAssertions.matches;
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasData;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
+import static androidx.test.espresso.intent.matcher.IntentMatchers.toPackage;
 import static androidx.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static androidx.test.espresso.matcher.ViewMatchers.withHint;
 import static androidx.test.espresso.matcher.ViewMatchers.withText;
@@ -48,6 +50,7 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
+import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -79,6 +82,7 @@ public class CalendarActivityTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true, false);
         InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
@@ -250,6 +254,23 @@ public class CalendarActivityTest {
                 assertDisplayed("Current invitations");
             }
             pressBack();
+
+            //exportCalendar
+            sleep(2, SECONDS);
+            Intents.init();
+            try {
+                clickOn(R.id.calendarMenuExport);
+                sleep(1, SECONDS);
+            } catch (Exception e) {
+                openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                sleep(2, SECONDS);
+                clickOn("Export");
+                sleep(1, SECONDS);
+            }
+            intended(toPackage("io.github.polysmee"));
+            Intents.release();
+            pressBack();
+
             //clickingSettingsButtonLaunchesSettingsActivity
             sleep(2, SECONDS);
             try {

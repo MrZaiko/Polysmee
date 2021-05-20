@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
@@ -24,8 +25,10 @@ import java.util.List;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseUser;
+import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
@@ -167,10 +170,35 @@ public class RoomActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             appointment.getParticipantsId_Once_AndThen(participants -> {
                                 if(participants.size() <= 1) {
+                                    for (String partId : participants) {
+                                        User part = new DatabaseUser(partId);
+                                        part.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                                            if (eventId != null && !eventId.equals(""))
+                                                part.getCalendarId_Once_AndThen(calendarId ->
+                                                        CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId,
+                                                                eventId, ()->{}, () -> runOnUiThread( () ->{
+                                                                    Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                                                    toast.show();
+                                                                })
+                                                        )
+                                                );
+                                        });
+                                    }
                                     appointment.selfDestroy();
                                 } else {
                                     appointment.removeParticipant(MainUser.getMainUser());
-                                    MainUser.getMainUser().removeAppointment(appointment);
+                                    MainUser.getMainUser().getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                                        if (eventId != null && !eventId.equals(""))
+                                            MainUser.getMainUser().getCalendarId_Once_AndThen(calendarId ->
+                                                    CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId, eventId,
+                                                    ()-> MainUser.getMainUser().removeAppointment(appointment),
+                                                        () -> runOnUiThread( () ->{
+                                                            Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                                            toast.show();
+                                                        })
+                                                    )
+                                            );
+                                    });
                                     appointment.getOwnerId_Once_AndThen(owner -> {
                                         if(owner.equals(MainUser.getMainUser().getId())) {
                                             for(String uid : participants) {
