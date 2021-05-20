@@ -21,6 +21,7 @@ public final class DatabaseUser implements User {
     private static final String NAME_RELATIVE_PATH = "name";
     private static final String FRIENDS_RELATIVE_PATH = "friends";
     private static final String PICTURE_RELATIVE_PATH = "picture";
+    private static final String CALENDAR_ID_RELATIVE_PATH = "calendarId";
     private final String self_id;
 
     public DatabaseUser(String id) {
@@ -393,7 +394,7 @@ public final class DatabaseUser implements User {
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("calendarId")
+                .child(CALENDAR_ID_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
 
@@ -403,7 +404,7 @@ public final class DatabaseUser implements User {
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
-                .child("calendarId")
+                .child(CALENDAR_ID_RELATIVE_PATH)
                 .setValue(calendarId);
     }
 

@@ -1,12 +1,10 @@
 package io.github.polysmee.database;
 
-import android.provider.ContactsContract;
 import android.util.Log;
 
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import com.android.dx.command.Main;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.database.FirebaseDatabase;
