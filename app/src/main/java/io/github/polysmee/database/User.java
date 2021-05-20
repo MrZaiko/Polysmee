@@ -1,5 +1,6 @@
 package io.github.polysmee.database;
 
+import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 
@@ -61,7 +62,33 @@ public interface User {
      *
      * @param newAppointment the appointment to be added
      */
-    void addAppointment(Appointment newAppointment);
+    void addAppointment(Appointment newAppointment, String eventId);
+
+    /**
+     @param valueListener the listener to be added for changes to the user's appointments and event ids
+     *                    It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getAppointmentsAndEventIdsAndThen(MapStringStringValueListener valueListener);
+
+    /**
+     @param valueListener the listener to be added for changes to the user's appointments and event ids
+      *                    It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getAppointmentsAndEventIds_Once_AndThen(MapStringStringValueListener valueListener);
+
+
+    /**
+     @param valueListener the listener to be added for changes to an appointment event id
+      *                    It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getAppointmentEventId_Once_AndThen(Appointment appointment, StringValueListener valueListener);
+
+    /**
+     *
+     * @param appointment appointment to change
+     * @param eventId new eventId value
+     */
+    void setAppointmentEventId(Appointment appointment, String eventId);
 
     /**
      * @param valueListener the listener to be added for changes to the invites the user is part of.
@@ -167,6 +194,18 @@ public interface User {
      *                      profile picture.
      */
     void removeProfilePictureListener(StringValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be added for changes to the calendarId.
+     *                      It is scheduled only once..
+     */
+    void getCalendarId_Once_AndThen(StringValueListener valueListener);
+
+    /**
+     * Change the calendar id of the user to the given value passed
+     * @param calendarId the new calendar id
+     */
+    void setCalendarId(String calendarId);
 
 
     /**

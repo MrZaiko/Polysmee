@@ -1,4 +1,4 @@
-package io.github.polysmee.zroomActivityTests;
+package io.github.polysmee.yroomActivityTests;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 

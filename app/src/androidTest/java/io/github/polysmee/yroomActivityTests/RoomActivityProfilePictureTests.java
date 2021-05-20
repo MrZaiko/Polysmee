@@ -1,9 +1,8 @@
-package io.github.polysmee.zroomActivityTests;
+package io.github.polysmee.yroomActivityTests;
 
 import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
-import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
 
 import com.google.android.gms.tasks.Tasks;
@@ -16,6 +15,7 @@ import org.junit.runners.JUnit4;
 
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -55,6 +55,7 @@ public class RoomActivityProfilePictureTests {
 
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityProfilePictureTests@gmail.com", "fakePassword"));
@@ -117,4 +118,3 @@ public class RoomActivityProfilePictureTests {
     }
 
 }
-

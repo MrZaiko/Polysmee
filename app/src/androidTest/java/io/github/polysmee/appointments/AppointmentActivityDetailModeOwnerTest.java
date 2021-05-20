@@ -19,12 +19,14 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
@@ -39,6 +41,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(JUnit4.class)
 public class AppointmentActivityDetailModeOwnerTest {
     private static final String username1 = "Mathis L'utilisateur";
+    private static final String calendarId = "appointmentactivitydetailmodeownertest@gmail.com";
     private static final String id2 = "ppppppsdfkjhsfdlkisdfhl";
     private static final String username2 = "Sami L'imposteur";
     private static final String id3 = "eeeeeeefdisjpdfjsp";
@@ -65,10 +68,13 @@ public class AppointmentActivityDetailModeOwnerTest {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         DatabaseFactory.setTest();
         AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityDetailModeOwnerTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").child(appointmentId).setValue("lkfdsjglkfd");
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
 
@@ -192,4 +198,6 @@ public class AppointmentActivityDetailModeOwnerTest {
 
         Thread.sleep(2000);
     }
+
+
 }

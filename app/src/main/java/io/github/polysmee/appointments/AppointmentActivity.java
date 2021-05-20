@@ -2,10 +2,14 @@ package io.github.polysmee.appointments;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -14,6 +18,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -30,6 +35,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.fragments.AppointmentCreationAddUserFragment;
 import io.github.polysmee.appointments.fragments.AppointmentCreationBanUserFragment;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -37,7 +43,6 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
@@ -90,7 +95,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
     // Misc
     private boolean isOwner;
-    boolean isKeyboardShowing;
+    private boolean isKeyboardShowing;
+    private String calendarId;
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -104,6 +110,10 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
     private SwitchCompat privateSelector;
     private ImageView showAdd, showBan;
     private View addFragment, banFragment, bottomBar, startTimeLayout, endTimeLayout;
+
+    //Manage appointment deletion
+    private MenuItem bin;
+    private Context fragmentContext;
 
 
     @Override
@@ -212,6 +222,8 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 }
         );
 
+        MainUser.getMainUser().getCalendarId_Once_AndThen(id -> calendarId = id);
+
         builder = new AlertDialog.Builder(this);
     }
 
@@ -258,6 +270,9 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 setupClickable(true);
                 isOwner = true;
                 bottomBarSetup(true);
+                if(bin != null) {
+                    bin.setVisible(true);
+                }
             }
         };
 
@@ -535,6 +550,17 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         if (mode == ADD_MODE) {
             String aptID = MainUser.getMainUser().createNewUserAppointment(startTime, duration, course, title, isPrivate);
             appointment = new DatabaseAppointment(aptID);
+
+            if (calendarId != null && !calendarId.equals("")) {
+                CalendarUtilities.addAppointmentToCalendar(this,
+                        calendarId, title, course, startTime, duration,
+                        eventId -> MainUser.getMainUser().setAppointmentEventId(appointment, eventId),
+                        () -> runOnUiThread( () ->{
+                            Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                            toast.show();
+                        }));
+            }
+
         } else {
             //TODO mb a new function to edit everything at once
             if (!title.equals(""))
@@ -548,6 +574,21 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
             if (startTimeUpdated || endTimeUpdated)
                 appointment.setDuration(duration);
+
+            if (calendarId != null && !calendarId.equals("")) {
+                MainUser.getMainUser().getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                    if (eventId != null && !eventId.equals(""))
+                        CalendarUtilities.updateAppointmentOnCalendar(this, calendarId, eventId,
+                                title, course,
+                                startTimeUpdated ? startTime : null,
+                                startTimeUpdated || endTimeUpdated ? duration : null,
+                                () -> {},
+                                () -> runOnUiThread(() -> {
+                                    Toast toast = Toast.makeText(this, getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                }));
+                });
+            }
 
             appointment.setPrivate(isPrivate);
         }
@@ -568,49 +609,68 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
 
         for (String userId : allIds) {
             User user = new DatabaseUser(userId);
-            StringValueListener nameListener = (name) -> {
+            user.getName_Once_AndThen((name) -> {   
                 if (mode == DETAIL_MODE) {
-                    for (String removedParticipant : removedInvites) {
-                        if (name.equals(removedParticipant)) {
-                            user.removeAppointment(appointment);
-                            appointment.removeParticipant(user);
+                    user.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                        if (eventId != null && !eventId.equals("")) {
+                            user.getCalendarId_Once_AndThen(userCalendarId ->
+                                    updateParticipants(name, eventId, userCalendarId, user)
+                            );
+                        } else {
+                            updateParticipants(name, null, null, user);
                         }
-                    }
-                    for (String addedBan : bans) {
-                        if (name.equals(addedBan)) {
-                            user.removeAppointment(appointment);
-                            appointment.removeParticipant(user);
-                        }
-                    }
-                    for (String removedBan : removedBans) {
-                        if (name.equals(removedBan)) {
-                            appointment.removeBan(user);
-                        }
-                    }
+
+                    });
+                } else {
+                   banAndInvite(name, user);
                 }
-
-                for (String banName : bans) {
-                    if (name.equals(banName)) {
-                        appointment.addBan(user);
-                    }
-                }
-
-                StringSetValueListener banListener = bannedUsers -> {
-                    for(String inviteName : invites) {
-                        if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
-                            user.addInvite(appointment);
-                            appointment.addInvite(user);
-                        }
-                    }
-                };
-
-                appointment.getBansAndThen(banListener);
-                commandsToRemoveListeners.add((x,y) -> appointment.removeBansListener(banListener));
-            };
-
-            user.getNameAndThen(nameListener);
-            commandsToRemoveListeners.add((x,y) -> user.removeNameListener(nameListener));
+            });
         }
+    }
+
+    private void updateParticipants(String name, String eventId, String userCalendarId, User user) {
+        for (String removedParticipant : removedInvites) {
+            if (name.equals(removedParticipant)) {
+                if (eventId != null && !eventId.equals(""))
+                    CalendarUtilities.deleteAppointmentFromCalendar(this, userCalendarId, eventId,
+                            () -> MainUser.getMainUser().setAppointmentEventId(appointment, ""), () -> {});
+                user.removeAppointment(appointment);
+                appointment.removeParticipant(user);
+            }
+        }
+        for (String addedBan : bans) {
+            if (name.equals(addedBan)) {
+                if (eventId != null && !eventId.equals(""))
+                    CalendarUtilities.deleteAppointmentFromCalendar(this, userCalendarId, eventId,
+                            () -> MainUser.getMainUser().setAppointmentEventId(appointment, ""), () -> {});
+                user.removeAppointment(appointment);
+                appointment.removeParticipant(user);
+            }
+        }
+        for (String removedBan : removedBans) {
+            if (name.equals(removedBan)) {
+                appointment.removeBan(user);
+            }
+        }
+
+        banAndInvite(name, user);
+    }
+
+    private void banAndInvite(String name, User user) {
+        for (String banName : bans) {
+            if (name.equals(banName)) {
+                appointment.addBan(user);
+            }
+        }
+
+        appointment.getBans_Once_AndThen(bannedUsers -> {
+            for (String inviteName : invites) {
+                if (name.equals(inviteName) && !bannedUsers.contains(user.getId())) {
+                    user.addInvite(appointment);
+                    appointment.addInvite(user);
+                }
+            }
+        });
     }
 
     @Override
@@ -631,6 +691,85 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
                 bans = new HashSet<>(data);
                 break;
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.appointment_menu, menu);
+        MenuItem item = menu.findItem(R.id.appointmentMenuOffline);
+        bin = menu.findItem(R.id.appointmentMenuDelete);
+        bin.setVisible(false);
+
+        if(appointment != null) {
+            appointment.getOwnerId_Once_AndThen(owner -> {
+                if(owner.equals(MainUser.getMainUser().getId())) {
+                    bin.setVisible(true);
+                }
+            });
+        }
+
+        if(InternetConnection.isOn()) {
+            item.setVisible(false);
+        }
+        InternetConnection.setCommand(((value, key) -> runOnUiThread(() -> item.setVisible(key))));
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.appointmentMenuDelete:
+                if(fragmentContext != null) {
+                    android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(fragmentContext);
+                    builder.setMessage(R.string.delete_message);
+                    builder.setPositiveButton(R.string.delete, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            finish();
+                            appointment.getParticipantsId_Once_AndThen(participants -> {
+                                appointment.selfDestroy();
+
+                                for (String partId : participants) {
+                                    User part = new DatabaseUser(partId);
+                                    part.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+                                        if (eventId != null && !eventId.equals(""))
+                                            part.getCalendarId_Once_AndThen(calendarId ->
+                                                    CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId,
+                                                            eventId, () -> {}, () -> runOnUiThread( () ->{
+                                                                Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                                                toast.show();
+                                                            })
+                                                    )
+                                            );
+                                    });
+                                }
+                            });
+                        }
+                    });
+
+                    builder.setNegativeButton(R.string.genericCancelText, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                        }
+                    });
+                    builder.show();
+
+                    return true;
+                }
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * Sets the value of the attribute fragmentContext to the one given
+     * @param context
+     */
+    public void setContext(Context context) {
+        this.fragmentContext = context;
     }
 
 }

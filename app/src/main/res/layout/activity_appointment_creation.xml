@@ -144,6 +144,7 @@
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:textSize="16sp"
+                    android:imeOptions="flagNoExtractUi"
                     app:layout_constraintBottom_toTopOf="@+id/appointmentCreationPrivateSelector"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
