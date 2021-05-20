@@ -17,10 +17,16 @@ import io.github.polysmee.database.User;
 
 public class CalendarUtilities {
     private static boolean test = false;
+    private static boolean faulty = false;
     private static CalendarService service = null;
 
     public static void setTest(boolean test) {
         CalendarUtilities.test = test;
+    }
+    public static void setFaulty(boolean faulty) { CalendarUtilities.faulty = faulty; }
+
+    public static void resetService() {
+        service = null;
     }
 
     private static void createService(Context context) {
@@ -28,7 +34,7 @@ public class CalendarUtilities {
             if (!test)
                 service = new GoogleCalendarService(context);
             else
-                service = new LocalCalendarService();
+                service = new LocalCalendarService(faulty);
         }
     }
 

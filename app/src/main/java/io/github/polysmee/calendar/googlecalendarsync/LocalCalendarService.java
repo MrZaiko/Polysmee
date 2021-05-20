@@ -11,9 +11,17 @@ import java.util.Random;
 
 public class LocalCalendarService implements CalendarService {
     private static final Map<String, Map<String, Event>> calendarList = new HashMap<>();
+    private boolean faulty = false;
+
+    public LocalCalendarService(boolean faulty) {
+        this.faulty = faulty;
+    }
 
     @Override
     public void deleteCalendar(String calendarId) throws IOException {
+        if (faulty)
+            throw new IOException();
+
         if (!calendarList.containsKey(calendarId)) {
             calendarList.put(calendarId, new HashMap<>());
         }
@@ -23,6 +31,9 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public void deleteEvent(String calendarId, String eventId) throws IOException {
+        if (faulty)
+            throw new IOException();
+
         if (!calendarList.containsKey(calendarId)) {
             calendarList.put(calendarId, new HashMap<>());
             calendarList.get(calendarId).put(eventId, new Event());
@@ -33,11 +44,15 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public void addUserToCalendar(String calendarId, String userEmail) throws IOException {
-        //nothing to do
+        if (faulty)
+            throw new IOException();
     }
 
     @Override
     public String createCalendar(String userEmail) throws IOException {
+        if (faulty)
+            throw new IOException();
+
         calendarList.put(userEmail, new HashMap<>());
         return userEmail;
     }
@@ -64,6 +79,9 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public String addEventToCalendar(String calendarId, Event event) throws IOException {
+        if (faulty)
+            throw new IOException();
+
         if (!calendarList.containsKey(calendarId)) {
             calendarList.put(calendarId, new HashMap<>());
         }
@@ -73,6 +91,9 @@ public class LocalCalendarService implements CalendarService {
 
     @Override
     public void updateEvent(String calendarId, String eventId, String title, String course, Long startTime, Long duration) throws IOException {
+        if (faulty)
+            throw new IOException();
+
         if (!calendarList.containsKey(calendarId)) {
             calendarList.put(calendarId, new HashMap<>());
             calendarList.get(calendarId).put(eventId, new Event());
