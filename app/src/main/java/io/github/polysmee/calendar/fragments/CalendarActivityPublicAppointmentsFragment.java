@@ -39,6 +39,7 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 
@@ -292,7 +293,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
                     BooleanValueListener privateListener = (isPrivate) ->{
                         if(!isPrivate){
-                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id);
+                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id,0);
                             LongValueListener startListener = (start)->{
 
                                 appointmentInfo.setStartTime(start);
@@ -303,13 +304,20 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                         appointmentInfo.setTitle((title));
                                         StringValueListener courseListener = (course) ->{
                                             appointmentInfo.setCourse(course);
-                                            scrollLayout.removeAllViewsInLayout();
-                                            if (!appointmentSet.contains(appointmentInfo.getId())) {
-                                                appointmentInfoMap.remove(appointmentInfo.getId());
-                                            } else {
-                                                appointmentInfoMap.put(appointment.getId(), appointmentInfo);
-                                            }
-                                            changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                            StringSetValueListener participantListener = (participants) -> {
+                                                appointmentInfo.setNumberOfParticipants(participants.size());
+                                                scrollLayout.removeAllViewsInLayout();
+                                                if (!appointmentSet.contains(appointmentInfo.getId())) {
+                                                    appointmentInfoMap.remove(appointmentInfo.getId());
+                                                } else {
+                                                    appointmentInfoMap.put(appointment.getId(), appointmentInfo);
+                                                }
+                                                changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                            };
+
+                                            appointment.getParticipantsIdAndThen(participantListener);
+                                            commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
+
                                         };
                                         appointment.getCourseAndThen(courseListener);
                                         commandsToRemoveListeners.add((x,y) -> appointment.removeCourseListener(courseListener));
