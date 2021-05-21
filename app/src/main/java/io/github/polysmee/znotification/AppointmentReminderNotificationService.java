@@ -122,6 +122,9 @@ public final class AppointmentReminderNotificationService extends Service {
     //it only accept intent with a startTime and a appointmentId extra
     public int onStartCommand(Intent intent, int flags, int startId) {
         super.onStartCommand(intent, flags, startId);
+        if (intent==null){
+            return START_STICKY;
+        }
         long startTime = intent.getLongExtra(intentKeyExtraStartTime, -1);
         String appointmentId = intent.getStringExtra(intentKeyExtraAppointmentId);
         if (startTime == -1 || appointmentId == null) {
