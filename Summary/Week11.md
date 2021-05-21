@@ -9,7 +9,7 @@ of 8 (the task is not even finished).
 
 Next week, I will finish to sync the calendar.
 
-## Youssef
+## Youssef (SM)
 This week I refactored the user profile, adding support for a profile picture as well. Not only we can see our own profile, but also other users.
 
 I took a bit time this sprint because I had to refactor some tests, but on my task alone my time estimate was correct.
@@ -38,7 +38,7 @@ My time estimate was not good this week, since it was the first time I used Aler
 
 Next time, if I know I will encounter a new thing to me. I will try my best not to underestimate the time needed.
 
-# Mathis (SM)
+# Mathis 
 This week, I implemented two things: i changed the sign-in method to use Google instead of our custom solution, so that Sami could work on getting data to Google calendar, as part of our destabilization sprint. I also added a logo to our app, to create a visual identity, and reworked the login screen so that it detects when the user is offline for their first login.
 
 I estimated the time it took fairly correctly.
