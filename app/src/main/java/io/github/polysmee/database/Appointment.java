@@ -333,6 +333,14 @@ public interface Appointment {
     void editMessage(String key, String newContent);
 
     /**
+     * replaces the reaction of the message with given key by the new reaction given
+     *
+     * @param key
+     * @param newContent
+     */
+    void editMessageReaction(String key, int newContent);
+
+    /**
      * Adds given listener to the set of messages of the appointment
      *
      * @param listener

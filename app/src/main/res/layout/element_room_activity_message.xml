@@ -11,7 +11,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementMainLayout"
+        app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementReactionMessageLayout"
         android:visibility="gone"
         android:layout_width="26dp"
         android:layout_height="26dp"
@@ -20,62 +20,107 @@
         android:src="@drawable/baseline_person" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/roomActivityMessageElementMainLayout"
+        android:id="@+id/roomActivityMessageElementReactionMessageLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementProfilePicture"
         app:layout_constraintEnd_toEndOf="parent">
-        <TextView
-            android:id="@+id/roomActivityMessageElementSenderText"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/genericSenderPlaceholder"
-            android:textSize="12sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toTopOf="@+id/roomActivityMessageElementMessageContent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.00"
-            app:layout_constraintStart_toStartOf="parent"
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/roomActivityMessageElementMainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.5" />
-
-        <TextView
-            android:id="@+id/roomActivityMessageElementMessageContent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="4dp"
-            android:text="@string/genericContentPlaceholder"
-            app:layout_constraintBottom_toTopOf="@+id/roomActivityMessageElementDateReceived"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/roomActivityMessageElementSenderText" />
-
-        <TextView
-            android:id="@+id/roomActivityMessageElementDateReceived"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="12sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.00"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/roomActivityMessageElementMessageContent" />
+            app:layout_constraintEnd_toEndOf="parent">
+            <TextView
+                android:id="@+id/roomActivityMessageElementSenderText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/genericSenderPlaceholder"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/roomActivityMessageElementMessageContent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.00"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.5" />
 
-        <TextView
-            android:id="@+id/roomActivityMessageElementDateSent"
+            <TextView
+                android:id="@+id/roomActivityMessageElementMessageContent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/genericContentPlaceholder"
+                app:layout_constraintBottom_toTopOf="@+id/roomActivityMessageElementDateReceived"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/roomActivityMessageElementSenderText" />
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementDateReceived"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.00"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/roomActivityMessageElementMessageContent" />
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementDateSent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="12sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/roomActivityMessageElementMessageContent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/roomActivityMessageElementReactionGuideline"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.7" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/roomActivityMessageElementReactionLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=""
-            android:textSize="12sp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/roomActivityMessageElementMainLayout"
+            app:layout_constraintTop_toTopOf="@id/roomActivityMessageElementReactionGuideline"
+            app:layout_constraintVertical_bias="1"
+            app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/roomActivityMessageElementMessageContent" />
+            android:background="@drawable/background_reaction">
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/roomActivityMessageElementReaction"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:gravity="center"
+                android:text="@string/emoji_joy"/>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

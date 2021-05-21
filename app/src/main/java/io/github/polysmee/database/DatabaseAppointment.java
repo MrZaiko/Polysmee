@@ -411,6 +411,18 @@ public class DatabaseAppointment implements Appointment {
     }
 
     @Override
+    public void editMessageReaction(String key, int newContent) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference("appointments")
+                .child(id)
+                .child("messages")
+                .child(key)
+                .child("reaction")
+                .setValue(newContent);
+    }
+
+    @Override
     public void addMessageListener(MessageChildListener listener) {
         DatabaseFactory
                 .getAdaptedInstance()
