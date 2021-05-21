@@ -182,6 +182,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
+        ((TextView) calendarEntry.findViewById(R.id.calendarEntryNumberOfParticipants)).setText("participants : " + Integer.toString(appointment.getNumberOfParticipants()));
 
         Appointment appointment1 = new DatabaseAppointment(appointment.getId());
         StringValueListener ownerListener = (ownerId) ->{

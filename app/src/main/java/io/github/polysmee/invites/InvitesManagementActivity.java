@@ -227,7 +227,7 @@ public class InvitesManagementActivity extends AppCompatActivity {
             }
             for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
                 Appointment appointment = new DatabaseAppointment(id);
-                CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
+                CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id,0);
                 appointment.getStartTime_Once_AndThen((start) -> {
                     appointmentInfo.setStartTime(start);
                     appointment.getDuration_Once_AndThen((duration) -> {
