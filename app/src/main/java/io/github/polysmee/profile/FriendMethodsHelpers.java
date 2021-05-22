@@ -22,6 +22,13 @@ import io.github.polysmee.room.fragments.HelperImages;
 
 public class FriendMethodsHelpers {
 
+    /**
+     * Helper method to visit a user profile from a friend entry (invitation or not)
+     * @param nameFriend the textview holding the user name
+     * @param userId the user's id
+     * @param activity the activity from which we are trying to access the user profile
+     * @param context the context from which we are trying to access the user profile
+     */
     public static void visitProfileFriendEntry(TextView nameFriend, String userId, Activity activity, Context context){
         nameFriend.setOnClickListener((view) -> {
             Intent profileIntent = new Intent(context, ProfileActivity.class);
@@ -31,6 +38,13 @@ public class FriendMethodsHelpers {
         });
     }
 
+    /**
+     * Helper method to add a friend entry (invitation or not) to a linear layout
+     * @param linearLayout the linear layout to which the entry will be added
+     * @param friendViews the views to add to the layout
+     * @param context the context from which this method is called
+     * @param friendEntryLayout the friend layout to add, with the profile picture (if present) and name
+     */
     public static void addFriendEntryToLayout(LinearLayout linearLayout,List<View> friendViews, Context context, ConstraintLayout friendEntryLayout){
         TextView padding = new TextView(context);
         friendViews.add(friendEntryLayout);
@@ -39,6 +53,12 @@ public class FriendMethodsHelpers {
         linearLayout.addView(padding);
     }
 
+    /**
+     * Helper method to download the profile picture to add to a friend entry (invitation or not)
+     * @param id the user's id
+     * @param friendEntry the entry in which the profile picture will be set
+     * @param context the context from which the method is called
+     */
     public static void downloadFriendProfilePicture(String id, ConstraintLayout friendEntry, Context context){
         (new DatabaseUser(id)).getProfilePicture_Once_And_Then((profilePictureId) ->{
             if(!profilePictureId.equals("")){
