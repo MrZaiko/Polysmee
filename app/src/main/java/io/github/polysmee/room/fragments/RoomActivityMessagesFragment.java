@@ -164,7 +164,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             appointmentId, id -> databaseAppointment.addMessage(
                                     new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true, 0)
-                            ), s -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
+                            ), s -> HelperImages.showToast(getActivity().getString(R.string.genericErrorText), getContext()), getContext());
 
                     if(!InternetConnection.isOn()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -356,7 +356,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
+            }, ss -> HelperImages.showToast(getActivity().getString(R.string.genericErrorText), getContext()), getContext());
         }
     }
 
@@ -384,7 +384,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 MenuInflater inflater = mode.getMenuInflater();
                 selectedMessage = messageKey;
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
-                mode.setTitle(getString(R.string.roomMessageOptionText));
+                mode.setTitle(getActivity().getString(R.string.roomMessageOptionText));
 
                 if (!isSent) {
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
@@ -471,7 +471,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         TextView messageView = messagesDisplayed.get(messageKey).findViewById(R.id.roomActivityMessageElementMessageContent);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(getString(R.string.roomEditMessageText));
+        builder.setTitle(getActivity().getString(R.string.roomEditMessageText));
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_room_activity_edit_and_delete, null);
@@ -479,7 +479,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         EditText editMessage = dialogView.findViewById(R.id.roomActivityEditDialogText);
         editMessage.setHint(messageView.getText());
 
-        builder.setPositiveButton(getString(R.string.genericEditText), (dialog, id) -> {
+        builder.setPositiveButton(getActivity().getString(R.string.genericEditText), (dialog, id) -> {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
             if(!InternetConnection.isOn()) {
                 AlertDialog.Builder offlineMsg = new AlertDialog.Builder(getContext());
@@ -496,7 +496,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
         });
 
-        builder.setNeutralButton(getString(R.string.genericCancelText), (dialog, id) -> {
+        builder.setNeutralButton(getActivity().getString(R.string.genericCancelText), (dialog, id) -> {
             //Nothing to do
         });
 
