@@ -88,8 +88,7 @@ public class FriendInvitesFragment extends Fragment {
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);
         TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
-        downloadFriendProfilePicture(userId,friendEntryLayout);
-
+        FriendMethodsHelpers.downloadFriendProfilePicture(userId,friendEntryLayout,getContext());
         FriendMethodsHelpers.visitProfileFriendEntry(nameFriend,userId,getActivity(),getContext());
 
         friendEntryLayout.findViewById(R.id.friendEntryAcceptFriendButton).setVisibility(View.VISIBLE);
@@ -102,25 +101,9 @@ public class FriendInvitesFragment extends Fragment {
             invitee.addFriend(user);
         });
 
-        /*TextView padding = new TextView(getContext());
-        List<View> friendViews = new ArrayList<>();
-        friendViews.add(friendEntryLayout);
-        friendViews.add(padding);
-        scrollLayout.addView(friendEntryLayout);
-        scrollLayout.addView(padding);*/
         List<View> friendViews = new ArrayList<>();
         FriendMethodsHelpers.addFriendEntryToLayout(scrollLayout,friendViews,getContext(),friendEntryLayout);
         friendInvitationIdsToView.put(userId, friendViews);
     }
 
-    protected void downloadFriendProfilePicture(String id, ConstraintLayout friendEntry){
-        (new DatabaseUser(id)).getProfilePicture_Once_And_Then((profilePictureId) ->{
-            if(!profilePictureId.equals("")){
-                UploadServiceFactory.getAdaptedInstance().downloadImage(profilePictureId, imageBytes -> {
-                    Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                    ((CircleImageView)friendEntry.findViewById(R.id.friendActivityElementProfilePicture)).setImageBitmap(Bitmap.createBitmap(bmp));
-                },ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()),getContext());
-            }
-        });
-    }
 }

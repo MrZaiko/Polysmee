@@ -163,7 +163,7 @@ public class FriendsActivity extends AppCompatActivity {
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);
         TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
-        downloadFriendProfilePicture(userId,friendEntryLayout);
+        FriendMethodsHelpers.downloadFriendProfilePicture(userId,friendEntryLayout,this);
 
         FriendMethodsHelpers.visitProfileFriendEntry(nameFriend,userId,this,this);
 
@@ -171,13 +171,6 @@ public class FriendsActivity extends AppCompatActivity {
             user.removeFriend(new DatabaseUser(userId));
             (new DatabaseUser(userId)).removeFriend(user);
         });
-
-        /*TextView padding = new TextView(this);
-        List<View> friendViews = new ArrayList<>();
-        friendViews.add(friendEntryLayout);
-        friendViews.add(padding);
-        scrollLayout.addView(friendEntryLayout);
-        scrollLayout.addView(padding);*/
         List<View> friendViews = new ArrayList<>();
         FriendMethodsHelpers.addFriendEntryToLayout(scrollLayout,friendViews,this,friendEntryLayout);
         idsToFriendEntries.put(userId, friendViews);
