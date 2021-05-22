@@ -301,15 +301,14 @@ public class CalendarActivityTest {
     public void logoutButtonTest() {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
-            Intents.init();
             try {
                 clickOn(R.id.calendarMenuLogout);
-                assertDisplayed("login");
             } catch (Exception e) {
                 openActionBarOverflowOrOptionsMenu(getApplicationContext());
+                clickOn("Logout");
                 sleep(2, SECONDS);
             }
-            Intents.release();
+            assertDisplayed("login");
         }
     }
 }
