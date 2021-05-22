@@ -304,14 +304,11 @@ public class CalendarActivityTest {
             Intents.init();
             try {
                 clickOn(R.id.calendarMenuLogout);
-                sleep(1, SECONDS);
+                assertDisplayed("login");
             } catch (Exception e) {
                 openActionBarOverflowOrOptionsMenu(getApplicationContext());
                 sleep(2, SECONDS);
-                clickOn(R.id.calendarMenuLogout);
-                sleep(1, SECONDS);
             }
-            assertDisplayed("login");
             Intents.release();
         }
     }
