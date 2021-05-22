@@ -95,8 +95,9 @@ public class CalendarActivityTest {
 
 
     @AfterClass
-    public static void clean() {
+    public static void clean() throws ExecutionException, InterruptedException {
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
     }
 
     @Before
