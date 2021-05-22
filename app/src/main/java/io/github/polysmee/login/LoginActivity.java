@@ -75,7 +75,6 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode != RC_SIGN_IN) {
             return;
         }
-        IdpResponse response = IdpResponse.fromResultIntent(data);
 
         if (resultCode == RESULT_OK) {
 
