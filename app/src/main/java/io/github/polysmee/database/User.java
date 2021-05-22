@@ -249,24 +249,24 @@ public interface User {
     void sendFriendInvitation(User user);
 
     /**
-     * @param user the user to be removed from the friend list
+     * @param user the user to be removed from the friend invitations list
      */
     void removeFriendInvitation(User user);
 
     /**
-     * @param valueListener the listener to be added for changes to the user's friends list.
+     * @param valueListener the listener to be added for changes to the user's friends invitations list.
      *                      It is scheduled once when added, even if there is no change at that moment.
      */
     void getFriendsInvitationsAndThen(StringSetValueListener valueListener);
 
     /**
-     * @param valueListener the listener to be added for changes to the user's friends list.
+     * @param valueListener the listener to be added for changes to the user's friends invitations list.
      *                      It is scheduled only once.
      */
     void getFriendsInvitations_Once_And_Then(StringSetValueListener valueListener);
 
     /**
-     * @param valueListener the listener to be removed from listening to changes to the user's friend
+     * @param valueListener the listener to be removed from listening to changes to the user's friend invitations
      *                      list.
      */
     void removeFriendsInvitationsListener(StringSetValueListener valueListener);
