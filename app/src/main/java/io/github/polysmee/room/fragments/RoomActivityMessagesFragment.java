@@ -37,6 +37,8 @@ import androidx.constraintlayout.widget.Guideline;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -87,6 +89,7 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private String selectedMessage;
     private MessageReaction selectedReaction;
+    private Context context;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
@@ -116,6 +119,12 @@ public class RoomActivityMessagesFragment extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onAttach(@NonNull @NotNull Context context) {
+        super.onAttach(context);
+        this.context = context;
     }
 
     private void openGallery(View view) {
@@ -453,7 +462,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         if (reaction != MessageReaction.DEFAULT) {
             reactionLayout.setVisibility(View.VISIBLE);
             if (reaction != null)
-                reactionView.setText(getText(reaction.getEmoji()));
+                reactionView.setText(context.getText(reaction.getEmoji()));
         } else {
             reactionLayout.setVisibility(View.GONE);
         }
