@@ -65,11 +65,15 @@ public class FriendInvitesFragment extends Fragment {
         super.onDestroy();
     }
 
+    /**
+     * Sets the listener of the friend invitations
+     */
     protected void setFriendInvitesListener(){
         StringSetValueListener friendInvitesListener = currentFriendInvitesListener();
         user.getFriendsInvitationsAndThen((friendInvitesListener));
         commandsToRemoveListeners.add((x,y) -> user.removeFriendsInvitationsListener(friendInvitesListener));
     }
+
     private StringSetValueListener currentFriendInvitesListener(){
         return (friendsInvites) ->{
             scrollLayout.removeAllViewsInLayout();

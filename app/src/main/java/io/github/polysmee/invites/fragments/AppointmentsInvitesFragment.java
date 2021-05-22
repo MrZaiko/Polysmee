@@ -28,6 +28,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.CalendarAppointmentInfo;
+import io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
@@ -107,12 +108,7 @@ public class AppointmentsInvitesFragment extends Fragment {
         ((TextView) InviteEntry.findViewById(R.id.InvitationEntryAppointmentDate)).setText(appointmentDate);
 
         ImageView status = InviteEntry.findViewById(R.id.InvitationEntryStatus);
-        if (current.before(startDate))
-            status.setImageResource(R.drawable.calendar_entry_incoming_dot);
-        else if (current.after(endDate))
-            status.setImageResource(R.drawable.calendar_entry_done_dot);
-        else
-            status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
+        CalendarActivityFragmentsHelpers.setStatusImage(status,current,startDate,endDate);
     }
 
     /**
