@@ -65,7 +65,7 @@ public class FriendsActivityTest {
     public void addingAndRemovingANewFriendTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            //TEST1
+            //TEST1 : Normal inviting
             sleep(5, TimeUnit.SECONDS);
             clickOn(R.id.friendAddTextView);
             writeTo(R.id.friendAddTextView, "Cringe");
@@ -76,7 +76,7 @@ public class FriendsActivityTest {
             assertDisplayed("Success");
             clickDialogPositiveButton();
             DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").child(id2).setValue(true);
-            //TEST2
+            //TEST2 : Error when inviting themselves
             sleep(2, TimeUnit.SECONDS);
             writeTo(R.id.friendAddTextView, username1);
             closeSoftKeyboard();
@@ -84,7 +84,7 @@ public class FriendsActivityTest {
             sleep(1, TimeUnit.SECONDS);
             assertDisplayed("Oops");
             clickDialogPositiveButton();
-            //TEST3
+            //TEST3 : Error when inviting non-existent user
             sleep(1, TimeUnit.SECONDS);
             writeTo(R.id.friendAddTextView, "PleaseLetMeGoBro");
             closeSoftKeyboard();
@@ -92,7 +92,7 @@ public class FriendsActivityTest {
             sleep(1, TimeUnit.SECONDS);
             assertDisplayed("User not found");
             clickDialogPositiveButton();
-            //TEST4
+            //TEST4 : Removing a friend
             assertDisplayed(username2);
             clickOn(username2);
             sleep(2, TimeUnit.SECONDS);
@@ -103,33 +103,6 @@ public class FriendsActivityTest {
         }
     }
 
-    /*@Test
-    public void errorMessageWhenTryingToAddThemselves() {
-        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
-        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(1, TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView, username1);
-            closeSoftKeyboard();
-            clickOn(R.id.friendActivityAddButton);
-            sleep(1, TimeUnit.SECONDS);
-            assertDisplayed("Oops");
-            clickDialogPositiveButton();
-        }
-    }*/
-
-   /* @Test
-    public void errorMessageWhenTryingToAddNonexistentUser() {
-        Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
-        try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
-            sleep(1, TimeUnit.SECONDS);
-            writeTo(R.id.friendAddTextView, "PleaseLetMeGoBro");
-            closeSoftKeyboard();
-            clickOn(R.id.friendActivityAddButton);
-            sleep(1, TimeUnit.SECONDS);
-            assertDisplayed("OK");
-            clickDialogPositiveButton();
-        }
-    }*/
 
 
 }
