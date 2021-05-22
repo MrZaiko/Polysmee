@@ -1,7 +1,9 @@
 package io.github.polysmee.yroomActivityTests;
 
 import android.content.Intent;
+import android.os.Bundle;
 
+import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
@@ -23,6 +25,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.RoomActivity;
+import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.intent.Intents.intended;
@@ -30,9 +33,12 @@ import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
+import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
+import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 
 @RunWith(AndroidJUnit4.class)
@@ -46,6 +52,9 @@ public class RoomActivityTest {
     private static final String appointmentId = "cwxbihezroijgdf";
     private static final String appointmentCourse = "Totally not SWENG";
     private static final long appointmentStart = 265655445;
+
+    private static final String firstMessageId = "jkxwcoihjcwxp";
+    private static final String firstMessage = "I'm a message";
 
 
     @BeforeClass
@@ -65,10 +74,42 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("content").setValue(firstMessage);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("sender").setValue(id2);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
+
+    @Test
+    public void reactionsWorkProperly() {
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
+        intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
+
+        try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(1, SECONDS);
+            scrollTo(firstMessage);
+            longClickOn(firstMessage);
+            clickOn(R.id.roomActivityMessageElementJoyReaction);
+            assertDisplayed(R.string.emoji_joy);
+            sleep(500);
+            longClickOn(firstMessage);
+            clickOn(R.id.roomActivityMessageElementSadReaction);
+            assertDisplayed(R.string.emoji_sad);
+            sleep(500);
+            longClickOn(firstMessage);
+            clickOn(R.id.roomActivityMessageElementHeartEyesReaction);
+            assertDisplayed(R.string.emoji_heart_eyes);
+            sleep(500);
+            longClickOn(firstMessage);
+            clickOn(R.id.roomActivityMessageElementSunglassesReaction);
+            assertDisplayed(R.string.emoji_sunglasses);
+            sleep(500);
+            longClickOn(firstMessage);
+            clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
+            assertDisplayed(R.string.emoji_expression_less);
+        }
+    }
 
     @Test
     public void titleOfTheActivityShouldBeTheAppointmentTitle() {

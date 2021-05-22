@@ -99,36 +99,6 @@ public class RoomActivityMessagesFragmentTest {
     }
 
     @Test
-    public void reactionsWorkProperly() {
-        Bundle bundle = new Bundle();
-        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
-        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
-        sleep(1, SECONDS);
-        scrollTo(firstMessage);
-        longClickOn(firstMessage);
-        clickOn(R.id.roomActivityMessageElementJoyReaction);
-        assertDisplayed(R.string.emoji_joy);
-        sleep(500);
-        longClickOn(firstMessage);
-        clickOn(R.id.roomActivityMessageElementSadReaction);
-        assertDisplayed(R.string.emoji_sad);
-        sleep(500);
-        longClickOn(firstMessage);
-        clickOn(R.id.roomActivityMessageElementHeartEyesReaction);
-        assertDisplayed(R.string.emoji_heart_eyes);
-        sleep(500);
-        longClickOn(firstMessage);
-        clickOn(R.id.roomActivityMessageElementSunglassesReaction);
-        assertDisplayed(R.string.emoji_sunglasses);
-        sleep(500);
-        longClickOn(firstMessage);
-        clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
-        assertDisplayed(R.string.emoji_expression_less);
-    }
-
-
-
-    @Test
     public void messagesShouldBeDisplayedAndClickOnPictureShouldWork() {
         Bundle bundle = new Bundle();
         bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
