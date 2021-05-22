@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
@@ -298,7 +299,7 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void logoutButtonTest() {
+    public void logoutButtonTest() throws ExecutionException, InterruptedException {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
             try {
@@ -310,5 +311,7 @@ public class CalendarActivityTest {
             }
             assertDisplayed("login");
         }
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
+
     }
 }
