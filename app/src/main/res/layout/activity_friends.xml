@@ -22,7 +22,7 @@
         android:id="@+id/friendActivityAddButton"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:text="Add"
+        android:text="Invite"
         app:layout_constraintBottom_toTopOf="@id/friendsActivityGuidelineAt20pourcent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/friendAddTextView"

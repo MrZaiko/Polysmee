@@ -72,6 +72,8 @@
     <string name="appointmentCreationAddBanError">Un utilisateur ne peut pas être à la fois banni et ajouté</string>
     <string name="calendarActivityTodayDatePublicAppointments">Date</string>
     <string name="invites_management_current_invitations">Invitations actives</string>
+    <string name="invites_management_current_invitations_appointments">Meetings</string>
+    <string name="invites_management_current_invitations_Friends">Amis</string>
     <string name="calendarActivityPublicAppointmentsCourse">Cours</string>
     <string name="calendarActivityPublicAppointmentsFilter">Filtrer</string>
     <string name="calendarActivityMyAppointments">Mes meetings</string>
@@ -108,7 +110,7 @@
     <string name="genericCancelText">Annuler</string>
     <string name="title_profile_main_user_friends">Gérez vos amis!</string>
     <string name="title_profile_user_description">Description</string>
-    <string name="friendsActivityEncouragingMessage1">Ajoutez est voyez vos amis ci-dessous!</string>
+    <string name="friendsActivityEncouragingMessage1">Invitez et voyez vos amis ci-dessous!</string>
     <string name="friendsActivityEncouragingMessage2">Ajoutez vos amis ici!</string>
     <string name="voice_hulk">Hulk</string>
     <string name="voice_no_tune">Pas de modification</string>

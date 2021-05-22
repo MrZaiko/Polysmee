@@ -81,7 +81,7 @@ public class FriendsActivity extends AppCompatActivity {
         searchFriend = findViewById(R.id.friendAddTextView);
         User.getAllUsersIds_Once_AndThen(this::fillUserList);
         friendAddButton = findViewById(R.id.friendActivityAddButton);
-        friendAddButton.setOnClickListener((v) -> addFriendBehavior());
+        friendAddButton.setOnClickListener((v) -> inviteFriendButtonBehavior());
         builder = new AlertDialog.Builder(this);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -113,7 +113,7 @@ public class FriendsActivity extends AppCompatActivity {
      * Determines the behavior of the "add" button after typing the name
      * of a user we want to add as friend
      */
-    protected void addFriendBehavior() {
+    protected void inviteFriendButtonBehavior() {
         String s = searchFriend.getText().toString();
         if (!allUsersNames.contains(s)) {
             builder.setMessage(getString(R.string.genericUserNotFoundText))
@@ -134,7 +134,7 @@ public class FriendsActivity extends AppCompatActivity {
                     alert.setTitle("Oops");
                     alert.show();
                 } else {
-                    user.addFriend(new DatabaseUser(namesToIds.get(s)));
+                    user.sendFriendInvitation(new DatabaseUser(namesToIds.get(s)));
                 }
             });
         }
@@ -165,6 +165,7 @@ public class FriendsActivity extends AppCompatActivity {
         });
         friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton).setOnClickListener((v) -> {
             user.removeFriend(new DatabaseUser(userId));
+            (new DatabaseUser(userId)).removeFriend(user);
         });
         TextView padding = new TextView(this);
         List<View> friendViews = new ArrayList<>();

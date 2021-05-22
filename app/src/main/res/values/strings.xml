@@ -60,7 +60,7 @@
     <string name="roomMessageOptionText">Choose an option</string>
     <string name="roomEditMessageText">Edit message</string>
 
-    <string name="friendsActivityEncouragingMessage1">Add and see your friends below!</string>
+    <string name="friendsActivityEncouragingMessage1">Invite and see your friends below!</string>
     <string name="friendsActivityEncouragingMessage2">Add friends here!</string>
     <!-- Preference Titles -->
     <string name="messages_header">Messages</string>
@@ -88,6 +88,8 @@
     <string name="appointmentCreationAddBanError">A user cannot be both added and banned</string>
     <string name="calendarActivityTodayDatePublicAppointments">Date</string>
     <string name="invites_management_current_invitations">Current invitations</string>
+    <string name="invites_management_current_invitations_appointments">Appointments</string>
+    <string name="invites_management_current_invitations_Friends">Friends</string>
     <string name="calendarActivityPublicAppointmentsCourse">Course</string>
     <string name="calendarActivityPublicAppointmentsFilter">Filter</string>
     <string name="calendarActivityMyAppointments">My appointments</string>
