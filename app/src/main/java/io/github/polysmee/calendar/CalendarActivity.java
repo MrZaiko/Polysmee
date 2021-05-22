@@ -28,6 +28,8 @@ import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarSyncActivity
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
+import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.LoginCheckActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
@@ -161,6 +163,12 @@ public class CalendarActivity extends AppCompatActivity {
             case R.id.calendarMenuExport:
                 Intent exportIntent = new Intent(this, GoogleCalendarSyncActivity.class);
                 startActivity(exportIntent);
+                return true;
+            case R.id.calendarMenuLogout:
+                AuthenticationFactory.getAdaptedInstance().signOut();
+                Intent loginIntent = new Intent(this, LoginCheckActivity.class);
+                finish();
+                startActivity(loginIntent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
