@@ -396,7 +396,7 @@ public final class DatabaseUser implements User {
                 .getReference(USERS_RELATIVE_PATH)
                 .child(user.getId())
                 .child(FRIENDS_INVITES_RELATIVE_PATH)
-                .child(MainUser.getMainUser().getId())
+                .child(self_id)
                 .setValue(true);
     }
 
@@ -405,7 +405,7 @@ public final class DatabaseUser implements User {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
-                .child(MainUser.getMainUser().getId())
+                .child(self_id)
                 .child(FRIENDS_INVITES_RELATIVE_PATH)
                 .child(user.getId())
                 .setValue(null);
@@ -416,7 +416,7 @@ public final class DatabaseUser implements User {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
-                .child(MainUser.getMainUser().getId())
+                .child(self_id)
                 .child(FRIENDS_INVITES_RELATIVE_PATH)
                 .addValueEventListener(valueListener);
     }
@@ -426,7 +426,7 @@ public final class DatabaseUser implements User {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
-                .child(MainUser.getMainUser().getId())
+                .child(self_id)
                 .child(FRIENDS_INVITES_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
     }
@@ -436,7 +436,7 @@ public final class DatabaseUser implements User {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
-                .child(MainUser.getMainUser().getId())
+                .child(self_id)
                 .child(FRIENDS_INVITES_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
