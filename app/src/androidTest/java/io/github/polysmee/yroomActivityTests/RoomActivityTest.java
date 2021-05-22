@@ -147,6 +147,7 @@ public class RoomActivityTest {
 
         intent.putExtra(RoomActivity.APPOINTMENT_KEY, appointmentId);
         try (ActivityScenario<RoomActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(1, TimeUnit.SECONDS);
             swipeViewPagerForward();
             sleep(1, TimeUnit.SECONDS);
             swipeViewPagerForward();
