@@ -65,13 +65,34 @@ public class FriendsActivityTest {
     public void addingAndRemovingANewFriendTest() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
+            //TEST1
             sleep(5, TimeUnit.SECONDS);
             clickOn(R.id.friendAddTextView);
             writeTo(R.id.friendAddTextView, "Cringe");
             sleep(3, TimeUnit.SECONDS);
             closeSoftKeyboard();
-            clickOn(R.id.friendActivityAddButton);
+            clickOn(R.id.friendActivityInviteButton);
             sleep(2, TimeUnit.SECONDS);
+            assertDisplayed("Success");
+            clickDialogPositiveButton();
+            DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").child(id2).setValue(true);
+            //TEST2
+            sleep(2, TimeUnit.SECONDS);
+            writeTo(R.id.friendAddTextView, username1);
+            closeSoftKeyboard();
+            clickOn(R.id.friendActivityInviteButton);
+            sleep(1, TimeUnit.SECONDS);
+            assertDisplayed("Oops");
+            clickDialogPositiveButton();
+            //TEST3
+            sleep(1, TimeUnit.SECONDS);
+            writeTo(R.id.friendAddTextView, "PleaseLetMeGoBro");
+            closeSoftKeyboard();
+            clickOn(R.id.friendActivityInviteButton);
+            sleep(1, TimeUnit.SECONDS);
+            assertDisplayed("User not found");
+            clickDialogPositiveButton();
+            //TEST4
             assertDisplayed(username2);
             clickOn(username2);
             sleep(2, TimeUnit.SECONDS);
@@ -82,7 +103,7 @@ public class FriendsActivityTest {
         }
     }
 
-    @Test
+    /*@Test
     public void errorMessageWhenTryingToAddThemselves() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
@@ -94,9 +115,9 @@ public class FriendsActivityTest {
             assertDisplayed("Oops");
             clickDialogPositiveButton();
         }
-    }
+    }*/
 
-    @Test
+   /* @Test
     public void errorMessageWhenTryingToAddNonexistentUser() {
         Intent intent = new Intent(getApplicationContext(), FriendsActivity.class);
         try (ActivityScenario<FriendsActivity> ignored = ActivityScenario.launch(intent)) {
@@ -108,7 +129,7 @@ public class FriendsActivityTest {
             assertDisplayed("OK");
             clickDialogPositiveButton();
         }
-    }
+    }*/
 
 
 }

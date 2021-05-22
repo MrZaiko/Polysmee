@@ -80,7 +80,7 @@ public class FriendsActivity extends AppCompatActivity {
         scrollLayout = findViewById(R.id.friendsActivityScrollLayout);
         searchFriend = findViewById(R.id.friendAddTextView);
         User.getAllUsersIds_Once_AndThen(this::fillUserList);
-        friendAddButton = findViewById(R.id.friendActivityAddButton);
+        friendAddButton = findViewById(R.id.friendActivityInviteButton);
         friendAddButton.setOnClickListener((v) -> inviteFriendButtonBehavior());
         builder = new AlertDialog.Builder(this);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -135,6 +135,12 @@ public class FriendsActivity extends AppCompatActivity {
                     alert.show();
                 } else {
                     user.sendFriendInvitation(new DatabaseUser(namesToIds.get(s)));
+                    builder.setMessage("Invitation sent")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", null);
+                    AlertDialog alert = builder.create();
+                    alert.setTitle("Success");
+                    alert.show();
                 }
             });
         }
