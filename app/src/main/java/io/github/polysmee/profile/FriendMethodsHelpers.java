@@ -43,7 +43,7 @@ public class FriendMethodsHelpers {
         (new DatabaseUser(id)).getProfilePicture_Once_And_Then((profilePictureId) ->{
             if(!profilePictureId.equals("")){
                 UploadServiceFactory.getAdaptedInstance().downloadImage(profilePictureId, imageBytes -> {
-                    ((CircleImageView)friendEntry.findViewById(R.id.friendActivityElementProfilePicture)).setImageBitmap(Bitmap.createBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);));
+                    ((CircleImageView)friendEntry.findViewById(R.id.friendActivityElementProfilePicture)).setImageBitmap(Bitmap.createBitmap(BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length)));
                 },ss -> HelperImages.showToast(context.getString(R.string.genericErrorText), context),context);
             }
         });
