@@ -296,11 +296,8 @@ public class CalendarActivityTest {
                 assertDisplayed(username1);
             }
         }
-    }
 
-    @Test
-    public void logoutButtonTest() throws ExecutionException, InterruptedException {
-        Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        intent = new Intent(getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
             try {
                 clickOn(R.id.calendarMenuLogout);
@@ -311,7 +308,5 @@ public class CalendarActivityTest {
             }
             assertDisplayed("Login");
         }
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
-
     }
 }

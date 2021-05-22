@@ -14,6 +14,7 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
+import io.github.polysmee.BuildConfig;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.internet.connection.InternetConnection;
@@ -26,7 +27,7 @@ public class LoginCheckActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_check);
         if (FirebaseApp.getApps(this).size() == 0) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            FirebaseDatabase.getInstance().setPersistenceEnabled(!BuildConfig.DEBUG);
         }
 
         FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
