@@ -159,26 +159,27 @@ public class FriendsActivity extends AppCompatActivity {
      * @param name   the user's name
      */
     protected void createFriendEntry(String userId, String name) {
+
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);
         TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
         downloadFriendProfilePicture(userId,friendEntryLayout);
-        nameFriend.setOnClickListener((view) -> {
-            Intent profileIntent = new Intent(this, ProfileActivity.class);
-            profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
-            profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
-            startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
-        });
+
+        FriendMethodsHelpers.visitProfileFriendEntry(nameFriend,userId,this,this);
+
         friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton).setOnClickListener((v) -> {
             user.removeFriend(new DatabaseUser(userId));
             (new DatabaseUser(userId)).removeFriend(user);
         });
-        TextView padding = new TextView(this);
+
+        /*TextView padding = new TextView(this);
         List<View> friendViews = new ArrayList<>();
         friendViews.add(friendEntryLayout);
         friendViews.add(padding);
         scrollLayout.addView(friendEntryLayout);
-        scrollLayout.addView(padding);
+        scrollLayout.addView(padding);*/
+        List<View> friendViews = new ArrayList<>();
+        FriendMethodsHelpers.addFriendEntryToLayout(scrollLayout,friendViews,this,friendEntryLayout);
         idsToFriendEntries.put(userId, friendViews);
     }
 

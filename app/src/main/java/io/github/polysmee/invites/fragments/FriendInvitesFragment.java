@@ -27,6 +27,7 @@ import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.profile.FriendMethodsHelpers;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.fragments.HelperImages;
 
@@ -88,12 +89,9 @@ public class FriendInvitesFragment extends Fragment {
         TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
         downloadFriendProfilePicture(userId,friendEntryLayout);
-        nameFriend.setOnClickListener((view) -> {
-            Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
-            profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
-            profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
-            startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
-        });
+
+        FriendMethodsHelpers.visitProfileFriendEntry(nameFriend,userId,getActivity(),getContext());
+
         friendEntryLayout.findViewById(R.id.friendEntryAcceptFriendButton).setVisibility(View.VISIBLE);
         friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton).setOnClickListener((v) -> {
             user.removeFriendInvitation(invitee);
@@ -103,12 +101,15 @@ public class FriendInvitesFragment extends Fragment {
             user.addFriend(invitee);
             invitee.addFriend(user);
         });
-        TextView padding = new TextView(getContext());
+
+        /*TextView padding = new TextView(getContext());
         List<View> friendViews = new ArrayList<>();
         friendViews.add(friendEntryLayout);
         friendViews.add(padding);
         scrollLayout.addView(friendEntryLayout);
-        scrollLayout.addView(padding);
+        scrollLayout.addView(padding);*/
+        List<View> friendViews = new ArrayList<>();
+        FriendMethodsHelpers.addFriendEntryToLayout(scrollLayout,friendViews,getContext(),friendEntryLayout);
         friendInvitationIdsToView.put(userId, friendViews);
     }
 
