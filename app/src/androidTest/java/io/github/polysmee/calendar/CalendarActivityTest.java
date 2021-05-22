@@ -139,7 +139,7 @@ public class CalendarActivityTest {
     }
 
     @Test
-    public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime() {
+    public void clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime() throws ExecutionException, InterruptedException {
         Intent intent = new Intent(getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
             Calendar calendar = Calendar.getInstance();
@@ -308,5 +308,7 @@ public class CalendarActivityTest {
             }
             assertDisplayed("Login");
         }
+
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
     }
 }
