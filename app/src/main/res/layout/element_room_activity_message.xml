@@ -16,7 +16,7 @@
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_marginEnd="5dp"
-        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintVertical_bias="0.85"
         android:src="@drawable/baseline_person" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -31,12 +31,13 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/roomActivityMessageElementMainLayout"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1">
             <TextView
                 android:id="@+id/roomActivityMessageElementSenderText"
                 android:layout_width="wrap_content"
@@ -96,6 +97,89 @@
             android:orientation="horizontal"
             app:layout_constraintGuide_percent="0.7" />
 
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/roomActivityMessageElementChooseReactionGuideline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.65" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/roomActivityMessageElementChooseReactionLayout"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toTopOf="@id/roomActivityMessageElementReactionGuideline"
+            app:layout_constraintEnd_toEndOf="@id/roomActivityMessageElementChooseReactionGuideline"
+            android:background="@drawable/background_reaction">
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementJoyReaction"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementSadReaction"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="@string/emoji_joy"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementSadReaction"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementJoyReaction"
+                app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementHeartEyesReaction"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="@string/emoji_sad"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementHeartEyesReaction"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementSadReaction"
+                app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementSunglassesReaction"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="@string/emoji_heart_eyes"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementSunglassesReaction"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementHeartEyesReaction"
+                app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementExpressionLessReaction"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="@string/emoji_sunglasses"
+                android:focusable="true" />
+
+            <TextView
+                android:id="@+id/roomActivityMessageElementExpressionLessReaction"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementSunglassesReaction"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:clickable="true"
+                android:gravity="center"
+                android:text="@string/emoji_expression_less"
+                android:focusable="true" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/roomActivityMessageElementReactionLayout"
             android:layout_width="wrap_content"
@@ -105,10 +189,10 @@
             app:layout_constraintVertical_bias="1"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintEnd_toEndOf="parent"
+            android:visibility="gone"
             android:background="@drawable/background_reaction">
 
             <TextView
-                android:visibility="gone"
                 android:id="@+id/roomActivityMessageElementReaction"
                 android:layout_width="20dp"
                 android:layout_height="20dp"

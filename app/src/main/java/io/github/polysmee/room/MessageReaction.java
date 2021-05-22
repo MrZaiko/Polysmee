@@ -1,5 +1,8 @@
 package io.github.polysmee.room;
 
+import android.content.Context;
+import android.util.Log;
+
 import io.github.polysmee.R;
 
 public enum MessageReaction {
@@ -23,6 +26,23 @@ public enum MessageReaction {
 
     public int getReactionId() {
         return reactionId;
+    }
+
+    public static MessageReaction getReaction(Context context, String s) {
+
+        if (s.equals(context.getString(JOY.emoji))) {
+            return JOY;
+        } else if (s.equals(context.getString(SUNGLASSES.emoji))) {
+            return SUNGLASSES;
+        } else if (s.equals(context.getString(HEART_EYES.emoji))) {
+            return HEART_EYES;
+        } else if (s.equals(context.getString(EXPRESSION_LESS.emoji))) {
+            return EXPRESSION_LESS;
+        } else if (s.equals(context.getString(SAD.emoji))) {
+            return SAD;
+        } else {
+            return DEFAULT;
+        }
     }
 
     public static MessageReaction getReaction(int id) {

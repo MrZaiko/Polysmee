@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -53,12 +54,9 @@ import io.github.polysmee.database.Message;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
-import io.github.polysmee.database.Message;
-import io.github.polysmee.R;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.MessageReaction;
@@ -87,6 +85,8 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private Uri currentPhotoUri;
 
+    private String selectedMessage;
+    private MessageReaction selectedReaction;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
@@ -288,13 +288,14 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
         }
 
+        messageLayout.setOnLongClickListener(v -> {
+            if (actionMode != null)
+                return false;
+            actionMode = getActivity().startActionMode(generateCallback(messageKey, message.getIsAPicture(), message.getContent(), isSent));
+            return true;
+        });
+
         if (isSent) {
-            messageLayout.setOnLongClickListener(v -> {
-                if (actionMode != null)
-                    return false;
-                actionMode = getActivity().startActionMode(generateCallback(messageKey, message.getIsAPicture(), message.getContent()));
-                return true;
-            });
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setText(formatter.format(currentDate));
 
             if (message.getIsAPicture())
@@ -306,24 +307,46 @@ public class RoomActivityMessagesFragment extends Fragment {
                 messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived).setBackgroundColor(Color.BLACK);
         }
 
-        MessageReaction reaction = MessageReaction.getReaction(message.getReaction());
-        if (reaction != MessageReaction.DEFAULT) {
-            if (!isSent) {
-                ConstraintLayout reactionLayout = messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout);
-                ConstraintLayout.LayoutParams reactionConstraints = (ConstraintLayout.LayoutParams) reactionLayout.getLayoutParams();
-                reactionConstraints.horizontalBias = 1;
-                reactionLayout.setLayoutParams(reactionConstraints);
 
-                Guideline guideLine = messageLayout.findViewById(R.id.roomActivityMessageElementReactionGuideline);
-                ConstraintLayout.LayoutParams reactionParams = (ConstraintLayout.LayoutParams) guideLine.getLayoutParams();
-                reactionParams.guidePercent = 0.75f;
-                guideLine.setLayoutParams(reactionParams);
-            }
+        if (!isSent) {
+            ConstraintLayout mainLayout = messageLayout.findViewById(R.id.roomActivityMessageElementMainLayout);
+            ConstraintLayout.LayoutParams mainConstraints = (ConstraintLayout.LayoutParams) mainLayout.getLayoutParams();
+            mainConstraints.horizontalBias = 0;
+            mainLayout.setLayoutParams(mainConstraints);
 
-            TextView reactionView = messageLayout.findViewById(R.id.roomActivityMessageElementReaction);
-            reactionView.setVisibility(View.VISIBLE);
-            reactionView.setText(getText(reaction.getEmoji()));
+            Guideline guideLineVert = messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionGuideline);
+            ConstraintLayout.LayoutParams vertGuidelineParams = (ConstraintLayout.LayoutParams) guideLineVert.getLayoutParams();
+            vertGuidelineParams.guidePercent = 0.35f;
+            guideLineVert.setLayoutParams(vertGuidelineParams);
+
+            ConstraintLayout reactionLayout = messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout);
+            ConstraintLayout.LayoutParams reactionConstraints = (ConstraintLayout.LayoutParams) reactionLayout.getLayoutParams();
+            reactionConstraints.horizontalBias = 1;
+            reactionLayout.setLayoutParams(reactionConstraints);
+
+            Guideline guideLine = messageLayout.findViewById(R.id.roomActivityMessageElementReactionGuideline);
+            ConstraintLayout.LayoutParams horGuidelineParams = (ConstraintLayout.LayoutParams) guideLine.getLayoutParams();
+            horGuidelineParams.guidePercent = 0.75f;
+            guideLine.setLayoutParams(horGuidelineParams);
+
+            ConstraintLayout chooseReactionMessageLayout = messageLayout.findViewById(
+                    message.getIsAPicture() ? R.id.roomActivityMessageElementPictureMainLayout : R.id.roomActivityMessageElementReactionMessageLayout);
+            ConstraintSet chooseReactionConstraints = new ConstraintSet();
+            chooseReactionConstraints.clone(chooseReactionMessageLayout);
+            chooseReactionConstraints.connect(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.START,
+                    R.id.roomActivityMessageElementChooseReactionGuideline, ConstraintSet.START);
+            chooseReactionConstraints.clear(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.END);
+            chooseReactionConstraints.applyTo(chooseReactionMessageLayout);
         }
+
+        MessageReaction reaction = MessageReaction.getReaction(message.getReaction());
+        messageLayout.findViewById(R.id.roomActivityMessageElementJoyReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementSadReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementExpressionLessReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementHeartEyesReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementSunglassesReaction).setOnClickListener(this::chooseReaction);
+
+        updateReaction(reaction, messageLayout);
 
         return messageLayout;
     }
@@ -348,24 +371,34 @@ public class RoomActivityMessagesFragment extends Fragment {
         if (id != null && !id.equals("")) {
             UploadServiceFactory.getAdaptedInstance().downloadImage(id, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
+                ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPicture);
                 image.setImageBitmap(Bitmap.createBitmap(bmp));
             }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE), getContext());
         }
     }
 
-    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId) {
+    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId, boolean isSent) {
         return new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
+                selectedMessage = messageKey;
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
                 mode.setTitle(getString(R.string.roomMessageOptionText));
+
+                if (!isSent) {
+                    menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
+                    menu.findItem(R.id.roomEditMessageMenuDelete).setVisible(false);
+                }
+
+                View messageLayout = messagesDisplayed.get(messageKey);
+                messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionLayout).setVisibility(View.VISIBLE);
+                messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout).setVisibility(View.GONE);
 
                 if (isAPicture)
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
                 else
-                    messagesDisplayed.get(messageKey)
+                    messageLayout
                             .findViewById(R.id.roomActivityMessageElementMainLayout)
                             .setBackgroundResource(R.drawable.background_selected_message);
                 return true;
@@ -398,12 +431,39 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 actionMode = null;
+
+                View messageLayout = messagesDisplayed.get(messageKey);
+                messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionLayout).setVisibility(View.GONE);
+
+                updateReaction(selectedReaction, messageLayout);
+                selectedReaction = null;
+                selectedMessage = null;
+
                 if (!isAPicture)
                     messagesDisplayed.get(messageKey)
                             .findViewById(R.id.roomActivityMessageElementMainLayout)
-                            .setBackgroundResource(R.drawable.background_sent_message);
+                            .setBackgroundResource(isSent ? R.drawable.background_sent_message : R.drawable.background_received_message);
             }
         };
+    }
+
+    private void updateReaction(MessageReaction reaction, View messageView) {
+        View reactionLayout = messageView.findViewById(R.id.roomActivityMessageElementReactionLayout);
+        TextView reactionView = messageView.findViewById(R.id.roomActivityMessageElementReaction);
+        if (reaction != MessageReaction.DEFAULT) {
+            reactionLayout.setVisibility(View.VISIBLE);
+            if (reaction != null)
+                reactionView.setText(getText(reaction.getEmoji()));
+        } else {
+            reactionLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private void chooseReaction(View view) {
+        TextView selectedReactionView = (TextView) view;
+        selectedReaction = MessageReaction.getReaction(getContext(), (String) selectedReactionView.getText());
+        databaseAppointment.editMessageReaction(selectedMessage, selectedReaction.getReactionId());
+        actionMode.finish();
     }
 
 
@@ -473,7 +533,9 @@ public class RoomActivityMessagesFragment extends Fragment {
 
             @Override
             public void childChanged(String key, Message value) {
-                ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(value.getContent());
+                if (!value.getIsAPicture())
+                    ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(value.getContent());
+                updateReaction(MessageReaction.getReaction(value.getReaction()), messagesDisplayed.get(key));
             }
 
             @Override
