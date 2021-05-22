@@ -309,7 +309,7 @@ public class CalendarActivityTest {
                 clickOn("Logout");
                 sleep(2, SECONDS);
             }
-            assertDisplayed("login");
+            assertDisplayed("Login");
         }
         Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
 
