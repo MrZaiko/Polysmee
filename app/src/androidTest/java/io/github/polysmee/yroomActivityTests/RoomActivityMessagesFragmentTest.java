@@ -98,6 +98,31 @@ public class RoomActivityMessagesFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
     }
 
+    @Test
+    public void reactionsWorkProperly() {
+        Bundle bundle = new Bundle();
+        bundle.putString(RoomActivityMessagesFragment.MESSAGES_KEY, appointmentId);
+        FragmentScenario.launchInContainer(RoomActivityMessagesFragment.class, bundle);
+        sleep(1, SECONDS);
+        scrollTo(firstMessage);
+        longClickOn(firstMessage);
+        clickOn(R.id.roomActivityMessageElementJoyReaction);
+        sleep(500);
+        longClickOn(firstMessage);
+        clickOn(R.id.roomActivityMessageElementSadReaction);
+        sleep(500);
+        longClickOn(firstMessage);
+        clickOn(R.id.roomActivityMessageElementHeartEyesReaction);
+        sleep(500);
+        longClickOn(firstMessage);
+        clickOn(R.id.roomActivityMessageElementSunglassesReaction);
+        sleep(500);
+        longClickOn(firstMessage);
+        clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
+        sleep(500);
+    }
+
+
 
     @Test
     public void messagesShouldBeDisplayedAndClickOnPictureShouldWork() {
