@@ -90,22 +90,27 @@ public class RoomActivityTest {
             sleep(1, SECONDS);
             scrollTo(firstMessage);
             longClickOn(firstMessage);
+            sleep(500);
             clickOn(R.id.roomActivityMessageElementJoyReaction);
             assertDisplayed(R.string.emoji_joy);
             sleep(500);
             longClickOn(firstMessage);
+            sleep(500);
             clickOn(R.id.roomActivityMessageElementSadReaction);
             assertDisplayed(R.string.emoji_sad);
             sleep(500);
             longClickOn(firstMessage);
+            sleep(500);
             clickOn(R.id.roomActivityMessageElementHeartEyesReaction);
             assertDisplayed(R.string.emoji_heart_eyes);
             sleep(500);
             longClickOn(firstMessage);
+            sleep(500);
             clickOn(R.id.roomActivityMessageElementSunglassesReaction);
             assertDisplayed(R.string.emoji_sunglasses);
             sleep(500);
             longClickOn(firstMessage);
+            sleep(500);
             clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
             assertDisplayed(R.string.emoji_expression_less);
         }
