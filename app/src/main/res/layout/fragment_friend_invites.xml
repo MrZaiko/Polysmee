@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".invites.InvitesManagementActivity">
+    tools:context=".invites.fragments.FriendInvitesFragment">
 
     <ScrollView
-        android:id="@+id/InvitesManagementScroll"
+        android:id="@+id/InvitesManagementFriendScroll"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
@@ -20,7 +20,7 @@
             android:textAlignment="gravity">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/InvitesManagementInfoTxtLayout"
+                android:id="@+id/InvitesManagementFriendInfoTxtLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
@@ -29,10 +29,10 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/InvitesManagementScrollLayout">
+                app:layout_constraintBottom_toTopOf="@id/InvitesManagementFriendScrollLayout">
 
                 <TextView
-                    android:id="@+id/InvitesManagementInfoTxt"
+                    android:id="@+id/InvitesManagementFriendInfoTxt"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:text="@string/invites_management_current_invitations"
@@ -46,26 +46,26 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <View
-                    android:id="@+id/InvitesManagementSeparationBar"
+                    android:id="@+id/InvitesManagementFriendSeparationBar"
                     android:layout_width="0dp"
                     android:layout_height="2dp"
                     android:layout_marginTop="8dp"
                     android:background="@color/grey"
-                    app:layout_constraintTop_toBottomOf="@id/InvitesManagementInfoTxt"
+                    app:layout_constraintTop_toBottomOf="@id/InvitesManagementFriendInfoTxt"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
-                android:id="@+id/InvitesManagementScrollLayout"
+                android:id="@+id/InvitesManagementFriendScrollLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/InvitesManagementInfoTxtLayout" />
+                app:layout_constraintTop_toBottomOf="@id/InvitesManagementFriendInfoTxtLayout" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

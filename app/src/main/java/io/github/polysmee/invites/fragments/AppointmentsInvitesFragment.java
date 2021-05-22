@@ -60,7 +60,6 @@ public class AppointmentsInvitesFragment extends Fragment {
         rootView = (ViewGroup)inflater.inflate(R.layout.fragment_appointments_invites, container, false);
         this.inflater = inflater;
         scrollLayout = rootView.findViewById(R.id.InvitesManagementAppointmentsScrollLayout);
-        System.out.println("ICI");
 
         user = MainUser.getMainUser();
 

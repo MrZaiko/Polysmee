@@ -26,12 +26,14 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.fragments.HelperImages;
 
 public class FriendInvitesFragment extends Fragment {
     private final Map<String, List<View>> friendInvitationIdsToView = new HashMap<>();
     private User user;
+    private ViewGroup rootView;
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
     private LinearLayout scrollLayout;
     private LayoutInflater inflater;
@@ -42,8 +44,12 @@ public class FriendInvitesFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        rootView = (ViewGroup)inflater.inflate(R.layout.fragment_friend_invites, container, false);
         this.inflater = inflater;
-        return inflater.inflate(R.layout.fragment_friend_invites, container, false);
+        scrollLayout = rootView.findViewById(R.id.InvitesManagementFriendScrollLayout);
+        user = MainUser.getMainUser();
+        setFriendInvitesListener();
+        return rootView;
     }
 
     @Override
@@ -60,11 +66,12 @@ public class FriendInvitesFragment extends Fragment {
 
     protected void setFriendInvitesListener(){
         StringSetValueListener friendInvitesListener = currentFriendInvitesListener();
-        user.getFriendsInvitations_Once_And_Then((friendInvitesListener));
+        user.getFriendsInvitationsAndThen((friendInvitesListener));
         commandsToRemoveListeners.add((x,y) -> user.removeFriendsInvitationsListener(friendInvitesListener));
     }
     private StringSetValueListener currentFriendInvitesListener(){
         return (friendsInvites) ->{
+            scrollLayout.removeAllViewsInLayout();
             friendInvitationIdsToView.clear();
             for (String newFriendId : friendsInvites) {
                 User newFriend = new DatabaseUser(newFriendId);
