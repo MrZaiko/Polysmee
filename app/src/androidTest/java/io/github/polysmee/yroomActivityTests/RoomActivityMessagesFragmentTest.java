@@ -107,19 +107,23 @@ public class RoomActivityMessagesFragmentTest {
         scrollTo(firstMessage);
         longClickOn(firstMessage);
         clickOn(R.id.roomActivityMessageElementJoyReaction);
+        assertDisplayed(R.string.emoji_joy);
         sleep(500);
         longClickOn(firstMessage);
         clickOn(R.id.roomActivityMessageElementSadReaction);
+        assertDisplayed(R.string.emoji_sad);
         sleep(500);
         longClickOn(firstMessage);
         clickOn(R.id.roomActivityMessageElementHeartEyesReaction);
+        assertDisplayed(R.string.emoji_heart_eyes);
         sleep(500);
         longClickOn(firstMessage);
         clickOn(R.id.roomActivityMessageElementSunglassesReaction);
+        assertDisplayed(R.string.emoji_sunglasses);
         sleep(500);
         longClickOn(firstMessage);
         clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
-        sleep(500);
+        assertDisplayed(R.string.emoji_expression_less);
     }
 
 
