@@ -71,12 +71,6 @@ public class RoomActivityTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
-    @AfterClass
-    public void cleanup() throws ExecutionException, InterruptedException {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().getCurrentUser().delete());
-    }
-
     @Test
     public void titleOfTheActivityShouldBeTheAppointmentTitle() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), RoomActivity.class);
