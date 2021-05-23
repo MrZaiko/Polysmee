@@ -469,8 +469,15 @@ public class RoomActivityMessagesFragment extends Fragment {
     private void chooseReaction(View view) {
         TextView selectedReactionView = (TextView) view;
         selectedReaction = MessageReaction.getReaction(getContext(), (String) selectedReactionView.getText());
-        databaseAppointment.editMessageReaction(selectedMessage, selectedReaction.getReactionId());
-        actionMode.finish();
+
+        databaseAppointment.getMessageReaction_Once_AndThen(selectedMessage, reactId -> {
+            if (reactId == selectedReaction.getReactionId())
+                selectedReaction = MessageReaction.DEFAULT;
+
+            databaseAppointment.editMessageReaction(selectedMessage, selectedReaction.getReactionId());
+            actionMode.finish();
+        });
+
     }
 
 

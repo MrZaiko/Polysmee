@@ -341,6 +341,14 @@ public interface Appointment {
     void editMessageReaction(String key, int newContent);
 
     /**
+     * return the current reaction
+     *
+     * @param key
+     * @param listener
+     */
+    void getMessageReaction_Once_AndThen(String key, LongValueListener listener);
+
+    /**
      * Adds given listener to the set of messages of the appointment
      *
      * @param listener

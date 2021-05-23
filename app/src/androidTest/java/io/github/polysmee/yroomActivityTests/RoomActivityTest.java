@@ -32,6 +32,7 @@ import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertContains;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
 import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
@@ -113,6 +114,12 @@ public class RoomActivityTest {
             sleep(500);
             clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
             assertDisplayed(R.string.emoji_expression_less);
+            sleep(500);
+            longClickOn(firstMessage);
+            sleep(500);
+            clickOn(R.id.roomActivityMessageElementExpressionLessReaction);
+            sleep(1000);
+            assertNotDisplayed(R.id.roomActivityMessageElementReactionLayout);
         }
     }
 
