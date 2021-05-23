@@ -14,10 +14,10 @@ public final class AppointmentReminderNotification {
     private static boolean isNotificationSetterEnable = true;
 
     /**
-     * Set the value of isNotificationSetterEnable to the given value. If isNotificationSetterEnable is false before calling appointmentReminderNotificationSetListeners
-     * then the appointment reminder notification listeners will not be set. By default isNotificationSetterEnable has true value.
+     * If the last called before calling appointmentReminderNotificationSetListeners to isNotificationSetterEnable is called with false
+     * then the appointment reminder notification listeners will not be set when calling appointmentReminderNotificationSetListeners.
      *
-     * @param value the value to give isNotificationSetterEnable
+     * @param value see the function description to know what value to pass
      */
     public static void setIsNotificationSetterEnable(boolean value) {
         isNotificationSetterEnable = value;

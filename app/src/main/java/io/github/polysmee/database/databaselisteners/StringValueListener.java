@@ -13,10 +13,11 @@ public interface StringValueListener extends ValueEventListener {
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
         String data = (String) snapshot.getValue();
-        if (data != null)
+        if (data != null) {
             onDone(data);
-        else
+        } else {
             onDone("");
+        }
     }
 
     @Override

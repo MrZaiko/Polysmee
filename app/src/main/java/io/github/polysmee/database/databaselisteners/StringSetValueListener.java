@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.Set;
 
 public interface StringSetValueListener extends ValueEventListener {
-
     void onDone(Set<String> o);
 
     @Override

@@ -106,9 +106,32 @@ public final class DatabaseUser implements User {
                 .setValue(null);
     }
 
+    @Override
+    public void getRealNameAndThen(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(NAME_RELATIVE_PATH)
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getRealName_Once_AndThen(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(NAME_RELATIVE_PATH)
+                .addListenerForSingleValueEvent(valueListener);
+    }
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
+        //TODO have a local id_to_nickName that is sync online, check if the id of the wanted user is in here if it is use this mapping. Then everytime the id_to_nickName change call the changer listener
+        //TODO if it is remove put it to the normal listener. When map changer if a id map is added remove the database listener and call the function with the mapping
+        //TODO if the id is not in local id_to_nickname call the normal listener and save the listener so it can potentially be added again
+        //TODO to test just make the above scenario happen and check the value of (volatile) value who's value is the value return as the name
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
@@ -286,6 +309,8 @@ public final class DatabaseUser implements User {
                 .addListenerForSingleValueEvent(valueListener);
     }
 
+
+
     @Override
     public void removeFriendsListener(StringSetValueListener valueListener) {
         DatabaseFactory
@@ -294,6 +319,16 @@ public final class DatabaseUser implements User {
                 .child(self_id)
                 .child(FRIENDS_RELATIVE_PATH)
                 .removeEventListener(valueListener);
+    }
+
+    @Override
+    public void getFriendsAndNicknameAndThen(MapStringStringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(FRIENDS_RELATIVE_PATH)
+                .addValueEventListener(valueListener);
     }
 
     @Override

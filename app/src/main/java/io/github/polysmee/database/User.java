@@ -16,6 +16,14 @@ public interface User {
      */
     String getId();
 
+    //TODO adapt/add documentation and method
+
+
+    void getRealNameAndThen(StringValueListener valueListener);
+
+    void getRealName_Once_AndThen(StringValueListener valueListener);
+
+
     /**
      * @param valueListener the listener to be added for changes to the user name.
      *                      It is scheduled once when added, even if there is no change at that moment.
@@ -168,6 +176,13 @@ public interface User {
     void removeFriendsListener(StringSetValueListener valueListener);
 
     /**
+     @param valueListener the listener to be added for changes to the user's friends and their corresponding nicknames.
+      *                    It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getFriendsAndNicknameAndThen(MapStringStringValueListener valueListener);
+
+
+    /**
      * @param pictureId the picture's id to set as profile picture
      */
     void setProfilePicture(String pictureId);
@@ -241,6 +256,8 @@ public interface User {
      *                      profile picture.
      */
     void removeDescriptionListener(StringValueListener valueListener);
+
+
 
 
 }
