@@ -8,7 +8,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public interface StringValueListener extends ValueEventListener {
 
-    void onDone(String o);
+    void onDone(@NonNull String o);
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {

@@ -10,13 +10,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public interface MapStringStringValueListener extends ValueEventListener {
-    void onDone(Map<String, String> o);
+    void onDone(@NonNull Map<String, String> o);
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
         HashMap<String, String> retrieved = (HashMap<String, String>) snapshot.getValue();
-        if (retrieved != null)
+        if (retrieved != null) {
             onDone(retrieved);
+        }else {
+            onDone(new HashMap<>());
+        }
+
     }
 
     @Override

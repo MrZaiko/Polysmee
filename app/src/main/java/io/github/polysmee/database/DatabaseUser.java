@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import io.github.polysmee.database.databaselisteners.MapStringStringChildListener;
 import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
@@ -124,6 +125,16 @@ public final class DatabaseUser implements User {
                 .child(self_id)
                 .child(NAME_RELATIVE_PATH)
                 .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void removeRealNameListener(StringValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(NAME_RELATIVE_PATH)
+                .removeEventListener(valueListener);
     }
 
     @Override
@@ -322,13 +333,13 @@ public final class DatabaseUser implements User {
     }
 
     @Override
-    public void getFriendsAndNicknameAndThen(MapStringStringValueListener valueListener) {
+    public void getFriendsAndNicknameAndThen(MapStringStringChildListener valueListener) {
         DatabaseFactory
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
                 .child(FRIENDS_RELATIVE_PATH)
-                .addValueEventListener(valueListener);
+                .addChildEventListener(valueListener);
     }
 
     @Override

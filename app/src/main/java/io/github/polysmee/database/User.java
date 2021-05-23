@@ -1,5 +1,6 @@
 package io.github.polysmee.database;
 
+import io.github.polysmee.database.databaselisteners.MapStringStringChildListener;
 import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
@@ -22,6 +23,8 @@ public interface User {
     void getRealNameAndThen(StringValueListener valueListener);
 
     void getRealName_Once_AndThen(StringValueListener valueListener);
+
+    void removeRealNameListener(StringValueListener valueListener);
 
 
     /**
@@ -176,10 +179,10 @@ public interface User {
     void removeFriendsListener(StringSetValueListener valueListener);
 
     /**
-     @param valueListener the listener to be added for changes to the user's friends and their corresponding nicknames.
+     @param valueListener the child listener to be added for changes to the user's friends and their corresponding nicknames.
       *                    It is scheduled once when added, even if there is no change at that moment.
      */
-    void getFriendsAndNicknameAndThen(MapStringStringValueListener valueListener);
+    void getFriendsAndNicknameAndThen(MapStringStringChildListener valueListener);
 
 
     /**
