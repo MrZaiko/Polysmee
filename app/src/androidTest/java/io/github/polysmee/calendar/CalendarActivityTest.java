@@ -22,6 +22,7 @@ import org.junit.runner.RunWith;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
@@ -295,6 +296,22 @@ public class CalendarActivityTest {
             assertDisplayed(R.string.title_profile_user_email);
             assertDisplayed(MAIN_USER_EMAIL);
             assertDisplayed(R.string.title_profile_main_user_friends);
+        }
+
+        intent = new Intent(getApplicationContext(), CalendarActivity.class);
+        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
+
+            openActionBarOverflowOrOptionsMenu(getApplicationContext());
+            clickOn("Logout");
+            sleep(2, SECONDS);
+
+            assertDisplayed("Login");
+        }
+
+        try {
+            Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
+        } catch (ExecutionException | InterruptedException e) {
+            throw new IllegalStateException("crashed in calendar activity while waiting ");
         }
     }
 
