@@ -44,7 +44,7 @@ public class AppointmentsInvitesFragment extends Fragment {
     private LayoutInflater inflater;
     private ViewGroup rootView;
 
-    private User user;
+    private User mainUser;
     private final Map<String, View> appointmentIdsToView = new HashMap<>();
     private final Set<String> appointmentSet = new HashSet<>();
     private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
@@ -62,7 +62,7 @@ public class AppointmentsInvitesFragment extends Fragment {
         this.inflater = inflater;
         scrollLayout = rootView.findViewById(R.id.InvitesManagementAppointmentsScrollLayout);
 
-        user = MainUser.getMainUser();
+        mainUser = MainUser.getMainUser();
 
         setListenerUserAppointments();
         return rootView;
@@ -120,27 +120,27 @@ public class AppointmentsInvitesFragment extends Fragment {
     private void acceptRefuseButtonBehavior(CalendarAppointmentInfo appointment, boolean accept) {
         DatabaseAppointment apt = new DatabaseAppointment(appointment.getId());
         if (accept) {
-            user.getCalendarId_Once_AndThen(calendarId -> {
+            mainUser.getCalendarId_Once_AndThen(calendarId -> {
                 if (calendarId != null && !calendarId.equals("")) {
-                    apt.addParticipant(user);
+                    apt.addParticipant(mainUser);
                     apt.getTitle_Once_AndThen(title ->
                             apt.getCourse_Once_AndThen( course ->
                                     apt.getStartTime_Once_AndThen( startTime ->
                                             apt.getDuration_Once_AndThen( duration ->
                                                     CalendarUtilities.addAppointmentToCalendar(getContext(), calendarId, title, course,
-                                                            startTime, duration, eventId -> user.addAppointment(apt, eventId), () -> {})
+                                                            startTime, duration, eventId -> mainUser.addAppointment(apt, eventId), () -> {})
                                             )
                                     )
                             )
                     );
                 } else {
-                    user.addAppointment(apt, "");
-                    apt.addParticipant(user);
+                    mainUser.addAppointment(apt, "");
+                    apt.addParticipant(mainUser);
                 }
             });
         }
-        user.removeInvite(apt);
-        apt.removeInvite(user);
+        mainUser.removeInvite(apt);
+        apt.removeInvite(mainUser);
     }
 
     public void goToAppointmentDetails(String id) {
@@ -171,12 +171,12 @@ public class AppointmentsInvitesFragment extends Fragment {
 
     protected void setListenerUserAppointments() {
         if (userInvitesListener != null) {
-            user.removeAppointmentsListener(userInvitesListener);
+            mainUser.removeAppointmentsListener(userInvitesListener);
         }
 
         userInvitesListener = currentUserInvitesListener();
-        user.getInvitesAndThen(userInvitesListener);
-        commandsToRemoveListeners.add((x,y) -> user.removeInvitesListener(userInvitesListener));
+        mainUser.getInvitesAndThen(userInvitesListener);
+        commandsToRemoveListeners.add((x,y) -> mainUser.removeInvitesListener(userInvitesListener));
     }
 
     /**

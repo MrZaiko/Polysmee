@@ -74,6 +74,7 @@
     <string name="invites_management_current_invitations">Invitations actives</string>
     <string name="invites_management_current_invitations_appointments">Meetings</string>
     <string name="invites_management_current_invitations_Friends">Amis</string>
+    <string name="friendActivityInviteButton">Invite</string>
     <string name="calendarActivityPublicAppointmentsCourse">Cours</string>
     <string name="calendarActivityPublicAppointmentsFilter">Filtrer</string>
     <string name="calendarActivityMyAppointments">Mes meetings</string>

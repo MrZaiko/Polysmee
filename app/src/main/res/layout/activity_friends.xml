@@ -22,14 +22,13 @@
         android:id="@+id/friendActivityInviteButton"
         android:layout_width="88dp"
         android:layout_height="wrap_content"
-        android:text="Invite"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/transparent"
+        android:text="@string/friendActivityInviteButton"
         app:layout_constraintBottom_toTopOf="@id/friendsActivityGuidelineAt20pourcent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/friendAddTextView"
-        android:layout_marginTop="20dp"
-        android:background="@android:color/transparent"
-        app:layout_constraintTop_toBottomOf="@+id/friendActivityEncouragingMessage"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/friendActivityEncouragingMessage" />
 
     <ScrollView
         android:id="@+id/friendsActivityScroll"

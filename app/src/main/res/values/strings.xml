@@ -90,6 +90,7 @@
     <string name="invites_management_current_invitations">Current invitations</string>
     <string name="invites_management_current_invitations_appointments">Appointments</string>
     <string name="invites_management_current_invitations_Friends">Friends</string>
+    <string name="friendActivityInviteButton">Invite</string>
     <string name="calendarActivityPublicAppointmentsCourse">Course</string>
     <string name="calendarActivityPublicAppointmentsFilter">Filter</string>
     <string name="calendarActivityMyAppointments">My appointments</string>
