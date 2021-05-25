@@ -47,6 +47,7 @@ import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.permissions.PermissionsHandler;
 import io.github.polysmee.profile.ProfileActivity;
 
 
@@ -314,17 +315,17 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
     private void joinChannel() {
         if(InternetConnection.isOn()) {
-            if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
+            if(!PermissionsHandler.checkPermission(Manifest.permission.RECORD_AUDIO, getContext())) {
                 requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
                 return;
             }
 
-            if(!checkPermission(Manifest.permission.BLUETOOTH)) {
+            if(!PermissionsHandler.checkPermission(Manifest.permission.BLUETOOTH, getContext())) {
                 requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
                 return;
             }
 
-            if(!checkPermission(Manifest.permission.CAMERA)){
+            if(!PermissionsHandler.checkPermission(Manifest.permission.CAMERA, getContext())){
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA);
             }
 
@@ -515,14 +516,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                         System.out.println("not granted");
                     }
                 });
-    }
-
-    /**
-     * @param permission the permission we're checking
-     * @return true if the permission given is granted by the user and false otherwise
-     */
-    private boolean checkPermission(String permission) {
-        return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
 

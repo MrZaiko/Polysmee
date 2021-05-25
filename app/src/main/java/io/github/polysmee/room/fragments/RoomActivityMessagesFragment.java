@@ -1,5 +1,6 @@
 package io.github.polysmee.room.fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -27,6 +28,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -54,6 +57,7 @@ import io.github.polysmee.database.databaselisteners.MessageChildListener;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.R;
 import io.github.polysmee.internet.connection.InternetConnection;
+import io.github.polysmee.permissions.PermissionsHandler;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.photo.editing.FileHelper;
@@ -77,10 +81,12 @@ public class RoomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
     private LayoutInflater inflater;
 
+    private ActivityResultLauncher<String> requestPermissionLauncher;
     private final Map<String, View> messagesDisplayed = new HashMap<>();
     private DatabaseAppointment databaseAppointment;
     private ActionMode actionMode;
     private MessageChildListener listener;
+    private ImageView takePictureBtn;
 
     private Uri currentPhotoUri;
 
@@ -100,8 +106,10 @@ public class RoomActivityMessagesFragment extends Fragment {
         ImageView pickGallery = rootView.findViewById(R.id.roomActivitySendPictureButton);
         pickGallery.setOnClickListener(this::openGallery);
 
-        ImageView takePicture = rootView.findViewById(R.id.roomActivityTakePictureButton);
-        takePicture.setOnClickListener(this::takePicture);
+        takePictureBtn = rootView.findViewById(R.id.roomActivityTakePictureButton);
+        takePictureBtn.setOnClickListener(this::takePicture);
+
+        initializePermissionRequester();
 
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
@@ -121,6 +129,11 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     private void takePicture(View view) {
+        if(!PermissionsHandler.checkPermission(Manifest.permission.CAMERA, getContext())) {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+            return;
+        }
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
@@ -470,6 +483,22 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         };
         databaseAppointment.addMessageListener(listener);
+    }
+
+    /**
+     * Initializes the request permission requester
+     */
+    private void initializePermissionRequester() {
+        requestPermissionLauncher =
+                this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    //joins the channel if granted and do nothing otherwise
+                    if (isGranted) {
+                        takePicture(takePictureBtn);
+
+                    } else {
+                        System.out.println("not granted");
+                    }
+                });
     }
 
 }

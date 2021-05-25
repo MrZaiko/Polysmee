@@ -42,3 +42,4 @@ database.rules.json
 firebase.json
 app/idea/*
 storage.rules
+credentials.json
