@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_profile_user_name">Username</string>
+    <string name="title_profile_user_email">Email</string>
+    <string name="title_profile_main_user_friends">Manage your friends!</string>
+    <string name="title_profile_user_description">Description</string>
+</resources>

@@ -26,6 +26,7 @@ import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotDisplayed;
+import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertNotExist;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
@@ -37,6 +38,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
     private static final String username1 = "Mathis L'utilisateur";
     private static final String id2 = "oierytuhjdfbsgvcwx";
     private static final String username2 = "Sami L'imposteur";
+    private static final String userDescription2 = "Bonjour, je suis Mathis ou Sami?";
 
     private static final String appointmentTitle = "It's a title";
     private static final String appointmentId = "ahvwcxtdfytazazeiu";
@@ -55,6 +57,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentNotOwnerTest@gmail.com", "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("description").setValue(userDescription2);
 
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
@@ -83,12 +86,8 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         Thread.sleep(1000);
         clickOn(R.id.roomActivityManageParticipantAsFriendButton);
         Thread.sleep(3000);
-        HashMap usr = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").get()).getValue();
+        HashMap usr = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("friendsInvites").get()).getValue();
         assertEquals(1, usr.size());
-        clickOn(R.id.roomActivityManageParticipantAsFriendButton);
-        Thread.sleep(3000);
-        HashMap usr1 = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").get()).getValue();
-        assertNull(usr1);
     }
 
     @Test
@@ -98,7 +97,12 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         FragmentScenario.launchInContainer(RoomActivityParticipantsFragment.class, bundle);
         sleep(2, SECONDS);
         clickOn(username2);
-        sleep(1, SECONDS);
+        sleep(2, SECONDS);
+        assertDisplayed(R.string.title_profile_user_name);
         assertDisplayed(username2);
+        assertDisplayed(R.string.title_profile_user_description);
+        assertDisplayed(userDescription2);
+        assertNotExist(R.string.title_profile_user_email);
+        assertNotExist(R.string.title_profile_main_user_friends);
     }
 }

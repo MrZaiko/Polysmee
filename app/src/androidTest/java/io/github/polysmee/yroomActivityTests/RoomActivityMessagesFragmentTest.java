@@ -98,7 +98,6 @@ public class RoomActivityMessagesFragmentTest {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
     }
 
-
     @Test
     public void messagesShouldBeDisplayedAndClickOnPictureShouldWork() {
         Bundle bundle = new Bundle();

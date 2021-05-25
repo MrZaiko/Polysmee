@@ -61,6 +61,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
                         .setAvailableProviders(providers)
                         .setIsSmartLockEnabled(false)
                         .build(),
@@ -75,7 +76,6 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode != RC_SIGN_IN) {
             return;
         }
-        IdpResponse response = IdpResponse.fromResultIntent(data);
 
         if (resultCode == RESULT_OK) {
 
@@ -84,7 +84,11 @@ public class LoginActivity extends AppCompatActivity {
             DatabaseReference name = db.getReference("users").child(MainUser.getMainUser().getId()).child("name");
             name.keepSynced(true);
             MainUser.getMainUser().getName_Once_AndThen((nam) -> {
+<<<<<<< HEAD
                 if(nam == null)
+=======
+                if(nam.isEmpty())
+>>>>>>> main
                     name.setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
             });
             Intent intent = new Intent(this, CalendarActivity.class);

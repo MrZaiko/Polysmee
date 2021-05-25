@@ -173,7 +173,7 @@ public interface User {
     void setProfilePicture(String pictureId);
 
     /**
-     * @param pictureId the picture's id to remove from being a profile picture
+     * remove a profile picture
      */
     void removeProfilePicture();
 
@@ -214,4 +214,61 @@ public interface User {
     static void getAllUsersIds_Once_AndThen(StringSetValueListener valueListener) {
         DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
     }
+
+    /**
+     * Set the description of the user.
+     * The description of a user, is a text that describe the user e.g. I'm a EPFL student
+     *
+     * @param description the description to set for the user
+     */
+    void setDescription(String description);
+
+    /**
+     * Put the passed listener as a listener of the description of the user
+     * @param  valueListener listener to be added for changes to the user's description.
+     */
+    void getDescriptionAndThen(StringValueListener valueListener);
+
+    /**
+     *
+     * @param valueListener the listener to be added for changes to the user's description.
+     *                      It is scheduled only once.
+     */
+    void getDescription_Once_AndThen(StringValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be removed from listening to changes to the
+     *                      profile picture.
+     */
+    void removeDescriptionListener(StringValueListener valueListener);
+
+
+    /**
+     * @param user the user to be invited to the friend list
+     */
+    void sendFriendInvitation(User user);
+
+    /**
+     * @param user the user to be removed from the friend invitations list
+     */
+    void removeFriendInvitation(User user);
+
+    /**
+     * @param valueListener the listener to be added for changes to the user's friends invitations list.
+     *                      It is scheduled once when added, even if there is no change at that moment.
+     */
+    void getFriendsInvitationsAndThen(StringSetValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be added for changes to the user's friends invitations list.
+     *                      It is scheduled only once.
+     */
+    void getFriendsInvitations_Once_And_Then(StringSetValueListener valueListener);
+
+    /**
+     * @param valueListener the listener to be removed from listening to changes to the user's friend invitations
+     *                      list.
+     */
+    void removeFriendsInvitationsListener(StringSetValueListener valueListener);
+
 }

@@ -1,7 +1,9 @@
 package io.github.polysmee.calendar.fragments;
 
 import android.content.Intent;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -73,6 +75,15 @@ public class CalendarActivityFragmentsHelpers {
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
         intent.putExtra(AppointmentActivity.APPOINTMENT_ID, id);
         calendarFragment.startActivity(intent);
+    }
+
+    public static void setStatusImage(ImageView status, Date current, Date startDate , Date endDate){
+        if (current.before(startDate))
+            status.setImageResource(R.drawable.calendar_entry_incoming_dot);
+        else if (current.after(endDate))
+            status.setImageResource(R.drawable.calendar_entry_done_dot);
+        else
+            status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
     }
 
 
