@@ -62,6 +62,7 @@ final class NameGetter {
                     synchronized (stringValueListenerToLastCallToExecute) {
                         if (stringValueListenerToLastCallToExecute.get(stringValueListener) == this) {
                             //indicate that the last wanted run has finished
+                            //TODO remove might be better has we will not have a growing thing
                             stringValueListenerToLastCallToExecute.put(stringValueListener, stringValueListener);
                         }
                     }
