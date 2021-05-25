@@ -2,62 +2,185 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/roomActivityMessageElementPictureMainLayout">
 
-    <TextView
-        android:id="@+id/roomActivityMessageElementPictureSenderText"
-        android:layout_width="0dp"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/roomActivityMessageElementMainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@+id/roomActivityMessageElementPictureSenderText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/genericSenderPlaceholder"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/roomActivityMessageElementPicture"
+            app:layout_constraintVertical_bias="1" />
+
+        <ImageView
+            android:id="@+id/roomActivityMessageElementPicture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/roomActivityMessageElementPictureSenderText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementPictureErrorText"
+            android:text="@string/genericPictureFailedToLoadText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            android:layout_marginBottom="4dp"
+            app:layout_constraintBottom_toTopOf="@id/roomActivityMessageElementDateReceived"
+            app:layout_constraintTop_toBottomOf="@id/roomActivityMessageElementPictureSenderText"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.0" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementDateReceived"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:textSize="12sp"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="@id/roomActivityMessageElementPicture"
+            app:layout_constraintStart_toStartOf="@id/roomActivityMessageElementPicture" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementDateSent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white"
+            android:text=""
+            android:textSize="12sp"
+            app:layout_constraintBottom_toBottomOf="@id/roomActivityMessageElementPicture"
+            app:layout_constraintEnd_toEndOf="@id/roomActivityMessageElementPicture" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/roomActivityMessageElementReactionGuideline"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.7" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/roomActivityMessageElementChooseReactionGuideline"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/genericSenderPlaceholder"
-        android:textSize="12sp"
-        android:textStyle="bold"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/roomActivityMessageElementChooseReactionLayout"
         android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/roomActivityMessageElementPictureContent"
-        app:layout_constraintVertical_bias="1" />
-
-    <ImageView
-        android:id="@+id/roomActivityMessageElementPictureContent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/roomActivityMessageElementPictureSenderText"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintBottom_toBottomOf="@id/roomActivityMessageElementMainLayout"
+        app:layout_constraintEnd_toEndOf="@id/roomActivityMessageElementChooseReactionGuideline"
+        android:background="@drawable/background_reaction">
 
-    <TextView
-        android:id="@+id/roomActivityMessageElementPictureErrorText"
-        android:text="@string/genericPictureFailedToLoadText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        <TextView
+            android:id="@+id/roomActivityMessageElementJoyReaction"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementSadReaction"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/emoji_joy"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementSadReaction"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementJoyReaction"
+            app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementHeartEyesReaction"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/emoji_sad"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementHeartEyesReaction"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementSadReaction"
+            app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementSunglassesReaction"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/emoji_heart_eyes"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementSunglassesReaction"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementHeartEyesReaction"
+            app:layout_constraintEnd_toStartOf="@id/roomActivityMessageElementExpressionLessReaction"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/emoji_sunglasses"
+            android:focusable="true" />
+
+        <TextView
+            android:id="@+id/roomActivityMessageElementExpressionLessReaction"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            app:layout_constraintStart_toEndOf="@id/roomActivityMessageElementSunglassesReaction"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/emoji_expression_less"
+            android:focusable="true" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/roomActivityMessageElementReactionLayout"
         android:visibility="gone"
-        android:layout_marginBottom="4dp"
-        app:layout_constraintBottom_toTopOf="@id/roomActivityMessageElementDateReceived"
-        app:layout_constraintTop_toBottomOf="@id/roomActivityMessageElementPictureSenderText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/roomActivityMessageElementMainLayout"
+        app:layout_constraintBottom_toBottomOf="@id/roomActivityMessageElementMainLayout"
+        app:layout_constraintVertical_bias="1"
+        app:layout_constraintHorizontal_bias="0"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintHorizontal_bias="0.0" />
+        android:background="@drawable/background_reaction">
 
-    <TextView
-        android:id="@+id/roomActivityMessageElementDateReceived"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text=""
-        android:textSize="12sp"
-        android:textColor="@color/white"
-        app:layout_constraintBottom_toBottomOf="@id/roomActivityMessageElementPictureContent"
-        app:layout_constraintStart_toStartOf="@id/roomActivityMessageElementPictureContent" />
+        <TextView
+            android:id="@+id/roomActivityMessageElementReaction"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            android:gravity="center"
+            android:text="@string/emoji_joy"/>
 
-    <TextView
-        android:id="@+id/roomActivityMessageElementDateSent"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textColor="@color/white"
-        android:text=""
-        android:textSize="12sp"
-        app:layout_constraintBottom_toBottomOf="@id/roomActivityMessageElementPictureContent"
-        app:layout_constraintEnd_toEndOf="@id/roomActivityMessageElementPictureContent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
