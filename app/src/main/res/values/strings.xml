@@ -130,16 +130,13 @@
     <string name="delete_message">Are you sure you want to delete the appointment ?</string>
     <string name="leave_message">Are you sure you want to leave the appointment ?</string>
     <string name="leave">Leave</string>
-<<<<<<< HEAD
     <string name="sort_by_date">Sort by chronological order</string>
     <string name="sort_by_participants">Sort by number of participants</string>
-=======
 
     <string name="emoji_joy" translatable="false">&#128514;</string>
     <string name="emoji_sunglasses" translatable="false">&#128526;</string>
     <string name="emoji_heart_eyes" translatable="false">&#128525;</string>
     <string name="emoji_expression_less" translatable="false">&#128529;</string>
     <string name="emoji_sad" translatable="false">&#128542;</string>
-
->>>>>>> main
+    
 </resources>

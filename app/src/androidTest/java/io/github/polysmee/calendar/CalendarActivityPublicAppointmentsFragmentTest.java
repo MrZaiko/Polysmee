@@ -104,9 +104,9 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             assertDisplayed(letterDayFormatter.format(date));
 
             //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
-            CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP", "BonjourBing", startTime.getTimeInMillis(), 60, appointmentId + 1);
-            CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP", "BonjourBing1", DailyCalendar.getDayEpochTimeAtMidnight(true), 60, appointmentId + 2);
-            CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG", "BonjourBing2", DailyCalendar.getDayEpochTimeAtMidnight(true), 60, appointmentId + 3);
+            CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP", "BonjourBing", startTime.getTimeInMillis(), 60, appointmentId + 1, 0);
+            CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP", "BonjourBing1", DailyCalendar.getDayEpochTimeAtMidnight(true), 60, appointmentId + 2,0);
+            CalendarAppointmentInfo calendarAppointmentInfo2 = new CalendarAppointmentInfo("ICG", "BonjourBing2", DailyCalendar.getDayEpochTimeAtMidnight(true), 60, appointmentId + 3,0);
             addAppointmentOtherUser(calendarAppointmentInfo1);
             addAppointmentOtherUser(calendarAppointmentInfo2);
             addAppointmentOtherUser(calendarAppointmentInfo);
