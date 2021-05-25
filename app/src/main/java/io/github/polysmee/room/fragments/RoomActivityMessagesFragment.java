@@ -390,6 +390,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
                 selectedMessage = messageKey;
+                selectedReaction = MessageReaction.DEFAULT;
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
                 mode.setTitle(getActivity().getString(R.string.roomMessageOptionText));
 
