@@ -39,8 +39,10 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.room.fragments.HelperImages;
 
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setDayText;
@@ -183,15 +185,25 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
 
         Appointment appointment1 = new DatabaseAppointment(appointment.getId());
-        StringValueListener ownerListener = (ownerId) ->{
-            if(!ownerId.equals(user.getId())){
-                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
-                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
-            }
+        StringSetValueListener bannedListener = (bannedParticipants) ->{
+            if(!bannedParticipants.contains(user.getId())){
+                StringValueListener ownerListener = (ownerId) ->{
+                    if(!ownerId.equals(user.getId())){
+                        calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
+                        calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
+                    }
 
+                };
+                appointment1.getOwnerIdAndThen(ownerListener);
+                commandsToRemoveListeners.add((x,y) -> appointment1.removeOwnerListener(ownerListener));
+            }
+            else{
+                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> HelperImages.showToast("You are banned from this appointment",getContext()));
+            }
         };
-        appointment1.getOwnerIdAndThen(ownerListener);
-        commandsToRemoveListeners.add((x,y) -> appointment1.removeOwnerListener(ownerListener));
+        appointment1.getBansAndThen(bannedListener);
+        commandsToRemoveListeners.add((x,y) -> appointment1.removeBansListener(bannedListener));
+
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime() + appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());

@@ -171,52 +171,14 @@ public class CalendarActivityTest {
             assertDisplayed(withHint(info1.getTitle()));
             assertDisplayed(withText(info1.getCourse()));
             pressBack();
+            swipeViewPagerForward();
+            sleep(2, SECONDS);
+            assertDisplayed(withText(info1.getTitle()));
+            swipeViewPagerBack();
             sleep(2, SECONDS);
             //writtenDateIsCorrectTest
             assertDisplayed(dayFormatter.format(date));
             assertDisplayed(letterDayFormatter.format(date));
-
-
-            //scrollViewContentsIsCoherentAfterAddingAppointments
-            int number_of_appointments = 2;
-
-            CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
-            for (int i = 0; i < number_of_appointments; ++i) {
-                infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
-                        DailyCalendar.getDayEpochTimeAtMidnight(false) + i * 3600 * 6 * 1000, 3600 * 6 * 1000, appointmentId + i);
-
-            }
-
-            for (int i = 0; i < number_of_appointments; ++i) {
-                MainUser.getMainUser().createNewUserAppointment(infos[i].getStartTime(),
-                        infos[i].getDuration(), infos[i].getCourse(), infos[i].getTitle(), i % 2 == 0);
-                sleep(3, SECONDS);
-            }
-
-            for (int i = 0; i < number_of_appointments; ++i) {
-                scrollTo(infos[i].getTitle());
-                assertDisplayed(infos[i].getTitle());
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                Date startDate = new Date(infos[i].getStartTime());
-                Date endDate = new Date((infos[i].getStartTime() + infos[i].getDuration()));
-                scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
-                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
-            }
-
-            swipeViewPagerForward();
-            sleep(3, SECONDS);
-            for (int i = 0; i < number_of_appointments; ++i) {
-                if (i % 2 != 0) {
-                    assertDisplayed(infos[i].getTitle());
-                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                    Date startDate = new Date(infos[i].getStartTime());
-                    Date endDate = new Date((infos[i].getStartTime() + infos[i].getDuration()));
-                    scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
-                    assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
-                }
-            }
-            swipeViewPagerBack();
-
             sleep(3, SECONDS);
 
             //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
