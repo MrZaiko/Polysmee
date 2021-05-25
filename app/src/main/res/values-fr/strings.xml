@@ -132,4 +132,6 @@
     <string name="delete_message">Etes-vous sûr de vouloir supprimer le meeting ?</string>
     <string name="leave_message">Etes-vous sûr de vouloir quitter le meeting ?</string>
     <string name="leave">Quitter</string>
+    <string name="sort_by_date">Trier par ordre chronologique</string>
+    <string name="sort_by_participants">Trier par nombre de participants</string>
 </resources>

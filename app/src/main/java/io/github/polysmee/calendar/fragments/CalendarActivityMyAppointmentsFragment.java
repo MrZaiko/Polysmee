@@ -154,7 +154,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      * this method is called.
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
-        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, false);
+        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, false,true);
         if (!todayAppointments.isEmpty()) {
             for (CalendarAppointmentInfo appointment : todayAppointments) {
                 addAppointmentToCalendarLayout(appointment);

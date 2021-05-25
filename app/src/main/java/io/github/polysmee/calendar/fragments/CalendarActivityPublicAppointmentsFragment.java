@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -65,6 +67,8 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
     private String currentCourse = "";
     AlertDialog.Builder builder;
     AutoCompleteTextView courseSelector;
+    private boolean sortChronologically = true;
+    private final static int SORT_CHRONOLOGICALLY_INDEX = 0;
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -99,6 +103,27 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
 
         getAllPublicAppointmentsForTheDay();
+
+        //Initialize spinner
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.sort_public_appointments_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(SORT_CHRONOLOGICALLY_INDEX);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortChronologically = position == SORT_CHRONOLOGICALLY_INDEX;
+                getAllPublicAppointmentsForTheDay();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+
         return rootView;
     }
 
@@ -160,7 +185,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * this method is called.
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
-        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true);
+        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true, sortChronologically);
         if (!todayAppointments.isEmpty()) {
             for (CalendarAppointmentInfo appointment : todayAppointments) {
                 if (!currentCourse.equals("")) {

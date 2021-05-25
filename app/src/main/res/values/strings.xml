@@ -127,5 +127,6 @@
     <string name="delete_message">Are you sure you want to delete the appointment ?</string>
     <string name="leave_message">Are you sure you want to leave the appointment ?</string>
     <string name="leave">Leave</string>
-
+    <string name="sort_by_date">Sort by chronological order</string>
+    <string name="sort_by_participants">Sort by number of participants</string>
 </resources>

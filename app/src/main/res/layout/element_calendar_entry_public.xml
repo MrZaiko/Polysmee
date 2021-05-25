@@ -67,10 +67,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text=""
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
+                android:textSize="16sp"
+                android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@id/calendarEntryAppointmentDate"
+                app:layout_constraintEnd_toStartOf="@+id/publicCalendarEntryButtonJoin"
                 app:layout_constraintStart_toEndOf="@+id/calendarEntryAppointmentTitle"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@+id/calendarEntryAppointmentTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView
