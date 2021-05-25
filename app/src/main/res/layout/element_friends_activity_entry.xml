@@ -60,6 +60,18 @@
 
                 app:srcCompat="@drawable/baseline_remove" />
 
+            <ImageView
+                android:id="@+id/friendEntryAcceptFriendButton"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/friendEntryRemoveFriendButton"
+                android:layout_marginRight="10dp"
+                app:srcCompat="@drawable/baseline_add" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

@@ -55,6 +55,7 @@ import io.github.polysmee.profile.ProfileActivity;
  */
 public class RoomActivityParticipantsFragment extends Fragment implements VoiceTunerChoiceDialogFragment.VoiceTunerChoiceDialogFragmentListener {
 
+    private User mainUser;
     private ViewGroup rootView;
     private Appointment appointment;
     private LayoutInflater inflater;
@@ -87,6 +88,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         databaseAppointment = new DatabaseAppointment(appointmentId);
         this.appointment = new DatabaseAppointment(appointmentId);
         this.inflater = getLayoutInflater();
+        mainUser = MainUser.getMainUser();
         generateParticipantsView();
         initializePermissionRequester();
         initializeAndDisplayDatabase();
@@ -132,7 +134,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
 
         StringSetValueListener participantListener = p -> {
-            if(p.contains(MainUser.getMainUser().getId())) {
+            if(p.contains(mainUser.getId())) {
                 layout.removeAllViewsInLayout();
                 participantsViews = new HashMap<String, ConstraintLayout>();
 
@@ -152,11 +154,11 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
                     TextView participantName = participantsLayout.findViewById(R.id.roomActivityParticipantElementName);
                     View participantsButtonLayout = participantsLayout.findViewById(R.id.roomActivityParticipantElementButtons);
-                    participantName.setOnClickListener(v -> visitProfile(id, MainUser.getMainUser().getId().equals(id)));
+                    participantName.setOnClickListener(v -> visitProfile(id, mainUser.getId().equals(id)));
 
                     CircleImageView profilePicture = participantsLayout.findViewById(R.id.roomActivityParticipantElementProfilePicture);
                     user.getProfilePicture_Once_And_Then(pictureId -> downloadPicture(pictureId, profilePicture));
-                    profilePicture.setOnClickListener(v -> visitProfile(id, MainUser.getMainUser().getId().equals(id)));
+                    profilePicture.setOnClickListener(v -> visitProfile(id, mainUser.getId().equals(id)));
 
                     TextView ownerTag = participantsLayout.findViewById(R.id.roomActivityParticipantElementOwnerText);
                     StringValueListener ownerListener = owner -> {
@@ -177,7 +179,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
                     participantsButtonLayout.setVisibility(View.VISIBLE);
                     callButton.setVisibility(View.GONE);
-                    String userId = MainUser.getMainUser().getId();
+                    String userId = mainUser.getId();
 
                     if (id.equals(userId)) {
                         //set the participants layout for the user using the app
@@ -203,21 +205,32 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                         muteButton.setOnClickListener(v -> muteUser());
                         videoButton.setOnClickListener(this::shareVideoBehavior);
                     } else {
+                        friendshipButton.setVisibility(View.VISIBLE);
                         ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
                         speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id), id));
                         StringValueListener nameListener = participantName::setText;
                         user.getNameAndThen(nameListener);
                         commandsToRemoveListeners.add((x, y) -> user.removeNameListener(nameListener));
-                        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) -> {
+                        mainUser.getFriends_Once_And_Then((friendsIds) -> {
                             if (friendsIds.contains(id)) {
-                                friendshipButton.setImageResource(R.drawable.baseline_remove);
+                                friendshipButton.setVisibility(View.GONE);
                             } else {
                                 friendshipButton.setImageResource(R.drawable.baseline_add);
+                                friendshipButton.setOnClickListener((v) -> {
+                                    friendshipButtonBehavior(v, id);
+                                });
                             }
                         });
-                        friendshipButton.setVisibility(View.VISIBLE);
-                        friendshipButton.setOnClickListener((v) -> {
-                            friendshipButtonBehavior(v, id);
+                        user.getFriendsInvitations_Once_And_Then((invitations) ->{
+                            if(invitations.contains(mainUser.getId())){
+                                friendshipButton.setVisibility(View.GONE);
+                            }
+                            else{
+                                friendshipButton.setImageResource(R.drawable.baseline_add);
+                                friendshipButton.setOnClickListener((v) -> {
+                                    friendshipButtonBehavior(v, id);
+                                });
+                            }
                         });
                     }
 
@@ -257,7 +270,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
     private void refreshViews() {
         LinearLayout layout = rootView.findViewById(R.id.roomActivityParticipantsLayout);
         layout.removeAllViews();
-        String userId = MainUser.getMainUser().getId();
+        String userId = mainUser.getId();
         //add current user for it to appear first
         layout.addView(participantsViews.get(userId));
         layout.addView(new TextView(rootView.getContext()));
@@ -289,15 +302,10 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
 
     private void friendshipButtonBehavior(View friendshipButton, String userId) {
-        MainUser.getMainUser().getFriends_Once_And_Then((friendsIds) -> {
-            if (friendsIds.contains(userId)) {
-                ((ImageView) friendshipButton).setImageResource(R.drawable.baseline_add);
-                MainUser.getMainUser().removeFriend(new DatabaseUser(userId));
-            } else {
-                ((ImageView) friendshipButton).setImageResource(R.drawable.baseline_remove);
-                MainUser.getMainUser().addFriend(new DatabaseUser(userId));
-            }
-        });
+        User user = new DatabaseUser(userId);
+        ((ImageView) friendshipButton).setVisibility(View.GONE);
+        mainUser.sendFriendInvitation(user);
+
     }
 
     private void shareVideoBehavior(View cameraButton) {
@@ -381,7 +389,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
             participantsLayout.setBackgroundResource(R.drawable.background_participant_in_call_element);
             muteButton.setVisibility(View.VISIBLE);
             videoButton.setVisibility(View.VISIBLE);
-            if (id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(mainUser.getId())) {
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
@@ -399,7 +407,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
             participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
             muteButton.setVisibility(View.GONE);
             videoButton.setVisibility(View.GONE);
-            if (id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(mainUser.getId())) {
                 isInCall = false;
                 locallyMuted.clear();
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
@@ -412,7 +420,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
         }
 
-        if (id.equals(MainUser.getMainUser().getId())) {
+        if (id.equals(mainUser.getId())) {
             for (String userId : inCall) {
                 displaySpeakerButton(online, userId);
             }
@@ -431,7 +439,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         ImageView muteButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementMuteButton);
         if (muted) {
             muteButton.setImageResource(R.drawable.baseline_mic_off);
-            if (id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(mainUser.getId())) {
                 isMuted = true;
             }
         } else {
@@ -439,7 +447,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                 muteButton.setImageResource(R.drawable.baseline_mic);
             }
 
-            if (id.equals(MainUser.getMainUser().getId())) {
+            if (id.equals(mainUser.getId())) {
                 isMuted = false;
             }
         }
