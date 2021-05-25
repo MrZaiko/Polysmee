@@ -88,10 +88,6 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         Thread.sleep(3000);
         HashMap usr = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("friendsInvites").get()).getValue();
         assertEquals(1, usr.size());
-        clickOn(R.id.roomActivityManageParticipantAsFriendButton);
-        Thread.sleep(3000);
-        HashMap usr1 = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("friendsInvites").get()).getValue();
-        assertNull(usr1);
     }
 
     @Test

@@ -221,6 +221,17 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                                 });
                             }
                         });
+                        user.getFriendsInvitations_Once_And_Then((invitations) ->{
+                            if(invitations.contains(mainUser.getId())){
+                                friendshipButton.setVisibility(View.GONE);
+                            }
+                            else{
+                                friendshipButton.setImageResource(R.drawable.baseline_add);
+                                friendshipButton.setOnClickListener((v) -> {
+                                    friendshipButtonBehavior(v, id);
+                                });
+                            }
+                        });
                     }
 
 
@@ -292,16 +303,9 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
     private void friendshipButtonBehavior(View friendshipButton, String userId) {
         User user = new DatabaseUser(userId);
-        user.getFriendsInvitations_Once_And_Then((invites)->{
-            if(invites.contains(mainUser.getId())){
-                ((ImageView) friendshipButton).setImageResource(R.drawable.baseline_add);
-                user.removeFriendInvitation(mainUser);
-            }
-            else{
-                ((ImageView) friendshipButton).setImageResource(R.drawable.baseline_remove);
-                mainUser.sendFriendInvitation(user);
-            }
-        });
+        ((ImageView) friendshipButton).setVisibility(View.GONE);
+        mainUser.sendFriendInvitation(user);
+
     }
 
     private void shareVideoBehavior(View cameraButton) {
