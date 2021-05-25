@@ -6,15 +6,14 @@ import androidx.annotation.Nullable;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import io.github.polysmee.database.databaselisteners.MapStringStringChildListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.utils.HashMapPutObservable;
 
 //TODO get the lock inside a try catch
 //TODO documentation
@@ -30,12 +29,11 @@ final class NameGetter {
     //make the table that save the value thread safe maybe
     //TODO check documentation
     //if return value is the StringValueListener from idToNameListeners then lastCallToExecute has been executed
-    private static HashMap<StringValueListener, StringValueListener> stringValueListenerToLastCallToExecute = new HashMap<>();
-    //TODO need concurenthasMap for idToNameListener
-    private static ConcurrentHashMap<String, ArrayList<StringValueListener>> idToNameListeners = new ConcurrentHashMap();
+    // I think stringValueListenerToLastCallToExecute is the bottleneck so if it is too slow check that
+    private static HashMapPutObservable<StringValueListener, StringValueListener> stringValueListenerToLastCallToExecute = new HashMapPutObservable<>();
+    private static ConcurrentHashMap<String, HashSet<StringValueListener>> idToNameListeners = new ConcurrentHashMap();
     //access to idToNameOnlineListeners is always surrounded by synchronized (idToNameListeners)
-    private static ConcurrentHashMap<String, ArrayList<StringValueListener>> idToNameOnlineListeners = new ConcurrentHashMap<>();
-    private static boolean isNicknameSyncWithDatabaseEnable = true;
+    private static ConcurrentHashMap<String, HashSet<StringValueListener>> idToNameOnlineListeners = new ConcurrentHashMap<>();
 
     private static boolean isUserHaveNickname(String userId) {
         return idToNickname.get(userId) != null;
@@ -51,19 +49,23 @@ final class NameGetter {
                 //TODO should not redefine the hasable and equal function i.e. 2 class are equal if they have the same reference
                 //the synchronized is needed so we can be sure the stringValueListener are executed one after the other (i.e. not at the same time it could cause data race)
                 synchronized (stringValueListener) {
+                    Boolean hasToExecute = false;
                     //So we are sure the last executed callable is indeed the last one that we wanted
-                    if (stringValueListenerToLastCallToExecute.get(stringValueListener) == this) {
+                    synchronized (stringValueListenerToLastCallToExecute){
+                        hasToExecute = stringValueListenerToLastCallToExecute.get(stringValueListener) == this;
+                    }
+                    if (hasToExecute) {
+                        //TODO maybe here launch in a new thread
                         stringValueListener.onDone(o);
                     }
-                    ;
+
                 }
                 if (isLocal) {
                     //TODO could make it faster by taking lower granularity and maybe use concurent map
                     synchronized (stringValueListenerToLastCallToExecute) {
                         if (stringValueListenerToLastCallToExecute.get(stringValueListener) == this) {
                             //indicate that the last wanted run has finished
-                            //TODO remove might be better has we will not have a growing thing
-                            stringValueListenerToLastCallToExecute.put(stringValueListener, stringValueListener);
+                            stringValueListenerToLastCallToExecute.remove(stringValueListener);
                         }
                     }
                 }
@@ -81,20 +83,25 @@ final class NameGetter {
         if (!idToNameListeners.containsKey(userId)) {
             lockForNoKeyValuePair.lock();
             isLockForNoKeyValuePairTaken = true;
-            idToNameListeners.put(userId, new ArrayList<StringValueListener>());
+            idToNameListeners.put(userId, new HashSet<>());
         }
-        ArrayList<StringValueListener> nameListeners = idToNameListeners.get(userId);
+        HashSet<StringValueListener> nameListeners = idToNameListeners.get(userId);
         synchronized (nameListeners) {
             nameListeners.add(nameListener);
             if (isUserHaveNickname(userId)) {
                 getRunnable(nameListener, true).onDone(idToNickname.get(userId));
             } else {
                 //2 possibilities either i'm the first one so I would need array list or
-                ArrayList<StringValueListener> nameOnlineListeners = idToNameOnlineListeners.getOrDefault(userId, new ArrayList<>());
+                HashSet<StringValueListener> nameOnlineListeners = idToNameOnlineListeners.get(userId);
+                if(nameOnlineListeners==null){
+                    nameOnlineListeners = new HashSet<>();
+                    idToNameOnlineListeners.put(userId, nameOnlineListeners);
+                }
                 assert nameOnlineListeners != null;
                 StringValueListener nameOnlineListener = getRunnable(nameListener, false);
                 nameOnlineListeners.add(nameOnlineListener);
                 new DatabaseUser(userId).getRealNameAndThen(nameListener);
+
             }
         }
         if (isLockForNoKeyValuePairTaken) {
@@ -105,10 +112,15 @@ final class NameGetter {
 
     }
 
-    public static void removeListener() {
+    public static void removeListener(StringValueListener nameListener) {
         //TODO implement : local or non local is dealt in different way
         //TODO online : get the onlineListener array list in syncronised before removing the key and get normal listener in synchronyse also
         //TODO: remove the element from array before removing the key so that the array size ==0
+        //TODO if online remove the listener from idToOnlineListeners
+        synchronized (stringValueListenerToLastCallToExecute){
+            
+        }
+
     }
 
     ;
@@ -143,28 +155,27 @@ final class NameGetter {
     //call to that should be surrounded by synchronized (idToNameListeners) otherwise undefined behavior
     private static final class FriendsAndNicknameMapChildListener implements MapStringStringChildListener {
 
-        private static boolean hasListeners(@NotNull ArrayList<StringValueListener> nameListeners){
-            return nameListeners.size()>0;
+        private static boolean hasListeners(@NotNull HashSet<StringValueListener> nameListeners){
+            return !nameListeners.isEmpty();
         }
         private static void fromNoNicknameToNicknameClean(@NotNull DatabaseUser databaseUser) {
-            ArrayList<StringValueListener> nameOnlineListeners = idToNameOnlineListeners.get(databaseUser.getId());
+            HashSet<StringValueListener> nameOnlineListeners = idToNameOnlineListeners.get(databaseUser.getId());
             assert nameOnlineListeners != null;
             for (StringValueListener nameOnlineListener : nameOnlineListeners) {
                 databaseUser.removeRealNameListener(nameOnlineListener);
             }
-            //TODO check if we can remove the key as we don't need anymore the values in the array, as it will be recreated next time
-
+            idToNameOnlineListeners.remove(databaseUser.getId());
         }
 
-        private static void toNewNickname(ArrayList<StringValueListener> nameListeners, @NotNull String value) {
+        private static void toNewNickname(@NotNull HashSet<StringValueListener> nameListeners, @NotNull String value) {
             for (StringValueListener nameListener : nameListeners) {
                 nameListener.onDone(value);
             }
         }
 
-        private static void fromNicknameToNoNickname(@NotNull ArrayList<StringValueListener> nameListeners, @NotNull DatabaseUser databaseUser) {
+        private static void fromNicknameToNoNickname(@NotNull HashSet<StringValueListener> nameListeners, @NotNull DatabaseUser databaseUser) {
             //TODO check that the deleter can not delete while here, normally shoudl take the lock as write
-            ArrayList<StringValueListener> nameOnlineListeners = new ArrayList<>(nameListeners.size());
+            HashSet<StringValueListener> nameOnlineListeners = new HashSet<>(nameListeners.size());
             idToNameOnlineListeners.put(databaseUser.getId(), nameOnlineListeners);
             for (StringValueListener nameListener : nameListeners) {
                 StringValueListener nameOnlineListener = getRunnable(nameListener, false);
@@ -174,8 +185,8 @@ final class NameGetter {
         }
 
         @Nullable
-        private static ArrayList<StringValueListener> getNameListeners(String key, @Nullable String value) {
-            ArrayList<StringValueListener> nameListeners = idToNameListeners.get(key);
+        private static HashSet<StringValueListener> getNameListeners(String key, @Nullable String value) {
+            HashSet<StringValueListener> nameListeners = idToNameListeners.get(key);
             if (nameListeners == null) {
                 lockForNoKeyValuePair.lock();
                 nameListeners = idToNameOnlineListeners.get(key);
@@ -204,7 +215,7 @@ final class NameGetter {
             if (value != null) {
                 //value == null would mean a new friend but with no nickname so he should be addressed like before, i.e. no action needed
                 //I assume that idToNickname has no value for key since the child has just been added => if their are listener they are listening online
-                ArrayList<StringValueListener> nameListeners = getNameListeners(key, value);
+                HashSet<StringValueListener> nameListeners = getNameListeners(key, value);
                 if (nameListeners == null) {
                     return;
                 }
@@ -224,7 +235,7 @@ final class NameGetter {
         @Override
         //Called when the Nickname change or there is no more Nickname
         public void childChanged(String key, @Nullable String value) {
-            ArrayList<StringValueListener> nameListeners = getNameListeners(key, value);
+            HashSet<StringValueListener> nameListeners = getNameListeners(key, value);
             if (nameListeners == null) {
                 return;
             }
@@ -251,7 +262,7 @@ final class NameGetter {
         @Override
         public void childRemoved(String key, @Nullable String value) {
             //not friend anymore
-            ArrayList<StringValueListener> nameListeners = getNameListeners(key, null);
+            HashSet<StringValueListener> nameListeners = getNameListeners(key, null);
             if (nameListeners == null) {
                 return;
             }
