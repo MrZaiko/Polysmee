@@ -347,8 +347,8 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                                 changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                                             };
 
-                                            appointment.getParticipantsIdAndThen(participantListener);
-                                            commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
+                                            appointment.getParticipantsId_Once_AndThen(participantListener);
+                                            //commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
 
                                         };
                                         appointment.getCourseAndThen(courseListener);
