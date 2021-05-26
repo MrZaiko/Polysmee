@@ -30,7 +30,9 @@ import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
+import static androidx.test.espresso.Espresso.onData;
 import static androidx.test.espresso.Espresso.onView;
+import static androidx.test.espresso.action.ViewActions.click;
 import static androidx.test.espresso.action.ViewActions.swipeLeft;
 import static androidx.test.espresso.assertion.ViewAssertions.doesNotExist;
 import static androidx.test.espresso.matcher.ViewMatchers.withId;
@@ -41,6 +43,9 @@ import static com.schibsted.spain.barista.interaction.BaristaEditTextInteraction
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static net.bytebuddy.matcher.ElementMatchers.is;
+import static org.hamcrest.Matchers.allOf;
+import static org.hamcrest.Matchers.instanceOf;
 
 @RunWith(AndroidJUnit4.class)
 public class CalendarActivityPublicAppointmentsFragmentTest {
@@ -142,6 +147,36 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         }
 
 
+    }
+
+    @Test
+    public void participantsNumberAreDisplayed() {
+        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(true));
+        Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
+        try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
+            sleep(3, TimeUnit.SECONDS);
+            onView(withId(R.id.calendarActivityPager)).perform(swipeLeft());
+
+
+            CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("SDP", "BonjourBing", startTime.getTimeInMillis(), 60, appointmentId + 1, 1);
+            CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP", "BonjourBing1", startTime.getTimeInMillis(), 60, appointmentId + 2, 2);
+            addAppointmentOtherUser(calendarAppointmentInfo1);
+            addAppointmentOtherUser(calendarAppointmentInfo);
+
+
+            sleep(3, TimeUnit.SECONDS);
+
+
+            clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
+            setDateOnPicker(appointmentYear, appointmentMonth + 1, appointmentDay);
+            sleep(2, SECONDS);
+            onView(withId(R.id.sortPublicAppointmentsSpinner)).perform(click());
+            sleep(2, SECONDS);
+            onView(allOf(withId(R.string.sort_by_participants))).perform(click());
+            sleep(5, SECONDS);
+            assertDisplayed("participants : 1");
+            assertDisplayed("participants : 2");
+        }
     }
 
     private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo) {
