@@ -208,7 +208,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
-        ((TextView) calendarEntry.findViewById(R.id.calendarEntryNumberOfParticipants)).setText('(' + Integer.toString(appointment.getNumberOfParticipants()) + ' ' +  getText(R.string.participants) + ')');
+        ((TextView) calendarEntry.findViewById(R.id.calendarEntryNumberOfParticipants)).setText('(' + Integer.toString(appointment.getNumberOfParticipants()) + "participant(s))");
 
         Appointment appointment1 = new DatabaseAppointment(appointment.getId());
         StringSetValueListener bannedListener = (bannedParticipants) ->{
@@ -348,6 +348,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                             };
 
                                             appointment.getParticipantsId_Once_AndThen(participantListener);
+
                                         };
                                         appointment.getCourseAndThen(courseListener);
                                         commandsToRemoveListeners.add((x,y) -> appointment.removeCourseListener(courseListener));
