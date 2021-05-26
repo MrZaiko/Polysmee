@@ -23,7 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,13 +40,11 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.databaselisteners.BooleanChildListener;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.permissions.PermissionsHandler;
 import io.github.polysmee.profile.ProfileActivity;
 
 
@@ -315,17 +312,17 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
     private void joinChannel() {
         if(InternetConnection.isOn()) {
-            if(!PermissionsHandler.checkPermission(Manifest.permission.RECORD_AUDIO, getContext())) {
+            if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
                 requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
                 return;
             }
 
-            if(!PermissionsHandler.checkPermission(Manifest.permission.BLUETOOTH, getContext())) {
+            if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED)) {
                 requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
                 return;
             }
 
-            if(!PermissionsHandler.checkPermission(Manifest.permission.CAMERA, getContext())){
+            if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)){
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA);
             }
 

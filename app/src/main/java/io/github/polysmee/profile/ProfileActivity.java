@@ -2,6 +2,7 @@ package io.github.polysmee.profile;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.preference.Preference;
@@ -30,7 +32,6 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.permissions.PermissionsHandler;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.fragments.ProfileActivityInfosFragment;
@@ -128,7 +129,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
     }
 
     private void takePicture(View v) {
-        if(!PermissionsHandler.checkPermission(Manifest.permission.CAMERA, this)) {
+        if(!(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
             return;
         }

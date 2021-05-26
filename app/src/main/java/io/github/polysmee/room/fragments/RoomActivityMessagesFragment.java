@@ -6,6 +6,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -34,6 +35,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -54,13 +56,9 @@ import io.github.polysmee.database.Message;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
-import io.github.polysmee.database.Message;
-import io.github.polysmee.R;
 import io.github.polysmee.internet.connection.InternetConnection;
-import io.github.polysmee.permissions.PermissionsHandler;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.room.RoomActivity;
@@ -129,7 +127,7 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     private void takePicture(View view) {
-        if(!PermissionsHandler.checkPermission(Manifest.permission.CAMERA, getContext())) {
+        if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
             return;
         }
