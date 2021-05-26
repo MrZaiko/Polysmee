@@ -11,6 +11,7 @@ import java.util.Objects;
 import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.login.MainUser;
 
 public final class DatabaseUser implements User {
 
@@ -20,6 +21,7 @@ public final class DatabaseUser implements User {
     private static final String INVITES_RELATIVE_PATH = "invites";
     private static final String NAME_RELATIVE_PATH = "name";
     private static final String FRIENDS_RELATIVE_PATH = "friends";
+    private static final String FRIENDS_INVITES_RELATIVE_PATH = "friendsInvites";
     private static final String PICTURE_RELATIVE_PATH = "picture";
     private static final String CALENDAR_ID_RELATIVE_PATH = "calendarId";
     private final String self_id;
@@ -384,6 +386,58 @@ public final class DatabaseUser implements User {
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
                 .child(DESCRIPTION_RELATIVE_PATH)
+                .removeEventListener(valueListener);
+    }
+
+    @Override
+    public void sendFriendInvitation(User user) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(user.getId())
+                .child(FRIENDS_INVITES_RELATIVE_PATH)
+                .child(self_id)
+                .setValue(true);
+    }
+
+    @Override
+    public void removeFriendInvitation(User user) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(FRIENDS_INVITES_RELATIVE_PATH)
+                .child(user.getId())
+                .setValue(null);
+    }
+
+    @Override
+    public void getFriendsInvitationsAndThen(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(FRIENDS_INVITES_RELATIVE_PATH)
+                .addValueEventListener(valueListener);
+    }
+
+    @Override
+    public void getFriendsInvitations_Once_And_Then(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(FRIENDS_INVITES_RELATIVE_PATH)
+                .addListenerForSingleValueEvent(valueListener);
+    }
+
+    @Override
+    public void removeFriendsInvitationsListener(StringSetValueListener valueListener) {
+        DatabaseFactory
+                .getAdaptedInstance()
+                .getReference(USERS_RELATIVE_PATH)
+                .child(self_id)
+                .child(FRIENDS_INVITES_RELATIVE_PATH)
                 .removeEventListener(valueListener);
     }
 

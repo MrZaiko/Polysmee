@@ -185,12 +185,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentDate)).setText(appointmentDate);
 
         ImageView status = calendarEntry.findViewById(R.id.calendarEntryStatus);
-        if (current.before(startDate))
-            status.setImageResource(R.drawable.calendar_entry_incoming_dot);
-        else if (current.after(endDate))
-            status.setImageResource(R.drawable.calendar_entry_done_dot);
-        else
-            status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
+        CalendarActivityFragmentsHelpers.setStatusImage(status,current,startDate,endDate);
     }
 
 
