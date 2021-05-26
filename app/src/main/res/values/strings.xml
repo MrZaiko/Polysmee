@@ -132,7 +132,7 @@
     <string name="leave">Leave</string>
     <string name="sort_by_date">Sort by chronological order</string>
     <string name="sort_by_participants">Sort by number of participants</string>
-
+    <string name="participants" translatable="false">participant(s)</string>
     <string name="emoji_joy" translatable="false">&#128514;</string>
     <string name="emoji_sunglasses" translatable="false">&#128526;</string>
     <string name="emoji_heart_eyes" translatable="false">&#128525;</string>
