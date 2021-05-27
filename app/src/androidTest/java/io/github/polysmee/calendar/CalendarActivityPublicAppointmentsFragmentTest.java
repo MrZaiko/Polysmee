@@ -172,9 +172,8 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             sleep(3, TimeUnit.SECONDS);
             Espresso.onData(allOf(is(instanceOf(String.class)))).atPosition(1).perform(click());
             sleep(3, TimeUnit.SECONDS);
-            assertEquals(true, true);
-            //assertDisplayed("(1 participant(s))");
-            //assertDisplayed("(2 participant(s))");
+            assertDisplayed("(1 participant(s))");
+            assertDisplayed("(2 participant(s))");
         }
     }
 
