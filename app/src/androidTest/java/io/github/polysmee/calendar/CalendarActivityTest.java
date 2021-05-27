@@ -113,7 +113,7 @@ public class CalendarActivityTest {
         String title = "NewTitle";
         long startTime = calendar.getTimeInMillis() + 60 * 1000;
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
-                startTime, 3600 * 6 * 1000, appointmentId + 5);
+                startTime, 3600 * 6 * 1000, appointmentId + 5,0);
         MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
                 info.getDuration(), info.getCourse(), info.getTitle(), false);
         sleep(3, SECONDS);
@@ -147,7 +147,7 @@ public class CalendarActivityTest {
             String title = "NewTitle";
             long startTime = calendar.getTimeInMillis() + 60 * 1000;
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
-                    startTime, 3600 * 6 * 1000, appointmentId + 5);
+                    startTime, 3600 * 6 * 1000, appointmentId + 5,0);
             MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3, SECONDS);
@@ -162,7 +162,7 @@ public class CalendarActivityTest {
 
             //clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime
             CalendarAppointmentInfo info1 = new CalendarAppointmentInfo("SDP", "ClickMe",
-                    calendar.getTimeInMillis() + 60 * 1000, 3600 * 6 * 1000, appointmentId + 5);
+                    calendar.getTimeInMillis() + 60 * 1000, 3600 * 6 * 1000, appointmentId + 5,0);
             MainUser.getMainUser().createNewUserAppointment(info1.getStartTime(),
                     info1.getDuration(), info1.getCourse(), info1.getTitle(), false);
             sleep(3, SECONDS);

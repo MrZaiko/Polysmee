@@ -223,7 +223,7 @@ public class AppointmentsInvitesFragment extends Fragment {
             }
             for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
                 Appointment appointment = new DatabaseAppointment(id);
-                CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
+                CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id,0);
                 appointment.getStartTime_Once_AndThen((start) -> {
                     appointmentInfo.setStartTime(start);
                     appointment.getDuration_Once_AndThen((duration) -> {
@@ -232,21 +232,25 @@ public class AppointmentsInvitesFragment extends Fragment {
                             appointmentInfo.setTitle((title));
                             appointment.getCourse_Once_AndThen((course) -> {
                                 appointmentInfo.setCourse(course);
-                                if (!appointmentSet.contains(id)) { //the appointment was removed; we thus have to remove it from the displayed appointments
-                                    appointmentInfoMap.remove(id);
-                                    if (appointmentIdsToView.containsKey(id)) {
-                                        scrollLayout.removeView(appointmentIdsToView.get(id));
-                                        appointmentIdsToView.remove(id);
+                                appointment.getParticipantsId_Once_AndThen(participants -> {
+                                    appointmentInfo.setNumberOfParticipants(participants.size());
+                                    if (!appointmentSet.contains(id)) { //the appointment was removed; we thus have to remove it from the displayed appointments
+                                        appointmentInfoMap.remove(id);
+                                        if (appointmentIdsToView.containsKey(id)) {
+                                            scrollLayout.removeView(appointmentIdsToView.get(id));
+                                            appointmentIdsToView.remove(id);
+                                        }
+                                    } else {
+                                        appointmentInfoMap.put(appointment.getId(), appointmentInfo);
+                                        if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it
+                                            makeInviteEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
+                                        } else { //we add the new appointment and update the layout
+                                            scrollLayout.removeAllViewsInLayout();
+                                            changeCurrentInvitesLayout(new HashSet<>(appointmentInfoMap.values()));
+                                        }
                                     }
-                                } else {
-                                    appointmentInfoMap.put(appointment.getId(), appointmentInfo);
-                                    if (appointmentIdsToView.containsKey(appointmentInfo.getId())) { //the view is already there, we just need to update it
-                                        makeInviteEntry(appointmentInfo, appointmentIdsToView.get(appointmentInfo.getId()));
-                                    } else { //we add the new appointment and update the layout
-                                        scrollLayout.removeAllViewsInLayout();
-                                        changeCurrentInvitesLayout(new HashSet<>(appointmentInfoMap.values()));
-                                    }
-                                }
+                                });
+
                             });
                         });
                     });

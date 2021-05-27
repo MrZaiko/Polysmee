@@ -19,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/calendarActivityPublicAppointmentsCourseLayout">
+        app:layout_constraintTop_toBottomOf="@id/calendarActivityPublicAppointmentsSortLayout">
 
         <ScrollView
             android:id="@+id/calendarActivityPublicAppointmentScroll"
@@ -105,6 +105,7 @@
         app:layout_constraintGuide_begin="20dp"
         app:layout_constraintGuide_percent="0.15" />
 
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/calendarActivityPublicAppointmentsCourseLayout"
         android:layout_width="0dp"
@@ -112,7 +113,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
-        app:layout_constraintBottom_toTopOf="@id/calendarActivityPublicAppointmentSwipeScroll"
+        app:layout_constraintBottom_toTopOf="@id/calendarActivityPublicAppointmentsSortLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/todayDatePublicAppointmentsCalendarActivity">
@@ -133,6 +134,37 @@
             app:layout_constraintEnd_toStartOf="@id/calendarActivityPublicAppointmentsFilterBtn"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/calendarActivityPublicAppointmentsSortLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintBottom_toTopOf="@id/calendarActivityPublicAppointmentsCourseLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendarActivityPublicAppointmentsCourseLayout">
+
+        <Spinner
+            android:id="@+id/sortPublicAppointmentsSpinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:layout_width="0dp"
+            android:layout_height="2dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/grey"
+            app:layout_constraintTop_toBottomOf="@id/sortPublicAppointmentsSpinner"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

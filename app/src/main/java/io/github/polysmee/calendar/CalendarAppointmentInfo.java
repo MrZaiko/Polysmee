@@ -11,13 +11,15 @@ public class CalendarAppointmentInfo {
     private long startTime;
     private long duration;
     private final String id;
+    private int nbOfParticipants;
 
-    public CalendarAppointmentInfo(String course, String title, long startTime, long duration, String id) {
+    public CalendarAppointmentInfo(String course, String title, long startTime, long duration, String id, int nbOfParticipants) {
         this.course = course;
         this.title = title;
         this.startTime = startTime;
         this.duration = duration;
         this.id = id;
+        this.nbOfParticipants = nbOfParticipants;
     }
 
     /**
@@ -55,6 +57,13 @@ public class CalendarAppointmentInfo {
     public void setTitle(String title) {
         this.title = title;
     }
+
+    /**
+     * Sets the appointment's number of participants
+     *
+     * @param nbOfParticipants the number of participants we chose to set
+     */
+    public void setNumberOfParticipants(int nbOfParticipants) { this.nbOfParticipants = nbOfParticipants; }
 
     /**
      * Gets the appointment's stored duration
@@ -99,6 +108,15 @@ public class CalendarAppointmentInfo {
      */
     public String getTitle() {
         return title;
+    }
+
+    /**
+     * Gets the appointment's stored title
+     *
+     * @return the appointment's title
+     */
+    public int getNumberOfParticipants() {
+        return nbOfParticipants;
     }
 
 
