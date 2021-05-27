@@ -23,7 +23,6 @@ import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
@@ -322,17 +320,17 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
     private void joinChannel() {
         if(InternetConnection.isOn()) {
-            if(!checkPermission(Manifest.permission.RECORD_AUDIO)) {
+            if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
                 requestPermissionLauncher.launch(Manifest.permission.RECORD_AUDIO);
                 return;
             }
 
-            if(!checkPermission(Manifest.permission.BLUETOOTH)) {
+            if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.BLUETOOTH) == PackageManager.PERMISSION_GRANTED)) {
                 requestPermissionLauncher.launch(Manifest.permission.BLUETOOTH);
                 return;
             }
 
-            if(!checkPermission(Manifest.permission.CAMERA)){
+            if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)){
                 requestPermissionLauncher.launch(Manifest.permission.CAMERA);
             }
 
@@ -523,14 +521,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                         System.out.println("not granted");
                     }
                 });
-    }
-
-    /**
-     * @param permission the permission we're checking
-     * @return true if the permission given is granted by the user and false otherwise
-     */
-    private boolean checkPermission(String permission) {
-        return ContextCompat.checkSelfPermission(getContext(), permission) == PackageManager.PERMISSION_GRANTED;
     }
 
 
