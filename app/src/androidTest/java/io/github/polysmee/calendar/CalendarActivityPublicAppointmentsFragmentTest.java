@@ -150,7 +150,7 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
     }
 
-    /*@Test
+    @Test
     public void sortBehavesProperly() {
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
@@ -162,18 +162,21 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
             CalendarAppointmentInfo calendarAppointmentInfo1 = new CalendarAppointmentInfo("SDP", "BonjourBing1", startTime.getTimeInMillis(), 60, appointmentId + 2, 2);
             addAppointmentOtherUser(calendarAppointmentInfo1);
             addAppointmentOtherUser(calendarAppointmentInfo);
-
+            sleep(3, TimeUnit.SECONDS);
+            clickOn(R.id.todayDatePublicAppointmentsCalendarActivity);
+            sleep(1, TimeUnit.SECONDS);
+            setDateOnPicker(appointmentYear, appointmentMonth + 1, appointmentDay);
 
             sleep(3, TimeUnit.SECONDS);
             onView(withId(R.id.sortPublicAppointmentsSpinner)).perform(click());
             sleep(3, TimeUnit.SECONDS);
-            Espresso.onData(allOf(is(instanceOf(String.class)))).atPosition(0).perform(click());
+            Espresso.onData(allOf(is(instanceOf(String.class)))).atPosition(1).perform(click());
             sleep(3, TimeUnit.SECONDS);
             assertEquals(true, true);
             //assertDisplayed("(1 participant(s))");
             //assertDisplayed("(2 participant(s))");
         }
-    }*/
+    }
 
     private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo) {
         DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("id").setValue(calendarAppointmentInfo.getId());
