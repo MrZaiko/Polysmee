@@ -6,69 +6,41 @@
     android:layout_height="match_parent"
     tools:context=".invites.InvitesManagementActivity">
 
-    <ScrollView
-        android:id="@+id/InvitesManagementScroll"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/invitesManagementActivityTabs"
+        android:layout_width="419dp"
+        android:layout_height="57dp"
+        app:layout_constraintBottom_toTopOf="@+id/invitesManagementActivityPager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/invitesManagementActivityFriends"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="gravity">
+            android:layout_height="match_parent"
+            android:text="@string/invites_management_current_invitations_appointments" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/InvitesManagementInfoTxtLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/InvitesManagementScrollLayout">
+        <com.google.android.material.tabs.TabItem
+            android:id="@+id/invitesManagementActivityAppointments"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/invites_management_current_invitations_Friends" />
 
-                <TextView
-                    android:id="@+id/InvitesManagementInfoTxt"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:text="@string/invites_management_current_invitations"
-                    android:textAlignment="center"
-                    android:textColor="@color/primaryTextColor"
-                    android:textSize="30sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+    </com.google.android.material.tabs.TabLayout>
 
-                <View
-                    android:id="@+id/InvitesManagementSeparationBar"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@color/grey"
-                    app:layout_constraintTop_toBottomOf="@id/InvitesManagementInfoTxt"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <LinearLayout
-                android:id="@+id/InvitesManagementScrollLayout"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/InvitesManagementInfoTxtLayout" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-    </ScrollView>
-
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/invitesManagementActivityPager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/invitesManagementActivityTabs"
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

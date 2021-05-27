@@ -30,6 +30,7 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static com.schibsted.spain.barista.interaction.BaristaViewPagerInteractions.swipeViewPagerForward;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
 @RunWith(JUnit4.class)
@@ -132,5 +133,14 @@ public class InvitesManagementActivityTest {
         assertDisplayed(title3);
         assertDisplayed("Course : " + course3);
         onView(withText(title2)).check(doesNotExist());
+
+        swipeViewPagerForward();
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friendsInvites").child(id2).setValue(true);
+        sleep(2,SECONDS);
+        clickOn(R.id.friendEntryAcceptFriendButton);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friendsInvites").child(id3).setValue(true);
+        sleep(1,SECONDS);
+        clickOn(R.id.friendEntryRemoveFriendButton);
+
     }
 }
