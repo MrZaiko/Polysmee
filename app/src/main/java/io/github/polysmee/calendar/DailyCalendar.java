@@ -63,7 +63,7 @@ public class DailyCalendar {
      * @return the list of ordered appointments of the user for the chosen day
      * @throws IllegalArgumentException if the set given as argument is null
      */
-    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments, boolean publicAppointments) {
+    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments, boolean publicAppointments, boolean sortChronologically) {
         if (userAppointments == null)
             throw new IllegalArgumentException();
         long todayMidnightTime = getDayEpochTimeAtMidnight(publicAppointments);
@@ -74,7 +74,12 @@ public class DailyCalendar {
                 todayAppointments.add(appointment);
             }
         }
-        Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(), t1.getStartTime()));
+        if(sortChronologically) {
+            Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(), t1.getStartTime()));
+        } else {
+            Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Integer.compare(calendarAppointmentInfo.getNumberOfParticipants(), t1.getNumberOfParticipants()));
+        }
+
 
         return Collections.unmodifiableList(todayAppointments);
     }

@@ -63,6 +63,7 @@ public class LoginActivity extends AppCompatActivity {
                         .createSignInIntentBuilder()
                         .setIsSmartLockEnabled(false)
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
         // [END auth_fui_create_intent]
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity {
             DatabaseReference name = db.getReference("users").child(MainUser.getMainUser().getId()).child("name");
             name.keepSynced(true);
             MainUser.getMainUser().getName_Once_AndThen((nam) -> {
+
                 if(nam.isEmpty())
                     name.setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
             });

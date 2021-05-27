@@ -187,6 +187,7 @@ public class RoomActivity extends AppCompatActivity {
                                     appointment.selfDestroy();
                                 } else {
                                     appointment.removeParticipant(MainUser.getMainUser());
+                                    MainUser.getMainUser().removeAppointment(appointment);
                                     MainUser.getMainUser().getAppointmentEventId_Once_AndThen(appointment, eventId -> {
                                         if (eventId != null && !eventId.equals(""))
                                             MainUser.getMainUser().getCalendarId_Once_AndThen(calendarId ->

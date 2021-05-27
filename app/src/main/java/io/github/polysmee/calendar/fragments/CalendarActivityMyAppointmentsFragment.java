@@ -154,7 +154,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      * this method is called.
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
-        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, false);
+        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, false,true);
         if (!todayAppointments.isEmpty()) {
             for (CalendarAppointmentInfo appointment : todayAppointments) {
                 addAppointmentToCalendarLayout(appointment);
@@ -287,7 +287,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
                 }
                 for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
                     Appointment appointment = new DatabaseAppointment(id);
-                    CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id);
+                    CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id,0);
 
                     LongValueListener startListener = (start) -> {
                         appointmentInfo.setStartTime(start);
