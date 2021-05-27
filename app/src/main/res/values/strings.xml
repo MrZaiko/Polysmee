@@ -1,5 +1,6 @@
 <resources>
     <string name="app_name">Polysmee</string>
+    <string name="android_description_reminder_notification_service">The service allows reminder notifications to be synced online (i.e. with other application users).</string>
     <string name="roomActivityReceiveButton">Receive</string>
     <string name="roomActivitySendButton">Send</string>
     <string name="roomActivityMessagesTab">Messages</string>

@@ -135,6 +135,7 @@
     <string name="delete_message">Etes-vous sûr de vouloir supprimer le meeting ?</string>
     <string name="leave_message">Etes-vous sûr de vouloir quitter le meeting ?</string>
     <string name="leave">Quitter</string>
+    <string name="android_description_reminder_notification_service">Ce service permet aux notifications de rappel d\'être cohérent avec le(s) serveur(s) (I.e. avec les autres utilisateurs de l\'application).</string>
     <string name="sort_by_date">Trier par ordre chronologique</string>
     <string name="sort_by_participants">Trier par nombre de participants</string>
 </resources>
