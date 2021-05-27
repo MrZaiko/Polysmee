@@ -44,12 +44,10 @@ import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.
-
-@RunWith(AndroidJUnit4.class)
 import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 
+@RunWith(AndroidJUnit4.class)
 public class CalendarActivityPublicAppointmentsFragmentTest {
 
     private static final int appointmentYear = 2042;
@@ -153,7 +151,6 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
 
     @Test
     public void sortBehavesProperly() {
-        Date date = new Date(DailyCalendar.getDayEpochTimeAtMidnight(true));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
         try (ActivityScenario<CalendarActivity> ignored = ActivityScenario.launch(intent)) {
             sleep(3, TimeUnit.SECONDS);
