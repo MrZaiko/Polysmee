@@ -42,7 +42,7 @@ public class DailyCalendarTest {
 
     @Test
     public void getAppointmentsForTheDayThrowsExceptionIfNullSetTest() {
-        assertThrows(IllegalArgumentException.class, () -> DailyCalendar.getAppointmentsForTheDay(null, false));
+        assertThrows(IllegalArgumentException.class, () -> DailyCalendar.getAppointmentsForTheDay(null, false,true));
     }
 
     @Test
@@ -52,14 +52,14 @@ public class DailyCalendarTest {
         for (int i = 0; i < random.nextInt(5); ++i) {
             setOfAppointments.add(new CalendarAppointmentInfo("TestCourse" + i, "TestTitle",
                     DailyCalendar.getDayEpochTimeAtMidnight(false) + random.nextInt(60), 60,
-                    "TestId" + i));
+                    "TestId" + i,0));
         }
         setOfAppointments.add(new CalendarAppointmentInfo("TestCourseTomorrow", "TestTitleTomorrow",
                 DailyCalendar.getDayEpochTimeAtMidnight(false) + 3600 * 24 * 1000, 60,
-                "TestIdTomorrow"));
+                "TestIdTomorrow",0));
         List<CalendarAppointmentInfo> sortedAppointmentsInfo = new ArrayList<>(setOfAppointments);
         Collections.sort(sortedAppointmentsInfo, (appointment, t1) -> Long.compare(appointment.getStartTime(), t1.getStartTime()));
         sortedAppointmentsInfo.remove(sortedAppointmentsInfo.size() - 1);
-        assertEquals(sortedAppointmentsInfo, DailyCalendar.getAppointmentsForTheDay(setOfAppointments, false));
+        assertEquals(sortedAppointmentsInfo, DailyCalendar.getAppointmentsForTheDay(setOfAppointments, false,true));
     }
 }

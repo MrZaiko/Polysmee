@@ -1,10 +1,12 @@
 package io.github.polysmee.room.fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -12,6 +14,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -27,10 +30,15 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.ContextCompat;
+import androidx.constraintlayout.widget.ConstraintSet;
+import androidx.constraintlayout.widget.Guideline;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -51,14 +59,12 @@ import io.github.polysmee.database.Message;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.MessageChildListener;
-import io.github.polysmee.database.Message;
-import io.github.polysmee.R;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.photo.editing.PictureEditActivity;
 import io.github.polysmee.profile.ProfileActivity;
+import io.github.polysmee.room.MessageReaction;
 import io.github.polysmee.room.RoomActivity;
 
 import static android.app.Activity.RESULT_OK;
@@ -77,13 +83,18 @@ public class RoomActivityMessagesFragment extends Fragment {
     private ViewGroup rootView;
     private LayoutInflater inflater;
 
+    private ActivityResultLauncher<String> requestPermissionLauncher;
     private final Map<String, View> messagesDisplayed = new HashMap<>();
     private DatabaseAppointment databaseAppointment;
     private ActionMode actionMode;
     private MessageChildListener listener;
+    private ImageView takePictureBtn;
 
     private Uri currentPhotoUri;
 
+    private String selectedMessage;
+    private MessageReaction selectedReaction;
+    private Context context;
 
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Nullable
@@ -100,8 +111,10 @@ public class RoomActivityMessagesFragment extends Fragment {
         ImageView pickGallery = rootView.findViewById(R.id.roomActivitySendPictureButton);
         pickGallery.setOnClickListener(this::openGallery);
 
-        ImageView takePicture = rootView.findViewById(R.id.roomActivityTakePictureButton);
-        takePicture.setOnClickListener(this::takePicture);
+        takePictureBtn = rootView.findViewById(R.id.roomActivityTakePictureButton);
+        takePictureBtn.setOnClickListener(this::takePicture);
+
+        initializePermissionRequester();
 
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
@@ -115,12 +128,23 @@ public class RoomActivityMessagesFragment extends Fragment {
         return rootView;
     }
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
     private void openGallery(View view) {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
     private void takePicture(View view) {
+        if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
+            requestPermissionLauncher.launch(Manifest.permission.CAMERA);
+            return;
+        }
+
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(getContext().getPackageManager()) != null) {
@@ -160,8 +184,8 @@ public class RoomActivityMessagesFragment extends Fragment {
 
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             appointmentId, id -> databaseAppointment.addMessage(
-                                    new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true)
-                            ), s -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
+                                    new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true, 0)
+                            ), s -> HelperImages.showToast(getActivity().getString(R.string.genericErrorText), getContext()), getContext());
 
                     if(!InternetConnection.isOn()) {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -210,7 +234,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             String messageToAdd = messageEditText.getText().toString();
             String userId = MainUser.getMainUser().getId();
 
-            databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false));
+            databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false, 0));
             messageEditText.setText("");
 
             if(!InternetConnection.isOn()) {
@@ -242,15 +266,15 @@ public class RoomActivityMessagesFragment extends Fragment {
         }
     }
 
-    private View generateMessageTextView(String message, boolean isSent, String senderId, long date, boolean isAPicture, String messageKey) {
-        User sender = new DatabaseUser(senderId);
+    private View generateMessageTextView(Message message, boolean isSent, String messageKey) {
+        User sender = new DatabaseUser(message.getSender());
 
-        Date currentDate = new Date(date);
+        Date currentDate = new Date(message.getMessageTime());
         String TIMESTAMP_PATTERN = "HH:mm";
         SimpleDateFormat formatter = new SimpleDateFormat(TIMESTAMP_PATTERN, Locale.ENGLISH);
 
         ConstraintLayout messageLayout;
-        if (isAPicture)
+        if (message.getIsAPicture())
             messageLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_picture, null);
         else
             messageLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_message, null);
@@ -259,8 +283,8 @@ public class RoomActivityMessagesFragment extends Fragment {
         params.gravity = isSent ? Gravity.END : Gravity.START;
         messageLayout.setLayoutParams(params);
 
-        if (isAPicture) {
-            downloadMessagePicture(message, messageLayout);
+        if (message.getIsAPicture()) {
+            downloadMessagePicture(message.getContent(), messageLayout);
             if (!isSent) {
                 TextView sendText = messageLayout.findViewById(R.id.roomActivityMessageElementPictureSenderText);
                 sendText.setVisibility(View.VISIBLE);
@@ -269,7 +293,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
         } else {
             TextView messageView = messageLayout.findViewById(R.id.roomActivityMessageElementMessageContent);
-            messageView.setText(message);
+            messageView.setText(message.getContent());
 
             if (isSent) {
                 messageLayout.findViewById(R.id.roomActivityMessageElementSenderText).setVisibility(View.GONE);
@@ -281,27 +305,69 @@ public class RoomActivityMessagesFragment extends Fragment {
                 CircleImageView profilePicture = messageLayout.findViewById(R.id.roomActivityMessageElementProfilePicture);
                 profilePicture.setVisibility(View.VISIBLE);
                 sender.getProfilePicture_Once_And_Then(pictureId -> downloadProfilePicture(pictureId, profilePicture));
-                profilePicture.setOnClickListener(v -> visitProfile(senderId));
+                profilePicture.setOnClickListener(v -> visitProfile(message.getSender()));
             }
         }
 
+        messageLayout.setOnLongClickListener(v -> {
+            if (actionMode != null)
+                return false;
+            actionMode = getActivity().startActionMode(generateCallback(messageKey, message.getIsAPicture(), message.getContent(), isSent));
+            return true;
+        });
+
         if (isSent) {
-            messageLayout.setOnLongClickListener(v -> {
-                if (actionMode != null)
-                    return false;
-                actionMode = getActivity().startActionMode(generateCallback(messageKey, isAPicture, message));
-                return true;
-            });
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setText(formatter.format(currentDate));
 
-            if (isAPicture)
+            if (message.getIsAPicture())
                 messageLayout.findViewById(R.id.roomActivityMessageElementDateSent).setBackgroundColor(Color.BLACK);
         } else {
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived)).setText(formatter.format(currentDate));
 
-            if (isAPicture)
+            if (message.getIsAPicture())
                 messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived).setBackgroundColor(Color.BLACK);
         }
+
+
+        if (!isSent) {
+            ConstraintLayout mainLayout = messageLayout.findViewById(R.id.roomActivityMessageElementMainLayout);
+            ConstraintLayout.LayoutParams mainConstraints = (ConstraintLayout.LayoutParams) mainLayout.getLayoutParams();
+            mainConstraints.horizontalBias = 0;
+            mainLayout.setLayoutParams(mainConstraints);
+
+            Guideline guideLineVert = messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionGuideline);
+            ConstraintLayout.LayoutParams vertGuidelineParams = (ConstraintLayout.LayoutParams) guideLineVert.getLayoutParams();
+            vertGuidelineParams.guidePercent = 0.35f;
+            guideLineVert.setLayoutParams(vertGuidelineParams);
+
+            ConstraintLayout reactionLayout = messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout);
+            ConstraintLayout.LayoutParams reactionConstraints = (ConstraintLayout.LayoutParams) reactionLayout.getLayoutParams();
+            reactionConstraints.horizontalBias = 1;
+            reactionLayout.setLayoutParams(reactionConstraints);
+
+            Guideline guideLine = messageLayout.findViewById(R.id.roomActivityMessageElementReactionGuideline);
+            ConstraintLayout.LayoutParams horGuidelineParams = (ConstraintLayout.LayoutParams) guideLine.getLayoutParams();
+            horGuidelineParams.guidePercent = 0.75f;
+            guideLine.setLayoutParams(horGuidelineParams);
+
+            ConstraintLayout chooseReactionMessageLayout = messageLayout.findViewById(
+                    message.getIsAPicture() ? R.id.roomActivityMessageElementPictureMainLayout : R.id.roomActivityMessageElementReactionMessageLayout);
+            ConstraintSet chooseReactionConstraints = new ConstraintSet();
+            chooseReactionConstraints.clone(chooseReactionMessageLayout);
+            chooseReactionConstraints.connect(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.START,
+                    R.id.roomActivityMessageElementChooseReactionGuideline, ConstraintSet.START);
+            chooseReactionConstraints.clear(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.END);
+            chooseReactionConstraints.applyTo(chooseReactionMessageLayout);
+        }
+
+        MessageReaction reaction = MessageReaction.getReaction(message.getReaction());
+        messageLayout.findViewById(R.id.roomActivityMessageElementJoyReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementSadReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementExpressionLessReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementHeartEyesReaction).setOnClickListener(this::chooseReaction);
+        messageLayout.findViewById(R.id.roomActivityMessageElementSunglassesReaction).setOnClickListener(this::chooseReaction);
+
+        updateReaction(reaction, messageLayout);
 
         return messageLayout;
     }
@@ -311,7 +377,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                 profilePicture.setImageBitmap(Bitmap.createBitmap(bmp));
-            }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), getContext()), getContext());
+            }, ss -> HelperImages.showToast(getActivity().getString(R.string.genericErrorText), getContext()), getContext());
         }
     }
 
@@ -326,25 +392,35 @@ public class RoomActivityMessagesFragment extends Fragment {
         if (id != null && !id.equals("")) {
             UploadServiceFactory.getAdaptedInstance().downloadImage(id, imageBytes -> {
                 Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPictureContent);
+                ImageView image = messageLayout.findViewById(R.id.roomActivityMessageElementPicture);
                 image.setImageBitmap(Bitmap.createBitmap(bmp));
             }, s -> messageLayout.findViewById(R.id.roomActivityMessageElementPictureErrorText).setVisibility(View.VISIBLE), getContext());
         }
     }
 
-    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId) {
+    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId, boolean isSent) {
         return new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
                 MenuInflater inflater = mode.getMenuInflater();
+                selectedMessage = messageKey;
+                selectedReaction = MessageReaction.DEFAULT;
                 inflater.inflate(R.menu.room_edit_message_menu, menu);
-                mode.setTitle(getString(R.string.roomMessageOptionText));
+                mode.setTitle(getActivity().getString(R.string.roomMessageOptionText));
+
+                if (!isSent) {
+                    menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
+                    menu.findItem(R.id.roomEditMessageMenuDelete).setVisible(false);
+                }
+
+                View messageLayout = messagesDisplayed.get(messageKey);
+                messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionLayout).setVisibility(View.VISIBLE);
+                messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout).setVisibility(View.GONE);
 
                 if (isAPicture)
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
-
-                if (!isAPicture)
-                    messagesDisplayed.get(messageKey)
+                else
+                    messageLayout
                             .findViewById(R.id.roomActivityMessageElementMainLayout)
                             .setBackgroundResource(R.drawable.background_selected_message);
                 return true;
@@ -377,12 +453,46 @@ public class RoomActivityMessagesFragment extends Fragment {
             @Override
             public void onDestroyActionMode(ActionMode mode) {
                 actionMode = null;
+
+                View messageLayout = messagesDisplayed.get(messageKey);
+                messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionLayout).setVisibility(View.GONE);
+
+                updateReaction(selectedReaction, messageLayout);
+                selectedReaction = null;
+                selectedMessage = null;
+
                 if (!isAPicture)
                     messagesDisplayed.get(messageKey)
                             .findViewById(R.id.roomActivityMessageElementMainLayout)
-                            .setBackgroundResource(R.drawable.background_sent_message);
+                            .setBackgroundResource(isSent ? R.drawable.background_sent_message : R.drawable.background_received_message);
             }
         };
+    }
+
+    private void updateReaction(MessageReaction reaction, View messageView) {
+        View reactionLayout = messageView.findViewById(R.id.roomActivityMessageElementReactionLayout);
+        TextView reactionView = messageView.findViewById(R.id.roomActivityMessageElementReaction);
+        if (reaction != MessageReaction.DEFAULT) {
+            reactionLayout.setVisibility(View.VISIBLE);
+            if (reaction != null)
+                reactionView.setText(context.getText(reaction.getEmoji()));
+        } else {
+            reactionLayout.setVisibility(View.GONE);
+        }
+    }
+
+    private void chooseReaction(View view) {
+        TextView selectedReactionView = (TextView) view;
+        selectedReaction = MessageReaction.getReaction(getContext(), (String) selectedReactionView.getText());
+
+        databaseAppointment.getMessageReaction_Once_AndThen(selectedMessage, reactId -> {
+            if (reactId == selectedReaction.getReactionId())
+                selectedReaction = MessageReaction.DEFAULT;
+
+            databaseAppointment.editMessageReaction(selectedMessage, selectedReaction.getReactionId());
+            actionMode.finish();
+        });
+
     }
 
 
@@ -390,7 +500,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         TextView messageView = messagesDisplayed.get(messageKey).findViewById(R.id.roomActivityMessageElementMessageContent);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        builder.setTitle(getString(R.string.roomEditMessageText));
+        builder.setTitle(getActivity().getString(R.string.roomEditMessageText));
 
         LayoutInflater inflater = getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.dialog_room_activity_edit_and_delete, null);
@@ -398,7 +508,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         EditText editMessage = dialogView.findViewById(R.id.roomActivityEditDialogText);
         editMessage.setHint(messageView.getText());
 
-        builder.setPositiveButton(getString(R.string.genericEditText), (dialog, id) -> {
+        builder.setPositiveButton(getActivity().getString(R.string.genericEditText), (dialog, id) -> {
             databaseAppointment.editMessage(messageKey, editMessage.getText().toString());
             if(!InternetConnection.isOn()) {
                 AlertDialog.Builder offlineMsg = new AlertDialog.Builder(getContext());
@@ -415,7 +525,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
         });
 
-        builder.setNeutralButton(getString(R.string.genericCancelText), (dialog, id) -> {
+        builder.setNeutralButton(getActivity().getString(R.string.genericCancelText), (dialog, id) -> {
             //Nothing to do
         });
 
@@ -432,14 +542,12 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     private void initializeAndDisplayDatabase() {
 
-
         listener = new MessageChildListener() {
 
             @Override
             public void childAdded(String key, Message value) {
-
                 String userId = MainUser.getMainUser().getId();
-                View messageToAddLayout = generateMessageTextView(value.getContent(), userId.equals(value.getSender()), value.getSender(), value.getMessageTime(), value.getIsAPicture(), key);
+                View messageToAddLayout = generateMessageTextView(value, userId.equals(value.getSender()), key);
                 messagesDisplayed.put(key, messageToAddLayout);
                 LinearLayout messages = rootView.findViewById(R.id.roomActivityScrollViewLayout);
                 messages.addView(messageToAddLayout);
@@ -454,7 +562,9 @@ public class RoomActivityMessagesFragment extends Fragment {
 
             @Override
             public void childChanged(String key, Message value) {
-                ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(value.getContent());
+                if (!value.getIsAPicture())
+                    ((TextView) messagesDisplayed.get(key).findViewById(R.id.roomActivityMessageElementMessageContent)).setText(value.getContent());
+                updateReaction(MessageReaction.getReaction(value.getReaction()), messagesDisplayed.get(key));
             }
 
             @Override
@@ -470,6 +580,22 @@ public class RoomActivityMessagesFragment extends Fragment {
 
         };
         databaseAppointment.addMessageListener(listener);
+    }
+
+    /**
+     * Initializes the request permission requester
+     */
+    private void initializePermissionRequester() {
+        requestPermissionLauncher =
+                this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+                    //joins the channel if granted and do nothing otherwise
+                    if (isGranted) {
+                        takePicture(takePictureBtn);
+
+                    } else {
+                        System.out.println("not granted");
+                    }
+                });
     }
 
 }

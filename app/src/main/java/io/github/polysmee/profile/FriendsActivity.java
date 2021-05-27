@@ -80,8 +80,8 @@ public class FriendsActivity extends AppCompatActivity {
         scrollLayout = findViewById(R.id.friendsActivityScrollLayout);
         searchFriend = findViewById(R.id.friendAddTextView);
         User.getAllUsersIds_Once_AndThen(this::fillUserList);
-        friendAddButton = findViewById(R.id.friendActivityAddButton);
-        friendAddButton.setOnClickListener((v) -> addFriendBehavior());
+        friendAddButton = findViewById(R.id.friendActivityInviteButton);
+        friendAddButton.setOnClickListener((v) -> inviteFriendButtonBehavior());
         builder = new AlertDialog.Builder(this);
         inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -113,7 +113,7 @@ public class FriendsActivity extends AppCompatActivity {
      * Determines the behavior of the "add" button after typing the name
      * of a user we want to add as friend
      */
-    protected void addFriendBehavior() {
+    protected void inviteFriendButtonBehavior() {
         String s = searchFriend.getText().toString();
         if (!allUsersNames.contains(s)) {
             builder.setMessage(getString(R.string.genericUserNotFoundText))
@@ -134,7 +134,13 @@ public class FriendsActivity extends AppCompatActivity {
                     alert.setTitle("Oops");
                     alert.show();
                 } else {
-                    user.addFriend(new DatabaseUser(namesToIds.get(s)));
+                    user.sendFriendInvitation(new DatabaseUser(namesToIds.get(s)));
+                    builder.setMessage("Invitation sent")
+                            .setCancelable(false)
+                            .setPositiveButton("OK", null);
+                    AlertDialog alert = builder.create();
+                    alert.setTitle("Success");
+                    alert.show();
                 }
             });
         }
@@ -153,25 +159,20 @@ public class FriendsActivity extends AppCompatActivity {
      * @param name   the user's name
      */
     protected void createFriendEntry(String userId, String name) {
+
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);
         TextView nameFriend = friendEntryLayout.findViewById(R.id.friendEntryName);
         nameFriend.setText(name);
-        downloadFriendProfilePicture(userId,friendEntryLayout);
-        nameFriend.setOnClickListener((view) -> {
-            Intent profileIntent = new Intent(this, ProfileActivity.class);
-            profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
-            profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
-            startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
-        });
+        FriendMethodsHelpers.downloadFriendProfilePicture(userId,friendEntryLayout,this);
+
+        FriendMethodsHelpers.visitProfileFriendEntry(nameFriend,userId,this,this);
+
         friendEntryLayout.findViewById(R.id.friendEntryRemoveFriendButton).setOnClickListener((v) -> {
             user.removeFriend(new DatabaseUser(userId));
+            (new DatabaseUser(userId)).removeFriend(user);
         });
-        TextView padding = new TextView(this);
         List<View> friendViews = new ArrayList<>();
-        friendViews.add(friendEntryLayout);
-        friendViews.add(padding);
-        scrollLayout.addView(friendEntryLayout);
-        scrollLayout.addView(padding);
+        FriendMethodsHelpers.addFriendEntryToLayout(scrollLayout,friendViews,this,friendEntryLayout);
         idsToFriendEntries.put(userId, friendViews);
     }
 
@@ -202,16 +203,5 @@ public class FriendsActivity extends AppCompatActivity {
                 });
             }
         };
-    }
-
-    protected void downloadFriendProfilePicture(String id, ConstraintLayout friendEntry){
-        (new DatabaseUser(id)).getProfilePicture_Once_And_Then((profilePictureId) ->{
-            if(!profilePictureId.equals("")){
-                UploadServiceFactory.getAdaptedInstance().downloadImage(profilePictureId, imageBytes -> {
-                            Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
-                            ((CircleImageView)friendEntry.findViewById(R.id.friendActivityElementProfilePicture)).setImageBitmap(Bitmap.createBitmap(bmp));
-                        },ss -> HelperImages.showToast(getString(R.string.genericErrorText), this),this);
-            }
-        });
     }
 }
