@@ -348,7 +348,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                             };
 
                                             appointment.getParticipantsId_Once_AndThen(participantListener);
-                                            commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
+                                            //commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
 
                                         };
                                         appointment.getCourseAndThen(courseListener);
