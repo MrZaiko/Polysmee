@@ -148,10 +148,10 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
     }
 
-
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
+     * @param infos all the user's appointments
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, false,true);
@@ -164,9 +164,10 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
     /**
      * Creates an appointment's textual description following a certain format
-     * to show in the calendar
+     * to show in the calendar in an entry
      *
      * @param appointment the appointment's whose description is created
+     * @param calendarEntry the entry which will hold the appointment's information
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
@@ -190,8 +191,8 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
 
     /**
-     * Everytime the user clicks on an appointment's description in his daily, the corresponding
-     * room activity is launched.
+     * Every time the user clicks on an appointment's description in his daily calendar, the corresponding
+     * room activity is launched if the appointment is ongoing or has ended.
      *
      * @param appointmentId the appointment's id which will see its room launched
      *                      when clicking on its description.
@@ -243,7 +244,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     }
 
     /**
-     * Adds a listener to the user's appointments so that everytime one is added/removed, the layout
+     * Adds a listener to the user's appointments so that every time one is added/removed, the layout
      * is updated. It also takes care of determining what should happen to the calendar's layout
      * if an appointment's parameters changes.
      */
@@ -258,13 +259,15 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         commandsToRemoveListeners.add((x,y) -> user.removeAppointmentsListener(userAppointmentsListener));
     }
 
+    /**
+     *
+     * @return the listener that will be set in the method "setListenerUserAppointments"
+     */
     protected StringSetValueListener currentDayUserAppointmentsListener() {
 
         return setOfIds -> {
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
             Set<String> newAppointments = new HashSet<>(setOfIds);
-
-            //two loops: one for the appointments that are gone, and another for the new appointments
 
             deletedAppointments.removeAll(newAppointments); //keep the deleted appointments
             newAppointments.removeAll(appointmentSet); //keep the new appointmnets
@@ -280,12 +283,12 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
 
                 appointmentSet.addAll(newAppointments); //add all new appointments
-                if (newAppointments.isEmpty()) {
+                if (newAppointments.isEmpty()) { //if empty, update the layout and return
                     scrollLayout.removeAllViewsInLayout();
                     changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                     return;
                 }
-                for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
+                for (String id : newAppointments) { //iterate only on the new appointments, to set their listener only once
                     Appointment appointment = new DatabaseAppointment(id);
                     CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id,0);
 
