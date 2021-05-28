@@ -23,9 +23,13 @@ public class CalendarActivityFragmentsHelpers {
     private CalendarActivityFragmentsHelpers() {
 
     }
-
+/**
+ * Sets the text view on top of the chosen calendar fragment to the current day's date
+ */
     /**
      * Sets the text view on top of the chosen calendar fragment to the current day's date
+     * @param rootView the rootView containing the date layout
+     * @param publicApp determines if it's the public appointments fragment or not, so we can pass the right ids
      */
     public static void setDayText(ViewGroup rootView, boolean publicApp) {
         ConstraintLayout dateLayout;
@@ -77,6 +81,14 @@ public class CalendarActivityFragmentsHelpers {
         calendarFragment.startActivity(intent);
     }
 
+    /**
+     * Sets the image status of the appointment depending on if the appointment has ended, has yet to begin, or is happening
+     * right now
+     * @param status the imageview containing the image to update
+     * @param current the current time
+     * @param startDate the appointment's start time
+     * @param endDate the appointment's end time
+     */
     public static void setStatusImage(ImageView status, Date current, Date startDate , Date endDate){
         if (current.before(startDate))
             status.setImageResource(R.drawable.calendar_entry_incoming_dot);
