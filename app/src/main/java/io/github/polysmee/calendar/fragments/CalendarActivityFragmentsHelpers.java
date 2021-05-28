@@ -82,8 +82,8 @@ public class CalendarActivityFragmentsHelpers {
     }
 
     /**
-     * Sets the image status of the appointment depending on if the appointment has ended, has yet to begin, or is happening
-     * right now
+     * Sets the image status of the appointment depending on if the appointment has ended (red), has yet to begin (green),
+     * or is happening right now (yellow)
      * @param status the imageview containing the image to update
      * @param current the current time
      * @param startDate the appointment's start time
