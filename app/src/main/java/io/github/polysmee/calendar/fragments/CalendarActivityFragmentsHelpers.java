@@ -110,11 +110,5 @@ public class CalendarActivityFragmentsHelpers {
         appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
     }
 
-    public static void setEpochTimeAfterChoosingDate(int year, int monthOfYear,int dayOfMonth, boolean publicAppointments, ViewGroup rootView,LinearLayout scrollLayout){
-        DailyCalendar.setDayEpochTimeAtMidnight(year, monthOfYear, dayOfMonth, publicAppointments);
-        setDayText(rootView, true);
-        scrollLayout.removeAllViewsInLayout();
-    }
-
 
 }

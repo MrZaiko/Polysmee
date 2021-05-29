@@ -99,7 +99,9 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         calendarChosenDay.setTime(chosenDay);
 
         new DatePickerDialog(getContext(), (view, year, monthOfYear, dayOfMonth) -> {
-            CalendarActivityFragmentsHelpers.setEpochTimeAfterChoosingDate(year,monthOfYear,dayOfMonth,false,rootView,scrollLayout);
+            DailyCalendar.setDayEpochTimeAtMidnight(year, monthOfYear, dayOfMonth, false);
+            setDayText(rootView, false);
+            scrollLayout.removeAllViewsInLayout();
             setListenerUserAppointments();
         }, calendarChosenDay.get(Calendar.YEAR), calendarChosenDay.get(Calendar.MONTH), calendarChosenDay.get(Calendar.DATE)).show();
 
