@@ -66,8 +66,8 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
     private ArrayList<String> courses;
     private String currentCourse = "";
-    AlertDialog.Builder builder;
-    AutoCompleteTextView courseSelector;
+    private AlertDialog.Builder builder;
+    private AutoCompleteTextView courseSelector;
     private boolean sortChronologically = true;
     private final static int SORT_CHRONOLOGICALLY_INDEX = 0;
 
@@ -181,9 +181,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         super.onDestroy();
     }
 
+
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
+     * @param infos the user's appointments
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true, sortChronologically);
@@ -202,9 +204,10 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
     /**
      * Creates an appointment's textual description following a certain format
-     * to show in the calendar
+     * to show in the calendar in an entry
      *
      * @param appointment the appointment's whose description is created
+     * @param calendarEntry the entry which will hold the appointment's information
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
