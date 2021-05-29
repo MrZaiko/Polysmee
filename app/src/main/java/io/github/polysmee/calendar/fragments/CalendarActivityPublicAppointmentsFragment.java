@@ -252,15 +252,9 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * @param appointment the appointment to add
      */
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
-
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
-        TextView emptySpace = new TextView(rootView.getContext());
-
-        scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
-        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
+        CalendarActivityFragmentsHelpers.addEntryToScrollLayout(rootView,scrollLayout,appointmentIdsToView,appointment,appointmentEntryLayout);
     }
 
 

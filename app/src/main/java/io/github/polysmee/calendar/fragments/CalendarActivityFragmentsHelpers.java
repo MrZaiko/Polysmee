@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -13,9 +14,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
 
 public class CalendarActivityFragmentsHelpers {
@@ -96,6 +99,15 @@ public class CalendarActivityFragmentsHelpers {
             status.setImageResource(R.drawable.calendar_entry_done_dot);
         else
             status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
+    }
+
+    public static void addEntryToScrollLayout(ViewGroup rootView, LinearLayout scrollLayout, Map<String,View> appointmentIdsToView, CalendarAppointmentInfo appointment,ConstraintLayout appointmentEntryLayout){
+        TextView emptySpace = new TextView(rootView.getContext());
+
+        scrollLayout.addView(appointmentEntryLayout);
+        scrollLayout.addView(emptySpace);
+        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
+        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
     }
 
 

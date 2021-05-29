@@ -212,13 +212,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
         appointmentEntryLayout.setOnLongClickListener(l -> exportToCalendarDialog(appointment));
-
-        TextView emptySpace = new TextView(rootView.getContext());
-
-        scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
-        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
+        CalendarActivityFragmentsHelpers.addEntryToScrollLayout(rootView,scrollLayout,appointmentIdsToView,appointment,appointmentEntryLayout);
     }
 
     private boolean exportToCalendarDialog(CalendarAppointmentInfo appointment) {
