@@ -14,7 +14,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -119,6 +118,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.inflater = getLayoutInflater();
         initializeAndDisplayDatabase();
 
+        //Used to avoid crash in tests
         try {
             ((RoomActivity) getActivity()).setContext(getContext());
         } catch (ClassCastException e) {
@@ -134,11 +134,19 @@ public class RoomActivityMessagesFragment extends Fragment {
         this.context = context;
     }
 
+    /**
+     * Open the phone gallery allowing the user to select a picture
+     * @param view button
+     */
     private void openGallery(View view) {
         Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         startActivityForResult(gallery, PICK_IMAGE);
     }
 
+    /**
+     * Generate a temporary file to store a picture and launch the phone camera
+     * @param view button
+     */
     private void takePicture(View view) {
         if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED)) {
             requestPermissionLauncher.launch(Manifest.permission.CAMERA);
@@ -173,33 +181,7 @@ public class RoomActivityMessagesFragment extends Fragment {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case SEND_PICTURE:
-                    currentPhotoUri = (Uri) data.getExtras().get("data");
-
-                    byte[] picturesToByte = new byte[0];
-                    try {
-                        picturesToByte = HelperImages.getBytes(getContext().getContentResolver().openInputStream(currentPhotoUri));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-
-                    UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
-                            appointmentId, id -> databaseAppointment.addMessage(
-                                    new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true, 0)
-                            ), s -> HelperImages.showToast(getActivity().getString(R.string.genericErrorText), getContext()), getContext());
-
-                    if(!InternetConnection.isOn()) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                        builder.setMessage(R.string.offline_picture);
-
-                        //add ok button
-                        builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        });
-                        builder.show();
-                    }
+                    uploadAndSendPictureMessage((Uri) data.getExtras().get("data"));
                     return;
 
                 case PICK_IMAGE:
@@ -214,7 +196,35 @@ public class RoomActivityMessagesFragment extends Fragment {
                 default:
             }
         }
+    }
 
+    /**
+     * Upload the picture with uri pictureUri and send a message displaying this picture
+     * @param pictureUri picture to upload and send
+     */
+    private void uploadAndSendPictureMessage(Uri pictureUri) {
+        currentPhotoUri = pictureUri;
+
+        byte[] picturesToByte = new byte[0];
+        try {
+            picturesToByte = HelperImages.getBytes(getContext().getContentResolver().openInputStream(currentPhotoUri));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
+                appointmentId, id -> databaseAppointment.addMessage(
+                        new Message(MainUser.getMainUser().getId(), id, System.currentTimeMillis(), true, 0)
+                ), s -> HelperImages.showToast(getActivity().getString(R.string.genericErrorText), getContext()), getContext());
+
+        if(!InternetConnection.isOn()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(R.string.offline_picture);
+
+            //add ok button
+            builder.setPositiveButton(R.string.offline_ok, (dialog, which) -> {});
+            builder.show();
+        }
     }
 
     @Override
@@ -224,46 +234,40 @@ public class RoomActivityMessagesFragment extends Fragment {
     }
 
     /**
-     * @param view
+     * Send a message with the text written in roomActivityMessageText
+     * @param view button
      */
     private void sendMessage(View view) {
         closeKeyboard();
+
         EditText messageEditText = rootView.findViewById(R.id.roomActivityMessageText);
-        //if(InternetConnection.isOn()) {
+        String messageToAdd = messageEditText.getText().toString();
+        String userId = MainUser.getMainUser().getId();
 
-            String messageToAdd = messageEditText.getText().toString();
-            String userId = MainUser.getMainUser().getId();
+        databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false, 0));
+        messageEditText.setText("");
 
-            databaseAppointment.addMessage(new Message(userId, messageToAdd, System.currentTimeMillis(), false, 0));
-            messageEditText.setText("");
+        if(!InternetConnection.isOn()) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+            builder.setMessage(R.string.offline_send_message);
 
-            if(!InternetConnection.isOn()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage(R.string.offline_send_message);
-
-                //add ok button
-                builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
-                builder.show();
-            }
-
-
-
+            //add ok button
+            builder.setPositiveButton(R.string.offline_ok, (dialog, which) -> {});
+            builder.show();
+        }
     }
 
 
+    /**
+     * Close the keyboard if displayed
+     */
     private void closeKeyboard() {
         try {
             InputMethodManager inputManager = (InputMethodManager)
                     rootView.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             inputManager.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(),
                     InputMethodManager.HIDE_NOT_ALWAYS);
-        } catch (Exception ignored) {
-        }
+        } catch (Exception ignored) {}
     }
 
     private View generateMessageTextView(Message message, boolean isSent, String messageKey) {
@@ -272,6 +276,10 @@ public class RoomActivityMessagesFragment extends Fragment {
         Date currentDate = new Date(message.getMessageTime());
         String TIMESTAMP_PATTERN = "HH:mm";
         SimpleDateFormat formatter = new SimpleDateFormat(TIMESTAMP_PATTERN, Locale.ENGLISH);
+
+        /* ================
+             LAYOUT SETUP
+           ================ */
 
         ConstraintLayout messageLayout;
         if (message.getIsAPicture())
@@ -282,6 +290,10 @@ public class RoomActivityMessagesFragment extends Fragment {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
         params.gravity = isSent ? Gravity.END : Gravity.START;
         messageLayout.setLayoutParams(params);
+
+        /* ================
+                CONTENT
+           ================ */
 
         if (message.getIsAPicture()) {
             downloadMessagePicture(message.getContent(), messageLayout);
@@ -309,12 +321,9 @@ public class RoomActivityMessagesFragment extends Fragment {
             }
         }
 
-        messageLayout.setOnLongClickListener(v -> {
-            if (actionMode != null)
-                return false;
-            actionMode = getActivity().startActionMode(generateCallback(messageKey, message.getIsAPicture(), message.getContent(), isSent));
-            return true;
-        });
+        /* ================
+               DATE UI
+           ================ */
 
         if (isSent) {
             ((TextView) messageLayout.findViewById(R.id.roomActivityMessageElementDateSent)).setText(formatter.format(currentDate));
@@ -328,38 +337,71 @@ public class RoomActivityMessagesFragment extends Fragment {
                 messageLayout.findViewById(R.id.roomActivityMessageElementDateReceived).setBackgroundColor(Color.BLACK);
         }
 
+        /* ================
+             EDIT MESSAGE
+           ================ */
 
-        if (!isSent) {
-            ConstraintLayout mainLayout = messageLayout.findViewById(R.id.roomActivityMessageElementMainLayout);
-            ConstraintLayout.LayoutParams mainConstraints = (ConstraintLayout.LayoutParams) mainLayout.getLayoutParams();
-            mainConstraints.horizontalBias = 0;
-            mainLayout.setLayoutParams(mainConstraints);
+        messageLayout.setOnLongClickListener(v -> {
+            if (actionMode != null)
+                return false;
+            actionMode = getActivity().startActionMode(generateCallback(messageKey, message.getIsAPicture() ? message.getContent() : null, isSent));
+            return true;
+        });
 
-            Guideline guideLineVert = messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionGuideline);
-            ConstraintLayout.LayoutParams vertGuidelineParams = (ConstraintLayout.LayoutParams) guideLineVert.getLayoutParams();
-            vertGuidelineParams.guidePercent = 0.35f;
-            guideLineVert.setLayoutParams(vertGuidelineParams);
+        /* ================
+           MESSAGE REACTION
+           ================ */
 
-            ConstraintLayout reactionLayout = messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout);
-            ConstraintLayout.LayoutParams reactionConstraints = (ConstraintLayout.LayoutParams) reactionLayout.getLayoutParams();
-            reactionConstraints.horizontalBias = 1;
-            reactionLayout.setLayoutParams(reactionConstraints);
+        if (!isSent)
+            adaptMessageReactionConstraint(messageLayout, message);
 
-            Guideline guideLine = messageLayout.findViewById(R.id.roomActivityMessageElementReactionGuideline);
-            ConstraintLayout.LayoutParams horGuidelineParams = (ConstraintLayout.LayoutParams) guideLine.getLayoutParams();
-            horGuidelineParams.guidePercent = 0.75f;
-            guideLine.setLayoutParams(horGuidelineParams);
+        setupMessageReaction(messageLayout, message);
 
-            ConstraintLayout chooseReactionMessageLayout = messageLayout.findViewById(
-                    message.getIsAPicture() ? R.id.roomActivityMessageElementPictureMainLayout : R.id.roomActivityMessageElementReactionMessageLayout);
-            ConstraintSet chooseReactionConstraints = new ConstraintSet();
-            chooseReactionConstraints.clone(chooseReactionMessageLayout);
-            chooseReactionConstraints.connect(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.START,
-                    R.id.roomActivityMessageElementChooseReactionGuideline, ConstraintSet.START);
-            chooseReactionConstraints.clear(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.END);
-            chooseReactionConstraints.applyTo(chooseReactionMessageLayout);
-        }
+        return messageLayout;
+    }
 
+    /**
+     * Adapt messageReaction constraint for a sent message
+     * @param messageLayout message layout to adapt
+     * @param message message to display
+     */
+    private void adaptMessageReactionConstraint(View messageLayout, Message message) {
+        ConstraintLayout mainLayout = messageLayout.findViewById(R.id.roomActivityMessageElementMainLayout);
+        ConstraintLayout.LayoutParams mainConstraints = (ConstraintLayout.LayoutParams) mainLayout.getLayoutParams();
+        mainConstraints.horizontalBias = 0;
+        mainLayout.setLayoutParams(mainConstraints);
+
+        Guideline guideLineVert = messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionGuideline);
+        ConstraintLayout.LayoutParams vertGuidelineParams = (ConstraintLayout.LayoutParams) guideLineVert.getLayoutParams();
+        vertGuidelineParams.guidePercent = 0.35f;
+        guideLineVert.setLayoutParams(vertGuidelineParams);
+
+        ConstraintLayout reactionLayout = messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout);
+        ConstraintLayout.LayoutParams reactionConstraints = (ConstraintLayout.LayoutParams) reactionLayout.getLayoutParams();
+        reactionConstraints.horizontalBias = 1;
+        reactionLayout.setLayoutParams(reactionConstraints);
+
+        Guideline guideLine = messageLayout.findViewById(R.id.roomActivityMessageElementReactionGuideline);
+        ConstraintLayout.LayoutParams horGuidelineParams = (ConstraintLayout.LayoutParams) guideLine.getLayoutParams();
+        horGuidelineParams.guidePercent = 0.75f;
+        guideLine.setLayoutParams(horGuidelineParams);
+
+        ConstraintLayout chooseReactionMessageLayout = messageLayout.findViewById(
+                message.getIsAPicture() ? R.id.roomActivityMessageElementPictureMainLayout : R.id.roomActivityMessageElementReactionMessageLayout);
+        ConstraintSet chooseReactionConstraints = new ConstraintSet();
+        chooseReactionConstraints.clone(chooseReactionMessageLayout);
+        chooseReactionConstraints.connect(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.START,
+                R.id.roomActivityMessageElementChooseReactionGuideline, ConstraintSet.START);
+        chooseReactionConstraints.clear(R.id.roomActivityMessageElementChooseReactionLayout, ConstraintSet.END);
+        chooseReactionConstraints.applyTo(chooseReactionMessageLayout);
+    }
+
+    /**
+     * Setup the messageReaction UI
+     * @param messageLayout message layout to adapt
+     * @param message message to display
+     */
+    private void setupMessageReaction(View messageLayout, Message message) {
         MessageReaction reaction = MessageReaction.getReaction(message.getReaction());
         messageLayout.findViewById(R.id.roomActivityMessageElementJoyReaction).setOnClickListener(this::chooseReaction);
         messageLayout.findViewById(R.id.roomActivityMessageElementSadReaction).setOnClickListener(this::chooseReaction);
@@ -368,10 +410,13 @@ public class RoomActivityMessagesFragment extends Fragment {
         messageLayout.findViewById(R.id.roomActivityMessageElementSunglassesReaction).setOnClickListener(this::chooseReaction);
 
         updateReaction(reaction, messageLayout);
-
-        return messageLayout;
     }
 
+    /**
+     * Download the specified picture and display it in profilePicture
+     * @param pictureId the picture to download
+     * @param profilePicture the view where the picture should be displayed
+     */
     private void downloadProfilePicture(String pictureId, CircleImageView profilePicture) {
         if (pictureId != null && !pictureId.equals("")) {
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
@@ -381,13 +426,11 @@ public class RoomActivityMessagesFragment extends Fragment {
         }
     }
 
-    private void visitProfile(String userId) {
-        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
-        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
-        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
-        startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
-    }
-
+    /**
+     * Download the specified picture and display it in profilePicture
+     * @param id the picture to download
+     * @param messageLayout the message where the picture should be displayed
+     */
     private void downloadMessagePicture(String id, View messageLayout) {
         if (id != null && !id.equals("")) {
             UploadServiceFactory.getAdaptedInstance().downloadImage(id, imageBytes -> {
@@ -398,7 +441,26 @@ public class RoomActivityMessagesFragment extends Fragment {
         }
     }
 
-    private ActionMode.Callback generateCallback(String messageKey, boolean isAPicture, String pictureId, boolean isSent) {
+    /**
+     * Start the ProfileActivity to display information of the specified user
+     * @param userId user to display
+     */
+    private void visitProfile(String userId) {
+        Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
+        profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, ProfileActivity.PROFILE_VISITING_MODE);
+        profileIntent.putExtra(ProfileActivity.PROFILE_ID_USER, userId);
+        startActivityForResult(profileIntent, ProfileActivity.VISIT_MODE_REQUEST_CODE);
+    }
+
+    /**
+     * Generate an action bar to edit the specified message
+     *
+     * @param messageKey message to interact with
+     * @param pictureId id of the picture, null if the message is not a picture
+     * @param isSent true if the message is sent
+     * @return ActionMode.Callback for the action bar corresponding to the messageKey message
+     */
+    private ActionMode.Callback generateCallback(String messageKey, String pictureId, boolean isSent) {
         return new ActionMode.Callback() {
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
@@ -417,7 +479,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 messageLayout.findViewById(R.id.roomActivityMessageElementChooseReactionLayout).setVisibility(View.VISIBLE);
                 messageLayout.findViewById(R.id.roomActivityMessageElementReactionLayout).setVisibility(View.GONE);
 
-                if (isAPicture)
+                if (pictureId != null)
                     menu.findItem(R.id.roomEditMessageMenuEdit).setVisible(false);
                 else
                     messageLayout
@@ -436,7 +498,7 @@ public class RoomActivityMessagesFragment extends Fragment {
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 switch (item.getItemId()) {
                     case R.id.roomEditMessageMenuDelete:
-                        if (isAPicture)
+                        if (pictureId != null)
                             UploadServiceFactory.getAdaptedInstance().deleteImage(pictureId, l -> HelperImages.showToast("Picture successfully removed", getContext()), l -> HelperImages.showToast("An error occurred", getContext()), getContext());
                         databaseAppointment.removeMessage(messageKey);
                         mode.finish();
@@ -461,7 +523,7 @@ public class RoomActivityMessagesFragment extends Fragment {
                 selectedReaction = null;
                 selectedMessage = null;
 
-                if (!isAPicture)
+                if (pictureId == null)
                     messagesDisplayed.get(messageKey)
                             .findViewById(R.id.roomActivityMessageElementMainLayout)
                             .setBackgroundResource(isSent ? R.drawable.background_sent_message : R.drawable.background_received_message);
@@ -469,19 +531,14 @@ public class RoomActivityMessagesFragment extends Fragment {
         };
     }
 
-    private void updateReaction(MessageReaction reaction, View messageView) {
-        View reactionLayout = messageView.findViewById(R.id.roomActivityMessageElementReactionLayout);
-        TextView reactionView = messageView.findViewById(R.id.roomActivityMessageElementReaction);
-        if (reaction != MessageReaction.DEFAULT) {
-            reactionLayout.setVisibility(View.VISIBLE);
-            if (reaction != null)
-                reactionView.setText(context.getText(reaction.getEmoji()));
-        } else {
-            reactionLayout.setVisibility(View.GONE);
-        }
-    }
-
+    /**
+     * Select the reaction corresponding to the string stored in view
+     * Only called when action mode != null
+     * @param view textView
+     */
     private void chooseReaction(View view) {
+        assert actionMode != null;
+
         TextView selectedReactionView = (TextView) view;
         selectedReaction = MessageReaction.getReaction(getContext(), (String) selectedReactionView.getText());
 
@@ -495,7 +552,29 @@ public class RoomActivityMessagesFragment extends Fragment {
 
     }
 
+    /**
+     * Update the messageView to display the given reaction
+     * @param reaction reaction to display
+     * @param messageView message to adapt
+     */
+    private void updateReaction(MessageReaction reaction, View messageView) {
+        View reactionLayout = messageView.findViewById(R.id.roomActivityMessageElementReactionLayout);
+        TextView reactionView = messageView.findViewById(R.id.roomActivityMessageElementReaction);
+        if (reaction != MessageReaction.DEFAULT) {
+            reactionLayout.setVisibility(View.VISIBLE);
+            if (reaction != null)
+                reactionView.setText(context.getText(reaction.getEmoji()));
+        } else {
+            reactionLayout.setVisibility(View.GONE);
+        }
+    }
 
+
+    /**
+     * generate a dialog to edit the specified message
+     * @param messageKey the message to edit
+     * @return a Dialog to edit the specified message
+     */
     private AlertDialog generateEditMessageDialog(String messageKey) {
         TextView messageView = messagesDisplayed.get(messageKey).findViewById(R.id.roomActivityMessageElementMessageContent);
 
@@ -515,20 +594,12 @@ public class RoomActivityMessagesFragment extends Fragment {
                 offlineMsg.setMessage(R.string.offline_edit_message);
 
                 //add ok button
-                offlineMsg.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                });
+                offlineMsg.setPositiveButton(R.string.offline_ok, (dialog1, which) -> {});
                 offlineMsg.show();
             }
         });
 
-        builder.setNeutralButton(getActivity().getString(R.string.genericCancelText), (dialog, id) -> {
-            //Nothing to do
-        });
-
+        builder.setNeutralButton(getActivity().getString(R.string.genericCancelText), (dialog, id) -> {});
 
         builder.setView(dialogView);
 
@@ -539,7 +610,6 @@ public class RoomActivityMessagesFragment extends Fragment {
      * Initializes the path of the database, displays the messages from the database and adds an event listener on the value of the messages
      * in order to update them in case of changes
      */
-
     private void initializeAndDisplayDatabase() {
 
         listener = new MessageChildListener() {
