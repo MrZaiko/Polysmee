@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -63,7 +64,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
 
     //Commands to remove listeners
-    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
+    private final List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
 
     @Nullable
@@ -215,6 +216,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      *
      * @param appointment the appointment to add
      */
+    @SuppressLint("InflateParams")
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
