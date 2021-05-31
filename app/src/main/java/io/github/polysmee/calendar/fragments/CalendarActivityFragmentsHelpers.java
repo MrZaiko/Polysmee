@@ -26,9 +26,7 @@ public class CalendarActivityFragmentsHelpers {
     private CalendarActivityFragmentsHelpers() {
 
     }
-/**
- * Sets the text view on top of the chosen calendar fragment to the current day's date
- */
+
     /**
      * Sets the text view on top of the chosen calendar fragment to the current day's date
      * @param rootView the rootView containing the date layout
