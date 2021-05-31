@@ -124,23 +124,30 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     }
 
     /*
-     * Behavior of the create appointment button, depending if the user is real or fake
+     * Message to announce to the user that they're offline and that their appointment
+     * will be added after they're connected
+     */
+    private void messageCreatingAppointmentOffline(){
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.offline_warning);
+        builder.setMessage(R.string.offline_appointment);
+
+        //add ok button
+        builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.show();
+    }
+    /*
+     * Behavior of the create appointment button, depending on if the user is connected or not
      */
     private void createAppointment() {
         if(!InternetConnection.isOn()) {
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.offline_warning);
-            builder.setMessage(R.string.offline_appointment);
-
-            //add ok button
-            builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
-                    startActivity(intent);
-                }
-            });
-            builder.show();
+            messageCreatingAppointmentOffline();
         } else {
             Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
             startActivity(intent);
