@@ -40,8 +40,6 @@ import io.github.polysmee.room.fragments.HelperImages;
 public class ProfileActivity extends AppCompatActivity implements PreferenceFragmentCompat.OnPreferenceStartFragmentCallback {
 
     private CircleImageView profilePicture;
-    private ImageView pickGallery;
-    private ImageView takePhoto;
     private Uri currentPictureUri;
     private StringValueListener pictureListener;
 
@@ -106,13 +104,11 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
      * The layout to be shown and behavior to be set in case we're visiting our own profile
      */
     protected void attributeSettersOwner() {
-        pickGallery = findViewById(R.id.profileActivitySendPictureButton);
-        takePhoto = findViewById(R.id.profileActivityTakePictureButton);
         profilePicture = findViewById(R.id.profileActivityProfilePictureContainer)
                 .findViewById(R.id.profileActivityProfilePicture);
 
-        pickGallery.setOnClickListener(this::chooseFromGallery);
-        takePhoto.setOnClickListener(this::takePicture);
+        findViewById(R.id.profileActivitySendPictureButton).setOnClickListener(this::chooseFromGallery);
+        findViewById(R.id.profileActivityTakePictureButton).setOnClickListener(this::takePicture);
         pictureListener = setPictureListener();
         MainUser.getMainUser().getProfilePicture_Once_And_Then(pictureListener);
     }
@@ -176,15 +172,10 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                     currentPictureUri = data.getData();
                 case TAKE_PICTURE: //launches the crop activity, in case we choose or took a picture
                     CropImage.activity(currentPictureUri)
-                            //.setMinCropResultSize(200,200)
-                            //.setMaxCropResultSize(200,200)
                             .start(this);
                     break;
                 case CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE: //When we're done with cropping: send it to the edit activity
-                    currentPictureUri = CropImage.getActivityResult(data).getUri();
-                    Intent photoEditIntent = new Intent(this, PictureEditActivity.class);
-                    photoEditIntent.putExtra(PictureEditActivity.PICTURE_URI, currentPictureUri);
-                    startActivityForResult(photoEditIntent, EDIT_PICTURE);
+                    launchEditActivity(data);
                     break;
                 case EDIT_PICTURE: //When done editing: set it as profile picture
                     currentPictureUri = (Uri) data.getExtras().get("data");
@@ -232,7 +223,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         return true;
     }
 
-    /**
+    /*
      * Initializes the request permission requester
      */
     private void initializePermissionRequester() {
@@ -240,7 +231,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                 this.registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
                     //joins the channel if granted and do nothing otherwise
                     if (isGranted) {
-                        takePicture(takePhoto);
+                        takePicture(findViewById(R.id.profileActivityTakePictureButton));
 
                     } else {
                         System.out.println("not granted");
@@ -248,6 +239,9 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                 });
     }
 
+    /*
+     * Download picture with given id
+     */
     private void downloadPicture(String pictureId) {
         UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
             Bitmap bmp = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
@@ -255,4 +249,10 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
         }, ss -> HelperImages.showToast(getString(R.string.genericErrorText), this), this);
     }
 
+    private void launchEditActivity(Intent data){
+        currentPictureUri = CropImage.getActivityResult(data).getUri();
+        Intent photoEditIntent = new Intent(this, PictureEditActivity.class);
+        photoEditIntent.putExtra(PictureEditActivity.PICTURE_URI, currentPictureUri);
+        startActivityForResult(photoEditIntent, EDIT_PICTURE);
+    }
 }
