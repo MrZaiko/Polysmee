@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -106,7 +107,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         getAllPublicAppointmentsForTheDay();
 
         //Initialize spinner
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
+        Spinner spinner = rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.sort_public_appointments_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -209,6 +210,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      * @param appointment the appointment's whose description is created
      * @param calendarEntry the entry which will hold the appointment's information
      */
+    @SuppressLint("SetTextI18n")
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryNumberOfParticipants)).setText('(' + Integer.toString(appointment.getNumberOfParticipants()) + "participant(s))");
@@ -251,6 +253,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      *
      * @param appointment the appointment to add
      */
+    @SuppressLint("InflateParams")
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
