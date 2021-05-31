@@ -33,11 +33,12 @@ import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
 public class Call {
 
     public static final int SUCCESS_CODE = 0;
-    public static final int ERROR_CODE = 1;
+    public static final int ERROR_CODE = -1;
     public static final int TIME_CODE_FREQUENCY = 10;
     public static final int INVALID_TIME_CODE_TIME = 30000;
     private static final int VOLUME_OFF = 0;
     private static final int STANDARD_VOLUME = 100;
+    private static final int DEFAULT_SMOOTHNESS = 3;
     private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK, Constants.VOICE_CHANGER_EFFECT_OLDMAN,
             Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
     private int timeCodeIndicator = 0;
@@ -67,7 +68,7 @@ public class Call {
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-            mRtcEngine.enableAudioVolumeIndication(100, 3, true);
+            mRtcEngine.enableAudioVolumeIndication(STANDARD_VOLUME, DEFAULT_SMOOTHNESS, true);
             mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -75,13 +76,18 @@ public class Call {
         }
     }
 
+    /**
+     *
+     * @param firebaseId
+     * @return the call id of the user whose firebase id is given
+     */
     public int getUid(String firebaseId) {
         for (Map.Entry<Integer, String> uidToId : usersCallId.entrySet()) {
             if (firebaseId.equals(uidToId.getValue()))
                 return uidToId.getKey();
         }
 
-        return -1;
+        return ERROR_CODE;
     }
 
     /**
@@ -150,6 +156,7 @@ public class Call {
      */
     public String generateToken(@NonNull String userId) {
         RtcTokenBuilder tokenBuilder = new RtcTokenBuilder();
+        //set time in seconds
         int timestamp = (int) (System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
         return tokenBuilder.buildTokenWithUserAccount(APP_ID, APP_CERTIFICATE, appointment.getId(), userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
@@ -177,8 +184,6 @@ public class Call {
 
             @Override
             public void onUserOffline(int uid, int reason) {
-
-                System.out.println("offline : " + usersCallId.get(uid));
                 usersInCall.remove(uid);
                 appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
             }
@@ -223,6 +228,7 @@ public class Call {
 
             @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
+                //Time code is set at a given frequency
                 if (timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
                     appointment.setTimeCode(new DatabaseUser(MainUser.getMainUser().getId()), System.currentTimeMillis());
                 }
@@ -306,10 +312,18 @@ public class Call {
 
     //========================== Fragment setters ====================//
 
+    /**
+     * Sets the room attribute to the given value
+     * @param fragment
+     */
     public void setParticipantFragment(Fragment fragment) {
         this.room = (RoomActivityParticipantsFragment) fragment;
     }
 
+    /**
+     * Sets the video room attribute to te given value and initializes the video
+     * @param fragment
+     */
     public void setVideoFragment(Fragment fragment) {
         this.videoRoom = (RoomActivityVideoFragment) fragment;
         eventHandler = new VideoEngineEventHandler();
