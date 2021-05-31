@@ -93,13 +93,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
 
-        Course.getAllCourses_Once_AndThen(s -> {
-                    courses = new ArrayList<>(s);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                            android.R.layout.simple_dropdown_item_1line, courses);
-                    courseSelector.setAdapter(adapter);
-                }
-        );
+        fillCoursesList();
 
         builder = new AlertDialog.Builder(getActivity());
         rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
@@ -107,6 +101,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         getAllPublicAppointmentsForTheDay();
 
         //Initialize spinner
+        spinnerInitialization();
+        return rootView;
+    }
+
+    private void spinnerInitialization(){
         Spinner spinner = rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.sort_public_appointments_array, android.R.layout.simple_spinner_item);
@@ -125,8 +124,16 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
             }
         });
+    }
 
-        return rootView;
+    private void fillCoursesList(){
+        Course.getAllCourses_Once_AndThen(s -> {
+                    courses = new ArrayList<>(s);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, courses);
+                    courseSelector.setAdapter(adapter);
+                }
+        );
     }
 
     private void filter() {
