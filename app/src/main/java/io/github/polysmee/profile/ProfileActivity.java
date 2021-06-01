@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.view.View;
-import android.widget.ImageView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -58,13 +57,11 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
 
     public final static String PROFILE_ID_USER = "io.github.polysmee.profile.visited_user_id";
 
-    private String visitingMode;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-        visitingMode = getIntent().getStringExtra(PROFILE_VISIT_CODE);
+        String visitingMode = getIntent().getStringExtra(PROFILE_VISIT_CODE);
         if (savedInstanceState == null) {
             ProfileActivityInfosFragment profileActivityInfosFragment = new ProfileActivityInfosFragment();
             Bundle bundle = new Bundle();
@@ -152,13 +149,10 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
     }
 
     private StringValueListener setPictureListener() {
-        return new StringValueListener() {
-            @Override
-            public void onDone(String pictureId) {
-                if (!pictureId.equals("")) {
-                    currentPictureId = pictureId;
-                    downloadPicture(pictureId);
-                }
+        return pictureId -> {
+            if (!pictureId.equals("")) {
+                currentPictureId = pictureId;
+                downloadPicture(pictureId);
             }
         };
     }
@@ -166,6 +160,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        assert data != null;
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case PICK_IMAGE: //In case we choose a picture from the gallery
@@ -188,9 +183,7 @@ public class ProfileActivity extends AppCompatActivity implements PreferenceFrag
                     }
                     if (currentPictureId != null) {
                         MainUser.getMainUser().removeProfilePicture();
-                        UploadServiceFactory.getAdaptedInstance().deleteImage(currentPictureId, (id) -> {
-                            MainUser.getMainUser().removeProfilePicture();
-                        }, s -> HelperImages.showToast(getString(R.string.genericErrorText), this), this);
+                        UploadServiceFactory.getAdaptedInstance().deleteImage(currentPictureId, (id) -> MainUser.getMainUser().removeProfilePicture(), s -> HelperImages.showToast(getString(R.string.genericErrorText), this), this);
                     }
                     UploadServiceFactory.getAdaptedInstance().uploadImage(picturesToByte,
                             MainUser.getMainUser().getId(), pictureId -> {
