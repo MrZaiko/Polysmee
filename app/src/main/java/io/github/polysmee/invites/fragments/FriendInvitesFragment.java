@@ -87,6 +87,11 @@ public class FriendInvitesFragment extends Fragment {
         };
     }
 
+    /**
+     * Add a new friend invitation entry to the scroll layout in the fragment
+     * @param userId the user who sent the invitation's id
+     * @param name the user who sent the invitation's friend
+     */
     protected void createFriendInvitationEntry(String userId, String name) {
         User invitee = new DatabaseUser(userId);
         ConstraintLayout friendEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_friends_activity_entry, null);

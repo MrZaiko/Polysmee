@@ -43,21 +43,17 @@ public class AutoCompleteUserAdapter extends ArrayAdapter<UserItemAutocomplete> 
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        if(convertView == null){
-            convertView = LayoutInflater.from(getContext()).inflate(
-                    R.layout.element_autocomplete_user, parent,false
-            );
-            UserItemAutocomplete userItemAutocomplete = (UserItemAutocomplete) getItem(position);
-            if(userItemAutocomplete != null){
-                convertView.setTag(userItemAutocomplete);
-                ((TextView)convertView.findViewById(R.id.autoCompleteEntryName)).setText(userItemAutocomplete.getUsername());
-                if(!userItemAutocomplete.getPictureId().equals("")){
-                    downloadUserProfilePicture(userItemAutocomplete.getPictureId(),(CircleImageView) convertView.findViewById(R.id.autoCompleteProfilePicture));
-                }
-            };
-        }
-
-        return convertView;
+        View view = LayoutInflater.from(getContext()).inflate(R.layout.element_autocomplete_user, parent,false);
+        TextView textView = view.findViewById(R.id.autoCompleteEntryName);
+        CircleImageView imageView = view.findViewById(R.id.autoCompleteProfilePicture);
+        UserItemAutocomplete userItemAutocomplete = (UserItemAutocomplete) getItem(position);
+        if(userItemAutocomplete != null){
+            textView.setText(userItemAutocomplete.getUsername());
+            if(!userItemAutocomplete.getPictureId().equals("")){
+                downloadUserProfilePicture(userItemAutocomplete.getPictureId(),imageView);
+            }
+        };
+        return view;
     }
 
     private final Filter userFilter = new Filter() {
