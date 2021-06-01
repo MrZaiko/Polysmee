@@ -39,8 +39,11 @@ public class Call {
     private static final int VOLUME_OFF = 0;
     private static final int STANDARD_VOLUME = 100;
     private static final int DEFAULT_SMOOTHNESS = 3;
+
+    //Array containing the different voice effects
     private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK, Constants.VOICE_CHANGER_EFFECT_OLDMAN,
             Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
+
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -65,13 +68,13 @@ public class Call {
         talking = new HashSet<>();
         initializeHandler();
 
+        //Initializes the RtcEngine attribute with default audio settings
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
             mRtcEngine.enableAudioVolumeIndication(STANDARD_VOLUME, DEFAULT_SMOOTHNESS, true);
             mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -163,6 +166,7 @@ public class Call {
 
     /**
      * Sets the command attribute to the value given
+     * This command is used to run on the UI thread the update of the users who are currently talking
      *
      * @param command the new value of command
      */
@@ -188,31 +192,28 @@ public class Call {
                 appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
             }
 
-            @Override
-            public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("success");
-            }
 
             @Override
             public void onUserInfoUpdated(int uid, UserInfo userInfo) {
-                System.out.println(uid + " => user account : " + userInfo.userAccount);
                 usersCallId.put(uid, userInfo.userAccount);
             }
 
             @Override
             public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+
+                //Check the users who are currently talking and run the command to make them appear as talking
                 Set<Integer> newUsersInCall = new HashSet<Integer>();
                 if (speakers != null) {
                     for (AudioVolumeInfo audioVolumeInfo : speakers) {
                         int uid = audioVolumeInfo.uid;
-                        if (audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
+                        if (audioVolumeInfo.volume > VOLUME_OFF && usersCallId.containsKey(uid)) {
                             String userId = usersCallId.get(uid);
                             command.execute(true, userId);
                             newUsersInCall.add(uid);
                         }
                     }
                 }
-
+                //Run the command on the users who stopped talking to adapt the UI
                 for (int uid : usersInCall) {
                     if (!newUsersInCall.contains(uid)) {
                         if (talking.contains(uid)) {
@@ -239,7 +240,7 @@ public class Call {
     }
 
     /**
-     * Makes the user leave the channel and removes the handler
+     * Makes the user leave the channel, removes the handler and destroy the engine
      */
     public void destroy() {
         leaveChannel();
