@@ -99,6 +99,14 @@ public class CalendarActivityFragmentsHelpers {
             status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
     }
 
+    /**
+     * Adds the given calendar entry to the give scroll layout
+     * @param rootView the ViewGroup having the original context
+     * @param scrollLayout the scroll layout we'll add the calendar entry to
+     * @param appointmentIdsToView the map containing mappings from appointment ids to the views for that appointment
+     * @param appointment the appointment info of the appointment we're going to add to the scroll layout
+     * @param appointmentEntryLayout the appointment's layout to add
+     */
     public static void addEntryToScrollLayout(ViewGroup rootView, LinearLayout scrollLayout, Map<String,View> appointmentIdsToView, CalendarAppointmentInfo appointment,ConstraintLayout appointmentEntryLayout){
         TextView emptySpace = new TextView(rootView.getContext());
 
