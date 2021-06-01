@@ -2,6 +2,9 @@ package io.github.polysmee.photo.editing;
 
 import android.graphics.ColorMatrix;
 
+/**
+ * Class used to implement the color matrices to be used for applying filters on images
+ */
 public final class Filters {
     public static ColorMatrix binaryFilter() {
         ColorMatrix colorMatrix = new ColorMatrix();
