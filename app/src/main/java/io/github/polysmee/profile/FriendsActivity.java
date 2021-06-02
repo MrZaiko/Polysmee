@@ -1,9 +1,6 @@
 package io.github.polysmee.profile;
 
 import android.content.Context;
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,14 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.room.fragments.HelperImages;
 
 public class FriendsActivity extends AppCompatActivity {
 
