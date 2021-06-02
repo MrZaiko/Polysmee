@@ -240,6 +240,10 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         invitesList.addView(newBanLayout);
     }
 
+    /**
+     * Used to add the invited user to the internal list and call the function which handles the UI side of things
+     * @param s username of the user to be invited
+     */
     protected void addNewInvite(String s) {
         invites.add(s);
         dataPasser.dataPass(invites, AppointmentActivity.INVITES);
@@ -253,6 +257,11 @@ public class AppointmentCreationAddUserFragment extends Fragment {
         addInvite(s);
     }
 
+    /**
+     * Used to create and display error messages when necessary
+     * @param builder builder required for this
+     * @param errorMessage the error message
+     */
     protected void createErrorMessage(AlertDialog.Builder builder, String errorMessage) {
         builder.setMessage(errorMessage)
                 .setCancelable(false)

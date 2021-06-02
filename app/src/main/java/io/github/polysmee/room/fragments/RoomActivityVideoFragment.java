@@ -146,10 +146,6 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
         LOGGER.info("I left the channel");
     }
 
-    public String getAppointmentId() {
-        return requireArguments().getString(VIDEO_KEY);
-    }
-
     /**
      * Remove videos frames according to this logic:
      * - If uid == -1, this means that the local user quit the call; this deletes
