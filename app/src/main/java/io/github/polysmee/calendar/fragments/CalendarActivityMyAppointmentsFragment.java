@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -63,7 +64,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     private final Map<String, CalendarAppointmentInfo> appointmentInfoMap = new HashMap<>();
 
     //Commands to remove listeners
-    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
+    private final List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
 
     @Nullable
@@ -124,23 +125,30 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     }
 
     /*
-     * Behavior of the create appointment button, depending if the user is real or fake
+     * Message to announce to the user that they're offline and that their appointment
+     * will be added after they're connected
+     */
+    private void messageCreatingAppointmentOffline(){
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
+        builder.setTitle(R.string.offline_warning);
+        builder.setMessage(R.string.offline_appointment);
+
+        //add ok button
+        builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
+                startActivity(intent);
+            }
+        });
+        builder.show();
+    }
+    /*
+     * Behavior of the create appointment button, depending on if the user is connected or not
      */
     private void createAppointment() {
         if(!InternetConnection.isOn()) {
-            android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(getContext());
-            builder.setTitle(R.string.offline_warning);
-            builder.setMessage(R.string.offline_appointment);
-
-            //add ok button
-            builder.setPositiveButton(R.string.offline_ok, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
-                    startActivity(intent);
-                }
-            });
-            builder.show();
+            messageCreatingAppointmentOffline();
         } else {
             Intent intent = new Intent(rootView.getContext(), AppointmentActivity.class);
             startActivity(intent);
@@ -148,10 +156,10 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
     }
 
-
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
+     * @param infos all the user's appointments
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, false,true);
@@ -164,9 +172,10 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
     /**
      * Creates an appointment's textual description following a certain format
-     * to show in the calendar
+     * to show in the calendar in an entry
      *
      * @param appointment the appointment's whose description is created
+     * @param calendarEntry the entry which will hold the appointment's information
      */
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
@@ -190,8 +199,8 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
 
     /**
-     * Everytime the user clicks on an appointment's description in his daily, the corresponding
-     * room activity is launched.
+     * Every time the user clicks on an appointment's description in his daily calendar, the corresponding
+     * room activity is launched if the appointment is ongoing or has ended.
      *
      * @param appointmentId the appointment's id which will see its room launched
      *                      when clicking on its description.
@@ -207,17 +216,12 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
      *
      * @param appointment the appointment to add
      */
+    @SuppressLint("InflateParams")
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
         appointmentEntryLayout.setOnLongClickListener(l -> exportToCalendarDialog(appointment));
-
-        TextView emptySpace = new TextView(rootView.getContext());
-
-        scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
-        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
+        CalendarActivityFragmentsHelpers.addEntryToScrollLayout(rootView,scrollLayout,appointmentIdsToView,appointment,appointmentEntryLayout);
     }
 
     private boolean exportToCalendarDialog(CalendarAppointmentInfo appointment) {
@@ -243,7 +247,7 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
     }
 
     /**
-     * Adds a listener to the user's appointments so that everytime one is added/removed, the layout
+     * Adds a listener to the user's appointments so that every time one is added/removed, the layout
      * is updated. It also takes care of determining what should happen to the calendar's layout
      * if an appointment's parameters changes.
      */
@@ -258,13 +262,15 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
         commandsToRemoveListeners.add((x,y) -> user.removeAppointmentsListener(userAppointmentsListener));
     }
 
+    /**
+     *
+     * @return the listener that will be set in the method "setListenerUserAppointments"
+     */
     protected StringSetValueListener currentDayUserAppointmentsListener() {
 
         return setOfIds -> {
             Set<String> deletedAppointments = new HashSet<>(appointmentSet);
             Set<String> newAppointments = new HashSet<>(setOfIds);
-
-            //two loops: one for the appointments that are gone, and another for the new appointments
 
             deletedAppointments.removeAll(newAppointments); //keep the deleted appointments
             newAppointments.removeAll(appointmentSet); //keep the new appointmnets
@@ -280,12 +286,12 @@ public class CalendarActivityMyAppointmentsFragment extends Fragment {
 
 
                 appointmentSet.addAll(newAppointments); //add all new appointments
-                if (newAppointments.isEmpty()) {
+                if (newAppointments.isEmpty()) { //if empty, update the layout and return
                     scrollLayout.removeAllViewsInLayout();
                     changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
                     return;
                 }
-                for (String id : newAppointments) { //iterate only on the new appointments, to set their listener
+                for (String id : newAppointments) { //iterate only on the new appointments, to set their listener only once
                     Appointment appointment = new DatabaseAppointment(id);
                     CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("", "", 0, 0, id,0);
 
