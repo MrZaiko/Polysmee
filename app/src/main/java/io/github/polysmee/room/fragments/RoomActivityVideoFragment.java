@@ -223,10 +223,12 @@ public class RoomActivityVideoFragment extends Fragment implements DuringCallEve
 
     public void setTalking(int id, boolean isTalking) {
         SurfaceView surfaceView = (SurfaceView) idsToVideoFrames.get(id).getChildAt(0);
+        if(surfaceView != null){
         if (isTalking)
             runOnUiThread(() -> surfaceView.setBackgroundResource(R.drawable.background_participant_talking_video));
         else
             runOnUiThread(() -> surfaceView.setBackgroundResource(0));
+        }
     }
 
 }
