@@ -1,5 +1,6 @@
 package io.github.polysmee.calendar.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -66,8 +67,8 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
     private ArrayList<String> courses;
     private String currentCourse = "";
-    AlertDialog.Builder builder;
-    AutoCompleteTextView courseSelector;
+    private AlertDialog.Builder builder;
+    private AutoCompleteTextView courseSelector;
     private boolean sortChronologically = true;
     private final static int SORT_CHRONOLOGICALLY_INDEX = 0;
 
@@ -92,13 +93,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
 
-        Course.getAllCourses_Once_AndThen(s -> {
-                    courses = new ArrayList<>(s);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                            android.R.layout.simple_dropdown_item_1line, courses);
-                    courseSelector.setAdapter(adapter);
-                }
-        );
+        fillCoursesList();
 
         builder = new AlertDialog.Builder(getActivity());
         rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
@@ -106,7 +101,12 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         getAllPublicAppointmentsForTheDay();
 
         //Initialize spinner
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
+        spinnerInitialization();
+        return rootView;
+    }
+
+    private void spinnerInitialization(){
+        Spinner spinner = rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
                 R.array.sort_public_appointments_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -124,8 +124,16 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
             }
         });
+    }
 
-        return rootView;
+    private void fillCoursesList(){
+        Course.getAllCourses_Once_AndThen(s -> {
+                    courses = new ArrayList<>(s);
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                            android.R.layout.simple_dropdown_item_1line, courses);
+                    courseSelector.setAdapter(adapter);
+                }
+        );
     }
 
     private void filter() {
@@ -181,9 +189,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         super.onDestroy();
     }
 
+
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
+     * @param infos the user's appointments
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
         List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true, sortChronologically);
@@ -202,10 +212,12 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
     /**
      * Creates an appointment's textual description following a certain format
-     * to show in the calendar
+     * to show in the calendar in an entry
      *
      * @param appointment the appointment's whose description is created
+     * @param calendarEntry the entry which will hold the appointment's information
      */
+    @SuppressLint("SetTextI18n")
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryNumberOfParticipants)).setText('(' + Integer.toString(appointment.getNumberOfParticipants()) + "participant(s))");
@@ -248,16 +260,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      *
      * @param appointment the appointment to add
      */
+    @SuppressLint("InflateParams")
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
-
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
-        TextView emptySpace = new TextView(rootView.getContext());
-
-        scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
-        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
+        CalendarActivityFragmentsHelpers.addEntryToScrollLayout(rootView,scrollLayout,appointmentIdsToView,appointment,appointmentEntryLayout);
     }
 
 
