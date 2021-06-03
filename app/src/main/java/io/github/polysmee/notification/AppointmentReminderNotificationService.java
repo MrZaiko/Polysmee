@@ -8,9 +8,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.IBinder;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.PreferenceManager;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,6 +88,7 @@ public final class AppointmentReminderNotificationService extends Service {
      *
      * @return the local SharePreferences used by this class.
      */
+    @NotNull
     private SharedPreferences getLocalSharedPreference() {
         return this.getSharedPreferences(this.getResources().getString(
                 R.string.shared_preference_key_appointment_reminder_notification_service),
@@ -103,8 +105,8 @@ public final class AppointmentReminderNotificationService extends Service {
      * @param localSetUpAppointments the SharedPreference that contain all the appointment with
      *                               reminder notification already set up.
      */
-    private void removeAppointmentReminderNotification(@NonNull String appointmentId,
-                                                       @NonNull SharedPreferences localSetUpAppointments) {
+    private void removeAppointmentReminderNotification(@NotNull String appointmentId,
+                                                       @NotNull SharedPreferences localSetUpAppointments) {
         int appointmentNotificationTimeMin = localSetUpAppointments.getInt(appointmentId,
                 NOT_SET_UP_APPOINTMENT_REMINDER_NOTIFICATION_TIME);
         //not set up if it take default value
@@ -150,7 +152,7 @@ public final class AppointmentReminderNotificationService extends Service {
     // Launched everyTime a update to the set of appointments of the main user change,
     // so that the appointment reminder notification time of apparition are consistent with
     // the database.
-    private void mainUserAppointmentsListenerUpdate(Set<String> o) {
+    private void mainUserAppointmentsListenerUpdate(@NotNull Set<String> o) {
         unsetSetUpAppointmentsThatTheUserHasLeave(o);
         //add listener to all the appointments that do not have listener set up yet
         setUpListenersForMainUserAppointments(o);
@@ -159,10 +161,10 @@ public final class AppointmentReminderNotificationService extends Service {
     /**
      * Adds listener to all the appointments that do not have a listener set up yet
      *
-     * @param UserAppointmentsId the appointments id the main user has.
+     * @param userAppointmentsId the appointments id the main user has.
      */
-    private void setUpListenersForMainUserAppointments(Set<String> UserAppointmentsId) {
-        for (String appointmentId : UserAppointmentsId) {
+    private void setUpListenersForMainUserAppointments(@NotNull Set<String> userAppointmentsId) {
+        for (String appointmentId : userAppointmentsId) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
                 LongValueListener startTimeValueListener = (long startTime) -> {
                     Intent updateNotification = new Intent(this,
@@ -182,18 +184,31 @@ public final class AppointmentReminderNotificationService extends Service {
      * Removes all the appointment reminder notifications that are set up in the system but that
      * doesn't exist for the main user anymore. And update correctly the data used by the service.
      *
-     * @param UserAppointmentsId the appointments id the main user has.
+     * @param userAppointmentsId the appointments id the main user has.
      */
-    private void unsetSetUpAppointmentsThatTheUserHasLeave(Set<String> UserAppointmentsId) {
+    private void unsetSetUpAppointmentsThatTheUserHasLeave(@NotNull Set<String> userAppointmentsId) {
         SharedPreferences localSetUpAppointmentReminderNotifications = getLocalSharedPreference();
+        ArrayList<String> appointmentToRemove = getSetUpAppointmentsToRemove(userAppointmentsId,
+                localSetUpAppointmentReminderNotifications);
+        removeSetUpAppointments(localSetUpAppointmentReminderNotifications, appointmentToRemove);
+    }
+
+    @NotNull
+    private ArrayList<String> getSetUpAppointmentsToRemove(@NotNull Set<String> userAppointmentsId,
+                                                           @NotNull SharedPreferences localSetUpAppointmentReminderNotifications) {
+
         Set<String> localSetUpAppointments =
                 localSetUpAppointmentReminderNotifications.getAll().keySet();
-        ArrayList<String> appointmentToRemove = new ArrayList<>();
+        ArrayList<String> appointmentsToRemove = new ArrayList<>();
         for (String appointmentId : localSetUpAppointments) {
-            if (!UserAppointmentsId.contains(appointmentId)) {
-                appointmentToRemove.add(appointmentId);
+            if (!userAppointmentsId.contains(appointmentId)) {
+                appointmentsToRemove.add(appointmentId);
             }
         }
+        return appointmentsToRemove;
+    }
+
+    private void removeSetUpAppointments(@NotNull SharedPreferences localSetUpAppointmentReminderNotifications, @NotNull ArrayList<String> appointmentToRemove) {
         for (String appointmentId : appointmentToRemove) {
             if (appointmentStartTimeListeners.containsKey(appointmentId)) {
                 new DatabaseAppointment(appointmentId)
