@@ -18,8 +18,8 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.DatabaseSingleton;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
@@ -49,22 +49,22 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         FirebaseApp.clearInstancesForTest();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentNotOwnerTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("description").setValue(userDescription2);
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentNotOwnerTest@gmail.com", "fakePassword"));
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("description").setValue(userDescription2);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(id2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
     }
 
     @Test
@@ -86,7 +86,7 @@ public class RoomActivityParticipantsFragmentNotOwnerTest {
         Thread.sleep(1000);
         clickOn(R.id.roomActivityManageParticipantAsFriendButton);
         Thread.sleep(3000);
-        HashMap usr = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("friendsInvites").get()).getValue();
+        HashMap usr = (HashMap) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("friendsInvites").get()).getValue();
         assertEquals(1, usr.size());
     }
 

@@ -29,7 +29,7 @@ public class LoginCheckActivity extends AppCompatActivity {
             FirebaseDatabase.getInstance().setPersistenceEnabled(true);
         }
 
-        FirebaseUser user = AuthenticationFactory.getAdaptedInstance().getCurrentUser();
+        FirebaseUser user = AuthenticationSingleton.getAdaptedInstance().getCurrentUser();
 
         InternetConnection.addConnectionListener(getApplicationContext());
 

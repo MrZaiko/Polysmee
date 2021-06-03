@@ -21,9 +21,9 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
@@ -41,21 +41,21 @@ public class DatabaseUserTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(username);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription);
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseUserTest@gmail.com", "fakePassword"));
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(username);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription);
         Thread.sleep(1000);
     }
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
@@ -88,13 +88,13 @@ public class DatabaseUserTest {
 
     @Test
     public void getId() {
-        assertEquals(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid(), MainUser.getMainUser().getId());
+        assertEquals(AuthenticationSingleton.getAdaptedInstance().getCurrentUser().getUid(), MainUser.getMainUser().getId());
     }
 
     @Test
     public void addAppointment() throws ExecutionException, InterruptedException {
         MainUser.getMainUser().addAppointment(new DatabaseAppointment("AZERTY"), "");
-        FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
+        FirebaseDatabase db = DatabaseSingleton.getAdaptedInstance();
         String id = Tasks.await(db.getReference()
                 .child("users")
                 .child(MainUser.getMainUser().getId())
@@ -135,9 +135,9 @@ public class DatabaseUserTest {
     @Test
     public void createNewUserAppointment() {
         String id = MainUser.getMainUser().createNewUserAppointment(0, 1, "AICC", "rév", false);
-        String ac = DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).getKey();
+        String ac = DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(id).getKey();
         assertEquals(id, ac);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(id).setValue(null);
     }
 
     @Test
@@ -168,7 +168,7 @@ public class DatabaseUserTest {
             lock.unlock();
             MainUser.getMainUser().getAppointments_Once_AndThen((e) -> {
             });
-            Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
+            Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
 
@@ -200,7 +200,7 @@ public class DatabaseUserTest {
             lock.unlock();
             MainUser.getMainUser().getInvites_Once_AndThen((e) -> {
             });
-            Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
+            Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(apid).removeValue());
         }
     }
 

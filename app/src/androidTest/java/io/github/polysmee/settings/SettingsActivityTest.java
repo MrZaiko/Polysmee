@@ -14,8 +14,8 @@ import org.junit.runner.RunWith;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.DatabaseSingleton;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;
@@ -35,12 +35,12 @@ public class SettingsActivityTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
-        AuthenticationFactory.setTest();
+        AuthenticationSingleton.setLocal();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword(userEmail, userPassword));
     }
 
     @Test

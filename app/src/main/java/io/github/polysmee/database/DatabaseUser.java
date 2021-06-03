@@ -8,10 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.login.MainUser;
+import io.github.polysmee.database.databaselisteners.valuelisteners.MapStringStringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 
 public final class DatabaseUser implements User {
 
@@ -37,7 +36,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void addAppointment(Appointment appointment, String eventId) {
-        DatabaseFactory.getAdaptedInstance()
+        DatabaseSingleton.getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
                 .child(APPOINTMENTS_RELATIVE_PATH)
@@ -47,7 +46,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeAppointment(Appointment appointment) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -58,7 +57,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getInvitesAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -68,7 +67,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getInvites_Once_AndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -78,7 +77,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeInvitesListener(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -88,7 +87,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void addInvite(Appointment newAppointment) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -99,7 +98,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeInvite(Appointment appointment) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -111,7 +110,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getNameAndThen(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -121,7 +120,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getName_Once_AndThen(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -135,7 +134,7 @@ public final class DatabaseUser implements User {
         if (value.isEmpty()) {
             return;
         }
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -145,7 +144,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeNameListener(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -155,7 +154,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getAppointmentsAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -165,7 +164,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getAppointmentsAndEventIdsAndThen(MapStringStringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -175,7 +174,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getAppointmentsAndEventIds_Once_AndThen(MapStringStringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -185,7 +184,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getAppointmentEventId_Once_AndThen(Appointment appointment, StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -196,7 +195,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void setAppointmentEventId(Appointment appointment, String eventId) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -207,7 +206,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getAppointments_Once_AndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -217,7 +216,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeAppointmentsListener(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -227,7 +226,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public String createNewUserAppointment(long start, long duration, String course, String name, boolean isPrivate) {
-        DatabaseReference ref = DatabaseFactory.getAdaptedInstance().getReference("appointments").push();
+        DatabaseReference ref = DatabaseSingleton.getAdaptedInstance().getReference("appointments").push();
 
         Map<String, Object> newAppo = new HashMap<>();
         newAppo.put("owner", self_id);
@@ -248,7 +247,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void addFriend(User user) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -259,7 +258,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeFriend(User user) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -270,7 +269,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getFriendsAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -280,7 +279,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getFriends_Once_And_Then(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -290,7 +289,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeFriendsListener(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -300,7 +299,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void setProfilePicture(String pictureId) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -310,7 +309,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeProfilePicture() {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -320,7 +319,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getProfilePictureAndThen(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -330,7 +329,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getProfilePicture_Once_And_Then(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -340,7 +339,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeProfilePictureListener(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -349,7 +348,7 @@ public final class DatabaseUser implements User {
     }
     @Override
     public void setDescription(String description) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -360,7 +359,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getDescriptionAndThen(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -371,7 +370,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getDescription_Once_AndThen(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -381,7 +380,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeDescriptionListener(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -391,7 +390,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void sendFriendInvitation(User user) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(user.getId())
@@ -402,7 +401,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeFriendInvitation(User user) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -413,7 +412,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getFriendsInvitationsAndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -423,7 +422,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getFriendsInvitations_Once_And_Then(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -433,7 +432,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void removeFriendsInvitationsListener(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -444,7 +443,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void getCalendarId_Once_AndThen(StringValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)
@@ -454,7 +453,7 @@ public final class DatabaseUser implements User {
 
     @Override
     public void setCalendarId(String calendarId) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference(USERS_RELATIVE_PATH)
                 .child(self_id)

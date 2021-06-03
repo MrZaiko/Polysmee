@@ -2,8 +2,8 @@ package io.github.polysmee.database;
 
 import android.content.Context;
 
-import io.github.polysmee.database.databaselisteners.DownloadValueListener;
-import io.github.polysmee.database.databaselisteners.LoadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.DownloadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LoadValueListener;
 
 public interface UploadService {
 

@@ -17,10 +17,10 @@ import org.junit.runners.JUnit4;
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.UploadServiceFactory;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
@@ -69,33 +69,33 @@ public class RoomActivityMessagesFragmentTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
         InternetConnection.setManuallyInternetConnectionForTests(true);
-        UploadServiceFactory.setTest(true);
+        UploadServiceFactory.setLocal(true);
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), pictureId, s -> {
         }, s -> {
         }, getApplicationContext());
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityMessagesFragmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(pictureId);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(pictureId);
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityMessagesFragmentTest@gmail.com", "fakePassword"));
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(pictureId);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(pictureId);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("sender").setValue(MainUser.getMainUser().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("content").setValue(pictureId);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("isAPicture").setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("content").setValue(firstMessage);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("sender").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("sender").setValue(MainUser.getMainUser().getId());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("content").setValue(pictureId);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(thirdMessageId).child("isAPicture").setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("content").setValue(firstMessage);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(firstMessageId).child("sender").setValue(id2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
     }
 
     @Test
@@ -122,7 +122,7 @@ public class RoomActivityMessagesFragmentTest {
         closeSoftKeyboard();
         clickDialogPositiveButton();
         assertDisplayed(newMsg);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
     }
 
     @Test
@@ -143,8 +143,8 @@ public class RoomActivityMessagesFragmentTest {
 
         assertTrue(thrown);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("sender").setValue(MainUser.getMainUser().getId());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("messages").child(secondMessageId).child("content").setValue(secondMessage);
     }
 
     @Test

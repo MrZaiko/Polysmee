@@ -1,18 +1,14 @@
-package io.github.polysmee.database.databaselisteners;
+package io.github.polysmee.database.databaselisteners.valuelisteners;
 
 import androidx.annotation.NonNull;
 
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
-public interface StringSetValueListener extends ValueEventListener {
-
-    void onDone(Set<String> o);
+public interface StringSetValueListener extends ValueListener<Set<String>> {
 
     @Override
     default void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -21,11 +17,6 @@ public interface StringSetValueListener extends ValueEventListener {
             onDone(retrieved.keySet());
         else
             onDone(new HashSet<>());
-    }
-
-    @Override
-    default void onCancelled(@NonNull DatabaseError error) {
-
     }
 
 }

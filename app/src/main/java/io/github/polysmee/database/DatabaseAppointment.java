@@ -2,12 +2,12 @@ package io.github.polysmee.database;
 
 import com.google.firebase.database.ValueEventListener;
 
-import io.github.polysmee.database.databaselisteners.BooleanChildListener;
-import io.github.polysmee.database.databaselisteners.BooleanValueListener;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.MessageChildListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.childListeners.BooleanChildListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.childListeners.MessageChildListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 
 public class DatabaseAppointment implements Appointment {
 
@@ -18,7 +18,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     private void getStuffAndThen(String stuff, ValueEventListener l) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -27,7 +27,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     private void getStuff_Once_AndThen(String stuff, ValueEventListener l) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -36,7 +36,7 @@ public class DatabaseAppointment implements Appointment {
     }
 
     private void removeStuffListener(String stuff, ValueEventListener l) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -175,7 +175,7 @@ public class DatabaseAppointment implements Appointment {
         if (startTime < 0)
             return;
 
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -188,7 +188,7 @@ public class DatabaseAppointment implements Appointment {
         if (duration < 0 || duration > 3600000 * 4)
             return;
 
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -198,7 +198,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void setCourse(String course) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -208,7 +208,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void setTitle(String title) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -218,7 +218,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addParticipant(User newParticipant) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -229,7 +229,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeParticipant(User participant) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -240,7 +240,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void getBansAndThen(StringSetValueListener s) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -250,7 +250,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void getBans_Once_AndThen(StringSetValueListener s) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -260,7 +260,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeBansListener(StringSetValueListener s) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -270,7 +270,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void setPrivate(boolean isPrivate) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -280,7 +280,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addInvite(User newParticipant) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -291,7 +291,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeInvite(User participant) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -302,7 +302,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addBan(User banned) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -313,7 +313,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeBan(User unbanned) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -324,7 +324,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addInCallUser(User inCall) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -335,7 +335,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void muteUser(User user, boolean muted) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -346,7 +346,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeOfCall(User outOfCall) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -357,7 +357,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addInCallListener(BooleanChildListener listener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -367,7 +367,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeInCallListener(BooleanChildListener listener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -377,7 +377,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addMessage(Message message) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -389,7 +389,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeMessage(String key) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -400,7 +400,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void editMessage(String key, String newContent) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -412,7 +412,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void editMessageReaction(String key, int newContent) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -424,7 +424,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void getMessageReaction_Once_AndThen(String key, LongValueListener listener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -436,7 +436,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void addMessageListener(MessageChildListener listener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -446,7 +446,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void removeMessageListener(MessageChildListener listener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -457,7 +457,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void getTimeCodeOnceAndThen(User user, LongValueListener listener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -470,7 +470,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void setTimeCode(User user, Long timeCode) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
@@ -488,7 +488,7 @@ public class DatabaseAppointment implements Appointment {
                 user.removeAppointment(this);
             }
         });
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id).removeValue();
@@ -496,7 +496,7 @@ public class DatabaseAppointment implements Appointment {
 
     @Override
     public void setOwner(User user) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .child(id)
