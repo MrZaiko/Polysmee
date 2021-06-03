@@ -23,7 +23,7 @@ import java.util.Set;
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
 public class FriendsActivity extends AppCompatActivity {

@@ -5,12 +5,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import io.github.polysmee.database.databaselisteners.BooleanChildListener;
-import io.github.polysmee.database.databaselisteners.BooleanValueListener;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.MessageChildListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.childListeners.BooleanChildListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.childListeners.MessageChildListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 
 /**
  * A generic appointment

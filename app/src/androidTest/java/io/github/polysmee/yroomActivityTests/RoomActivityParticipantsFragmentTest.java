@@ -26,7 +26,7 @@ import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.database.UploadServiceFactory;
-import io.github.polysmee.database.databaselisteners.BooleanChildListener;
+import io.github.polysmee.database.databaselisteners.childListeners.BooleanChildListener;
 import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;

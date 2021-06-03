@@ -21,8 +21,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;

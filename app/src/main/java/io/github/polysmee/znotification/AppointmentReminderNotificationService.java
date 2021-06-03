@@ -20,8 +20,8 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
 

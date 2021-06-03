@@ -5,6 +5,13 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.DownloadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LoadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 

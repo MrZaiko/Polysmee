@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.MapStringStringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 
 public final class DatabaseUser implements User {
 

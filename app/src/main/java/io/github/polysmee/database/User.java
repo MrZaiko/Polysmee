@@ -1,8 +1,8 @@
 package io.github.polysmee.database;
 
-import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.MapStringStringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 
 /**
  * A generic user
