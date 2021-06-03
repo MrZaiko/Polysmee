@@ -40,6 +40,47 @@ final class AppointmentReminderNotificationService extends Service {
     private final StringSetValueListener mainUserStringSetValueListener =
             this::mainUserAppointmentsListenerUpdate;
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        //it only accept intent with a startTime and a appointmentId extra
+        super.onStartCommand(intent, flags, startId);
+        if (intent == null) {
+            return START_STICKY;
+        }
+        long startTime = intent.getLongExtra(INTENT_KEY_EXTRA_START_TIME, -1);
+        String appointmentId = intent.getStringExtra(INTENT_KEY_EXTRA_APPOINTMENT_ID);
+        if (startTime == -1 || appointmentId == null) {
+            return START_STICKY;
+        }
+        updateAppointmentReminderNotification(startTime, appointmentId);
+        return START_STICKY;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        MainUser.getMainUser().getAppointmentsAndThen(mainUserStringSetValueListener);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        MainUser.getMainUser().removeAppointmentsListener(mainUserStringSetValueListener);
+        Set<Map.Entry<String, LongValueListener>> appointmentIdAndStartTimeListeners =
+                appointmentStartTimeListeners.entrySet();
+        for (Map.Entry<String, LongValueListener> appointmentIdAndStartTimeListener :
+                appointmentIdAndStartTimeListeners) {
+            new DatabaseAppointment(appointmentIdAndStartTimeListener.getKey())
+                    .removeStartListener(appointmentIdAndStartTimeListener.getValue());
+        }
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        //we don't allow bindings
+        return null;
+    }
 
     /**
      * Gets the SharePreference used only by this class.
@@ -51,7 +92,6 @@ final class AppointmentReminderNotificationService extends Service {
                 R.string.sharedPreferenceKeyAppointmentReminderNotificationService),
                 Context.MODE_PRIVATE);
     }
-
 
     /**
      * Removes the appointment reminder notification of the appointment from alarmManager and update
@@ -106,7 +146,6 @@ final class AppointmentReminderNotificationService extends Service {
         return PendingIntent.getBroadcast(this, appointmentReminderNotificationTimeMin,
                 notificationIntent, 0);
     }
-
 
     // Launched everyTime a update to the set of appointments of the main user change,
     // so that the appointment reminder notification time of apparition are consistent with
@@ -166,23 +205,6 @@ final class AppointmentReminderNotificationService extends Service {
         }
     }
 
-
-    @Override
-    //it only accept intent with a startTime and a appointmentId extra
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        super.onStartCommand(intent, flags, startId);
-        if (intent == null) {
-            return START_STICKY;
-        }
-        long startTime = intent.getLongExtra(INTENT_KEY_EXTRA_START_TIME, -1);
-        String appointmentId = intent.getStringExtra(INTENT_KEY_EXTRA_APPOINTMENT_ID);
-        if (startTime == -1 || appointmentId == null) {
-            return START_STICKY;
-        }
-        updateAppointmentReminderNotification(startTime, appointmentId);
-        return START_STICKY;
-    }
-
     private void updateAppointmentReminderNotification(long startTime, String appointmentId) {
         if (startTime > System.currentTimeMillis()) {
             SharedPreferences localAppointmentsReminderTime = getLocalSharedPreference();
@@ -205,33 +227,6 @@ final class AppointmentReminderNotificationService extends Service {
                     TimeUnit.MINUTES.toMillis(appointmentReminderNotificationTimeMin),
                     getReminderNotificationPendingIntent(appointmentReminderNotificationTimeMin));
         }
-    }
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        MainUser.getMainUser().getAppointmentsAndThen(mainUserStringSetValueListener);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        MainUser.getMainUser().removeAppointmentsListener(mainUserStringSetValueListener);
-        Set<Map.Entry<String, LongValueListener>> appointmentIdAndStartTimeListeners =
-                appointmentStartTimeListeners.entrySet();
-        for (Map.Entry<String, LongValueListener> appointmentIdAndStartTimeListener :
-                appointmentIdAndStartTimeListeners) {
-            new DatabaseAppointment(appointmentIdAndStartTimeListener.getKey())
-                    .removeStartListener(appointmentIdAndStartTimeListener.getValue());
-        }
-    }
-
-
-    @Nullable
-    @Override
-    public IBinder onBind(Intent intent) {
-        //we don't allow bindings
-        return null;
     }
 
 }

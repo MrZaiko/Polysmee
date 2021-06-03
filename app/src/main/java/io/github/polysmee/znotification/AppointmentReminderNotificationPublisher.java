@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.provider.Settings;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
@@ -18,52 +17,26 @@ import io.github.polysmee.login.LoginCheckActivity;
 
 
 /**
- * greatly inspired by https://developer.android.com/training/notify-user/build-notification#java
- * It is the broadcast receiver class that will receive broadcasts at certain times (specified in
- * in the values resources, in appointmentReminderNotification.xml) before appointments, and will create
- * a notification at each broadcast received to remind the user that he/she has a appointment coming soon
+ * A broadcast receiver class that create the appointment reminder notifications.
+ *
+ * Inspired by https://developer.android.com/training/notify-user/build-notification#java.
  **/
-public final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
+final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
-    private final static int NOTIFICATION_LOCK_SCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
-    private final static long[] vibrationPattern = {0, 250, 250, 250};
-
-
-    /**
-     * Create the notification channel for the reminder notification
-     * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
-     * "It's safe to call this repeatedly because creating an existing notification channel performs no operation."
-     * Later when doing the notification with resource file move it to the app launch as suggested
-     */
-
-    private static void createNotificationChannel(Context context) {
-        assert context != null;
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(context.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
-                    , context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
-            channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
-            channel.setLockscreenVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY);
-            channel.enableVibration(true);
-            channel.setVibrationPattern(vibrationPattern);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }
+    private final static int NOTIFICATION_LOCK_SCREEN_VISIBILITY =
+            NotificationCompat.VISIBILITY_PRIVATE;
+    private final static long[] VIBRATION_PATTERN = {0, 250, 250, 250};
 
     @Override
     public void onReceive(@NonNull Context context, @NonNull Intent intent) {
         Intent fullScreenIntent = new Intent(context, LoginCheckActivity.class);
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(context, 0,
                 fullScreenIntent, 0);
-
         createNotificationChannel(context);
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(context, context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
+                context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.title_appointment_reminder_notification_notification))
                 .setContentText(context.getResources().getString(R.string.text_appointment_reminder_notification_notification))
@@ -72,9 +45,37 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
                 .setAutoCancel(true)
-                .setVibrate(vibrationPattern);
+                .setVibrate(VIBRATION_PATTERN);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
+    }
+
+    /**
+     * Create the notification channel for the reminder notifications.
+     *
+     * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
+     * "It's safe to call this repeatedly because creating an existing notification channel
+     * performs no operation." Later when doing the notification with resource file move it to
+     * the app launch as suggested.
+     */
+    private static void createNotificationChannel(Context context) {
+        assert context != null;
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel =
+                    new NotificationChannel(context.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
+                    , context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
+            channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
+            channel.setLockscreenVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(VIBRATION_PATTERN);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager =
+                    context.getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
 
