@@ -6,6 +6,9 @@ import java.util.List;
 
 import io.agora.rtc.IRtcEngineEventHandler;
 
+/**
+ * Class used to implement the callback on the video events
+ */
 public class VideoEngineEventHandler extends IRtcEngineEventHandler {
 
     private final List<AGEventHandler> handlers;
@@ -61,7 +64,6 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
 
     @Override
     public void onRemoteVideoStateChanged(int uid, int state, int reason, int elapsed) {
-        System.out.println("onRemoteUserStateChanged " + (uid & 0xFFFFFFFFL) + " " + reason + " " + elapsed);
         for (AGEventHandler handler : handlers) {
             if (handler instanceof DuringCallEventHandler) {
                 ((DuringCallEventHandler) handler).onRemoteVideoStateChanged(uid, state, reason, elapsed);
@@ -72,7 +74,6 @@ public class VideoEngineEventHandler extends IRtcEngineEventHandler {
 
     @Override
     public void onLocalVideoStateChanged(int localVideoState, int error) {
-        System.out.println("onLocalVideoStateChanged" + localVideoState);
         for (AGEventHandler handler : handlers) {
             if (handler instanceof DuringCallEventHandler) {
                 ((DuringCallEventHandler) handler).onLocalVideoStateChanged(localVideoState, error);

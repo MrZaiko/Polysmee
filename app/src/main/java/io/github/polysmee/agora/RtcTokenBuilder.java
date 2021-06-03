@@ -2,6 +2,8 @@ package io.github.polysmee.agora;
 
 /**
  * Class that builds channel tokens through an AccessToken instance
+ * This class is fully provided by agora.io library and is used to generate the tokens
+ * see https://docs.agora.io/en/Video/token_server?platform=Android for javadoc
  */
 public class RtcTokenBuilder {
     public enum Role {
