@@ -28,5 +28,4 @@ public class InvitesManagementActivity extends AppCompatActivity {
         new TabLayoutMediator(tabs, pager,
                 (tab, position) -> tab.setText(getString(InvitesManagementActivityPagerAdapter.FRAGMENT_NAME_ID[position]))).attach();
     }
-
 }
