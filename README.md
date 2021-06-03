@@ -14,7 +14,7 @@ Polysmee supports, among other things, picture sharing, notifications for appoin
 
 ## How it works
 
-This application uses two main cloud service providers : [Google Firebase](https://www.firebase.google.com) and [Agora](https://www.agora.io). 
+This application uses two main cloud service providers : [Google Firebase](https://firebase.google.com) and [Agora](https://www.agora.io). 
 
 ## Authors (alphabetical order)
 
