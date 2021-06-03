@@ -331,7 +331,7 @@ public class DatabaseAppointmentTest {
         new DatabaseAppointment(apid).editMessageReaction("msg", 0);
         Thread.sleep(2000);
         assertEquals(
-                0,
+                0L,
                 Tasks.await(DatabaseFactory
                         .getAdaptedInstance()
                         .getReference("appointments")
