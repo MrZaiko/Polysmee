@@ -20,7 +20,7 @@ import java.util.Calendar;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseSingleton;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
@@ -54,11 +54,11 @@ public class AppointmentActivityDetailModeNotOwnerTest {
         endTime.add(Calendar.MILLISECOND, (int) duration);
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         CalendarUtilities.setTest(true, false);
-        DatabaseSingleton.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityDetailModeNotOwnerTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityDetailModeNotOwnerTest@gmail.com", "fakePassword"));
         DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
         DatabaseSingleton.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);

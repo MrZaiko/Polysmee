@@ -39,7 +39,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.database.UploadServiceFactory;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.pressBack;
@@ -66,13 +66,13 @@ public class PictureEditActivityTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseSingleton.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
-        UploadServiceFactory.setTest(true);
+        UploadServiceFactory.setLocal(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("PictureEditActivityTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("PictureEditActivityTest@gmail.com", "fakePassword"));
 
         //UploadServiceFactory.getAdaptedInstance().uploadImage(bigYoshi, "bigyoshi", l-> System.out.println("done"), l -> System.out.println("fail"));
         //Thread.sleep(5000);

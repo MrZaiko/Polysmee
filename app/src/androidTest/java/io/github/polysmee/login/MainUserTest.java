@@ -23,12 +23,12 @@ public class MainUserTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseSingleton.setTest();
+        DatabaseSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
-        AuthenticationFactory.setTest();
+        AuthenticationSingleton.setLocal();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
     }
 
     @AfterClass
@@ -38,19 +38,19 @@ public class MainUserTest {
 
     @Test(expected = NullPointerException.class)
     public void getInstanceThrows() {
-        AuthenticationFactory.getAdaptedInstance().signOut();
+        AuthenticationSingleton.getAdaptedInstance().signOut();
         MainUser.getMainUser();
     }
 
     @Test
     public void getInstanceWorks() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
-        assertEquals(MainUser.getMainUser().getId(), AuthenticationFactory.getAdaptedInstance().getUid());
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
+        assertEquals(MainUser.getMainUser().getId(), AuthenticationSingleton.getAdaptedInstance().getUid());
     }
 
     @Test
     public void getEmailWorks() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().signInWithEmailAndPassword("mainusersingleton@gmail.com", "fakePassword"));
         assertEquals("mainusersingleton@gmail.com", MainUser.getCurrentUserEmail());
     }
 }

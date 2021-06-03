@@ -85,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
             MainUser.getMainUser().getName_Once_AndThen((nam) -> {
 
                 if(nam.isEmpty())
-                    name.setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
+                    name.setValue(AuthenticationSingleton.getAdaptedInstance().getCurrentUser().getDisplayName());
             });
             Intent intent = new Intent(this, CalendarActivity.class);
 

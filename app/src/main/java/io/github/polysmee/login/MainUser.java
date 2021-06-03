@@ -13,7 +13,7 @@ public class MainUser {
      * @return the current user
      */
     public static User getMainUser() {
-        return new DatabaseUser(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getUid());
+        return new DatabaseUser(AuthenticationSingleton.getAdaptedInstance().getCurrentUser().getUid());
     }
 
     public static String getCurrentUserEmail() throws NullPointerException {
