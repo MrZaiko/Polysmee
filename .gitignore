@@ -40,3 +40,4 @@ hs_err_pid*
 .firebaserc
 database.rules.json
 firebase.json
+storage.rules
