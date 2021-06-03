@@ -3,10 +3,8 @@ package io.github.polysmee.calendar;
 
 import android.content.Intent;
 
-import androidx.lifecycle.Lifecycle;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.Espresso;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
 import com.google.android.gms.tasks.Tasks;
@@ -25,7 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
@@ -44,7 +42,6 @@ import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.hamcrest.CoreMatchers.allOf;
-import static org.hamcrest.Matchers.instanceOf;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 
@@ -72,22 +69,22 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
         startTime.set(appointmentYear, appointmentMonth, appointmentDay, 18, 3, 0);
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
 
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityPublicAppointmentsFragmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child("SDP").setValue("SDP");
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child("ICG").setValue("ICG");
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child("SDP").setValue("SDP");
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child("ICG").setValue("ICG");
     }
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
 
@@ -177,14 +174,14 @@ public class CalendarActivityPublicAppointmentsFragmentTest {
     }*/
 
     private void addAppointmentOtherUser(CalendarAppointmentInfo calendarAppointmentInfo) {
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("id").setValue(calendarAppointmentInfo.getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("duration").setValue(calendarAppointmentInfo.getDuration());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("private").setValue(false);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("owner").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("participants").child(id2).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("title").setValue(calendarAppointmentInfo.getTitle());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("course").setValue(calendarAppointmentInfo.getCourse());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("start").setValue(calendarAppointmentInfo.getStartTime());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("id").setValue(calendarAppointmentInfo.getId());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("duration").setValue(calendarAppointmentInfo.getDuration());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("private").setValue(false);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("owner").setValue(id2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("participants").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("title").setValue(calendarAppointmentInfo.getTitle());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("course").setValue(calendarAppointmentInfo.getCourse());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(calendarAppointmentInfo.getId()).child("start").setValue(calendarAppointmentInfo.getStartTime());
     }
 
 }

@@ -25,7 +25,7 @@ import java.util.Date;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -79,23 +79,23 @@ public class CalendarActivityTest {
         startTime = Calendar.getInstance();
         startTime.set(appointmentYear, appointmentMonth, appointmentDay, 18, 3, 0);
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true, false);
         InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(MAIN_USER_EMAIL, "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").child(appointmentId).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription1);
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child(appointmentCourse).setValue(appointmentCourse);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").child(appointmentId).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription1);
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child(appointmentCourse).setValue(appointmentCourse);
     }
 
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Before

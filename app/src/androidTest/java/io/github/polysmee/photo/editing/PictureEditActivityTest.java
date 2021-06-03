@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.BigYoshi;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
@@ -66,7 +66,7 @@ public class PictureEditActivityTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true, false);
         UploadServiceFactory.setTest(true);
@@ -101,7 +101,7 @@ public class PictureEditActivityTest {
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     public void bitmapMatcher(Bitmap bitmap) {

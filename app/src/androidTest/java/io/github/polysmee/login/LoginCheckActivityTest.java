@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.intent.Intents.intending;
@@ -31,7 +31,7 @@ public class LoginCheckActivityTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         CalendarUtilities.setTest(true, false);
         AuthenticationFactory.setTest();
         FirebaseApp.clearInstancesForTest();
@@ -41,7 +41,7 @@ public class LoginCheckActivityTest {
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test

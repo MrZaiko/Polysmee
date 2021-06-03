@@ -4,7 +4,7 @@ import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 
 public class Course {
     public static void getAllCourses_Once_AndThen(StringSetValueListener valueListener) {
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("courses")
                 .addListenerForSingleValueEvent(valueListener);

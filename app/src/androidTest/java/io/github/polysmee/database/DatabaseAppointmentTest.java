@@ -39,7 +39,7 @@ public class DatabaseAppointmentTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true, false);
 
@@ -47,7 +47,7 @@ public class DatabaseAppointmentTest {
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
         apid = MainUser.getMainUser().createNewUserAppointment(0, 3600, "AU", "chihiro", false);
         Thread.sleep(1000);
     }
@@ -56,7 +56,7 @@ public class DatabaseAppointmentTest {
     @AfterClass
     public static void clean() {
         new DatabaseAppointment(apid).selfDestroy();
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
@@ -332,7 +332,7 @@ public class DatabaseAppointmentTest {
         Thread.sleep(2000);
         assertEquals(
                 0L,
-                Tasks.await(DatabaseFactory
+                Tasks.await(DatabaseSingleton
                         .getAdaptedInstance()
                         .getReference("appointments")
                         .child(apid)

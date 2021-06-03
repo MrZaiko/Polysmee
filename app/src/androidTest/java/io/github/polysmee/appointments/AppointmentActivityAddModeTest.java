@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
@@ -37,7 +37,6 @@ import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -58,23 +57,23 @@ public class AppointmentActivityAddModeTest {
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
         CalendarUtilities.setTest(true, false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("AppointmentActivityAddModeTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child(course).setValue(course);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friends").child(id2).setValue(true);
     }
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
 
@@ -309,13 +308,13 @@ public class AppointmentActivityAddModeTest {
 
         Thread.sleep(30000);
 
-        HashMap aptId = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").get()).getValue();
+        HashMap aptId = (HashMap) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").get()).getValue();
         assertNotNull(aptId);
         assertEquals(1, aptId.keySet().size());
 
 
         for (Object id : aptId.keySet()) {
-            HashMap apt = (HashMap) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("appointments").child((String) id).get()).getValue();
+            HashMap apt = (HashMap) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("appointments").child((String) id).get()).getValue();
 
             assertEquals(title, apt.get("title"));
             assertTrue(((HashMap) apt.get("banned")).containsKey(id3));

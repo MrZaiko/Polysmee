@@ -8,7 +8,6 @@ import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
-import com.firebase.ui.auth.IdpResponse;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -17,7 +16,7 @@ import java.util.List;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 
 //Copyright 2017 github.com/firebase
 
@@ -80,7 +79,7 @@ public class LoginActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
 
             // Successfully signed in
-            FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
+            FirebaseDatabase db = DatabaseSingleton.getAdaptedInstance();
             DatabaseReference name = db.getReference("users").child(MainUser.getMainUser().getId()).child("name");
             name.keepSynced(true);
             MainUser.getMainUser().getName_Once_AndThen((nam) -> {

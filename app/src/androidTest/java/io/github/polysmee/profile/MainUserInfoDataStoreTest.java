@@ -12,7 +12,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.settings.SettingsActivity;
@@ -34,7 +34,7 @@ public class MainUserInfoDataStoreTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
@@ -44,7 +44,7 @@ public class MainUserInfoDataStoreTest {
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
 
@@ -52,14 +52,14 @@ public class MainUserInfoDataStoreTest {
     private static void testNameDatabase(String value) throws Exception {
         // necessary otherwise not enough time to set the value
         sleep(1, SECONDS);
-        String name = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+        String name = (String) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference().child("users")
                 .child(MainUser.getMainUser().getId()).child("name").get()).getValue();
         assertEquals(value, name);
     }
 
     private static void testDescriptionDatabase(String value) throws Exception{
         sleep(1, SECONDS);
-        String description = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference().child("users")
+        String description = (String) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference().child("users")
                 .child(MainUser.getMainUser().getId()).child("description").get()).getValue();
         assertEquals(value, description);
     }

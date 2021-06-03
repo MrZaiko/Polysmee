@@ -4,7 +4,6 @@ import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.intent.Intents;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -15,14 +14,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarSyncActivity;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.LoginActivity;
@@ -45,21 +42,21 @@ public class calendarSyncActivityTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setTest();
         AuthenticationFactory.setTest();
         CalendarUtilities.setTest(true, false);
         InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
         Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(email1, "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue("");
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue("");
     }
 
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
@@ -80,7 +77,7 @@ public class calendarSyncActivityTest {
 
             clickOn(R.id.calendarSyncActivityCopyButton);
 
-            String calendarID1 = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").get()).getValue();
+            String calendarID1 = (String) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").get()).getValue();
             assertEquals(email1, calendarID1);
 
             clickOn(R.id.calendarSyncActivityDeleteButton);
@@ -91,7 +88,7 @@ public class calendarSyncActivityTest {
             assertNotDisplayed(R.id.calendarSyncActivityCopyButton);
             assertNotDisplayed(R.id.calendarSyncActivityDeleteButton);
 
-            String calendarID2 = (String) Tasks.await(DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").get()).getValue();
+            String calendarID2 = (String) Tasks.await(DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").get()).getValue();
             assertEquals("", calendarID2);
 
         }

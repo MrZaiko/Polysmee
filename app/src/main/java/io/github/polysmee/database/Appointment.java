@@ -397,7 +397,7 @@ public interface Appointment {
     @SuppressWarnings({"unchecked"})
     static void getAllPublicAppointmentsOnce(StringSetValueListener ssv) {
 
-        DatabaseFactory
+        DatabaseSingleton
                 .getAdaptedInstance()
                 .getReference("appointments")
                 .get().addOnSuccessListener(dataSnapshot -> {
