@@ -57,7 +57,7 @@ import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.Message;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.MessageChildListener;
+import io.github.polysmee.database.databaselisteners.childListeners.MessageChildListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.photo.editing.FileHelper;
 import io.github.polysmee.login.MainUser;
