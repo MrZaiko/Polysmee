@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -54,6 +55,7 @@ public class DatabaseAppointmentTest {
 
     @AfterClass
     public static void clean() {
+        new DatabaseAppointment(apid).selfDestroy();
         DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
     }
 
@@ -322,5 +324,21 @@ public class DatabaseAppointmentTest {
             new DatabaseAppointment(apid).getPrivate_Once_AndThen((l) -> {
             });
         }
+    }
+
+    @Test
+    public void reaction() throws ExecutionException, InterruptedException {
+        new DatabaseAppointment(apid).editMessageReaction("msg", 0);
+        assertEquals(
+                0,
+                Tasks.await(DatabaseFactory
+                        .getAdaptedInstance()
+                        .getReference("appointments")
+                        .child(apid)
+                        .child("messages")
+                        .child("msg")
+                        .child("reaction")
+                        .get()).getValue()
+        );
     }
 }
