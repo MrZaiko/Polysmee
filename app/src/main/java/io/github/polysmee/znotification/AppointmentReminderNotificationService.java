@@ -113,8 +113,8 @@ final class AppointmentReminderNotificationService extends Service {
     // the database.
     private void mainUserAppointmentsListenerUpdate(Set<String> o) {
         unsetSetUpAppointmentsThatTheUserHasLeave(o);
-        //add litstener to all the appointments that do not have listener set up yet
-        SetUpListenersForMainUserAppointments(o);
+        //add listener to all the appointments that do not have listener set up yet
+        setUpListenersForMainUserAppointments(o);
     }
 
     /**
@@ -122,7 +122,7 @@ final class AppointmentReminderNotificationService extends Service {
      *
      * @param UserAppointmentsId the appointments id the main user has.
      */
-    private void SetUpListenersForMainUserAppointments(Set<String> UserAppointmentsId) {
+    private void setUpListenersForMainUserAppointments(Set<String> UserAppointmentsId) {
         for (String appointmentId : UserAppointmentsId) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
                 LongValueListener startTimeValueListener = (long startTime) -> {
@@ -179,17 +179,18 @@ final class AppointmentReminderNotificationService extends Service {
         if (startTime == -1 || appointmentId == null) {
             return START_STICKY;
         }
-        SharedPreferences localAppointmentsReminderTime = getLocalSharedPreference();
-        int appointmentReminderNotificationTimeMin =
-                (int) (TimeUnit.MILLISECONDS.toMinutes(startTime) -
-                        PreferenceManager.getDefaultSharedPreferences(this).getInt(
-                                this.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
-                                this.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
-        //I don't need to check if the time of reminder is already pass, indeed setExact, which
-        // has the same semantic in that point that set (methods of alarmManger),
-        //will trigger directly the alarm if the time passed as argument is greater than the
-        // current time
+        updateAppointmentReminderNotification(startTime, appointmentId);
+        return START_STICKY;
+    }
+
+    private void updateAppointmentReminderNotification(long startTime, String appointmentId) {
         if (startTime > System.currentTimeMillis()) {
+            SharedPreferences localAppointmentsReminderTime = getLocalSharedPreference();
+            int appointmentReminderNotificationTimeMin =
+                    (int) (TimeUnit.MILLISECONDS.toMinutes(startTime) -
+                            PreferenceManager.getDefaultSharedPreferences(this).getInt(
+                                    this.getResources().getString(R.string.preference_key_appointments_reminder_notification_time_from_appointment_minutes),
+                                    this.getResources().getInteger(R.integer.default_appointment_reminder_notification__time_from_appointment_min)));
             //if the appointment reminder is not setup at the correct time remove it
             if (localAppointmentsReminderTime.getInt(appointmentId, -1) != appointmentReminderNotificationTimeMin) {
                 removeAppointmentReminderNotification(appointmentId, localAppointmentsReminderTime);
@@ -197,11 +198,13 @@ final class AppointmentReminderNotificationService extends Service {
                         appointmentReminderNotificationTimeMin).apply();
             }
             AlarmManager alarmManager = getAlarmManager();
+            // I don't need to check if the time of reminder is already pass, indeed
+            // alarmManager.setExact, will trigger directly the alarm if the time passed as argument
+            // is greater than the current time
             alarmManager.setExact(AlarmManager.RTC_WAKEUP,
                     TimeUnit.MINUTES.toMillis(appointmentReminderNotificationTimeMin),
                     getReminderNotificationPendingIntent(appointmentReminderNotificationTimeMin));
         }
-        return START_STICKY;
     }
 
     @Override
