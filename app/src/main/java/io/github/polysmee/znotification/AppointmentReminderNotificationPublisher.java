@@ -51,7 +51,7 @@ final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
     }
 
     /**
-     * Create the notification channel for the reminder notifications.
+     * Creates the notification channel for the reminder notifications.
      *
      * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
      * "It's safe to call this repeatedly because creating an existing notification channel
