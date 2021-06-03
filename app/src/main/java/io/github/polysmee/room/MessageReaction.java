@@ -5,6 +5,9 @@ import android.util.Log;
 
 import io.github.polysmee.R;
 
+/**
+ * Represents a reaction with a representation (UI) and an id (Database)
+ */
 public enum MessageReaction {
     DEFAULT(0, 0),
     JOY(1, R.string.emoji_joy),
@@ -28,6 +31,12 @@ public enum MessageReaction {
         return reactionId;
     }
 
+    /**
+     * Convert a string to a MessageReactionInstance
+     * @param context Context
+     * @param s displayed reaction
+     * @return MessageReaction instance corresponding to the string given
+     */
     public static MessageReaction getReaction(Context context, String s) {
 
         if (s.equals(context.getString(JOY.emoji))) {
@@ -45,6 +54,11 @@ public enum MessageReaction {
         }
     }
 
+    /**
+     * Convert an id to a MessageReaction
+     * @param id id
+     * @return MessageReaction instance corresponding to the given id
+     */
     public static MessageReaction getReaction(int id) {
         switch (id) {
             case 1:
