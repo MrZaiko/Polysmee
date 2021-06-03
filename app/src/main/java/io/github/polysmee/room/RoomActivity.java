@@ -1,8 +1,8 @@
 package io.github.polysmee.room;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -49,7 +49,7 @@ public class RoomActivity extends AppCompatActivity {
     private boolean left;
 
     //Commands to remove listeners
-    private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
+    private final List<Command> commandsToRemoveListeners = new ArrayList<Command>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,6 +107,9 @@ public class RoomActivity extends AppCompatActivity {
         paused = false;
     }
 
+    /**
+     * Checks if a user is a member of the appointment. If not, generates a RemovedDialogFragment
+     */
     private void checkIfParticipant() {
         StringSetValueListener participantListener = p -> {
             if (!paused && !p.contains(MainUser.getMainUser().getId())) {
@@ -117,8 +120,10 @@ public class RoomActivity extends AppCompatActivity {
         commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
     }
 
+    /**
+     * @see RemovedDialogFragment
+     */
     private void generateRemovedDialog() {
-
         left = true;
         FragmentManager fragmentManager = getSupportFragmentManager();
         RemovedDialogFragment newFragment = new RemovedDialogFragment();
@@ -134,6 +139,10 @@ public class RoomActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * Set context attribute (only used to avoid a strange crash in tests)
+     * @param context new context value
+     */
     public void setContext(Context context) {
         this.context = context;
     }
@@ -150,6 +159,7 @@ public class RoomActivity extends AppCompatActivity {
         return true;
     }
 
+    @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
@@ -165,64 +175,9 @@ public class RoomActivity extends AppCompatActivity {
                 if(!left && context != null) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage(R.string.leave_message);
-                    builder.setPositiveButton(R.string.leave, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            appointment.getParticipantsId_Once_AndThen(participants -> {
-                                if(participants.size() <= 1) {
-                                    for (String partId : participants) {
-                                        User part = new DatabaseUser(partId);
-                                        part.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
-                                            if (eventId != null && !eventId.equals(""))
-                                                part.getCalendarId_Once_AndThen(calendarId ->
-                                                        CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId,
-                                                                eventId, ()->{}, () -> runOnUiThread( () ->{
-                                                                    Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
-                                                                    toast.show();
-                                                                })
-                                                        )
-                                                );
-                                        });
-                                    }
-                                    appointment.selfDestroy();
-                                } else {
-                                    appointment.removeParticipant(MainUser.getMainUser());
-                                    MainUser.getMainUser().removeAppointment(appointment);
-                                    MainUser.getMainUser().getAppointmentEventId_Once_AndThen(appointment, eventId -> {
-                                        if (eventId != null && !eventId.equals(""))
-                                            MainUser.getMainUser().getCalendarId_Once_AndThen(calendarId ->
-                                                    CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId, eventId,
-                                                    ()-> MainUser.getMainUser().removeAppointment(appointment),
-                                                        () -> runOnUiThread( () ->{
-                                                            Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
-                                                            toast.show();
-                                                        })
-                                                    )
-                                            );
-                                    });
-                                    appointment.getOwnerId_Once_AndThen(owner -> {
-                                        if(owner.equals(MainUser.getMainUser().getId())) {
-                                            for(String uid : participants) {
-                                                if(!uid.equals(owner)) {
-                                                    appointment.setOwner(new DatabaseUser(uid));
-                                                    break;
-                                                }
-                                            }
+                    builder.setPositiveButton(R.string.leave, (dialog, which) -> removeUserFromAppointment());
 
-                                        }
-                                    });
-                                }
-                            });
-
-                        }
-                    });
-
-                    builder.setNegativeButton(R.string.genericCancelText, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-
-                        }
-                    });
+                    builder.setNegativeButton(R.string.genericCancelText, (dialog, which) -> {});
                     builder.show();
                 }
 
@@ -232,5 +187,52 @@ public class RoomActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Remove the current user from the current appointment.
+     * If the user is the last participant, the appointment is removed.
+     * If the user is the owner, the ownership is transferred to another participant.
+     */
+    private void removeUserFromAppointment() {
+        appointment.getParticipantsId_Once_AndThen(participants -> {
+            if(participants.size() <= 1) {
+                for (String partId : participants) {
+                    removeAppointmentFromCalendar(new DatabaseUser(partId));
+                }
+                appointment.selfDestroy();
+            } else {
+                appointment.removeParticipant(MainUser.getMainUser());
+                MainUser.getMainUser().removeAppointment(appointment);
+                removeAppointmentFromCalendar(MainUser.getMainUser());
+                appointment.getOwnerId_Once_AndThen(owner -> {
+                    if(owner.equals(MainUser.getMainUser().getId())) {
+                        for(String uid : participants) {
+                            if(!uid.equals(owner)) {
+                                appointment.setOwner(new DatabaseUser(uid));
+                                break;
+                            }
+                        }
 
+                    }
+                });
+            }
+        });
+    }
+
+    /**
+     * Remove the appointment from the calendar of the specified user if the calendar exist
+     * @param user user to remove appointment from
+     */
+    private void removeAppointmentFromCalendar(User user) {
+        user.getAppointmentEventId_Once_AndThen(appointment, eventId -> {
+            if (eventId != null && !eventId.equals(""))
+                user.getCalendarId_Once_AndThen(calendarId ->
+                        CalendarUtilities.deleteAppointmentFromCalendar(getApplicationContext(), calendarId,
+                                eventId, ()->{}, () -> runOnUiThread( () ->{
+                                    Toast toast = Toast.makeText(getApplicationContext(), getText(R.string.genericErrorText), Toast.LENGTH_SHORT);
+                                    toast.show();
+                                })
+                        )
+                );
+        });
+    }
 }

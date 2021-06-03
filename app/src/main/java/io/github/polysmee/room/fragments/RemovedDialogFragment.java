@@ -14,12 +14,16 @@ import androidx.fragment.app.Fragment;
 
 import io.github.polysmee.R;
 
+/**
+ * Dialog not cancellable that blocks access to a room activity
+ */
 public class RemovedDialogFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Disable back button
         OnBackPressedCallback callback = new OnBackPressedCallback(true /* enabled by default */) {
             @Override
             public void handleOnBackPressed() {
