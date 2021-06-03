@@ -60,6 +60,8 @@
     <string name="roomTabCallText">Participants</string>
     <string name="roomMessageOptionText">Choose an option</string>
     <string name="roomEditMessageText">Edit message</string>
+    <string name="app_id" translatable="false">a255f3c708ab4e27a52e0d31ec25ce56</string>
+    <string name="app_certificate" translatable="false">1b4283ea74394f209ccadd74ac467194</string>
 
     <string name="friendsActivityEncouragingMessage1">Invite and see your friends below!</string>
     <string name="friendsActivityEncouragingMessage2">Add friends here!</string>

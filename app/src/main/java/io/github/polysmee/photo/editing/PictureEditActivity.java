@@ -1,8 +1,6 @@
 package io.github.polysmee.photo.editing;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -29,14 +27,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import io.github.polysmee.R;
-import io.github.polysmee.internet.connection.InternetConnection;
 import top.defaults.colorpicker.ColorPickerPopup;
 
+/**
+ * Activity class corresponding to the edit picture activity
+ */
 public class PictureEditActivity extends AppCompatActivity {
 
     public static final String PICTURE_URI = "io.github.polysmee.photo.editing.PICTURE_URI";
     private static final float MAX_STROKE = 100f;
     private static final float MIN_STROKE = 1f;
+    private static final int DEFAULT_QUALITY = 100;
+    private static final int SEEK_BAR_DIVISION_CONSTANT = 100;
 
     private Bitmap pictureBitmap;
     private Button colorPickerButton;
@@ -57,6 +59,7 @@ public class PictureEditActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        //set default editing settings
         displayedPictureView = findViewById(R.id.pictureEditPicture);
         displayedPictureView.setImageBitmap(pictureBitmap);
         displayedPictureView.setColor(Color.RED);
@@ -82,6 +85,10 @@ public class PictureEditActivity extends AppCompatActivity {
         getOnBackPressedDispatcher().addCallback(this, callback);
     }
 
+    /**
+     * Sets the color picked for editing depending on the color selected by the user
+     * @param view
+     */
     private void colorPickerButtonBehavior(View view) {
         new ColorPickerPopup.Builder(PictureEditActivity.this)
                 .initialColor(Color.RED)
@@ -103,11 +110,15 @@ public class PictureEditActivity extends AppCompatActivity {
                         });
     }
 
+    /**
+     *
+     * @return a listener on the SeekBar
+     */
     private SeekBar.OnSeekBarChangeListener strokeBarBehavior() {
         return new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                float newStroke = i * (MAX_STROKE - MIN_STROKE) / 100 + MIN_STROKE;
+                float newStroke = i * (MAX_STROKE - MIN_STROKE) / SEEK_BAR_DIVISION_CONSTANT + MIN_STROKE;
                 displayedPictureView.setStrokeWidth(newStroke);
             }
 
@@ -121,6 +132,10 @@ public class PictureEditActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * Applies the filter corresponding to the given color matrix
+     * @param matrix
+     */
     private void applyColorFilter(ColorMatrix matrix) {
         Paint paint = new Paint();
         paint.setColorFilter(new ColorMatrixColorFilter(matrix));
@@ -132,9 +147,14 @@ public class PictureEditActivity extends AppCompatActivity {
         displayedPictureView.setImageBitmap(newPicture);
     }
 
+
+    /**
+     * Makes the picture go online
+     * @param view
+     */
     private void doneBehavior(View view) {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
-        displayedPictureView.getAlteredPicture().compress(Bitmap.CompressFormat.PNG, 100, stream);
+        displayedPictureView.getAlteredPicture().compress(Bitmap.CompressFormat.PNG, DEFAULT_QUALITY, stream);
         byte[] byteArray = stream.toByteArray();
 
         File photoFile = null;
@@ -158,6 +178,9 @@ public class PictureEditActivity extends AppCompatActivity {
         finish();
     }
 
+    /**
+     * Sets the picture as it was before edition
+     */
     private void reset() {
         displayedPictureView.setImageBitmap(pictureBitmap);
         strokeBar.setProgress(0);
@@ -167,6 +190,10 @@ public class PictureEditActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Call the method to apply the filter corresponding to the selected button
+     * @param view
+     */
     @SuppressLint("NonConstantResourceId")
     public void onFilterSelected(View view) {
         boolean checked = ((RadioButton) view).isChecked();
