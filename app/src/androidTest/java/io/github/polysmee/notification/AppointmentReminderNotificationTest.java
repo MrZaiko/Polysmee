@@ -12,8 +12,12 @@ import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.Until;
 
+import com.google.android.gms.tasks.Tasks;
+import com.google.firebase.FirebaseApp;
+
 import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,22 +25,71 @@ import org.junit.runner.RunWith;
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
-import io.github.polysmee.login.LoginActivity;
+import io.github.polysmee.calendar.CalendarActivity;
+import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
+import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.MainUser;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class AppointmentReminderNotificationTest {
 
-    private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-    private static final UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+    private final static long TIMEOUT = SECONDS.toMillis(10);
+    private final static String username = "UsernameAppointmentReminderNotificationTest";
+    private final static String appointmentId = "AppointmentIdAppointmentReminderNotificationTest";
+    private static final UiDevice uiDevice =
+            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     private static final Context context = ApplicationProvider.getApplicationContext();
-    private final static String NOTIFICATION_TEXT = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
-    private final static String NOTIFICATION_TITLE = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
+    private static final String EXPECTED_APP_NAME = context.getString(R.string.app_name);
+    private final static String NOTIFICATION_TEXT =
+            context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
+    private final static String NOTIFICATION_TITLE =
+            context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
 
     @Rule
-    public ActivityScenarioRule<LoginActivity> testRule = new ActivityScenarioRule<>(LoginActivity.class);
+    public ActivityScenarioRule<CalendarActivity> testRule =
+            new ActivityScenarioRule<>(CalendarActivity.class);
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        DatabaseFactory.setTest();
+        AuthenticationFactory.setTest();
+        CalendarUtilities.setTest(true, false);
+        FirebaseApp.clearInstancesForTest();
+        FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(
+                "AppointmentReminderTest@gmail.com", "fakePassword"));
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
+                .getId()).child("name").setValue(username);
+    }
+
+    @Test
+    public void appointmentReminderNotificationSyncedOnline() {
+        long timeOfAppointment = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId)
+                .child("start").setValue(timeOfAppointment);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
+                .getId()).child("appointments").child(appointmentId).setValue("");
+        reminderNotificationPresent();
+        resetStateNotification();
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
+                .getId()).child("appointments").child(appointmentId).setValue(null);
+        // wait for the listener in the service to work
+        sleep(2, SECONDS);
+        timeOfAppointment = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2);
+        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId)
+                .child("start").setValue(timeOfAppointment);
+        uiDevice.openNotification();
+        assertFalse(uiDevice.wait(Until.hasObject(By.textStartsWith(EXPECTED_APP_NAME)),
+                TIMEOUT));
+        closeNotification();
+    }
 
     @Before
     @After
@@ -46,19 +99,24 @@ public class AppointmentReminderNotificationTest {
 
     @Test
     public void notification_launch_with_good_title_and_text() {
-        AppointmentReminderNotificationPublisher publisher = new AppointmentReminderNotificationPublisher();
+        AppointmentReminderNotificationPublisher publisher =
+                new AppointmentReminderNotificationPublisher();
         Intent intent = new Intent(context, AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(context, intent);
         reminderNotificationPresent();
     }
 
-    //assert that a notification reminder is present in the system at return notification layout will be closed
+    //assert that a notification reminder is present in the system at return notification layout
+    // will be closed
     public static void reminderNotificationPresent() {
-        String expectedAppName = context.getString(R.string.app_name);
         uiDevice.openNotification();
-        assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));
+        assertTrue(uiDevice.wait(Until.hasObject(By.textStartsWith(EXPECTED_APP_NAME)), TIMEOUT));
         assertNotNull(uiDevice.findObject(By.text(NOTIFICATION_TEXT)));
         assertNotNull(uiDevice.findObject(By.text(NOTIFICATION_TITLE)));
+        closeNotification();
+    }
+
+    private static void closeNotification() {
         Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(closeIntent);
     }

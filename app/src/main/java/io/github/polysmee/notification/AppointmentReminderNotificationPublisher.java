@@ -18,10 +18,10 @@ import io.github.polysmee.login.LoginCheckActivity;
 
 /**
  * A broadcast receiver class that create the appointment reminder notifications.
- *
+ * <p>
  * Inspired by https://developer.android.com/training/notify-user/build-notification#java.
  **/
-final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
+public final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
@@ -52,11 +52,11 @@ final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
 
     /**
      * Creates the notification channel for the reminder notifications.
-     *
-     * From https://developer.android.com/training/notify-user/build-notification?hl=en#java :
-     * "It's safe to call this repeatedly because creating an existing notification channel
-     * performs no operation." Later when doing the notification with resource file move it to
-     * the app launch as suggested.
+     * <p>
+     * From https://developer.android.com/training/notify-user/build-notification?hl=en#java : "It's
+     * safe to call this repeatedly because creating an existing notification channel performs no
+     * operation." Later when doing the notification with resource file move it to the app launch as
+     * suggested.
      */
     private static void createNotificationChannel(Context context) {
         assert context != null;
@@ -65,7 +65,8 @@ final class AppointmentReminderNotificationPublisher extends BroadcastReceiver {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel =
                     new NotificationChannel(context.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
-                    , context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
+                            ,
+                            context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
             channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
             channel.setLockscreenVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY);
             channel.enableVibration(true);

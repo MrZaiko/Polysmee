@@ -32,7 +32,7 @@ import io.github.polysmee.login.MainUser;
  * extra in the intent and once, as all the necessary sub call to the service would be set up by the
  * first call to the service.
  */
-final class AppointmentReminderNotificationService extends Service {
+public final class AppointmentReminderNotificationService extends Service {
     private final static String INTENT_KEY_EXTRA_START_TIME = "IntentKeyExtraStartTime";
     private final static String INTENT_KEY_EXTRA_APPOINTMENT_ID = "IntentKeyExtraAppointmentId";
     private final static int NOT_SET_UP_APPOINTMENT_REMINDER_NOTIFICATION_TIME = -1;
