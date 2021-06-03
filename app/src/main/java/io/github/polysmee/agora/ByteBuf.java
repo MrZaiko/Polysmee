@@ -7,6 +7,8 @@ import java.util.TreeMap;
 
 /**
  * ByteBuffer data structure
+ * This class is fully provided by agora.io library and is used to generate the tokens
+ * see https://docs.agora.io/en/Video/token_server?platform=Android for javadoc
  */
 public class ByteBuf {
     private ByteBuffer buffer = ByteBuffer.allocate(1024).order(ByteOrder.LITTLE_ENDIAN);

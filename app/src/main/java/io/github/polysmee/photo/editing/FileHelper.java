@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * Helper class to create an image JPEG file
+ */
 public class FileHelper {
     public static File createImageFile(Context context) throws IOException {
         // Create an image file name
