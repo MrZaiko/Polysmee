@@ -1,9 +1,7 @@
 package io.github.polysmee.yroomActivityTests;
 
 import android.content.Intent;
-import android.os.Bundle;
 
-import androidx.fragment.app.testing.FragmentScenario;
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
 import androidx.test.espresso.intent.Intents;
@@ -25,8 +23,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.RoomActivity;
-import io.github.polysmee.room.fragments.RoomActivityMessagesFragment;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
+import io.github.polysmee.notification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.intent.Intents.intended;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasExtra;

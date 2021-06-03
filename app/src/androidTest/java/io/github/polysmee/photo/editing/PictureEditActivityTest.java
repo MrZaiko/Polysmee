@@ -40,7 +40,7 @@ import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.login.AuthenticationFactory;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
+import io.github.polysmee.notification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.pressBack;
 import static androidx.test.espresso.contrib.ActivityResultMatchers.hasResultCode;

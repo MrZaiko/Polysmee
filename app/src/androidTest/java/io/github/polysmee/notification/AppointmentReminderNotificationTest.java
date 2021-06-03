@@ -1,25 +1,29 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.content.Context;
 import android.content.Intent;
 
+import androidx.core.app.NotificationManagerCompat;
 import androidx.test.core.app.ApplicationProvider;
+import androidx.test.ext.junit.rules.ActivityScenarioRule;
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
-import androidx.test.uiautomator.UiObject2;
 import androidx.test.uiautomator.Until;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
+import io.github.polysmee.login.LoginActivity;
 
+import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(AndroidJUnit4.class)
@@ -31,17 +35,13 @@ public class AppointmentReminderNotificationTest {
     private final static String NOTIFICATION_TEXT = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
     private final static String NOTIFICATION_TITLE = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
 
+    @Rule
+    public ActivityScenarioRule<LoginActivity> testRule = new ActivityScenarioRule<>(LoginActivity.class);
+
     @Before
     @After
     public void resetStateNotification() {
-        UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
-        uiDevice.openNotification();
-        UiObject2 clear_all_notification = uiDevice.findObject(By.desc("Clear all notifications."));
-        if (clear_all_notification != null) {
-            clear_all_notification.click();
-        }
-        Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-        context.sendBroadcast(closeIntent);
+        NotificationManagerCompat.from(context).cancelAll();
     }
 
     @Test

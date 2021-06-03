@@ -24,7 +24,7 @@ import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
+import io.github.polysmee.notification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;
 import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
@@ -37,7 +37,6 @@ import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setTimeOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;

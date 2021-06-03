@@ -4,7 +4,6 @@ import android.content.Intent;
 
 import androidx.test.core.app.ActivityScenario;
 import androidx.test.core.app.ApplicationProvider;
-import androidx.test.espresso.intent.Intents;
 
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.FirebaseApp;
@@ -15,8 +14,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.R;
@@ -27,7 +24,7 @@ import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.LoginActivity;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
+import io.github.polysmee.notification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;

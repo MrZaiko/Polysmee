@@ -1,4 +1,4 @@
-package io.github.polysmee.znotification;
+package io.github.polysmee.notification;
 
 import android.content.Context;
 import android.content.Intent;

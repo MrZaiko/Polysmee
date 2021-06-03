@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -25,7 +24,6 @@ import com.google.android.material.tabs.TabLayoutMediator;
 
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarSyncActivity;
-import io.github.polysmee.agora.Command;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
@@ -33,7 +31,7 @@ import io.github.polysmee.login.LoginActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
-import io.github.polysmee.znotification.AppointmentReminderNotification;
+import io.github.polysmee.notification.AppointmentReminderNotification;
 
 public class CalendarActivity extends AppCompatActivity {
 
