@@ -329,6 +329,7 @@ public class DatabaseAppointmentTest {
     @Test
     public void reaction() throws ExecutionException, InterruptedException {
         new DatabaseAppointment(apid).editMessageReaction("msg", 0);
+        Thread.sleep(2000);
         assertEquals(
                 0,
                 Tasks.await(DatabaseFactory
