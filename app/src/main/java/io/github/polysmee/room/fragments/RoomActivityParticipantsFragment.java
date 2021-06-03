@@ -145,6 +145,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                         }
                     });
 
+                    //set up default new view =========================================================
                     ConstraintLayout participantsLayout = (ConstraintLayout) inflater.inflate(R.layout.element_room_activity_participant, null);
                     participantsViews.put(id, participantsLayout);
                     participantsLayout.setBackgroundColor(Color.LTGRAY);
@@ -177,6 +178,9 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
                     participantsButtonLayout.setVisibility(View.VISIBLE);
                     callButton.setVisibility(View.GONE);
+
+                    //=====================================================================================
+
                     String userId = mainUser.getId();
 
                     if (id.equals(userId)) {
@@ -203,6 +207,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                         muteButton.setOnClickListener(v -> muteUser());
                         videoButton.setOnClickListener(this::shareVideoBehavior);
                     } else {
+                        //Set the layout specific to other users than the one using the app
                         friendshipButton.setVisibility(View.VISIBLE);
                         ImageView speakerButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementSpeakerButton);
                         speakerButton.setOnClickListener(v -> muteUserLocally(!locallyMuted.contains(id), id));
@@ -246,6 +251,11 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
     }
 
+    /**
+     * downloads a user's profile picture to display it on the corresponding view
+     * @param pictureId the id of the picture to download
+     * @param profilePicture the image view that will be used to display the profile picture
+     */
     private void downloadPicture(String pictureId, CircleImageView profilePicture) {
         if (pictureId != null && !pictureId.equals("")) {
             UploadServiceFactory.getAdaptedInstance().downloadImage(pictureId, imageBytes -> {
@@ -255,6 +265,11 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         }
     }
 
+    /**
+     * called when the user clicks on a participant's profile picture, sending them to the participant's profile
+     * @param userId the id of the participant whose profile we want to check
+     * @param isOwner true if we clicked our own profile so that we can modify it
+     */
     private void visitProfile(String userId, boolean isOwner) {
         Intent profileIntent = new Intent(getContext(), ProfileActivity.class);
         profileIntent.putExtra(ProfileActivity.PROFILE_VISIT_CODE, isOwner ? ProfileActivity.PROFILE_OWNER_MODE : ProfileActivity.PROFILE_VISITING_MODE);
@@ -298,7 +313,11 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         }
     }
 
-
+    /**
+     * defines what happens when we click the add friend button for a participant
+     * @param friendshipButton the button view
+     * @param userId the participant we want to add as friend's id
+     */
     private void friendshipButtonBehavior(View friendshipButton, String userId) {
         User user = new DatabaseUser(userId);
         ((ImageView) friendshipButton).setVisibility(View.GONE);
@@ -306,6 +325,10 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
 
     }
 
+    /**
+     * defines what happens when we start/stop sharing our video
+     * @param cameraButton the button we clicked
+     */
     private void shareVideoBehavior(View cameraButton) {
         if (call.isVideoEnabled()) {
             //disable button
@@ -318,6 +341,9 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         call.shareLocalVideo();
     }
 
+    /**
+     * asks for necessary permissions when joining a channel if needed, then joins the call and video call channel
+     */
     private void joinChannel() {
         if(InternetConnection.isOn()) {
             if(!(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED)) {
