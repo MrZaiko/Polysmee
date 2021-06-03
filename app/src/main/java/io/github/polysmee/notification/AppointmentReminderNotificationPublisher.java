@@ -36,7 +36,7 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
                 fullScreenIntent, 0);
         createNotificationChannel(context);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context,
-                context.getResources().getString(R.string.appointment_reminder_notification_chanel_id))
+                context.getResources().getString(R.string.chanel_id_appointment_reminder_notification))
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.title_appointment_reminder_notification_notification))
                 .setContentText(context.getResources().getString(R.string.text_appointment_reminder_notification_notification))
@@ -64,10 +64,10 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel =
-                    new NotificationChannel(context.getResources().getString(R.string.appointment_reminder_notification_chanel_id)
+                    new NotificationChannel(context.getResources().getString(R.string.chanel_id_appointment_reminder_notification)
                             ,
-                            context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
-            channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
+                            context.getResources().getString(R.string.chanel_name_appointment_reminder_notification), CHANEL_NOTIFICATION_PRIORITY);
+            channel.setDescription(context.getResources().getString(R.string.chanel_description_appointment_reminder_notification));
             channel.setLockscreenVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY);
             channel.enableVibration(true);
             channel.setVibrationPattern(VIBRATION_PATTERN);
