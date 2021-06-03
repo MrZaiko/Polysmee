@@ -104,7 +104,7 @@ public final class AppointmentReminderNotificationService extends Service {
         //add listener to all the appointments that do not have listener set up yet
         for (String appointmentId : o) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
-                LongValueListener startTimeValueListener = (long startTime) -> {
+                LongValueListener startTimeValueListener = (startTime) -> {
                     Intent updateNotification = new Intent(this, AppointmentReminderNotificationService.class);
                     updateNotification.putExtra(intentKeyExtraStartTime, startTime);
                     updateNotification.putExtra(intentKeyExtraAppointmentId, appointmentId);
