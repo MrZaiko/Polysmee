@@ -143,6 +143,10 @@ public class AppointmentsInvitesFragment extends Fragment {
         apt.removeInvite(mainUser);
     }
 
+    /**
+     * Starts the appointment activity in detail mode for the appointment the user just clicked
+     * @param id the appointment's id
+     */
     public void goToAppointmentDetails(String id) {
         Intent intent = new Intent(getContext(), AppointmentActivity.class);
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
@@ -193,7 +197,10 @@ public class AppointmentsInvitesFragment extends Fragment {
         }
     }
 
-
+    /**
+     *
+     * @return a listener on the user's invites to display/remove them from the view
+     */
     private StringSetValueListener currentUserInvitesListener() {
 
         return setOfIds -> {
