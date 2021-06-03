@@ -28,8 +28,8 @@ public class AppointmentReminderNotificationTest {
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
     private static final UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     private static final Context context = ApplicationProvider.getApplicationContext();
-    private final static String notification_text = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
-    private final static String notification_title = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
+    private final static String NOTIFICATION_TEXT = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
+    private final static String NOTIFICATION_TITLE = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
 
     @Before
     @After
@@ -46,13 +46,10 @@ public class AppointmentReminderNotificationTest {
 
     @Test
     public void notification_launch_with_good_title_and_text() {
-
         AppointmentReminderNotificationPublisher publisher = new AppointmentReminderNotificationPublisher();
         Intent intent = new Intent(context, AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(context, intent);
-        String expectedAppName = context.getString(R.string.app_name);
         reminderNotificationPresent();
-
     }
 
     //assert that a notification reminder is present in the system at return notification layout will be closed
@@ -60,8 +57,8 @@ public class AppointmentReminderNotificationTest {
         String expectedAppName = context.getString(R.string.app_name);
         uiDevice.openNotification();
         assertNotNull(uiDevice.wait(Until.hasObject(By.textStartsWith(expectedAppName)), TIMEOUT));
-        assertNotNull(uiDevice.findObject(By.text(notification_text)));
-        assertNotNull(uiDevice.findObject(By.text(notification_title)));
+        assertNotNull(uiDevice.findObject(By.text(NOTIFICATION_TEXT)));
+        assertNotNull(uiDevice.findObject(By.text(NOTIFICATION_TITLE)));
         Intent closeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         context.sendBroadcast(closeIntent);
     }
