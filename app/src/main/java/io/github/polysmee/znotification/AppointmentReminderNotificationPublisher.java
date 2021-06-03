@@ -28,6 +28,7 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
     private final static int CHANEL_NOTIFICATION_PRIORITY = NotificationManager.IMPORTANCE_HIGH;
     private final static int NOTIFICATION_PRIORITY = NotificationCompat.PRIORITY_MAX;
     private final static int NOTIFICATION_LOCK_SCREEN_VISIBILITY = NotificationCompat.VISIBILITY_PRIVATE;
+    private final static long[] vibrationPattern = {0, 250, 250, 250};
 
 
     /**
@@ -46,6 +47,8 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
                     , context.getResources().getString(R.string.appointment_reminder_notification_chanel_name), CHANEL_NOTIFICATION_PRIORITY);
             channel.setDescription(context.getResources().getString(R.string.appointment_reminder_notification_chanel_description));
             channel.setLockscreenVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(vibrationPattern);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
             NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
@@ -64,14 +67,12 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle(context.getResources().getString(R.string.title_appointment_reminder_notification_notification))
                 .setContentText(context.getResources().getString(R.string.text_appointment_reminder_notification_notification))
-
                 .setPriority(NOTIFICATION_PRIORITY)
                 .setVisibility(NOTIFICATION_LOCK_SCREEN_VISIBILITY)
                 .setCategory(NotificationCompat.CATEGORY_EVENT)
                 .setFullScreenIntent(fullScreenPendingIntent, true)
-                .setSound(Settings.System.DEFAULT_RINGTONE_URI)
-                .setContentIntent(fullScreenPendingIntent)
-                .setAutoCancel(true);
+                .setAutoCancel(true)
+                .setVibrate(vibrationPattern);
         NotificationManagerCompat notificationManager = NotificationManagerCompat.from(context);
         notificationManager.notify(context.getResources().getInteger(R.integer.appointment_reminder_notification_id), builder.build());
     }

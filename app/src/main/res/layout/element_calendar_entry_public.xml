@@ -61,6 +61,19 @@
                 app:layout_constraintHorizontal_bias="0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/calendarEntryAppointmentTitle" />
+
+            <TextView
+                android:id="@+id/calendarEntryNumberOfParticipants"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textStyle="bold"
+                android:textSize="12sp"
+                android:gravity="center"
+                app:layout_constraintBottom_toTopOf="@id/calendarEntryAppointmentDate"
+                app:layout_constraintEnd_toStartOf="@+id/publicCalendarEntryButtonJoin"
+                app:layout_constraintStart_toEndOf="@+id/calendarEntryAppointmentTitle"
+                app:layout_constraintTop_toTopOf="@+id/calendarEntryAppointmentTitle" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <ImageView

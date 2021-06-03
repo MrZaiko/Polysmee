@@ -1,7 +1,10 @@
 package io.github.polysmee.calendar.fragments;
 
 import android.content.Intent;
+import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -11,9 +14,11 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
+import io.github.polysmee.calendar.CalendarAppointmentInfo;
 import io.github.polysmee.calendar.DailyCalendar;
 
 public class CalendarActivityFragmentsHelpers {
@@ -24,6 +29,8 @@ public class CalendarActivityFragmentsHelpers {
 
     /**
      * Sets the text view on top of the chosen calendar fragment to the current day's date
+     * @param rootView the rootView containing the date layout
+     * @param publicApp determines if it's the public appointments fragment or not, so we can pass the right ids
      */
     public static void setDayText(ViewGroup rootView, boolean publicApp) {
         ConstraintLayout dateLayout;
@@ -73,6 +80,40 @@ public class CalendarActivityFragmentsHelpers {
         intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
         intent.putExtra(AppointmentActivity.APPOINTMENT_ID, id);
         calendarFragment.startActivity(intent);
+    }
+
+    /**
+     * Sets the image status of the appointment depending on if the appointment has ended (red), has yet to begin (green),
+     * or is happening right now (yellow)
+     * @param status the imageview containing the image to update
+     * @param current the current time
+     * @param startDate the appointment's start time
+     * @param endDate the appointment's end time
+     */
+    public static void setStatusImage(ImageView status, Date current, Date startDate , Date endDate){
+        if (current.before(startDate))
+            status.setImageResource(R.drawable.calendar_entry_incoming_dot);
+        else if (current.after(endDate))
+            status.setImageResource(R.drawable.calendar_entry_done_dot);
+        else
+            status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
+    }
+
+    /**
+     * Adds the given calendar entry to the give scroll layout
+     * @param rootView the ViewGroup having the original context
+     * @param scrollLayout the scroll layout we'll add the calendar entry to
+     * @param appointmentIdsToView the map containing mappings from appointment ids to the views for that appointment
+     * @param appointment the appointment info of the appointment we're going to add to the scroll layout
+     * @param appointmentEntryLayout the appointment's layout to add
+     */
+    public static void addEntryToScrollLayout(ViewGroup rootView, LinearLayout scrollLayout, Map<String,View> appointmentIdsToView, CalendarAppointmentInfo appointment,ConstraintLayout appointmentEntryLayout){
+        TextView emptySpace = new TextView(rootView.getContext());
+
+        scrollLayout.addView(appointmentEntryLayout);
+        scrollLayout.addView(emptySpace);
+        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
+        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
     }
 
 

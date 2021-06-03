@@ -37,7 +37,7 @@ public final class FirebaseUploadService implements UploadService {
     public void downloadImage(String id, DownloadValueListener dvl, LoadValueListener fl, Context ctx) {
         byte[] data = null;
         try {
-            File fi = new File(ctx.getFilesDir(), id);
+            File fi = new File(ctx.getCacheDir(), id);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O && fi.exists())
                 data = readAllBytes(Paths.get(fi.getPath()));
         } catch (IOException ignored) {}
@@ -64,7 +64,7 @@ public final class FirebaseUploadService implements UploadService {
 
     private void addNewFileToCache(String name, byte[] data, Context ctx) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) //cache does not work for api below 26, it will cache miss at 100%
-            try(OutputStream os = new FileOutputStream(new File(ctx.getFilesDir(), name))) {
+            try(OutputStream os = new FileOutputStream(new File(ctx.getCacheDir(), name))) {
                 os.write(data);
             } catch (IOException ignored) {}
     }

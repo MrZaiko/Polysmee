@@ -14,7 +14,7 @@ public class CalendarAppointmentInfoTest {
     @Test
     public void appointmentInfoGettersWorkCorrectly() {
         CalendarAppointmentInfo calendarAppointmentInfo = new CalendarAppointmentInfo("Course", "Title",
-                0, 0, "0");
+                0, 0, "0",0);
         assertEquals("Course", calendarAppointmentInfo.getCourse());
         assertEquals("Title", calendarAppointmentInfo.getTitle());
         assertEquals(0, calendarAppointmentInfo.getStartTime());

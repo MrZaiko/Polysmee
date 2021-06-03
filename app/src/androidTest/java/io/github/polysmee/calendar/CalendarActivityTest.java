@@ -27,7 +27,6 @@ import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseFactory;
 import io.github.polysmee.internet.connection.InternetConnection;
-import io.github.polysmee.invites.InvitesManagementActivity;
 import io.github.polysmee.login.AuthenticationFactory;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.znotification.AppointmentReminderNotification;
@@ -50,7 +49,6 @@ import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.c
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.longClickOn;
 import static com.schibsted.spain.barista.interaction.BaristaDialogInteractions.clickDialogPositiveButton;
 import static com.schibsted.spain.barista.interaction.BaristaEditTextInteractions.writeTo;
-import static com.schibsted.spain.barista.interaction.BaristaMenuClickInteractions.clickMenu;
 import static com.schibsted.spain.barista.interaction.BaristaPickerInteractions.setDateOnPicker;
 import static com.schibsted.spain.barista.interaction.BaristaScrollInteractions.scrollTo;
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -63,17 +61,18 @@ import static org.junit.Assert.assertTrue;
 public class CalendarActivityTest {
 
     private static final String username1 = "Youssef le dindon";
+    private static final String userDescription1 = "Bonjour tout le monde !";
     private static final String appointmentTitle = "J'adore le surf";
     private static final String appointmentCourse = "SDP";
     private static final String appointmentId = "-lsdqrhrrdtisjhmf";
-
-    private static Calendar startTime;
+    //be care full the email has to be in lower case for the test to pass
+    private static final String MAIN_USER_EMAIL = "calendaractivitytest@gmail.com";
     private static final int appointmentYear = 2022;
     private static final int appointmentMonth = 3;
     private static final int appointmentDay = 7;
-
     private static final SimpleDateFormat dayFormatter = new SimpleDateFormat("d");
     private static final SimpleDateFormat letterDayFormatter = new SimpleDateFormat("EEEE");
+    private static Calendar startTime;
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -86,9 +85,10 @@ public class CalendarActivityTest {
         InternetConnection.setManuallyInternetConnectionForTests(true);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("CalendarActivityTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(MAIN_USER_EMAIL, "fakePassword"));
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
         DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("appointments").child(appointmentId).setValue(true);
+        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("description").setValue(userDescription1);
         DatabaseFactory.getAdaptedInstance().getReference("courses").child(appointmentCourse).setValue(appointmentCourse);
     }
 
@@ -113,7 +113,7 @@ public class CalendarActivityTest {
         String title = "NewTitle";
         long startTime = calendar.getTimeInMillis() + 60 * 1000;
         CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
-                startTime, 3600 * 6 * 1000, appointmentId + 5);
+                startTime, 3600 * 6 * 1000, appointmentId + 5,0);
         MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
                 info.getDuration(), info.getCourse(), info.getTitle(), false);
         sleep(3, SECONDS);
@@ -147,7 +147,7 @@ public class CalendarActivityTest {
             String title = "NewTitle";
             long startTime = calendar.getTimeInMillis() + 60 * 1000;
             CalendarAppointmentInfo info = new CalendarAppointmentInfo("SDP", "ClickMeBoi",
-                    startTime, 3600 * 6 * 1000, appointmentId + 5);
+                    startTime, 3600 * 6 * 1000, appointmentId + 5,0);
             MainUser.getMainUser().createNewUserAppointment(info.getStartTime(),
                     info.getDuration(), info.getCourse(), info.getTitle(), false);
             sleep(3, SECONDS);
@@ -162,7 +162,7 @@ public class CalendarActivityTest {
 
             //clickingOnAnAppointmentLaunchesItsDetailsWhenItsBeforeItsTime
             CalendarAppointmentInfo info1 = new CalendarAppointmentInfo("SDP", "ClickMe",
-                    calendar.getTimeInMillis() + 60 * 1000, 3600 * 6 * 1000, appointmentId + 5);
+                    calendar.getTimeInMillis() + 60 * 1000, 3600 * 6 * 1000, appointmentId + 5,0);
             MainUser.getMainUser().createNewUserAppointment(info1.getStartTime(),
                     info1.getDuration(), info1.getCourse(), info1.getTitle(), false);
             sleep(3, SECONDS);
@@ -171,52 +171,14 @@ public class CalendarActivityTest {
             assertDisplayed(withHint(info1.getTitle()));
             assertDisplayed(withText(info1.getCourse()));
             pressBack();
+            swipeViewPagerForward();
+            sleep(2, SECONDS);
+            assertDisplayed(withText(info1.getTitle()));
+            swipeViewPagerBack();
             sleep(2, SECONDS);
             //writtenDateIsCorrectTest
             assertDisplayed(dayFormatter.format(date));
             assertDisplayed(letterDayFormatter.format(date));
-
-
-            //scrollViewContentsIsCoherentAfterAddingAppointments
-            int number_of_appointments = 2;
-
-            CalendarAppointmentInfo[] infos = new CalendarAppointmentInfo[number_of_appointments];
-            for (int i = 0; i < number_of_appointments; ++i) {
-                infos[i] = new CalendarAppointmentInfo("SDP" + i, "FakeTitle" + i,
-                        DailyCalendar.getDayEpochTimeAtMidnight(false) + i * 3600 * 6 * 1000, 3600 * 6 * 1000, appointmentId + i);
-
-            }
-
-            for (int i = 0; i < number_of_appointments; ++i) {
-                MainUser.getMainUser().createNewUserAppointment(infos[i].getStartTime(),
-                        infos[i].getDuration(), infos[i].getCourse(), infos[i].getTitle(), i % 2 == 0);
-                sleep(3, SECONDS);
-            }
-
-            for (int i = 0; i < number_of_appointments; ++i) {
-                scrollTo(infos[i].getTitle());
-                assertDisplayed(infos[i].getTitle());
-                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                Date startDate = new Date(infos[i].getStartTime());
-                Date endDate = new Date((infos[i].getStartTime() + infos[i].getDuration()));
-                scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
-                assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
-            }
-
-            swipeViewPagerForward();
-            sleep(3, SECONDS);
-            for (int i = 0; i < number_of_appointments; ++i) {
-                if (i % 2 != 0) {
-                    assertDisplayed(infos[i].getTitle());
-                    SimpleDateFormat formatter = new SimpleDateFormat("HH:mm");
-                    Date startDate = new Date(infos[i].getStartTime());
-                    Date endDate = new Date((infos[i].getStartTime() + infos[i].getDuration()));
-                    scrollTo(formatter.format(startDate) + " - " + formatter.format(endDate));
-                    assertDisplayed(formatter.format(startDate) + " - " + formatter.format(endDate));
-                }
-            }
-            swipeViewPagerBack();
-
             sleep(3, SECONDS);
 
             //addingAnAppointmentOnAnotherDayDisplaysItOnlyWhenChoosingThatDay
@@ -285,15 +247,16 @@ public class CalendarActivityTest {
             pressBack();
             sleep(2, SECONDS);
             //profileButtonShouldOpenProfile
-            try {
-                clickOn(R.id.calendarMenuProfile);
-                assertDisplayed(username1);
-            } catch (Exception e) {
-                openActionBarOverflowOrOptionsMenu(getApplicationContext());
-                sleep(2, SECONDS);
-                clickOn(R.id.calendarMenuProfile);
-                assertDisplayed(username1);
-            }
+            clickOn(R.id.calendarMenuProfile);
+            sleep(2, SECONDS);
+
+            assertDisplayed(R.string.title_profile_user_name);
+            assertDisplayed(username1);
+            assertDisplayed(R.string.title_profile_user_description);
+            assertDisplayed(userDescription1);
+            assertDisplayed(R.string.title_profile_user_email);
+            assertDisplayed(MAIN_USER_EMAIL);
+            assertDisplayed(R.string.title_profile_main_user_friends);
         }
     }
 

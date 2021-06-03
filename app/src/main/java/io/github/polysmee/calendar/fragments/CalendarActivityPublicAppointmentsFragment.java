@@ -1,14 +1,17 @@
 package io.github.polysmee.calendar.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,8 +42,10 @@ import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
 import io.github.polysmee.database.databaselisteners.BooleanValueListener;
 import io.github.polysmee.database.databaselisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.StringSetValueListener;
 import io.github.polysmee.database.databaselisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
+import io.github.polysmee.room.fragments.HelperImages;
 
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.goToAppointmentDetails;
 import static io.github.polysmee.calendar.fragments.CalendarActivityFragmentsHelpers.setDayText;
@@ -62,8 +67,10 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
     private ArrayList<String> courses;
     private String currentCourse = "";
-    AlertDialog.Builder builder;
-    AutoCompleteTextView courseSelector;
+    private AlertDialog.Builder builder;
+    private AutoCompleteTextView courseSelector;
+    private boolean sortChronologically = true;
+    private final static int SORT_CHRONOLOGICALLY_INDEX = 0;
 
     //Commands to remove listeners
     private List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -86,6 +93,40 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
         courseSelector = rootView.findViewById(R.id.calendarActivityPublicAppointmentsEditTxtCourse);
 
+        fillCoursesList();
+
+        builder = new AlertDialog.Builder(getActivity());
+        rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
+
+        getAllPublicAppointmentsForTheDay();
+
+        //Initialize spinner
+        spinnerInitialization();
+        return rootView;
+    }
+
+    private void spinnerInitialization(){
+        Spinner spinner = rootView.findViewById(R.id.sortPublicAppointmentsSpinner);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getContext(),
+                R.array.sort_public_appointments_array, android.R.layout.simple_spinner_item);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(SORT_CHRONOLOGICALLY_INDEX);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                sortChronologically = position == SORT_CHRONOLOGICALLY_INDEX;
+                getAllPublicAppointmentsForTheDay();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+    }
+
+    private void fillCoursesList(){
         Course.getAllCourses_Once_AndThen(s -> {
                     courses = new ArrayList<>(s);
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
@@ -93,12 +134,6 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                     courseSelector.setAdapter(adapter);
                 }
         );
-
-        builder = new AlertDialog.Builder(getActivity());
-        rootView.findViewById(R.id.calendarActivityPublicAppointmentsFilterBtn).setOnClickListener(v -> filter());
-
-        getAllPublicAppointmentsForTheDay();
-        return rootView;
     }
 
     private void filter() {
@@ -154,12 +189,14 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         super.onDestroy();
     }
 
+
     /**
      * Changes the calendar's layout to show the user's daily appointments at the time
      * this method is called.
+     * @param infos the user's appointments
      */
     protected void changeCurrentCalendarLayout(Set<CalendarAppointmentInfo> infos) {
-        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true);
+        List<CalendarAppointmentInfo> todayAppointments = DailyCalendar.getAppointmentsForTheDay(infos, true, sortChronologically);
         if (!todayAppointments.isEmpty()) {
             for (CalendarAppointmentInfo appointment : todayAppointments) {
                 if (!currentCourse.equals("")) {
@@ -175,23 +212,36 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
     /**
      * Creates an appointment's textual description following a certain format
-     * to show in the calendar
+     * to show in the calendar in an entry
      *
      * @param appointment the appointment's whose description is created
+     * @param calendarEntry the entry which will hold the appointment's information
      */
+    @SuppressLint("SetTextI18n")
     protected void createAppointmentEntry(CalendarAppointmentInfo appointment, View calendarEntry) {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentTitle)).setText(appointment.getTitle());
+        ((TextView) calendarEntry.findViewById(R.id.calendarEntryNumberOfParticipants)).setText('(' + Integer.toString(appointment.getNumberOfParticipants()) + "participant(s))");
 
         Appointment appointment1 = new DatabaseAppointment(appointment.getId());
-        StringValueListener ownerListener = (ownerId) ->{
-            if(!ownerId.equals(user.getId())){
-                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
-                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
-            }
+        StringSetValueListener bannedListener = (bannedParticipants) ->{
+            if(!bannedParticipants.contains(user.getId())){
+                StringValueListener ownerListener = (ownerId) ->{
+                    if(!ownerId.equals(user.getId())){
+                        calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setVisibility(View.VISIBLE);
+                        calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> joinPublicAppointmentWhenClickingOnJoin(appointment.getId()));
+                    }
 
+                };
+                appointment1.getOwnerIdAndThen(ownerListener);
+                commandsToRemoveListeners.add((x,y) -> appointment1.removeOwnerListener(ownerListener));
+            }
+            else{
+                calendarEntry.findViewById(R.id.publicCalendarEntryButtonJoin).setOnClickListener((v) -> HelperImages.showToast("You are banned from this appointment",getContext()));
+            }
         };
-        appointment1.getOwnerIdAndThen(ownerListener);
-        commandsToRemoveListeners.add((x,y) -> appointment1.removeOwnerListener(ownerListener));
+        appointment1.getBansAndThen(bannedListener);
+        commandsToRemoveListeners.add((x,y) -> appointment1.removeBansListener(bannedListener));
+
         Date startDate = new Date(appointment.getStartTime());
         Date endDate = new Date((appointment.getStartTime() + appointment.getDuration()));
         Date current = new Date(System.currentTimeMillis());
@@ -202,12 +252,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
         ((TextView) calendarEntry.findViewById(R.id.calendarEntryAppointmentDate)).setText(appointmentDate);
 
         ImageView status = calendarEntry.findViewById(R.id.calendarEntryStatus);
-        if (current.before(startDate))
-            status.setImageResource(R.drawable.calendar_entry_incoming_dot);
-        else if (current.after(endDate))
-            status.setImageResource(R.drawable.calendar_entry_done_dot);
-        else
-            status.setImageResource(R.drawable.calendar_entry_ongoing_dot);
+        CalendarActivityFragmentsHelpers.setStatusImage(status,current,startDate,endDate);
     }
 
     /**
@@ -215,16 +260,11 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
      *
      * @param appointment the appointment to add
      */
+    @SuppressLint("InflateParams")
     protected void addAppointmentToCalendarLayout(CalendarAppointmentInfo appointment) {
-
         ConstraintLayout appointmentEntryLayout = (ConstraintLayout) inflater.inflate(R.layout.element_calendar_entry_public, null);
         createAppointmentEntry(appointment, appointmentEntryLayout);
-        TextView emptySpace = new TextView(rootView.getContext());
-
-        scrollLayout.addView(appointmentEntryLayout);
-        scrollLayout.addView(emptySpace);
-        appointmentIdsToView.put(appointment.getId(), appointmentEntryLayout);
-        appointmentIdsToView.put(appointment.getId() + 1, emptySpace);
+        CalendarActivityFragmentsHelpers.addEntryToScrollLayout(rootView,scrollLayout,appointmentIdsToView,appointment,appointmentEntryLayout);
     }
 
 
@@ -292,7 +332,7 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
 
                     BooleanValueListener privateListener = (isPrivate) ->{
                         if(!isPrivate){
-                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id);
+                            CalendarAppointmentInfo appointmentInfo = new CalendarAppointmentInfo("","",0,0,id,0);
                             LongValueListener startListener = (start)->{
 
                                 appointmentInfo.setStartTime(start);
@@ -303,13 +343,20 @@ public class CalendarActivityPublicAppointmentsFragment extends Fragment {
                                         appointmentInfo.setTitle((title));
                                         StringValueListener courseListener = (course) ->{
                                             appointmentInfo.setCourse(course);
-                                            scrollLayout.removeAllViewsInLayout();
-                                            if (!appointmentSet.contains(appointmentInfo.getId())) {
-                                                appointmentInfoMap.remove(appointmentInfo.getId());
-                                            } else {
-                                                appointmentInfoMap.put(appointment.getId(), appointmentInfo);
-                                            }
-                                            changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                            StringSetValueListener participantListener = (participants) -> {
+                                                appointmentInfo.setNumberOfParticipants(participants.size());
+                                                scrollLayout.removeAllViewsInLayout();
+                                                if (!appointmentSet.contains(appointmentInfo.getId())) {
+                                                    appointmentInfoMap.remove(appointmentInfo.getId());
+                                                } else {
+                                                    appointmentInfoMap.put(appointment.getId(), appointmentInfo);
+                                                }
+                                                changeCurrentCalendarLayout(new HashSet<>(appointmentInfoMap.values()));
+                                            };
+
+                                            appointment.getParticipantsId_Once_AndThen(participantListener);
+                                            //commandsToRemoveListeners.add((x,y) -> appointment.removeParticipantsListener(participantListener));
+
                                         };
                                         appointment.getCourseAndThen(courseListener);
                                         commandsToRemoveListeners.add((x,y) -> appointment.removeCourseListener(courseListener));

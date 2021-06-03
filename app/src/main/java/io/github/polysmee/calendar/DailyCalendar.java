@@ -24,7 +24,7 @@ public class DailyCalendar {
     /**
      * Gets the chosen's date time at midnight in milliseconds, and sets the
      * midnightEpochTime attribute to that; this function is used when the user
-     * changes the day he wants to see his appointments
+     * changes the day he wants to see his appointments on
      *
      * @param year  the chosen's date year
      * @param month the chosen's date month
@@ -51,30 +51,35 @@ public class DailyCalendar {
     public static long getDayEpochTimeAtMidnight(boolean publicAppointments) {
         if (publicAppointments)
             return midnightEpochTimePublicAppointments;
-        return midnightEpochTimeMyAppointments; //get the day of interest's time at midnight in seconds epoch
+        return midnightEpochTimeMyAppointments;
     }
 
     /**
      * For a given set of user appointments, gets the ones that are programmed to happen
      * on the day the user chose on the calendar. The appointments are ordered according
-     * to their start time.
+     * to the chosen sorting metric (either the number of participants, or the start time)
      *
      * @param userAppointments set of appointments of the user.
      * @return the list of ordered appointments of the user for the chosen day
      * @throws IllegalArgumentException if the set given as argument is null
      */
-    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments, boolean publicAppointments) {
+    public static List<CalendarAppointmentInfo> getAppointmentsForTheDay(Set<CalendarAppointmentInfo> userAppointments, boolean publicAppointments, boolean sortChronologically) {
         if (userAppointments == null)
             throw new IllegalArgumentException();
         long todayMidnightTime = getDayEpochTimeAtMidnight(publicAppointments);
-        long nextDayMidnightTime = todayMidnightTime + 24 * 3600 * 1000; //get the epoch time in seconds of next day at midnight
+        long nextDayMidnightTime = todayMidnightTime + 24 * 3600 * 1000; //get the epoch time in milliseconds of next day at midnight
         List<CalendarAppointmentInfo> todayAppointments = new ArrayList<>();
         for (CalendarAppointmentInfo appointment : userAppointments) {
             if (appointment.getStartTime() >= todayMidnightTime && appointment.getStartTime() < nextDayMidnightTime) {
                 todayAppointments.add(appointment);
             }
         }
-        Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(), t1.getStartTime()));
+        if(sortChronologically) {
+            Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Long.compare(calendarAppointmentInfo.getStartTime(), t1.getStartTime()));
+        } else {
+            Collections.sort(todayAppointments, (calendarAppointmentInfo, t1) -> Integer.compare(calendarAppointmentInfo.getNumberOfParticipants(), t1.getNumberOfParticipants()));
+        }
+
 
         return Collections.unmodifiableList(todayAppointments);
     }

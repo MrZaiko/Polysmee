@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.Collections;
@@ -60,7 +61,9 @@ public class LoginActivity extends AppCompatActivity {
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
+                        .setIsSmartLockEnabled(false)
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)
                         .build(),
                 RC_SIGN_IN);
         // [END auth_fui_create_intent]
@@ -73,14 +76,18 @@ public class LoginActivity extends AppCompatActivity {
         if (requestCode != RC_SIGN_IN) {
             return;
         }
-        IdpResponse response = IdpResponse.fromResultIntent(data);
 
         if (resultCode == RESULT_OK) {
 
             // Successfully signed in
             FirebaseDatabase db = DatabaseFactory.getAdaptedInstance();
-            db.getReference("users").child(MainUser.getMainUser().getId()).child("name")
-                    .setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
+            DatabaseReference name = db.getReference("users").child(MainUser.getMainUser().getId()).child("name");
+            name.keepSynced(true);
+            MainUser.getMainUser().getName_Once_AndThen((nam) -> {
+
+                if(nam.isEmpty())
+                    name.setValue(AuthenticationFactory.getAdaptedInstance().getCurrentUser().getDisplayName());
+            });
             Intent intent = new Intent(this, CalendarActivity.class);
 
             startActivity(intent);
