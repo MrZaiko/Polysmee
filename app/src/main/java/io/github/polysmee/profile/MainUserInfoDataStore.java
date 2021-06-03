@@ -9,12 +9,11 @@ import io.github.polysmee.database.User;
 import io.github.polysmee.login.MainUser;
 
 /**
- * This class implement a PreferenceDataStore so that we can save values enter in a EditTextPreference to the database,
+ * A PreferenceDataStore that save values to the database,
  * more precisely it represent a PreferenceDataStore of the main user info.
  */
 public final class MainUserInfoDataStore extends PreferenceDataStore {
     public static final String PREFERENCE_KEY_MAIN_USER_NAME = "preference_key_main_user_info_name";
-    public static final String PREFERENCE_KEY_MAIN_USER_EMAIL = "preference_key_main_user_info_email";
     public static final String PREFERENCE_KEY_MAIN_USER_DESCRIPTION = "preference_key_main_user_info_description";
 
     @Override
