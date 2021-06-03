@@ -35,7 +35,7 @@ public final class AppointmentReminderNotification {
      * appointments can be coherent with the database Value as soon as possible. To be specific as
      * soon as possible but it need the user to be logged in.
      *
-     * @param context The Context in which to perform the setup
+     * @param context The Context in which to perform the setup.
      */
     public static void appointmentReminderNotificationSetListeners(@NonNull Context context) {
         //to be sure that the listener will be setup only once, more robustness
