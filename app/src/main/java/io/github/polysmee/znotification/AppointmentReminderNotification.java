@@ -7,25 +7,33 @@ import androidx.annotation.NonNull;
 
 
 /**
- * this class is used to setup the reminder notification.
- * The reminder notification with this class aer consistent with the appointments the user have in the database and the appointment instance in the database
+ * Used to start the {@link AppointmentReminderNotificationService appointment reminder notification
+ * service}. It allow to easily disable the appointment reminder service if needed.
  */
 public final class AppointmentReminderNotification {
     private static boolean isNotificationSetterEnable = true;
 
     /**
-     * Set the value of isNotificationSetterEnable to the given value. If isNotificationSetterEnable is false before calling appointmentReminderNotificationSetListeners
-     * then the appointment reminder notification listeners will not be set. By default isNotificationSetterEnable has true value.
+     * Sets the value of isNotificationSetterEnable to the given value. If
+     * isNotificationSetterEnable is false before calling appointmentReminderNotificationSetListeners
+     * then the appointment reminder notification listeners will not be set. By default,
+     * isNotificationSetterEnable has true value. Use this function in tests where UI is used to
+     * disable notification and might avoid the tests to fails because the notification is taking
+     * the screen.
      *
-     * @param value the value to give isNotificationSetterEnable
+     * @param newValue the value to set isNotificationSetterEnable to.
      */
-    public static void setIsNotificationSetterEnable(boolean value) {
-        isNotificationSetterEnable = value;
+    public static void setIsNotificationSetterEnable(boolean newValue) {
+        isNotificationSetterEnable = newValue;
     }
 
     /**
-     * This function should be called as soon as the MainUserCurrentrSingleton exist so that the reminder of appointments can be coherent with the database Value,
-     * i.e. as soon as possible but it need MainUserCurrentSingleton
+     * Start the {@link AppointmentReminderNotificationService appointment reminder notification
+     * services}.
+     * <p>
+     * This function should be called as soon as the user is logged in, so that the reminder of
+     * appointments can be coherent with the database Value as soon as possible. To be specific as
+     * soon as possible but it need the user to be logged in.
      *
      * @param context The Context in which to perform the setup
      */
@@ -33,7 +41,6 @@ public final class AppointmentReminderNotification {
         //to be sure that the listener will be setup only once, more robustness
         if (isNotificationSetterEnable) {
             context.startService(new Intent(context, AppointmentReminderNotificationService.class));
-            return;
         }
     }
 
