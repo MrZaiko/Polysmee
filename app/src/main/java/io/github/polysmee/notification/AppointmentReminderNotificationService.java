@@ -89,7 +89,7 @@ public final class AppointmentReminderNotificationService extends Service {
      */
     private SharedPreferences getLocalSharedPreference() {
         return this.getSharedPreferences(this.getResources().getString(
-                R.string.sharedPreferenceKeyAppointmentReminderNotificationService),
+                R.string.shared_preference_key_appointment_reminder_notification_service),
                 Context.MODE_PRIVATE);
     }
 
