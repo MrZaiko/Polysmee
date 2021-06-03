@@ -214,6 +214,7 @@ public class AppointmentActivity extends AppCompatActivity implements DataPasser
         txtAdd = findViewById(R.id.appointmentCreationAddTextView);
         txtBan = findViewById(R.id.appointmentCreationBanTextView);
 
+        //Only the app creators can change the courses so it will happen very rarely, therefore getting them only once is better
         Course.getAllCourses_Once_AndThen(s -> {
                     courses = new ArrayList<>(s);
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(this,

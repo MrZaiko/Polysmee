@@ -10,6 +10,10 @@ import android.view.MotionEvent;
 
 import io.github.polysmee.R;
 
+
+/**
+ * Class to implement the custom image view to be used when sharing pictures
+ */
 public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageView {
     private final Paint paint;
     private final Path path;
@@ -22,6 +26,8 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
 
     private float previousX, previousY;
 
+    private final static int DEFAULT_STROKE_WIDTH = 5;
+
     public DrawableImageView(Context context, AttributeSet attrs) {
         super(context, attrs);
 
@@ -31,8 +37,8 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
         paint.setAntiAlias(true);
         paint.setStyle(Paint.Style.STROKE);
         paint.setStrokeJoin(Paint.Join.ROUND);
-        paint.setStrokeWidth(5);
-        currentStrokeWidth = 5;
+        paint.setStrokeWidth(DEFAULT_STROKE_WIDTH);
+        currentStrokeWidth = DEFAULT_STROKE_WIDTH;
 
         path = new Path();
     }
@@ -82,6 +88,10 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
         paint.setStrokeWidth(strokeWidth);
     }
 
+    /**
+     *
+     * @return the current stroke width
+     */
     public float getCurrentStrokeWidth() {
         return currentStrokeWidth;
     }
@@ -91,6 +101,10 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
         paint.setColor(colorId);
     }
 
+    /**
+     *
+     * @return the current color id
+     */
     public int getCurrentColorId() {
         return currentColorId;
     }
@@ -105,7 +119,7 @@ public class DrawableImageView extends androidx.appcompat.widget.AppCompatImageV
     private void touchMove(float x, float y) {
         float dx = Math.abs(x - previousX);
         float dy = Math.abs(y - previousX);
-        if (dx >= 5 || dy >= 5) {
+        if (dx >= DEFAULT_STROKE_WIDTH || dy >= DEFAULT_STROKE_WIDTH) {
             path.quadTo(previousX, previousY, (x + previousX) / 2, (y + previousY) / 2);
             previousX = x;
             previousY = y;
