@@ -21,8 +21,8 @@ import java.util.concurrent.TimeUnit;
 
 import io.github.polysmee.R;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
 
@@ -166,7 +166,7 @@ public final class AppointmentReminderNotificationService extends Service {
     private void setUpListenersForMainUserAppointments(@NotNull Set<String> userAppointmentsId) {
         for (String appointmentId : userAppointmentsId) {
             if (!appointmentStartTimeListeners.containsKey(appointmentId)) {
-                LongValueListener startTimeValueListener = (long startTime) -> {
+                LongValueListener startTimeValueListener = (Long startTime) -> {
                     Intent updateNotification = new Intent(this,
                             AppointmentReminderNotificationService.class);
                     updateNotification.putExtra(INTENT_KEY_EXTRA_START_TIME, startTime);

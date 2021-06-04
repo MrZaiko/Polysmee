@@ -1,8 +1,5 @@
 package io.github.polysmee.invites.fragments;
 
-import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -19,17 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 import io.github.polysmee.R;
 import io.github.polysmee.agora.Command;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.database.UploadServiceFactory;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.FriendMethodsHelpers;
-import io.github.polysmee.profile.ProfileActivity;
-import io.github.polysmee.room.fragments.HelperImages;
 
 public class FriendInvitesFragment extends Fragment {
     private final Map<String, List<View>> friendInvitationIdsToView = new HashMap<>();

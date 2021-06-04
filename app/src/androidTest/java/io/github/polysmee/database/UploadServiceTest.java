@@ -2,7 +2,6 @@ package io.github.polysmee.database;
 
 import androidx.test.ext.junit.runners.AndroidJUnit4;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -16,7 +15,7 @@ import static org.junit.Assert.assertTrue;
 public class UploadServiceTest {
     @Test
     public void uploadDownloadDelete() {
-        UploadServiceFactory.setTest(true);
+        UploadServiceFactory.setLocal(true);
         UploadService us = UploadServiceFactory.getAdaptedInstance();
         us.uploadImage(
                 new byte[]{2, 3, 4},
@@ -38,7 +37,7 @@ public class UploadServiceTest {
                 }, getApplicationContext()
         );
 
-        UploadServiceFactory.setTest(false);
+        UploadServiceFactory.setLocal(false);
         us = UploadServiceFactory.getAdaptedInstance();
 
         us.uploadImage(
@@ -64,7 +63,7 @@ public class UploadServiceTest {
 
     @Test
     public void exceptionOnDataNotFound(){
-        UploadServiceFactory.setTest(false);
+        UploadServiceFactory.setLocal(false);
         UploadService us = UploadServiceFactory.getAdaptedInstance();
 
         us.downloadImage(

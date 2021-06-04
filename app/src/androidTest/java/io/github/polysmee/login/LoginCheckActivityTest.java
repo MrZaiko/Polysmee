@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.notification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.intent.Intents.intending;
@@ -31,22 +31,22 @@ public class LoginCheckActivityTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
+        DatabaseSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
-        AuthenticationFactory.setTest();
+        AuthenticationSingleton.setLocal();
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
     }
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
     public void firesLoginWhenNotLoggedIn() {
-        AuthenticationFactory.getAdaptedInstance().signOut();
+        AuthenticationSingleton.getAdaptedInstance().signOut();
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), LoginCheckActivity.class);
         Intents.init();
         try (ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)) {
@@ -57,7 +57,7 @@ public class LoginCheckActivityTest {
 
     @Test
     public void firesMainWhenLoggedIn() throws ExecutionException, InterruptedException {
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().signInWithEmailAndPassword("LoginCheckActivityTest@gmail.com", "fakePassword"));
         Intent intent = new Intent(ApplicationProvider.getApplicationContext(), CalendarActivity.class);
         Intents.init();
         try (ActivityScenario<LoginCheckActivity> ignored = ActivityScenario.launch(intent)) {

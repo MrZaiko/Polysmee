@@ -26,7 +26,7 @@ import io.github.polysmee.R;
 import io.github.polysmee.calendar.googlecalendarsync.GoogleCalendarSyncActivity;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.invites.InvitesManagementActivity;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.LoginActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
@@ -163,7 +163,7 @@ public class CalendarActivity extends AppCompatActivity {
                 startActivity(exportIntent);
                 return true;
             case R.id.calendarMenuLogout:
-                AuthenticationFactory.getAdaptedInstance().signOut();
+                AuthenticationSingleton.getAdaptedInstance().signOut();
                 Intent logoutIntent = new Intent(this, LoginActivity.class);
                 finish();
                 startActivity(logoutIntent);

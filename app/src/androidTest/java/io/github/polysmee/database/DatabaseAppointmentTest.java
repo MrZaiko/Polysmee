@@ -11,6 +11,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
@@ -18,11 +19,11 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.databaselisteners.BooleanValueListener;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.notification.AppointmentReminderNotification;
 
@@ -38,15 +39,15 @@ public class DatabaseAppointmentTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
 
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
 
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("DatabaseAppointmentTest@gmail.com", "fakePassword"));
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username);
         apid = MainUser.getMainUser().createNewUserAppointment(0, 3600, "AU", "chihiro", false);
         Thread.sleep(1000);
     }
@@ -54,7 +55,8 @@ public class DatabaseAppointmentTest {
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        new DatabaseAppointment(apid).selfDestroy();
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
@@ -322,5 +324,22 @@ public class DatabaseAppointmentTest {
             new DatabaseAppointment(apid).getPrivate_Once_AndThen((l) -> {
             });
         }
+    }
+
+    @Test
+    public void reaction() throws ExecutionException, InterruptedException {
+        new DatabaseAppointment(apid).editMessageReaction("msg", 0);
+        Thread.sleep(2000);
+        assertEquals(
+                0L,
+                Tasks.await(DatabaseSingleton
+                        .getAdaptedInstance()
+                        .getReference("appointments")
+                        .child(apid)
+                        .child("messages")
+                        .child("msg")
+                        .child("reaction")
+                        .get()).getValue()
+        );
     }
 }

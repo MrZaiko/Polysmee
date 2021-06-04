@@ -33,7 +33,7 @@ import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
 import io.github.polysmee.login.MainUser;
 
 public class AppointmentsInvitesFragment extends Fragment {

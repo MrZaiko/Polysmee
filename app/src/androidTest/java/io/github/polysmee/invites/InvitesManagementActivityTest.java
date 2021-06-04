@@ -19,8 +19,8 @@ import java.util.Calendar;
 import io.github.polysmee.R;
 import io.github.polysmee.appointments.AppointmentActivity;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.DatabaseSingleton;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.notification.AppointmentReminderNotification;
 
@@ -60,52 +60,52 @@ public class InvitesManagementActivityTest {
         Calendar endTime = (Calendar) startTime.clone();
         endTime.add(Calendar.MILLISECOND, (int) duration);
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         FirebaseApp.clearInstancesForTest();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("InvitesManagementActivityTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course).setValue(course);
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course2).setValue(course2);
-        DatabaseFactory.getAdaptedInstance().getReference("courses").child(course3).setValue(course3);
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("InvitesManagementActivityTest@gmail.com", "fakePassword"));
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("calendarId").setValue(calendarId);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id3).child("name").setValue(username3);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child(course).setValue(course);
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child(course2).setValue(course2);
+        DatabaseSingleton.getAdaptedInstance().getReference("courses").child(course3).setValue(course3);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(title);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(course);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(startTime.getTimeInMillis());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("duration").setValue(duration);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(false);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(title);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(course);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(startTime.getTimeInMillis());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("duration").setValue(duration);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(id2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("private").setValue(false);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("title").setValue(title2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("course").setValue(course2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("start").setValue(startTime.getTimeInMillis());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("duration").setValue(duration);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("participants").child(id2).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("owner").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("private").setValue(false);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("title").setValue(title2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("course").setValue(course2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("start").setValue(startTime.getTimeInMillis());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("duration").setValue(duration);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("participants").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("owner").setValue(id2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId2).child("private").setValue(false);
 
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("title").setValue(title3);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("course").setValue(course3);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("start").setValue(startTime.getTimeInMillis());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("duration").setValue(duration);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("participants").child(id2).setValue(true);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("owner").setValue(id2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("private").setValue(false);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("title").setValue(title3);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("course").setValue(course3);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("start").setValue(startTime.getTimeInMillis());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("duration").setValue(duration);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("invites").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("participants").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("owner").setValue(id2);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId3).child("private").setValue(false);
     }
 
     @AfterClass
     public static void clean() {
-        DatabaseFactory.getAdaptedInstance().getReference().setValue(null);
+        DatabaseSingleton.getAdaptedInstance().getReference().setValue(null);
     }
 
     @Test
@@ -123,22 +123,22 @@ public class InvitesManagementActivityTest {
         clickOn(R.id.invitationEntryImgAccept);
         sleep(1, SECONDS);
         onView(withText(title)).check(doesNotExist());
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId2).setValue(true);
         sleep(1, SECONDS);
         assertDisplayed(title2);
         assertDisplayed("Course : " + course2);
         clickOn(R.id.invitationEntryImgRefuse);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId3).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("invites").child(appointmentId3).setValue(true);
         sleep(1, SECONDS);
         assertDisplayed(title3);
         assertDisplayed("Course : " + course3);
         onView(withText(title2)).check(doesNotExist());
 
         swipeViewPagerForward();
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friendsInvites").child(id2).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friendsInvites").child(id2).setValue(true);
         sleep(2,SECONDS);
         clickOn(R.id.friendEntryAcceptFriendButton);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friendsInvites").child(id3).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("friendsInvites").child(id3).setValue(true);
         sleep(1,SECONDS);
         clickOn(R.id.friendEntryRemoveFriendButton);
 

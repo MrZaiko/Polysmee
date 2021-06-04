@@ -22,7 +22,7 @@ import io.github.polysmee.agora.RtcTokenBuilder;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
@@ -99,7 +99,7 @@ public class Call {
      * @return user id if the channel is successfully joined
      */
     public void joinChannel() {
-        String userId = AuthenticationFactory.getAdaptedInstance().getUid();
+        String userId = AuthenticationSingleton.getAdaptedInstance().getUid();
         String token1 = generateToken(userId);
         mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);

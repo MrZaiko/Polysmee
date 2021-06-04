@@ -1,8 +1,8 @@
 package io.github.polysmee.database;
 
-import io.github.polysmee.database.databaselisteners.MapStringStringValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.MapStringStringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 
 /**
  * A generic user
@@ -212,7 +212,7 @@ public interface User {
      * @param valueListener a listener that will be run once that will receive the list of every user on the database
      */
     static void getAllUsersIds_Once_AndThen(StringSetValueListener valueListener) {
-        DatabaseFactory.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").addListenerForSingleValueEvent(valueListener);
     }
 
     /**

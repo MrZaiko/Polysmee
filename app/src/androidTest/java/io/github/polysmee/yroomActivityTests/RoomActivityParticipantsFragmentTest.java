@@ -24,10 +24,10 @@ import io.github.polysmee.R;
 import io.github.polysmee.agora.video.Call;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseAppointment;
-import io.github.polysmee.database.DatabaseFactory;
+import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.database.UploadServiceFactory;
-import io.github.polysmee.database.databaselisteners.BooleanChildListener;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.databaselisteners.childListeners.BooleanChildListener;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.notification.AppointmentReminderNotification;
@@ -57,26 +57,26 @@ public class RoomActivityParticipantsFragmentTest {
     @BeforeClass
     public static void setUp() throws Exception {
         AppointmentReminderNotification.setIsNotificationSetterEnable(false);
-        UploadServiceFactory.setTest(true);
+        UploadServiceFactory.setLocal(true);
 
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword("RoomActivityParticipantsFragmentTest@gmail.com", "fakePassword"));
         UploadServiceFactory.getAdaptedInstance().uploadImage(BigYoshi.getBytes(), profilePictureId, s -> {
         }, s -> {
         }, getApplicationContext());
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(profilePictureId);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(profilePictureId);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("name").setValue(username1);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser().getId()).child("picture").setValue(profilePictureId);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("name").setValue(username2);
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(id2).child("picture").setValue(profilePictureId);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("title").setValue(appointmentTitle);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("course").setValue(appointmentCourse);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("owner").setValue(MainUser.getMainUser().getId());
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("start").setValue(appointmentStart);
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId).child("participants").child(MainUser.getMainUser().getId()).setValue(true);
     }
 
 

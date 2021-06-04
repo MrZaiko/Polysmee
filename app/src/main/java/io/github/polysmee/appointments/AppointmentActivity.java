@@ -41,9 +41,9 @@ import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.BooleanValueListener;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.MainUser;
 

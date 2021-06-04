@@ -27,8 +27,8 @@ import java.util.concurrent.TimeUnit;
 import io.github.polysmee.R;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
-import io.github.polysmee.database.DatabaseFactory;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.database.DatabaseSingleton;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 
 import static com.schibsted.spain.barista.interaction.BaristaSleepInteractions.sleep;
@@ -58,32 +58,32 @@ public class AppointmentReminderNotificationTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        DatabaseFactory.setTest();
-        AuthenticationFactory.setTest();
+        DatabaseSingleton.setLocal();
+        AuthenticationSingleton.setLocal();
         CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
-        Tasks.await(AuthenticationFactory.getAdaptedInstance().createUserWithEmailAndPassword(
+        Tasks.await(AuthenticationSingleton.getAdaptedInstance().createUserWithEmailAndPassword(
                 "AppointmentReminderTest@gmail.com", "fakePassword"));
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
                 .getId()).child("name").setValue(username);
     }
 
     @Test
     public void appointmentReminderNotificationSyncedOnline() {
         long timeOfAppointment = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(5);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId)
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId)
                 .child("start").setValue(timeOfAppointment);
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
                 .getId()).child("appointments").child(appointmentId).setValue("");
         reminderNotificationPresent();
         resetStateNotification();
-        DatabaseFactory.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
+        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
                 .getId()).child("appointments").child(appointmentId).setValue(null);
         // wait for the listener in the service to work
         sleep(2, SECONDS);
         timeOfAppointment = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2);
-        DatabaseFactory.getAdaptedInstance().getReference("appointments").child(appointmentId)
+        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId)
                 .child("start").setValue(timeOfAppointment);
         uiDevice.openNotification();
         assertFalse(uiDevice.wait(Until.hasObject(By.textStartsWith(EXPECTED_APP_NAME)),

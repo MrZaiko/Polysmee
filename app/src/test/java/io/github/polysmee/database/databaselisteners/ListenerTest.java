@@ -5,8 +5,16 @@ import org.junit.Test;
 
 import java.util.HashSet;
 
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.DownloadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LoadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 public class ListenerTest {
 
@@ -14,7 +22,7 @@ public class ListenerTest {
     DownloadValueListener dv = (b) -> assertEquals(1, b.length);
     LoadValueListener lvl = (s) -> assertEquals("1234567890", s);
     StringValueListener sv = (s) -> assertEquals("1234567890", s);
-    LongValueListener lv = (l) -> assertEquals(1234567890, l);
+    LongValueListener lv = (l) -> assertEquals(1234567890L, (long) l);
     StringSetValueListener ssv = (s) -> assertEquals(0, s.size());
 
     @Test
@@ -23,7 +31,7 @@ public class ListenerTest {
         dv.onDone(new byte[]{0});
         lvl.onDone("1234567890");
         sv.onDone("1234567890");
-        lv.onDone(1234567890);
+        lv.onDone(1234567890L);
         ssv.onDone(new HashSet<>());
     }
 

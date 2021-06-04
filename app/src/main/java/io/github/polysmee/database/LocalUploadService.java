@@ -5,8 +5,8 @@ import android.content.Context;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.github.polysmee.database.databaselisteners.DownloadValueListener;
-import io.github.polysmee.database.databaselisteners.LoadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.DownloadValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LoadValueListener;
 
 public class LocalUploadService implements UploadService {
     static Map<String, byte[]> hash = new HashMap<>();
