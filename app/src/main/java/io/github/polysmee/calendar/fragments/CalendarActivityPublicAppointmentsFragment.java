@@ -40,10 +40,10 @@ import io.github.polysmee.database.Appointment;
 import io.github.polysmee.database.Course;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.User;
-import io.github.polysmee.database.databaselisteners.BooleanValueListener;
-import io.github.polysmee.database.databaselisteners.LongValueListener;
-import io.github.polysmee.database.databaselisteners.StringSetValueListener;
-import io.github.polysmee.database.databaselisteners.StringValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.BooleanValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.LongValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetValueListener;
+import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.HelperImages;
 

@@ -22,7 +22,7 @@ import io.github.polysmee.agora.RtcTokenBuilder;
 import io.github.polysmee.agora.video.handlers.VideoEngineEventHandler;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.database.DatabaseUser;
-import io.github.polysmee.login.AuthenticationFactory;
+import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
@@ -33,13 +33,17 @@ import io.github.polysmee.room.fragments.RoomActivityVideoFragment;
 public class Call {
 
     public static final int SUCCESS_CODE = 0;
-    public static final int ERROR_CODE = 1;
+    public static final int ERROR_CODE = -1;
     public static final int TIME_CODE_FREQUENCY = 10;
     public static final int INVALID_TIME_CODE_TIME = 30000;
     private static final int VOLUME_OFF = 0;
     private static final int STANDARD_VOLUME = 100;
+    private static final int DEFAULT_SMOOTHNESS = 3;
+
+    //Array containing the different voice effects
     private static final int[] VOICE_EFFECTS = {Constants.AUDIO_EFFECT_OFF, Constants.VOICE_CHANGER_EFFECT_HULK, Constants.VOICE_CHANGER_EFFECT_OLDMAN,
             Constants.VOICE_CHANGER_EFFECT_PIGKING, Constants.VOICE_CHANGER_EFFECT_GIRL, Constants.VOICE_CHANGER_EFFECT_BOY};
+
     private int timeCodeIndicator = 0;
     private static final String APP_ID = "a255f3c708ab4e27a52e0d31ec25ce56";
     private static final String APP_CERTIFICATE = "1b4283ea74394f209ccadd74ac467194";
@@ -64,24 +68,29 @@ public class Call {
         talking = new HashSet<>();
         initializeHandler();
 
+        //Initializes the RtcEngine attribute with default audio settings
         try {
             mRtcEngine = RtcEngine.create(context, APP_ID, handler);
             mRtcEngine.setChannelProfile(Constants.CHANNEL_PROFILE_COMMUNICATION);
-            mRtcEngine.enableAudioVolumeIndication(100, 3, true);
+            mRtcEngine.enableAudioVolumeIndication(STANDARD_VOLUME, DEFAULT_SMOOTHNESS, true);
             mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
 
+    /**
+     *
+     * @param firebaseId
+     * @return the call id of the user whose firebase id is given
+     */
     public int getUid(String firebaseId) {
         for (Map.Entry<Integer, String> uidToId : usersCallId.entrySet()) {
             if (firebaseId.equals(uidToId.getValue()))
                 return uidToId.getKey();
         }
 
-        return -1;
+        return ERROR_CODE;
     }
 
     /**
@@ -90,7 +99,7 @@ public class Call {
      * @return user id if the channel is successfully joined
      */
     public void joinChannel() {
-        String userId = AuthenticationFactory.getAdaptedInstance().getUid();
+        String userId = AuthenticationSingleton.getAdaptedInstance().getUid();
         String token1 = generateToken(userId);
         mRtcEngine.setAudioProfile(Constants.AUDIO_SCENARIO_SHOWROOM, Constants.AUDIO_SCENARIO_GAME_STREAMING);
         int joinStatus = mRtcEngine.joinChannelWithUserAccount(token1, appointment.getId(), userId);
@@ -150,12 +159,14 @@ public class Call {
      */
     public String generateToken(@NonNull String userId) {
         RtcTokenBuilder tokenBuilder = new RtcTokenBuilder();
+        //set time in seconds
         int timestamp = (int) (System.currentTimeMillis() / 1000 + EXPIRATION_TIME);
         return tokenBuilder.buildTokenWithUserAccount(APP_ID, APP_CERTIFICATE, appointment.getId(), userId, RtcTokenBuilder.Role.Role_Publisher, timestamp);
     }
 
     /**
      * Sets the command attribute to the value given
+     * This command is used to run on the UI thread the update of the users who are currently talking
      *
      * @param command the new value of command
      */
@@ -177,37 +188,32 @@ public class Call {
 
             @Override
             public void onUserOffline(int uid, int reason) {
-
-                System.out.println("offline : " + usersCallId.get(uid));
                 usersInCall.remove(uid);
                 appointment.removeOfCall(new DatabaseUser(usersCallId.get(uid)));
             }
 
-            @Override
-            public void onJoinChannelSuccess(String channel, int uid, int elapsed) {
-                System.out.println("success");
-            }
 
             @Override
             public void onUserInfoUpdated(int uid, UserInfo userInfo) {
-                System.out.println(uid + " => user account : " + userInfo.userAccount);
                 usersCallId.put(uid, userInfo.userAccount);
             }
 
             @Override
             public void onAudioVolumeIndication(AudioVolumeInfo[] speakers, int totalVolume) {
+
+                //Check the users who are currently talking and run the command to make them appear as talking
                 Set<Integer> newUsersInCall = new HashSet<Integer>();
                 if (speakers != null) {
                     for (AudioVolumeInfo audioVolumeInfo : speakers) {
                         int uid = audioVolumeInfo.uid;
-                        if (audioVolumeInfo.volume > 0 && usersCallId.containsKey(uid)) {
+                        if (audioVolumeInfo.volume > VOLUME_OFF && usersCallId.containsKey(uid)) {
                             String userId = usersCallId.get(uid);
                             command.execute(true, userId);
                             newUsersInCall.add(uid);
                         }
                     }
                 }
-
+                //Run the command on the users who stopped talking to adapt the UI
                 for (int uid : usersInCall) {
                     if (!newUsersInCall.contains(uid)) {
                         if (talking.contains(uid)) {
@@ -223,6 +229,7 @@ public class Call {
 
             @Override
             public void onLocalAudioStats(LocalAudioStats stats) {
+                //Time code is set at a given frequency
                 if (timeCodeIndicator % TIME_CODE_FREQUENCY == 0) {
                     appointment.setTimeCode(new DatabaseUser(MainUser.getMainUser().getId()), System.currentTimeMillis());
                 }
@@ -233,7 +240,7 @@ public class Call {
     }
 
     /**
-     * Makes the user leave the channel and removes the handler
+     * Makes the user leave the channel, removes the handler and destroy the engine
      */
     public void destroy() {
         leaveChannel();
@@ -306,10 +313,18 @@ public class Call {
 
     //========================== Fragment setters ====================//
 
+    /**
+     * Sets the room attribute to the given value
+     * @param fragment
+     */
     public void setParticipantFragment(Fragment fragment) {
         this.room = (RoomActivityParticipantsFragment) fragment;
     }
 
+    /**
+     * Sets the video room attribute to te given value and initializes the video
+     * @param fragment
+     */
     public void setVideoFragment(Fragment fragment) {
         this.videoRoom = (RoomActivityVideoFragment) fragment;
         eventHandler = new VideoEngineEventHandler();
