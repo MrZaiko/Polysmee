@@ -19,8 +19,11 @@ This application uses two main cloud service providers : [Google Firebase](https
 ## References
 
 [Icons](https://fonts.google.com/icons?selected=Material+Icons)
+
 [Circle Image View](https://github.com/hdodenhof/CircleImageView)
+
 [Color Picker](https://github.com/duanhong169/ColorPicker)
+
 [Image Cropper](https://github.com/ArthurHub/Android-Image-Cropper/)
 
 ## Authors (alphabetical order)
