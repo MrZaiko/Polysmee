@@ -27,5 +27,6 @@ public final class DatabaseSingleton {
 
     public static void setLocal() {
         runLocally = true;
+        firebaseDatabase = null;
     }
 }

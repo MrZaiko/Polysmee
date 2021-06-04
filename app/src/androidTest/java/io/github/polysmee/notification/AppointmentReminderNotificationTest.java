@@ -60,6 +60,7 @@ public class AppointmentReminderNotificationTest {
     public static void setUp() throws Exception {
         DatabaseSingleton.setLocal();
         AuthenticationSingleton.setLocal();
+        AppointmentReminderNotification.setIsNotificationSetterEnable(true);
         CalendarUtilities.setTest(true, false);
         FirebaseApp.clearInstancesForTest();
         FirebaseApp.initializeApp(ApplicationProvider.getApplicationContext());
