@@ -26,10 +26,13 @@ import static org.junit.Assert.assertNotNull;
 public class AppointmentReminderNotificationTest {
 
     private final static long TIMEOUT = TimeUnit.SECONDS.toMillis(10);
-    private static final UiDevice uiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
+    private static final UiDevice uiDevice =
+            UiDevice.getInstance(InstrumentationRegistry.getInstrumentation());
     private static final Context context = ApplicationProvider.getApplicationContext();
-    private final static String notification_text = context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
-    private final static String notification_title = context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
+    private final static String notification_text =
+            context.getResources().getString(R.string.text_appointment_reminder_notification_notification);
+    private final static String notification_title =
+            context.getResources().getString(R.string.title_appointment_reminder_notification_notification);
 
     @Before
     @After
@@ -47,15 +50,16 @@ public class AppointmentReminderNotificationTest {
     @Test
     public void notification_launch_with_good_title_and_text() {
 
-        AppointmentReminderNotificationPublisher publisher = new AppointmentReminderNotificationPublisher();
+        AppointmentReminderNotificationPublisher publisher =
+                new AppointmentReminderNotificationPublisher();
         Intent intent = new Intent(context, AppointmentReminderNotificationPublisher.class);
         publisher.onReceive(context, intent);
-        String expectedAppName = context.getString(R.string.app_name);
         reminderNotificationPresent();
 
     }
 
-    //assert that a notification reminder is present in the system at return notification layout will be closed
+    //assert that a notification reminder is present in the system at return notification layout
+    // will be closed
     public static void reminderNotificationPresent() {
         String expectedAppName = context.getString(R.string.app_name);
         uiDevice.openNotification();

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Polysmee</string>
-    <string name="appointment_reminder_notification_chanel_description">Channel de notification utilisé pour rappeler à l\'utilisateur qu\'il/elle a un meeting sous peu</string>
+    <string name="chanel_description_appointment_reminder_notification">Channel de notification utilisé pour rappeler à l\'utilisateur qu\'il/elle a un meeting sous peu</string>
     <string name="text_appointment_reminder_notification_notification">Rappel de meeting :)</string>
     <string name="title_settings_appointments_reminder">Paramètres de rappel de meeting</string>
     <string name="title_settings_appointments_reminder_notification_time_from_appointment">Me rappeler avant</string>
