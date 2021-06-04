@@ -5,6 +5,14 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        release {
+            storeFile file('../release_key.jks')
+            storePassword 'polysmee'
+            keyAlias 'release_key'
+            keyPassword 'polysmee'
+        }
+    }
     compileSdkVersion 30
     buildToolsVersion "30.0.3"
 
@@ -22,6 +30,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
 
         debug {
