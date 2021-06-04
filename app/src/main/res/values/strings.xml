@@ -119,6 +119,7 @@
     <string name="genericEditText">Edit</string>
     <string name="genericCancelText">Cancel</string>
     <string name="default_course">Others</string>
+    <string name="inCallError">You cannot do this action while in call</string>
     <string name="offline_send_message">The message will be sent when your device connects to the internet</string>
     <string name="offline_picture">The picture will be sent when your device connects to the internet</string>
     <string name="offline_edit_message">The message will be edited when your device connects to the internet</string>

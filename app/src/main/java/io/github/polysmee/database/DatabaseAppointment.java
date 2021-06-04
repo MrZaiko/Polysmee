@@ -487,11 +487,12 @@ public class DatabaseAppointment implements Appointment {
                 User user = new DatabaseUser(userId);
                 user.removeAppointment(this);
             }
+
+            DatabaseSingleton
+                    .getAdaptedInstance()
+                    .getReference("appointments")
+                    .child(id).removeValue();
         });
-        DatabaseSingleton
-                .getAdaptedInstance()
-                .getReference("appointments")
-                .child(id).removeValue();
     }
 
     @Override

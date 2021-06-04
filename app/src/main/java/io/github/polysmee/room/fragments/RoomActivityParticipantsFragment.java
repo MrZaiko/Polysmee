@@ -1,6 +1,7 @@
 package io.github.polysmee.room.fragments;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -46,6 +47,7 @@ import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.databaselisteners.childListeners.BooleanChildListener;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
+import io.github.polysmee.room.RoomActivity;
 
 
 /**
@@ -134,7 +136,7 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
         StringSetValueListener participantListener = p -> {
             if(p.contains(mainUser.getId())) {
                 layout.removeAllViewsInLayout();
-                participantsViews = new HashMap<String, ConstraintLayout>();
+                participantsViews = new HashMap<>();
 
                 for (String id : p) {
                     User user = new DatabaseUser(id);
@@ -417,6 +419,13 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call_end);
                 isInCall = true;
+
+                try {
+                    RoomActivity roomActivity = (RoomActivity) getActivity();
+                    if (roomActivity != null)
+                        roomActivity.setInCall(true);
+                } catch (ClassCastException ignored) {}
+
                 System.out.println("child added");
 
             } else {
@@ -424,8 +433,6 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
                 if (isInCall) {
                     speakerButton.setVisibility(View.VISIBLE);
                 }
-
-
             }
         } else {
             participantsLayout.setBackgroundResource(R.drawable.background_participant_element);
@@ -433,6 +440,13 @@ public class RoomActivityParticipantsFragment extends Fragment implements VoiceT
             videoButton.setVisibility(View.GONE);
             if (id.equals(mainUser.getId())) {
                 isInCall = false;
+
+                try {
+                    RoomActivity roomActivity = (RoomActivity) getActivity();
+                    if (roomActivity != null)
+                        roomActivity.setInCall(false);
+                } catch (ClassCastException ignored) {}
+
                 locallyMuted.clear();
                 ImageView callButton = participantsLayout.findViewById(R.id.roomActivityParticipantElementCallButton);
                 callButton.setImageResource(R.drawable.baseline_call);
