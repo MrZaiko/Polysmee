@@ -7,7 +7,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import io.github.polysmee.R;
 
 /*
- * The fragment representing the appointments reminder settings user interface
+ * Fragment representing the appointments reminder settings user interface.
  */
 public final class SettingsAppointmentsReminderFragment extends PreferenceFragmentCompat {
 
