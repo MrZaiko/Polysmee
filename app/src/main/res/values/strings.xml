@@ -110,6 +110,7 @@
     <string name="genericPictureFailedToLoadText">Picture failed to load</string>
     <string name="genericCreateANewAppointmentText">Create a new appointment</string>
     <string name="genericErrorText">An error occurred</string>
+    <string name="restartErrorText">An error occurred, please restart the application</string>
     <string name="genericOkText">OK</string>
     <string name="genericCourseNotFoundText">Course not found</string>
     <string name="genericUserNotFoundText">User not found</string>
@@ -119,6 +120,7 @@
     <string name="genericEditText">Edit</string>
     <string name="genericCancelText">Cancel</string>
     <string name="default_course">Others</string>
+    <string name="inCallError">You cannot do this action while in call</string>
     <string name="offline_send_message">The message will be sent when your device connects to the internet</string>
     <string name="offline_picture">The picture will be sent when your device connects to the internet</string>
     <string name="offline_edit_message">The message will be edited when your device connects to the internet</string>

@@ -138,4 +138,6 @@
     <string name="android_description_reminder_notification_service">Ce service permet aux notifications de rappel d\'être cohérent avec le(s) serveur(s) (I.e. avec les autres utilisateurs de l\'application).</string>
     <string name="sort_by_date">Trier par ordre chronologique</string>
     <string name="sort_by_participants">Trier par nombre de participants</string>
+    <string name="inCallError">Vous ne pouvez pas réaliser cette action pendant un appel</string>
+    <string name="restartErrorText">Une erreur est survenue, veuillez relancer l\'application</string>
 </resources>

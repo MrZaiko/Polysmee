@@ -35,6 +35,7 @@ import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.database.DatabaseAppointment;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.fragments.RemovedDialogFragment;
+import io.github.polysmee.room.fragments.RoomActivityParticipantsFragment;
 
 /**
  * Activity representing all room related operations
@@ -45,8 +46,7 @@ public class RoomActivity extends AppCompatActivity {
     private Appointment appointment;
     public final static String APPOINTMENT_KEY = "io.github.polysmee.room.RoomActivity.APPOINTMENT_KEY";
     private Context context;
-    private boolean paused;
-    private boolean left;
+    private boolean paused, left, inCall;
 
     //Commands to remove listeners
     private final List<Command> commandsToRemoveListeners = new ArrayList<Command>();
@@ -65,6 +65,7 @@ public class RoomActivity extends AppCompatActivity {
 
         left = false;
         paused = false;
+        inCall = false;
 
         checkIfParticipant();
 
@@ -126,6 +127,13 @@ public class RoomActivity extends AppCompatActivity {
     private void generateRemovedDialog() {
         left = true;
         FragmentManager fragmentManager = getSupportFragmentManager();
+
+        try {
+            RoomActivityParticipantsFragment participantsFragment = (RoomActivityParticipantsFragment) fragmentManager.getFragments().get(2);
+            if (participantsFragment != null)
+                participantsFragment.onDestroy();
+        } catch (IndexOutOfBoundsException ignored) {}
+
         RemovedDialogFragment newFragment = new RemovedDialogFragment();
 
         // The device is smaller, so show the fragment fullscreen
@@ -136,7 +144,6 @@ public class RoomActivity extends AppCompatActivity {
         // for the fragment, which is always the root view for the activity
         transaction.add(android.R.id.content, newFragment)
                 .addToBackStack(null).commit();
-
     }
 
     /**
@@ -165,26 +172,38 @@ public class RoomActivity extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.roomMenuInfo:
-                paused = true;
-                Intent intent = new Intent(this, AppointmentActivity.class);
-                intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
-                intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
-                startActivity(intent);
+                if (!inCall) {
+                    paused = true;
+                    Intent intent = new Intent(this, AppointmentActivity.class);
+                    intent.putExtra(AppointmentActivity.LAUNCH_MODE, AppointmentActivity.DETAIL_MODE);
+                    intent.putExtra(AppointmentActivity.APPOINTMENT_ID, appointment.getId());
+                    startActivity(intent);
+                } else {
+                    Toast toast = Toast.makeText(this, getText(R.string.inCallError), Toast.LENGTH_SHORT);
+                    toast.show();
+                }
                 return true;
             case R.id.roomMenuLeave:
-                if(!left && context != null) {
+                if(!left && context != null && !inCall) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(context);
                     builder.setMessage(R.string.leave_message);
                     builder.setPositiveButton(R.string.leave, (dialog, which) -> removeUserFromAppointment());
 
                     builder.setNegativeButton(R.string.genericCancelText, (dialog, which) -> {});
                     builder.show();
+                } else if (inCall) {
+                    Toast toast = Toast.makeText(this, getText(R.string.inCallError), Toast.LENGTH_SHORT);
+                    toast.show();
                 }
 
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void setInCall(boolean inCall) {
+        this.inCall = inCall;
     }
 
     /**

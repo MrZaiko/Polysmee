@@ -6,12 +6,15 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseException;
 import com.google.firebase.database.FirebaseDatabase;
 
 import io.github.polysmee.R;
@@ -25,9 +28,16 @@ public class LoginCheckActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login_check);
-        if (FirebaseApp.getApps(this).size() == 0) {
-            FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+
+        if (FirebaseApp.getApps(this).size() == 1) {
+            try {
+                FirebaseDatabase.getInstance().setPersistenceEnabled(true);
+            } catch (DatabaseException e) {
+                Toast toast = Toast.makeText(this, getText(R.string.restartErrorText), Toast.LENGTH_SHORT);
+                toast.show();
+            }
         }
+
 
         FirebaseUser user = AuthenticationSingleton.getAdaptedInstance().getCurrentUser();
 
