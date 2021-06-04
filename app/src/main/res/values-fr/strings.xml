@@ -139,4 +139,5 @@
     <string name="sort_by_date">Trier par ordre chronologique</string>
     <string name="sort_by_participants">Trier par nombre de participants</string>
     <string name="inCallError">Vous ne pouvez pas réaliser cette action pendant un appel</string>
+    <string name="restartErrorText">Une erreur est survenue, veuillez relancer l\'application</string>
 </resources>
