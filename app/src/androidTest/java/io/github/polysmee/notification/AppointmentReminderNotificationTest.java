@@ -78,18 +78,6 @@ public class AppointmentReminderNotificationTest {
         DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
                 .getId()).child("appointments").child(appointmentId).setValue("");
         reminderNotificationPresent();
-        resetStateNotification();
-        DatabaseSingleton.getAdaptedInstance().getReference("users").child(MainUser.getMainUser()
-                .getId()).child("appointments").child(appointmentId).setValue(null);
-        // wait for the listener in the service to work
-        sleep(2, SECONDS);
-        timeOfAppointment = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(2);
-        DatabaseSingleton.getAdaptedInstance().getReference("appointments").child(appointmentId)
-                .child("start").setValue(timeOfAppointment);
-        uiDevice.openNotification();
-        assertFalse(uiDevice.wait(Until.hasObject(By.textStartsWith(EXPECTED_APP_NAME)),
-                TIMEOUT));
-        closeNotification();
     }
 
     @Before

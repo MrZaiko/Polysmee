@@ -7,23 +7,18 @@ public final class AuthenticationSingleton {
     }
 
     private static boolean runLocally = false;
-    private static FirebaseAuth firebaseAuth = null;
 
     public static FirebaseAuth getAdaptedInstance() {
-        if (firebaseAuth == null){
-            if (runLocally) {
-                FirebaseAuth fb = FirebaseAuth.getInstance();
-                fb.useEmulator("10.0.2.2", 9099);
-                firebaseAuth = fb;
-            } else {
-                firebaseAuth = FirebaseAuth.getInstance();
-            }
+        if (runLocally) {
+            FirebaseAuth fb = FirebaseAuth.getInstance();
+            fb.useEmulator("10.0.2.2", 9099);
+            return fb;
+        } else {
+            return FirebaseAuth.getInstance();
         }
-        return firebaseAuth;
     }
 
     public static void setLocal() {
         runLocally = true;
-        firebaseAuth = null;
     }
 }

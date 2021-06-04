@@ -5,7 +5,7 @@ import com.google.firebase.database.FirebaseDatabase;
 public final class DatabaseSingleton {
     private DatabaseSingleton() {
     }
-    private static FirebaseDatabase firebaseDatabase=null;
+
     private static boolean runLocally = false;
 
     /**
@@ -13,20 +13,17 @@ public final class DatabaseSingleton {
      * depending on state.
      */
     public static FirebaseDatabase getAdaptedInstance() {
-        if(firebaseDatabase==null){
-            if (runLocally) {
-                FirebaseDatabase fb = FirebaseDatabase.getInstance();
-                fb.useEmulator("10.0.2.2", 9000);
-                firebaseDatabase = fb;
-            } else {
-                firebaseDatabase = FirebaseDatabase.getInstance();
-            }
+
+        if (runLocally) {
+            FirebaseDatabase fb = FirebaseDatabase.getInstance();
+            fb.useEmulator("10.0.2.2", 9000);
+            return fb;
+        } else {
+            return FirebaseDatabase.getInstance();
         }
-        return firebaseDatabase;
     }
 
     public static void setLocal() {
         runLocally = true;
-        firebaseDatabase = null;
     }
 }
