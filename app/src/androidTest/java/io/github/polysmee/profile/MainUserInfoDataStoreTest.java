@@ -80,8 +80,6 @@ public class MainUserInfoDataStoreTest {
         testDescriptionDatabase(userDescription);
         mainUserInfoDataStore.putString("efse", nameToPut);
         testNameDatabase(userName);
-        mainUserInfoDataStore.putString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, nameToPut);
-        testNameDatabase(userName);
         mainUserInfoDataStore.putString("fkesjnfejsf", nameToPut);
         testNameDatabase(userName);
         mainUserInfoDataStore.putString("fkesjnfejsf", null);
@@ -92,7 +90,6 @@ public class MainUserInfoDataStoreTest {
     public void getString() {
         MainUserInfoDataStore mainUserInfoDataStore = new MainUserInfoDataStore();
         assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_NAME, "test"));
-        assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_EMAIL, "test"));
         assertEquals("", mainUserInfoDataStore.getString(MainUserInfoDataStore.PREFERENCE_KEY_MAIN_USER_DESCRIPTION, "test"));
         assertEquals("", mainUserInfoDataStore.getString("jfnsejfnes", "test"));
 
