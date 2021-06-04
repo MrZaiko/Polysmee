@@ -1,4 +1,4 @@
-package io.github.polysmee.notification;
+package io.github.polysmee.znotification;
 
 import android.content.Context;
 import android.content.Intent;
@@ -7,7 +7,7 @@ import androidx.annotation.NonNull;
 
 
 /**
- * Used to start the {@link AppointmentReminderNotificationService appointment reminder notification
+ * Used to start the {@link AppointmentReminderNotificationService appointment reminder znotification
  * service}. It allow to easily disable the appointment reminder service if needed.
  */
 public final class AppointmentReminderNotification {
@@ -16,9 +16,9 @@ public final class AppointmentReminderNotification {
     /**
      * Sets the value of isNotificationSetterEnable to the given value. If
      * isNotificationSetterEnable is false before calling appointmentReminderNotificationSetListeners
-     * then the appointment reminder notification listeners will not be set. By default,
+     * then the appointment reminder znotification listeners will not be set. By default,
      * isNotificationSetterEnable has true value. Use this function in tests where UI is used to
-     * disable notification and might avoid the tests to fails because the notification is taking
+     * disable znotification and might avoid the tests to fails because the znotification is taking
      * the screen.
      *
      * @param newValue the value to set isNotificationSetterEnable to.
@@ -28,7 +28,7 @@ public final class AppointmentReminderNotification {
     }
 
     /**
-     * Start the {@link AppointmentReminderNotificationService appointment reminder notification
+     * Start the {@link AppointmentReminderNotificationService appointment reminder znotification
      * services}.
      * <p>
      * This function should be called as soon as the user is logged in, so that the reminder of

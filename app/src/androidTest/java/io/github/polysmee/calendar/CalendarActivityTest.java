@@ -29,7 +29,7 @@ import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.notification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.core.app.ApplicationProvider.getApplicationContext;
 import static androidx.test.espresso.Espresso.closeSoftKeyboard;

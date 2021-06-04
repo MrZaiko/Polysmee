@@ -49,7 +49,7 @@
         <activity android:name=".profile.ProfileActivity"></activity>
 
         <service
-            android:name=".notification.AppointmentReminderNotificationService"
+            android:name=".znotification.AppointmentReminderNotificationService"
             android:exported="false"
             android:description="@string/android_description_reminder_notification_service"/>
 
@@ -80,7 +80,7 @@
         <activity android:name=".calendar.CalendarActivity" />
         <activity android:name=".photo.editing.PictureEditActivity" />
 
-        <receiver android:name=".notification.AppointmentReminderNotificationPublisher" />
+        <receiver android:name=".znotification.AppointmentReminderNotificationPublisher" />
 
         <activity android:name=".login.LoginActivity" />
         <activity android:name=".room.RoomActivity" />

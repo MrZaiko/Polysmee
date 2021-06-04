@@ -22,7 +22,7 @@ import io.github.polysmee.database.DatabaseSingleton;
 import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.room.RoomActivity;
-import io.github.polysmee.notification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;
 import static com.schibsted.spain.barista.interaction.BaristaClickInteractions.clickOn;

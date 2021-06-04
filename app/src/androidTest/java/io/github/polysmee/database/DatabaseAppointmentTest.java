@@ -25,7 +25,7 @@ import io.github.polysmee.database.databaselisteners.valuelisteners.StringSetVal
 import io.github.polysmee.database.databaselisteners.valuelisteners.StringValueListener;
 import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.notification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

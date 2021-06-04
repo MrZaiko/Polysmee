@@ -1,4 +1,4 @@
-package io.github.polysmee.notification;
+package io.github.polysmee.znotification;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
@@ -96,14 +96,14 @@ public final class AppointmentReminderNotificationService extends Service {
     }
 
     /**
-     * Removes the appointment reminder notification of the appointment from alarmManager and update
+     * Removes the appointment reminder znotification of the appointment from alarmManager and update
      * the local state of set up appointment reminder notifications. If the appointment reminder
-     * notification of the appointment is not set up do nothing
+     * znotification of the appointment is not set up do nothing
      *
      * @param appointmentId          the appointmentId of the appointment to remove the appointment
-     *                               reminder notification.
+     *                               reminder znotification.
      * @param localSetUpAppointments the SharedPreference that contain all the appointment with
-     *                               reminder notification already set up.
+     *                               reminder znotification already set up.
      */
     private void removeAppointmentReminderNotification(@NonNull String appointmentId,
                                                        @NonNull SharedPreferences localSetUpAppointments) {
@@ -133,14 +133,14 @@ public final class AppointmentReminderNotificationService extends Service {
 
     /**
      * Returns the {@link AppointmentReminderNotificationPublisher} pendingIntent associated to a
-     * appointment reminder notification that want to appear at the passed starting time.
+     * appointment reminder znotification that want to appear at the passed starting time.
      * <p>
      * The return pendingIntent is uniquely identify by the android system by the appointment
-     * reminder notification time of the appointment and the fact that it is a broadcast intent for
+     * reminder znotification time of the appointment and the fact that it is a broadcast intent for
      * AppointmentReminderNotificationPublisher
      *
      * @param appointmentReminderNotificationTimeMin the epoch time in minutes of when the
-     *                                               notification should appear.
+     *                                               znotification should appear.
      */
     private PendingIntent getReminderNotificationPendingIntent(int appointmentReminderNotificationTimeMin) {
         Intent notificationIntent = new Intent(this,
@@ -150,7 +150,7 @@ public final class AppointmentReminderNotificationService extends Service {
     }
 
     // Launched everyTime a update to the set of appointments of the main user change,
-    // so that the appointment reminder notification time of apparition are consistent with
+    // so that the appointment reminder znotification time of apparition are consistent with
     // the database.
     private void mainUserAppointmentsListenerUpdate(@NonNull Set<String> o) {
         unsetSetUpAppointmentsThatTheUserHasLeave(o);

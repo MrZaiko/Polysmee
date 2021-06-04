@@ -20,7 +20,7 @@ import java.util.concurrent.ExecutionException;
 import io.github.polysmee.calendar.CalendarActivity;
 import io.github.polysmee.calendar.googlecalendarsync.CalendarUtilities;
 import io.github.polysmee.database.DatabaseSingleton;
-import io.github.polysmee.notification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static androidx.test.espresso.intent.Intents.intending;
 import static androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent;

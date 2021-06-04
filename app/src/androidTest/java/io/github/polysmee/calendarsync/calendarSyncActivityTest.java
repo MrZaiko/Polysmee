@@ -24,7 +24,7 @@ import io.github.polysmee.internet.connection.InternetConnection;
 import io.github.polysmee.login.AuthenticationSingleton;
 import io.github.polysmee.login.LoginActivity;
 import io.github.polysmee.login.MainUser;
-import io.github.polysmee.notification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 import static com.schibsted.spain.barista.assertion.BaristaClickableAssertions.assertClickable;
 import static com.schibsted.spain.barista.assertion.BaristaVisibilityAssertions.assertDisplayed;

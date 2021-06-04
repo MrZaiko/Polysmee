@@ -31,7 +31,7 @@ import io.github.polysmee.login.LoginActivity;
 import io.github.polysmee.login.MainUser;
 import io.github.polysmee.profile.ProfileActivity;
 import io.github.polysmee.settings.SettingsActivity;
-import io.github.polysmee.notification.AppointmentReminderNotification;
+import io.github.polysmee.znotification.AppointmentReminderNotification;
 
 public class CalendarActivity extends AppCompatActivity {
 

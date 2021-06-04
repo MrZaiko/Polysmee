@@ -1,4 +1,4 @@
-package io.github.polysmee.notification;
+package io.github.polysmee.znotification;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -51,11 +51,11 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
     }
 
     /**
-     * Creates the notification channel for the reminder notifications.
+     * Creates the znotification channel for the reminder notifications.
      * <p>
      * From https://developer.android.com/training/notify-user/build-notification?hl=en#java : "It's
-     * safe to call this repeatedly because creating an existing notification channel performs no
-     * operation." Later when doing the notification with resource file move it to the app launch as
+     * safe to call this repeatedly because creating an existing znotification channel performs no
+     * operation." Later when doing the znotification with resource file move it to the app launch as
      * suggested.
      */
     private static void createNotificationChannel(Context context) {
@@ -72,7 +72,7 @@ public final class AppointmentReminderNotificationPublisher extends BroadcastRec
             channel.enableVibration(true);
             channel.setVibrationPattern(VIBRATION_PATTERN);
             // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
+            // or other znotification behaviors after this
             NotificationManager notificationManager =
                     context.getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
